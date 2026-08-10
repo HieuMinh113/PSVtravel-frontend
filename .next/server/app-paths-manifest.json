@@ -1,0 +1,4 @@
+{
+  "/(site)/page": "app/(site)/page.js",
+  "/(site)/tour-nuoc-ngoai/[slug]/page": "app/(site)/tour-nuoc-ngoai/[slug]/page.js"
+}

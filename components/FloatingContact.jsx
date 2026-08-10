@@ -1,0 +1,46 @@
+"use client";
+import { motion } from "framer-motion";
+import { Phone, MessageCircle } from "lucide-react";
+
+// Nút liên hệ nổi — giúp khách chốt tour nhanh qua gọi điện / Zalo,
+// kênh chuyển đổi rất quan trọng với thị trường du lịch Việt Nam.
+export default function FloatingContact() {
+  return (
+    <div className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-5 z-40 flex flex-col items-end gap-3 sm:right-6">
+      {/* Zalo */}
+      <motion.a
+        href="https://zalo.me/0"
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        whileHover={{ scale: 1.08 }}
+        className="group relative grid h-12 w-12 place-items-center rounded-full bg-white text-ocean-600 shadow-deep ring-1 ring-ocean-100 sm:h-14 sm:w-14"
+        aria-label="Nhắn tin qua Zalo"
+      >
+        <span className="pointer-events-none absolute right-full mr-3 whitespace-nowrap rounded-lg bg-deep-900 px-3 py-1.5 text-xs font-semibold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          Chat Zalo
+        </span>
+        <MessageCircle className="h-6 w-6" />
+      </motion.a>
+
+      {/* Hotline — có vòng lan toả (ripple) để thu hút chú ý */}
+      <motion.a
+        href="tel:19001177"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.15 }}
+        whileHover={{ scale: 1.08 }}
+        className="group relative grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-ocean-500 to-teal-500 text-white shadow-glow sm:h-16 sm:w-16"
+        aria-label="Gọi hotline 1900 1177"
+      >
+        <span className="absolute inset-0 -z-10 rounded-full bg-ocean-400 animate-ripple" />
+        <span className="pointer-events-none absolute right-full mr-3 whitespace-nowrap rounded-lg bg-deep-900 px-3 py-1.5 text-xs font-semibold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          Hotline 1900 1177
+        </span>
+        <Phone className="h-6 w-6 sm:h-7 sm:w-7" />
+      </motion.a>
+    </div>
+  );
+}
