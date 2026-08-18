@@ -26,7 +26,7 @@ const orbitImages = [
   "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=400&auto=format&fit=crop", // Singapore
   "https://images.unsplash.com/photo-1470004914212-05527e49370b?q=80&w=400&auto=format&fit=crop", // Đài Loan
 ];
-import { domesticTours, abroadTours } from "@/data/tours";
+
 
 const destinations = [
   { name: "Phú Quốc", image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=800&auto=format&fit=crop", count: "24 tour" },
@@ -44,13 +44,18 @@ const whyUs = [
   { icon: Clock3, title: "Xác nhận tức thì", desc: "Đặt chỗ và nhận xác nhận tour chỉ trong vài phút." },
 ];
 
-// Ghép & sắp xếp theo ngày khởi hành gần nhất để mô phỏng "tour sát ngày"
-const upcoming = [...domesticTours, ...abroadTours]
-  .slice()
-  .sort((a, b) => new Date(a.startDate.split("/").reverse().join("-")) - new Date(b.startDate.split("/").reverse().join("-")))
-  .slice(0, 6);
 
-export default function Home() {
+
+
+export default function Home({ upcoming = [], banner = null, reviews = [] }) {
+  // Nếu DB chưa có banner nào thì dùng banner mặc định để trang không bị trống
+  const promo = banner ?? {
+    image: "https://images.unsplash.com/photo-1512100356356-de1b84283e18?q=80&w=1600&auto=format&fit=crop",
+    title: "Săn vé Đông Nam Á — giảm đến 25% cho 100 khách đặt sớm",
+    subtitle: "Áp dụng cho tour Thái Lan, Singapore, Đài Loan khởi hành trước 30/09/2026.",
+    link: "/tour-nuoc-ngoai",
+  };
+
   return (
     <div>
       {/* ===== HERO — vòng ảnh xoay bao quanh khối tiêu đề + tìm kiếm ===== */}
@@ -140,8 +145,8 @@ export default function Home() {
         <SectionReveal className="mx-auto max-w-7xl">
           <div className="relative overflow-hidden rounded-3xl shadow-deep">
             <motion.img
-              src="https://images.unsplash.com/photo-1512100356356-de1b84283e18?q=80&w=1600&auto=format&fit=crop"
-              alt="Ưu đãi mùa hè PSVTravel"
+                            src={promo.image}
+              alt={promo.title || "Ưu đãi PSVTravel"}
               initial={{ scale: 1.08 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
@@ -155,13 +160,13 @@ export default function Home() {
                 Ưu đãi có hạn
               </span>
               <h2 className="max-w-md font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
-                Săn vé Đông Nam Á — giảm đến 25% cho 100 khách đặt sớm
+                {promo.title}
               </h2>
-              <p className="max-w-sm text-sm text-white/75">
-                Áp dụng cho tour Thái Lan, Singapore, Đài Loan khởi hành trước 30/09/2026.
-              </p>
+                            {promo.subtitle && (
+                <p className="max-w-sm text-sm text-white/75">{promo.subtitle}</p>
+              )}
               <Link
-                href="/tour-nuoc-ngoai"
+                href={promo.link || "/tour-nuoc-ngoai"}
                 className="mt-2 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ocean-700 transition-transform hover:-translate-y-0.5"
               >
                 Xem ưu đãi ngay <ArrowRight className="h-4 w-4" />
@@ -194,7 +199,7 @@ export default function Home() {
                 key={tour.slug}
                 tour={tour}
                 index={i}
-                basePath={domesticTours.includes(tour) ? "/tour-trong-nuoc" : "/tour-nuoc-ngoai"}
+                basePath={tour.type === "domestic" ? "/tour-trong-nuoc" : "/tour-nuoc-ngoai"}
               />
             ))}
           </div>
@@ -281,7 +286,7 @@ export default function Home() {
         </div>
       </section>
 
-      <Testimonials />
+            <Testimonials reviews={reviews} />
 
       {/* ===== CTA CUỐI TRANG ===== */}
       <section className="relative overflow-hidden bg-horizon py-20">

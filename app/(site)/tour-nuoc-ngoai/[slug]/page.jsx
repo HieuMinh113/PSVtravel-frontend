@@ -1,26 +1,36 @@
+import { notFound } from "next/navigation";
 import TourDetail from "@/components/pages/TourDetail";
-import { abroadTours } from "@/data/tours";
 import { tourMeta, tourJsonLd, JsonLd } from "@/app/lib/seo";
+import { getTours, getTourBySlug } from "@/app/lib/api";
 
 const BASE = "/tour-nuoc-ngoai";
+export const revalidate = 60;
 
-export function generateStaticParams() {
-  return abroadTours.map((t) => ({ slug: t.slug }));
+export async function generateStaticParams() {
+  const tours = await getTours({ type: "abroad" });
+  return tours.map((t) => ({ slug: t.slug }));
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const tour = abroadTours.find((t) => t.slug === slug);
+  const tour = await getTourBySlug(slug);
   return tourMeta(tour, BASE);
 }
 
 export default async function Page({ params }) {
   const { slug } = await params;
-  const tour = abroadTours.find((t) => t.slug === slug);
+  const tour = await getTourBySlug(slug);
+  if (!tour || tour.type !== "abroad") notFound();
+
+  const all = await getTours({ type: "abroad" });
+  const related = all
+    .filter((t) => t.slug !== tour.slug && t.region === tour.region)
+    .slice(0, 3);
+
   return (
     <>
-      {tour && <JsonLd data={tourJsonLd(tour, BASE)} />}
-      <TourDetail basePath={BASE} slug={slug} />
+      <JsonLd data={tourJsonLd(tour, BASE)} />
+      <TourDetail basePath={BASE} tour={tour} related={related} />
     </>
   );
 }

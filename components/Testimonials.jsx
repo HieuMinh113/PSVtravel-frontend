@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import { Star, Quote, ArrowRight, Images } from "lucide-react";
 import SectionReveal from "./SectionReveal";
 
-const testimonials = [
+// Data mẫu — chỉ dùng làm fallback khi backend chưa có đánh giá nào được duyệt
+const fallbackTestimonials = [
   {
     name: "Nguyễn Thu Hà",
     trip: "Tour Phú Quốc 3N2Đ",
@@ -49,37 +50,55 @@ const testimonials = [
 ];
 
 function TestimonialCard({ t }) {
+  const initial = (t.name || "?").trim().charAt(0).toUpperCase();
   return (
     <div className="card-surface mx-3 flex w-[300px] shrink-0 flex-col overflow-hidden sm:w-[340px]">
-      <div className="relative h-40 overflow-hidden">
-        <Image src={t.photo} alt={t.trip} fill sizes="340px" className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-deep-950/70 via-deep-950/0 to-transparent" />
-        <span className="absolute right-3 top-3 flex items-center gap-0.5 rounded-full bg-white/90 px-2 py-1 backdrop-blur">
-          {Array.from({ length: t.rating }).map((_, i) => (
-            <Star key={i} className="h-3 w-3 fill-teal-500 text-teal-500" />
-          ))}
-        </span>
-        <img
-          src={t.avatar}
-          alt={t.name}
-          className="absolute -bottom-5 left-4 h-12 w-12 rounded-full border-4 border-white object-cover shadow"
-        />
-      </div>
+      {t.photo && (
+        <div className="relative h-40 overflow-hidden">
+          <Image src={t.photo} alt={t.trip || t.name} fill sizes="340px" className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-deep-950/70 via-deep-950/0 to-transparent" />
+          <span className="absolute right-3 top-3 flex items-center gap-0.5 rounded-full bg-white/90 px-2 py-1 backdrop-blur">
+            {Array.from({ length: t.rating || 0 }).map((_, i) => (
+              <Star key={i} className="h-3 w-3 fill-teal-500 text-teal-500" />
+            ))}
+          </span>
+          {t.avatar ? (
+            <img
+              src={t.avatar}
+              alt={t.name}
+              className="absolute -bottom-5 left-4 h-12 w-12 rounded-full border-4 border-white object-cover shadow"
+            />
+          ) : (
+            <span className="absolute -bottom-5 left-4 grid h-12 w-12 place-items-center rounded-full border-4 border-white bg-ocean-100 font-display text-sm font-bold text-ocean-700 shadow">
+              {initial}
+            </span>
+          )}
+        </div>
+      )}
 
-      <div className="flex flex-1 flex-col p-5 pt-8">
+      <div className={`flex flex-1 flex-col p-5 ${t.photo ? "pt-8" : ""}`}>
+        {!t.photo && (
+          <div className="mb-2 flex gap-0.5">
+            {Array.from({ length: t.rating || 0 }).map((_, i) => (
+              <Star key={i} className="h-3.5 w-3.5 fill-teal-500 text-teal-500" />
+            ))}
+          </div>
+        )}
         <Quote className="h-5 w-5 text-ocean-200" />
-        <p className="mt-2 flex-1 text-sm leading-relaxed text-deep-800/80">"{t.quote}"</p>
+        <p className="mt-2 flex-1 text-sm leading-relaxed text-deep-800/80">&ldquo;{t.quote}&rdquo;</p>
         <div className="mt-4 border-t border-ocean-100 pt-3">
           <p className="text-sm font-semibold text-deep-900">{t.name}</p>
-          <p className="text-xs text-deep-800/50">{t.trip}</p>
+          {t.trip && <p className="text-xs text-deep-800/50">{t.trip}</p>}
         </div>
       </div>
     </div>
   );
 }
 
-export default function Testimonials() {
-  const loop = [...testimonials, ...testimonials];
+export default function Testimonials({ reviews = [] }) {
+  // Ưu tiên đánh giá thật từ API; nếu chưa có thì dùng data mẫu để không trống
+  const list = reviews.length ? reviews : fallbackTestimonials;
+  const loop = [...list, ...list];
 
   return (
     <section className="overflow-hidden bg-ocean-50/60 py-20">

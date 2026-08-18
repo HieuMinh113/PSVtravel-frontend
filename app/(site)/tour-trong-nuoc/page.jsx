@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import DomesticTours from "@/components/pages/DomesticTours";
 import { pageMeta } from "@/app/lib/seo";
+import { getTours } from "@/app/lib/api";
+
+export const revalidate = 60;
 
 export const metadata = pageMeta({
   title: "Tour trong nước",
@@ -8,10 +11,11 @@ export const metadata = pageMeta({
   path: "/tour-trong-nuoc",
 });
 
-export default function Page() {
+export default async function Page() {
+  const tours = await getTours({ type: "domestic" });
   return (
     <Suspense fallback={null}>
-      <DomesticTours />
+      <DomesticTours tours={tours} />
     </Suspense>
   );
 }

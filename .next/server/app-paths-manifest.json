@@ -1,1 +1,6 @@
-{}
+{
+  "/(site)/page": "app/(site)/page.js",
+  "/(site)/tour-nuoc-ngoai/page": "app/(site)/tour-nuoc-ngoai/page.js",
+  "/(site)/tour-trong-nuoc/page": "app/(site)/tour-trong-nuoc/page.js",
+  "/(site)/tour-trong-nuoc/[slug]/page": "app/(site)/tour-trong-nuoc/[slug]/page.js"
+}

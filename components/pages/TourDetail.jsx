@@ -10,10 +10,8 @@ import {
   User, Mail, Quote, CheckCircle2, Images, X, FileCheck2, Clock,
   BadgeCheck, HelpCircle, Search, SlidersHorizontal,
 } from "lucide-react";
-import { allTours, formatVND } from "@/data/tours";
-import { guides } from "@/data/guides";
-import { customerPhotos } from "@/data/customerPhotos";
-import { pickReviewsForTour } from "@/data/reviews";
+import { createBooking } from "@/app/lib/api";
+import { formatVND } from "@/data/tours";
 import { getVisaInfo } from "@/data/visa";
 import { domesticRegions, abroadRegions } from "@/data/filters";
 import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwan } from "@/components/FlagIcons";
@@ -102,6 +100,7 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
 }
 
 function ReviewCard({ r, index }) {
+  const initial = (r.name || "?").trim().charAt(0).toUpperCase();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -110,26 +109,29 @@ function ReviewCard({ r, index }) {
       transition={{ duration: 0.5, delay: (index % 6) * 0.06 }}
       className="card-surface flex flex-col overflow-hidden"
     >
-      {r.photo && (
-        <div className="relative h-36 w-full overflow-hidden">
-          <Image src={r.photo} alt={r.name} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
-        </div>
-      )}
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-center gap-3">
-          <img src={r.avatar} alt={r.name} className="h-10 w-10 rounded-full object-cover" />
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-100 font-display text-sm font-bold text-ocean-700">
+            {initial}
+          </span>
           <div className="flex-1">
             <p className="text-sm font-semibold text-deep-900">{r.name}</p>
             <p className="text-xs text-deep-800/45">{r.date}</p>
           </div>
           <div className="flex gap-0.5">
-            {Array.from({ length: r.rating }).map((_, i) => (
+            {Array.from({ length: r.rating || 0 }).map((_, i) => (
               <Star key={i} className="h-3.5 w-3.5 fill-teal-500 text-teal-500" />
             ))}
           </div>
         </div>
         <Quote className="mt-3 h-4 w-4 text-ocean-200" />
         <p className="mt-1.5 flex-1 text-sm leading-relaxed text-deep-800/75">{r.comment}</p>
+        {r.reply && (
+          <div className="mt-3 rounded-xl bg-ocean-50/70 p-3">
+            <p className="text-xs font-semibold text-ocean-700">Phản hồi từ PSV Travel</p>
+            <p className="mt-1 text-sm text-deep-800/70">{r.reply}</p>
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -159,15 +161,17 @@ function FaqItem({ item, isOpen, onToggle }) {
   );
 }
 
-export default function TourDetail({ basePath, slug }) {
+export default function TourDetail({ basePath, tour, related = [] }) {
   const router = useRouter();
-  const tour = allTours.find((t) => t.slug === slug);
   const [openDay, setOpenDay] = useState(0);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [form, setForm] = useState({ name: "", contact: "" });
   const [formError, setFormError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [bookingCode, setBookingCode] = useState("");
+  const [depId, setDepId] = useState(tour?.departures?.[0]?.id ?? null);
   const [lightboxImg, setLightboxImg] = useState(null);
   const [openFaq, setOpenFaq] = useState(0);
   const [showMobileBar, setShowMobileBar] = useState(false);
@@ -199,10 +203,8 @@ export default function TourDetail({ basePath, slug }) {
 
   const galleryImages = useMemo(() => {
     if (!tour) return [];
-    const sameRegion = allTours.filter((t) => t.region === tour.region && t.slug !== tour.slug).map((t) => t.image);
-    const experience = customerPhotos.slice(0, 3).map((p) => p.photo);
-    const foodPhoto = guides.find((g) => g.slug === "am-thuc-hoi-an")?.image;
-    return [tour.image, ...sameRegion, ...(foodPhoto ? [foodPhoto] : []), ...experience].slice(0, 6);
+    const fromApi = (tour.images || []).filter(Boolean);
+    return [...new Set([tour.image, ...fromApi].filter(Boolean))].slice(0, 6);
   }, [tour]);
 
   const dayImages = useMemo(() => {
@@ -213,28 +215,43 @@ export default function TourDetail({ basePath, slug }) {
     );
   }, [tour, galleryImages]);
 
-  const reviews = useMemo(() => (tour ? pickReviewsForTour(tour.slug, 6) : []), [tour]);
+  const reviews = tour?.reviewsList ?? [];
   const visaInfo = useMemo(() => (tour?.country ? getVisaInfo(tour.country) : null), [tour]);
   const VisaFlag = tour?.country ? flagBySlug[tour.country] : null;
   const faqs = useMemo(() => (tour ? tourFaqs(tour, !!tour.country) : []), [tour]);
 
   if (!tour) return notFound();
 
-  const related = allTours.filter((t) => t.slug !== tour.slug && t.region === tour.region).slice(0, 3);
-  const childPrice = Math.round((tour.price * 0.6) / 1000) * 1000;
+  const childPrice = tour.childPrice ?? Math.round((tour.price * 0.6) / 1000) * 1000;
   const total = adults * tour.price + children * childPrice;
 
   const scrollToBooking = () => {
     document.getElementById("booking-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.name.trim() || !form.contact.trim()) {
-      setFormError("Vui lòng nhập họ tên và số điện thoại hoặc email.");
+      setFormError("Vui lòng nhập họ tên và số điện thoại.");
       return;
     }
     setFormError("");
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      const res = await createBooking({
+        tour_id: tour.id,
+        tour_departure_id: depId,
+        customer_name: form.name.trim(),
+        customer_phone: form.contact.trim(),
+        adults,
+        children,
+      });
+      setBookingCode(res?.data?.booking_code || "");
+      setSubmitted(true);
+    } catch (e) {
+      setFormError(e.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleAskSubmit = (e) => {
@@ -458,6 +475,9 @@ export default function TourDetail({ basePath, slug }) {
                     <CheckCircle2 className="h-12 w-12 text-teal-500" />
                     <p className="mt-3 font-display text-base font-bold text-deep-900">Đã gửi yêu cầu giữ chỗ!</p>
                     <p className="mt-1.5 text-sm text-deep-800/60">Tư vấn viên sẽ liên hệ {form.name} qua {form.contact} trong 15 phút để xác nhận.</p>
+                    {bookingCode && (
+                      <p className="mt-2 rounded-lg bg-ocean-50 px-3 py-2 text-sm font-semibold text-ocean-700">Mã đơn: {bookingCode}</p>
+                    )}
                     <button onClick={() => setSubmitted(false)} className="mt-5 text-sm font-semibold text-ocean-600 hover:text-ocean-700">Đặt thêm yêu cầu khác</button>
                   </motion.div>
                 ) : (
@@ -470,17 +490,32 @@ export default function TourDetail({ basePath, slug }) {
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-deep-800/60">Số điện thoại hoặc Email</label>
+                      <label className="text-xs font-semibold text-deep-800/60">Số điện thoại</label>
                       <div className="relative mt-1.5">
-                        <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                        <input value={form.contact} onChange={(e) => setForm((f) => ({ ...f, contact: e.target.value }))} placeholder="09xx xxx xxx hoặc email" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
+                        <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
+                        <input value={form.contact} onChange={(e) => setForm((f) => ({ ...f, contact: e.target.value }))} placeholder="09xx xxx xxx" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
                       </div>
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-deep-800/60">Ngày khởi hành</label>
-                      <div className="mt-1.5 flex items-center gap-2 rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2.5 text-sm">
-                        <CalendarDays className="h-4 w-4 text-ocean-500" /> {tour.startDate}
-                      </div>
+                      {tour.departures && tour.departures.length > 0 ? (
+                        <div className="relative mt-1.5">
+                          <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-500" />
+                          <select
+                            value={depId ?? ""}
+                            onChange={(e) => setDepId(Number(e.target.value))}
+                            className="w-full appearance-none rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none focus:border-ocean-400 focus:bg-white"
+                          >
+                            {tour.departures.map((d) => (
+                              <option key={d.id} value={d.id}>{d.startDate} · còn {d.seatsLeft} chỗ</option>
+                            ))}
+                          </select>
+                        </div>
+                      ) : (
+                        <div className="mt-1.5 flex items-center gap-2 rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2.5 text-sm">
+                          <CalendarDays className="h-4 w-4 text-ocean-500" /> {tour.startDate || "Liên hệ để biết lịch"}
+                        </div>
+                      )}
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-deep-800/60">Người lớn</label>
@@ -489,7 +524,7 @@ export default function TourDetail({ basePath, slug }) {
                         <div className="flex items-center gap-3">
                           <button onClick={() => setAdults((g) => Math.max(1, g - 1))} className="grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">−</button>
                           <span className="w-4 text-center text-sm font-semibold">{adults}</span>
-                          <button onClick={() => setAdults((g) => Math.min(tour.seatsLeft, g + 1))} className="grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">+</button>
+                          <button onClick={() => setAdults((g) => Math.min((tour.seatsLeft || 99), g + 1))} className="grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">+</button>
                         </div>
                       </div>
                     </div>
@@ -509,7 +544,9 @@ export default function TourDetail({ basePath, slug }) {
                       <span className="font-display text-lg font-bold text-ocean-700">{formatVND(total)}</span>
                     </div>
                     {formError && <p className="text-xs font-medium text-rose-600">{formError}</p>}
-                    <button type="button" onClick={handleSubmit} className="btn-cta w-full !py-3.5">Đặt tour ngay <ArrowRight className="h-4 w-4" /></button>
+                    <button type="button" onClick={handleSubmit} disabled={submitting} className="btn-cta w-full !py-3.5 disabled:opacity-60">
+                      {submitting ? "Đang gửi..." : <>Đặt tour ngay <ArrowRight className="h-4 w-4" /></>}
+                    </button>
                     <a href="tel:19001177" className="flex w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-50">
                       <Phone className="h-4 w-4" /> Gọi tư vấn: 1900 1177
                     </a>
@@ -631,11 +668,17 @@ export default function TourDetail({ basePath, slug }) {
               <span className="text-sm text-deep-800/50">/5 · {tour.reviews} đánh giá</span>
             </div>
           </SectionReveal>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {reviews.map((r, i) => (
-              <ReviewCard key={r.name + i} r={r} index={i} />
-            ))}
-          </div>
+          {reviews.length === 0 ? (
+            <p className="rounded-2xl border border-dashed border-ocean-200 bg-white py-12 text-center text-sm text-deep-800/55">
+              Chưa có đánh giá cho tour này.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {reviews.map((r, i) => (
+                <ReviewCard key={r.name + i} r={r} index={i} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

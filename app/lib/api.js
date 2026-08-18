@@ -1,9 +1,6 @@
-// Mọi lời gọi tới backend Laravel đi qua đây.
-// Đổi domain khi lên production ở biến API_URL.
+// Mọi lời gọi tới backend Laravel đi qua đây. Đổi domain khi lên production.
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-
-// Thời gian Next tự làm mới trang tĩnh (giây). 60 = chậm nhất 1 phút thấy thay đổi từ admin.
-const REVALIDATE = 60;
+const REVALIDATE = 60; // giây — chậm nhất 1 phút thấy thay đổi từ admin
 
 async function layJSON(duongDan) {
   const res = await fetch(`${API_URL}${duongDan}`, {
@@ -17,21 +14,22 @@ async function layJSON(duongDan) {
   return res.json();
 }
 
-// ---- Chuyển dữ liệu tour từ backend sang hình dạng giao diện quen dùng ----
+// Chuyển dữ liệu tour từ backend sang đúng hình dạng giao diện quen dùng
 function mapTour(t) {
   if (!t) return null;
-
-  // Lấy đợt gần nhất (nếu API chi tiết có departures)
   const dep = Array.isArray(t.departures) && t.departures.length ? t.departures[0] : null;
 
-  return {
+    return {
+    id: t.id,
     slug: t.slug,
     name: t.name,
+    type: t.type,
     region: t.region,
     country: t.country,
     days: `${t.duration_days} ngày ${t.duration_nights} đêm`,
     departure: t.departure_from ? `Từ ${t.departure_from}` : "",
     price: t.adult_price,
+    childPrice: t.child_price ?? null,
     oldPrice: t.old_price,
     rating: Number(t.rating) || 0,
     reviews: t.review_count ?? 0,
@@ -55,16 +53,14 @@ function mapTour(t) {
     reviewsList: (t.reviews ?? []).map((r) => ({
       name: r.customer_name,
       rating: r.rating,
-      content: r.content,
+      comment: r.content,
       reply: r.admin_reply,
       date: r.created_at,
     })),
-    cancellationPolicy: t.cancellation_policy,
     description: t.description,
   };
 }
 
-// ---- Các hàm dùng trong trang ----
 export async function getTours({ type, featured, category } = {}) {
   const q = new URLSearchParams();
   if (type) q.set("type", type);
@@ -80,8 +76,30 @@ export async function getTourBySlug(slug) {
   const json = await layJSON(`/tours/${slug}`);
   return mapTour(json?.data ?? json);
 }
-
-export async function getTourSlugs() {
-  const json = await layJSON(`/tours-slugs`);
-  return json ?? [];
+// Gọi từ trình duyệt (form đặt tour). Server tự tính tiền & đặt trạng thái.
+export async function createBooking(payload) {
+  const res = await fetch(`${API_URL}/bookings`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(json?.message || "Đặt tour thất bại, vui lòng thử lại.");
+  }
+  return json;
+}
+export async function getBanners() {
+  const json = await layJSON(`/banners`);
+  return json?.data ?? [];
+}
+export async function getFeaturedReviews() {
+  const json = await layJSON(`/reviews/featured`);
+  return (json?.data ?? []).map((r) => ({
+    name: r.name,
+    trip: r.tour_name,
+    quote: r.content,
+    rating: r.rating,
+    photo: r.tour_image,
+  }));
 }

@@ -1,15 +1,15 @@
 "use client";
 import TourListPage from "./TourListPage";
-import { domesticTours } from "@/data/tours";
 import { domesticRegions as regions } from "@/data/filters";
 
-export default function DomesticTours() {
-  // Chỉ có 6 tour trong nước thật, lặp lại cho đủ 10 ảnh — khớp mật độ vòng ảnh như Hero trang chủ
-  const orbitImages = Array.from({ length: 10 }, (_, i) => domesticTours[i % domesticTours.length].image);
+export default function DomesticTours({ tours = [] }) {
+  const orbitImages = tours.length
+    ? Array.from({ length: 10 }, (_, i) => tours[i % tours.length].image)
+    : [];
 
   return (
     <TourListPage
-      tours={domesticTours}
+      tours={tours}
       basePath="/tour-trong-nuoc"
       eyebrow="Tour trong nước"
       title="Khám phá Việt Nam từ Bắc chí Nam"
