@@ -8,8 +8,6 @@ import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import { visaCountries } from "@/data/visa";
 
-const countries = visaCountries.filter((c) => c.required);
-
 const steps = [
   { title: "Tư vấn hồ sơ", desc: "Chuyên viên visa đánh giá hồ sơ và tư vấn loại visa phù hợp." },
   { title: "Chuẩn bị giấy tờ", desc: "Hướng dẫn chi tiết danh sách giấy tờ cần thiết, hỗ trợ dịch thuật công chứng." },
@@ -45,8 +43,13 @@ function FaqItem({ item, isOpen, onToggle }) {
   );
 }
 
-export default function Visa() {
+export default function Visa({ countries: apiCountries = [] }) {
   const [openFaq, setOpenFaq] = useState(0);
+
+  // Ưu tiên dữ liệu từ API; nếu DB trống thì dùng data mẫu (chỉ nước cần visa)
+  const countries = apiCountries.length
+    ? apiCountries
+    : visaCountries.filter((c) => c.required);
 
   return (
     <div>
@@ -70,7 +73,7 @@ export default function Visa() {
           <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {countries.map((c, i) => (
               <motion.div
-                key={c.name}
+                key={c.slug ?? c.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
@@ -79,14 +82,20 @@ export default function Visa() {
                 className="card-surface p-5"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl">{c.flag}</span>
+                  {c.flagImage ? (
+                    <img src={c.flagImage} alt={c.name} className="h-8 w-11 rounded object-cover shadow-sm ring-1 ring-ocean-100" />
+                  ) : (
+                    <span className="text-3xl">{c.flag || "🌐"}</span>
+                  )}
                   <div>
                     <p className="font-display text-base font-semibold text-deep-900">{c.name}</p>
-                    <p className="text-xs text-deep-800/50">Tỷ lệ đậu {c.rate}</p>
+                    {c.rate && <p className="text-xs text-deep-800/50">Tỷ lệ đậu {c.rate}</p>}
                   </div>
                 </div>
                 <div className="mt-4 flex items-center justify-between border-t border-ocean-100 pt-3 text-xs text-deep-800/60">
-                  <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-ocean-500" /> {c.time}</span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5 text-ocean-500" /> {c.time || "—"}
+                  </span>
                   <span className="font-display text-sm font-bold text-ocean-700">{c.price}</span>
                 </div>
               </motion.div>

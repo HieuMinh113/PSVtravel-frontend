@@ -159,3 +159,16 @@ img, video {
 .card-surface {
   @apply rounded-3xl bg-white shadow-[0_10px_40px_-15px_rgba(10,42,69,0.18)] transition-all duration-500;
 }
+/* Nội dung bài viết cẩm nang (HTML từ admin) */
+.prose-psv { color: rgb(15 42 66 / 0.8); line-height: 1.8; }
+.prose-psv h2 { font-size: 1.5rem; font-weight: 700; margin: 2rem 0 0.75rem; color: #0b2440; }
+.prose-psv h3 { font-size: 1.2rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #0b2440; }
+.prose-psv p { margin: 1rem 0; }
+.prose-psv ul, .prose-psv ol { margin: 1rem 0; padding-left: 1.5rem; }
+.prose-psv ul { list-style: disc; }
+.prose-psv ol { list-style: decimal; }
+.prose-psv li { margin: 0.4rem 0; }
+.prose-psv a { color: #0ea5b7; text-decoration: underline; }
+.prose-psv img { border-radius: 1rem; margin: 1.5rem 0; max-width: 100%; height: auto; }
+.prose-psv blockquote { border-left: 4px solid #7dd3e0; padding-left: 1rem; font-style: italic; margin: 1.5rem 0; }
+.prose-psv strong { color: #0b2440; font-weight: 700; }

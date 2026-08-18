@@ -103,3 +103,88 @@ export async function getFeaturedReviews() {
     photo: r.tour_image,
   }));
 }
+export async function getMoments() {
+  const json = await layJSON(`/moments`);
+  return (json?.data ?? []).map((m, i) => ({
+    id: i,
+    name: m.customer_name,
+    trip: m.tour_name,
+    photo: m.image,
+    caption: m.caption,
+    avatar: null, // model Moment chưa có
+    rating: null,
+    date: null,
+  }));
+}
+export async function getVisaCountries() {
+  const json = await layJSON(`/visa-countries`);
+  return (json?.data ?? []).map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    flagImage: c.flag_image, // URL ảnh cờ (nếu có)
+    rate: c.success_rate ? `${c.success_rate}%` : null,
+    time: c.processing_time,
+    price: c.price ? `${Number(c.price).toLocaleString("vi-VN")}đ` : "Liên hệ",
+    required: true,
+  }));
+}
+export async function getAirlines() {
+  const json = await layJSON(`/airlines`);
+  return (json?.data ?? []).map((a) => ({
+    name: a.name,
+    code: a.code,
+    logoImage: a.logo, // URL hoặc null
+  }));
+}
+
+export async function getFlightDeals() {
+  const json = await layJSON(`/flight-deals`);
+  return (json?.data ?? []).map((d, i) => ({
+    id: i,
+    route: `${d.from_city} → ${d.to_city}`,
+    price: d.price ? `${Number(d.price).toLocaleString("vi-VN")}đ` : "Liên hệ",
+    oldPrice: d.old_price ? `${Number(d.old_price).toLocaleString("vi-VN")}đ` : null,
+    airlineName: d.airline?.name ?? null,
+    airlineLogo: d.airline?.logo ?? null,
+    note: d.note ?? null,
+    image: null, // FlightDeal không có ảnh
+  }));
+}
+export async function getSettings() {
+  const json = await layJSON(`/settings`);
+  return json?.data ?? {};
+}
+function mapGuide(g) {
+  if (!g) return null;
+  return {
+    slug: g.slug,
+    title: g.title,
+    excerpt: g.excerpt,
+    image: g.cover_image,
+    category: g.category,
+    author: g.author_name ?? null,
+    views: g.view_count ?? 0,
+    date: g.published_at ? g.published_at.split("-").reverse().join("/") : null, // yyyy-mm-dd → dd/mm/yyyy
+    content: g.content ?? null,
+    metaTitle: g.meta_title ?? g.title,
+    metaDescription: g.meta_description ?? g.excerpt,
+  };
+}
+
+export async function getGuides({ category } = {}) {
+  const q = new URLSearchParams();
+  if (category) q.set("category", category);
+  q.set("per_page", "30");
+  const json = await layJSON(`/guides?${q.toString()}`);
+  return (json?.data ?? []).map(mapGuide);
+}
+
+export async function getGuideBySlug(slug) {
+  const json = await layJSON(`/guides/${slug}`);
+  return mapGuide(json?.data ?? json);
+}
+
+export async function getGuideSlugs() {
+  const json = await layJSON(`/guides-slugs`);
+  return json ?? [];
+}

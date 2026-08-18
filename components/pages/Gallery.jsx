@@ -6,15 +6,20 @@ import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import { customerPhotos } from "@/data/customerPhotos";
 
-export default function Gallery() {
+const chuCaiDau = (ten) => (ten || "?").trim().charAt(0).toUpperCase();
+
+export default function Gallery({ photos = [] }) {
+  // Ưu tiên ảnh thật từ API; nếu DB chưa có thì dùng data mẫu để trang không trống
+  const list = photos.length ? photos : customerPhotos;
+
   const [activeIndex, setActiveIndex] = useState(null);
 
   const openAt = (i) => setActiveIndex(i);
   const close = () => setActiveIndex(null);
-  const prev = () => setActiveIndex((i) => (i - 1 + customerPhotos.length) % customerPhotos.length);
-  const next = () => setActiveIndex((i) => (i + 1) % customerPhotos.length);
+  const prev = () => setActiveIndex((i) => (i - 1 + list.length) % list.length);
+  const next = () => setActiveIndex((i) => (i + 1) % list.length);
 
-  const active = activeIndex !== null ? customerPhotos[activeIndex] : null;
+  const active = activeIndex !== null ? list[activeIndex] : null;
 
   return (
     <div>
@@ -29,14 +34,14 @@ export default function Gallery() {
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="mb-10 flex items-center justify-center gap-2 text-center text-sm text-deep-800/55">
             <Camera className="h-4 w-4 text-teal-500" />
-            {customerPhotos.length} khoảnh khắc được chia sẻ bởi du khách PSVTravel — chạm vào ảnh để xem đầy đủ
+            {list.length} khoảnh khắc được chia sẻ bởi du khách PSVTravel — chạm vào ảnh để xem đầy đủ
           </SectionReveal>
 
           {/* Lưới ảnh dạng masonry (columns) */}
           <div className="columns-1 gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5">
-            {customerPhotos.map((p, i) => (
+            {list.map((p, i) => (
               <motion.button
-                key={p.id}
+                key={p.id ?? i}
                 type="button"
                 onClick={() => openAt(i)}
                 initial={{ opacity: 0, y: 24 }}
@@ -58,19 +63,27 @@ export default function Gallery() {
                 <div className="absolute inset-x-0 bottom-0 translate-y-2 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                   <p className="line-clamp-2 text-sm text-white/90">{p.caption}</p>
                   <div className="mt-2 flex items-center gap-2">
-                    <img src={p.avatar} alt={p.name} className="h-7 w-7 rounded-full border-2 border-white/70 object-cover" />
+                    {p.avatar ? (
+                      <img src={p.avatar} alt={p.name} className="h-7 w-7 rounded-full border-2 border-white/70 object-cover" />
+                    ) : (
+                      <span className="grid h-7 w-7 place-items-center rounded-full border-2 border-white/70 bg-ocean-500 text-[10px] font-bold text-white">
+                        {chuCaiDau(p.name)}
+                      </span>
+                    )}
                     <div>
                       <p className="text-xs font-semibold text-white">{p.name}</p>
-                      <p className="text-[11px] text-white/60">{p.trip}</p>
+                      {p.trip && <p className="text-[11px] text-white/60">{p.trip}</p>}
                     </div>
                   </div>
                 </div>
 
-                <span className="absolute right-3 top-3 flex items-center gap-0.5 rounded-full bg-white/90 px-2 py-1 backdrop-blur">
-                  {Array.from({ length: p.rating }).map((_, r) => (
-                    <Star key={r} className="h-3 w-3 fill-teal-500 text-teal-500" />
-                  ))}
-                </span>
+                {p.rating ? (
+                  <span className="absolute right-3 top-3 flex items-center gap-0.5 rounded-full bg-white/90 px-2 py-1 backdrop-blur">
+                    {Array.from({ length: p.rating }).map((_, r) => (
+                      <Star key={r} className="h-3 w-3 fill-teal-500 text-teal-500" />
+                    ))}
+                  </span>
+                ) : null}
               </motion.button>
             ))}
           </div>
@@ -127,7 +140,7 @@ export default function Gallery() {
             </button>
 
             <motion.div
-              key={active.id}
+              key={active.id ?? activeIndex}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -140,17 +153,25 @@ export default function Gallery() {
               </div>
               <div className="flex flex-col p-6 sm:p-7">
                 <div className="flex items-center gap-3">
-                  <img src={active.avatar} alt={active.name} className="h-11 w-11 rounded-full object-cover" />
+                  {active.avatar ? (
+                    <img src={active.avatar} alt={active.name} className="h-11 w-11 rounded-full object-cover" />
+                  ) : (
+                    <span className="grid h-11 w-11 place-items-center rounded-full bg-ocean-500 text-sm font-bold text-white">
+                      {chuCaiDau(active.name)}
+                    </span>
+                  )}
                   <div>
                     <p className="font-display text-base font-semibold text-deep-900">{active.name}</p>
-                    <p className="text-xs text-deep-800/50">{active.trip} · {active.date}</p>
+                    <p className="text-xs text-deep-800/50">{active.trip}{active.date ? ` · ${active.date}` : ""}</p>
                   </div>
                 </div>
-                <div className="mt-3 flex gap-0.5">
-                  {Array.from({ length: active.rating }).map((_, r) => (
-                    <Star key={r} className="h-4 w-4 fill-teal-500 text-teal-500" />
-                  ))}
-                </div>
+                {active.rating ? (
+                  <div className="mt-3 flex gap-0.5">
+                    {Array.from({ length: active.rating }).map((_, r) => (
+                      <Star key={r} className="h-4 w-4 fill-teal-500 text-teal-500" />
+                    ))}
+                  </div>
+                ) : null}
                 <Quote className="mt-4 h-6 w-6 text-ocean-200" />
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-deep-800/75">{active.caption}</p>
               </div>

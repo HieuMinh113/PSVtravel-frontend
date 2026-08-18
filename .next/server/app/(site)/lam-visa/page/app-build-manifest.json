@@ -1,0 +1,29 @@
+{
+  "pages": {
+    "/(site)/lam-visa/page": [
+      "static/chunks/[root of the server]__938f94._.css",
+      "static/chunks/_acf725._.js",
+      "static/chunks/app_layout_jsx_5bd992._.js",
+      "static/chunks/node_modules_0c5ceb._.js",
+      "static/chunks/_ebc8e3._.js",
+      "static/chunks/app_not-found_jsx_41399f._.js",
+      "static/chunks/_e09dea._.js",
+      "static/chunks/node_modules_next_9628be._.js",
+      "static/chunks/node_modules_framer-motion_dist_es_fa5608._.js",
+      "static/chunks/node_modules_351218._.js",
+      "static/chunks/app_(site)_layout_jsx_652889._.js",
+      "static/chunks/_178251._.js",
+      "static/chunks/app_(site)_lam-visa_page_jsx_6a3d71._.js",
+      "static/chunks/node_modules_next_dist_compiled_react_a1d82d._.js",
+      "static/chunks/node_modules_next_dist_compiled_react-dom_cjs_react-dom_development_c9a189.js",
+      "static/chunks/node_modules_next_dist_compiled_react-dom_87a050._.js",
+      "static/chunks/node_modules_next_dist_compiled_e13b54._.js",
+      "static/chunks/node_modules_next_dist_client_90f538._.js",
+      "static/chunks/node_modules_next_dist_091837._.js",
+      "static/chunks/node_modules_@swc_helpers_cjs_00636a._.js",
+      "static/chunks/[turbopack]_dev_client_hmr-client_ts_679dd5._.js",
+      "static/chunks/node_modules_next_dist_esm_build_templates_app-page_dbb983.js",
+      "static/chunks/node_modules_next_dist_esm_build_templates_app-page_fa4edd.js"
+    ]
+  }
+}

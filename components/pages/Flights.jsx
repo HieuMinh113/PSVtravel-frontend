@@ -1,11 +1,12 @@
 "use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { BadgeCheck, Wallet, Headset } from "lucide-react";
+import { BadgeCheck, Wallet, Headset, Plane } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 
-const airlines = [
+// Data mẫu — chỉ dùng làm fallback khi DB chưa có
+const fallbackAirlines = [
   { name: "Vietnam Airlines", logo: "VN", color: "bg-amber-500" },
   { name: "Vietjet Air", logo: "VJ", color: "bg-rose-500" },
   { name: "Bamboo Airways", logo: "QH", color: "bg-emerald-600" },
@@ -14,7 +15,7 @@ const airlines = [
   { name: "AirAsia", logo: "AK", color: "bg-red-600" },
 ];
 
-const deals = [
+const fallbackDeals = [
   { route: "TP.HCM → Phú Quốc", price: "590.000đ", image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=800&auto=format&fit=crop" },
   { route: "Hà Nội → Đà Nẵng", price: "690.000đ", image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=800&auto=format&fit=crop" },
   { route: "TP.HCM → Bangkok", price: "1.290.000đ", image: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=800&auto=format&fit=crop" },
@@ -27,7 +28,10 @@ const perks = [
   { icon: Headset, title: "Hỗ trợ đổi/huỷ vé", desc: "Đội ngũ chăm sóc khách hàng hỗ trợ xử lý phát sinh 24/7." },
 ];
 
-export default function Flights() {
+export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = [] }) {
+  const airlines = apiAirlines.length ? apiAirlines : fallbackAirlines;
+  const deals = apiDeals.length ? apiDeals : fallbackDeals;
+
   return (
     <div>
       <PageHero
@@ -48,7 +52,7 @@ export default function Flights() {
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {deals.map((d, i) => (
               <motion.div
-                key={d.route}
+                key={d.id ?? d.route}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
@@ -57,13 +61,29 @@ export default function Flights() {
                 className="card-surface overflow-hidden"
               >
                 <div className="relative h-32 overflow-hidden">
-                  <Image src={d.image} alt={d.route} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-deep-950/60 to-transparent" />
+                  {d.image ? (
+                    <>
+                      <Image src={d.image} alt={d.route} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-deep-950/60 to-transparent" />
+                    </>
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ocean-500 to-teal-500">
+                      {d.airlineLogo ? (
+                        <img src={d.airlineLogo} alt={d.airlineName || d.route} className="max-h-10 max-w-[60%] object-contain" />
+                      ) : (
+                        <Plane className="h-8 w-8 text-white/90" />
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div className="p-4">
                   <p className="text-sm font-semibold text-deep-900">{d.route}</p>
+                  {d.airlineName && <p className="text-[11px] text-deep-800/45">{d.airlineName}</p>}
                   <p className="mt-1 text-xs text-deep-800/50">Giá chỉ từ</p>
-                  <p className="font-display text-lg font-bold text-ocean-700">{d.price}</p>
+                  <div className="flex items-baseline gap-2">
+                    {d.oldPrice && <span className="text-xs text-deep-800/40 line-through">{d.oldPrice}</span>}
+                    <p className="font-display text-lg font-bold text-ocean-700">{d.price}</p>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -79,10 +99,16 @@ export default function Flights() {
           </p>
           <div className="mt-8 grid grid-cols-3 gap-4 sm:grid-cols-6">
             {airlines.map((a) => (
-              <div key={a.name} className="flex flex-col items-center gap-2">
-                <div className={`grid h-14 w-14 place-items-center rounded-2xl ${a.color} font-display text-sm font-bold text-white shadow`}>
-                  {a.logo}
-                </div>
+              <div key={a.code ?? a.name} className="flex flex-col items-center gap-2">
+                {a.logoImage ? (
+                  <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white p-2 shadow ring-1 ring-ocean-100">
+                    <img src={a.logoImage} alt={a.name} className="max-h-full max-w-full object-contain" />
+                  </div>
+                ) : (
+                  <div className={`grid h-14 w-14 place-items-center rounded-2xl ${a.color || "bg-ocean-500"} font-display text-sm font-bold text-white shadow`}>
+                    {a.logo || a.code}
+                  </div>
+                )}
                 <span className="text-center text-[11px] text-deep-800/55">{a.name}</span>
               </div>
             ))}

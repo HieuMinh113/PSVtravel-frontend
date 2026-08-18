@@ -5,9 +5,19 @@ import Link from "next/link";
 import { Phone, Mail, MapPin, Send, CheckCircle2, ArrowRight } from "lucide-react";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "./SocialIcons";
 
-export default function Footer() {
+export default function Footer({ settings = {} }) {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+
+  const hotline = settings.hotline || "1900 1177";
+  const contactEmail = settings.email || "hi@psvtravel.vn";
+  const address = settings.address || "190 Pasteur, Phường Võ Thị Sáu, Quận 3, TP. Hồ Chí Minh";
+
+  const socials = [
+    { Icon: FacebookIcon, href: settings.facebook },
+    { Icon: InstagramIcon, href: settings.instagram },
+    { Icon: YoutubeIcon, href: settings.youtube },
+  ];
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -63,10 +73,12 @@ export default function Footer() {
               đến những vùng đất mới lạ khắp thế giới.
             </p>
             <div className="mt-5 flex gap-3">
-              {[FacebookIcon, InstagramIcon, YoutubeIcon].map((Icon, i) => (
+              {socials.map(({ Icon, href }, i) => (
                 <a
                   key={i}
-                  href="#"
+                  href={href || "#"}
+                  target={href ? "_blank" : undefined}
+                  rel={href ? "noopener noreferrer" : undefined}
                   className="grid h-9 w-9 place-items-center rounded-full bg-white/10 transition-colors hover:bg-teal-500"
                 >
                   <Icon className="h-4 w-4" />
@@ -100,11 +112,11 @@ export default function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-white/65">
               <li className="flex items-center gap-2.5">
                 <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10"><Phone className="h-3.5 w-3.5 text-teal-400" /></span>
-                1900 1177 (24/7)
+                {hotline} (24/7)
               </li>
               <li className="flex items-center gap-2.5">
                 <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10"><Mail className="h-3.5 w-3.5 text-teal-400" /></span>
-                hi@psvtravel.vn
+                {contactEmail}
               </li>
             </ul>
           </div>
@@ -114,7 +126,7 @@ export default function Footer() {
             <h4 className="font-display text-base font-semibold text-white/90">Văn phòng chính</h4>
             <p className="mt-3 flex items-start gap-2.5 text-sm text-white/65">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-teal-400" />
-              190 Pasteur, Phường Võ Thị Sáu, Quận 3, TP. Hồ Chí Minh
+              {address}
             </p>
             <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 shadow-inner">
               <iframe
@@ -140,7 +152,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/75 sm:flex-row">
-          <p>© 2026 PSVTravel. Bảo lưu mọi quyền.</p>
+          <p>© 2026 {settings.company_name || "PSVTravel"}. Bảo lưu mọi quyền.</p>
           <p>Giấy phép kinh doanh lữ hành quốc tế số 79-234/2026/TCDL-GP LHQT</p>
         </div>
       </div>

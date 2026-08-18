@@ -1,6 +1,7 @@
 {
   "/(site)/page": "app/(site)/page.js",
-  "/(site)/tour-nuoc-ngoai/page": "app/(site)/tour-nuoc-ngoai/page.js",
-  "/(site)/tour-trong-nuoc/page": "app/(site)/tour-trong-nuoc/page.js",
-  "/(site)/tour-trong-nuoc/[slug]/page": "app/(site)/tour-trong-nuoc/[slug]/page.js"
+  "/(site)/khoanh-khac-du-khach/page": "app/(site)/khoanh-khac-du-khach/page.js",
+  "/(site)/lam-visa/page": "app/(site)/lam-visa/page.js",
+  "/(site)/ve-may-bay/page": "app/(site)/ve-may-bay/page.js",
+  "/(site)/lien-he/page": "app/(site)/lien-he/page.js"
 }

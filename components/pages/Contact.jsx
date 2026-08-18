@@ -14,8 +14,18 @@ const offices = [
   { city: "Cần Thơ", address: "12 Hòa Bình, Ninh Kiều, Cần Thơ", phone: "090 393 3788" },
 ];
 
-export default function Contact() {
+export default function Contact({ settings = {} }) {
   const [submitted, setSubmitted] = useState(false);
+
+  const hotline = settings.hotline || "1900 1177";
+  const contactEmail = settings.email || "hi@psvtravel.vn";
+  const workingHours = settings.working_hours || "Thứ 2 – Chủ nhật: 7:30 – 21:30";
+
+  const socials = [
+    { Icon: FacebookIcon, href: settings.facebook },
+    { Icon: InstagramIcon, href: settings.instagram },
+    { Icon: YoutubeIcon, href: settings.youtube },
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -45,7 +55,7 @@ export default function Contact() {
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-deep-900">Hotline 24/7</p>
-                  <p className="text-sm text-deep-800/60">1900 1177 (1.000đ/phút)</p>
+                  <p className="text-sm text-deep-800/60">{hotline}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 rounded-2xl bg-white p-4 shadow-sm">
@@ -54,7 +64,7 @@ export default function Contact() {
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-deep-900">Email hỗ trợ</p>
-                  <p className="text-sm text-deep-800/60">hi@psvtravel.vn</p>
+                  <p className="text-sm text-deep-800/60">{contactEmail}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 rounded-2xl bg-white p-4 shadow-sm">
@@ -63,7 +73,7 @@ export default function Contact() {
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-deep-900">Giờ làm việc</p>
-                  <p className="text-sm text-deep-800/60">Thứ 2 – Chủ nhật: 7:30 – 21:30</p>
+                  <p className="text-sm text-deep-800/60">{workingHours}</p>
                 </div>
               </div>
             </div>
@@ -81,8 +91,14 @@ export default function Contact() {
             </div>
 
             <div className="mt-8 flex gap-3">
-              {[FacebookIcon, InstagramIcon, YoutubeIcon].map((Icon, i) => (
-                <a key={i} href="#" className="grid h-10 w-10 place-items-center rounded-full bg-ocean-50 text-ocean-700 transition-colors hover:bg-ocean-500 hover:text-white">
+              {socials.map(({ Icon, href }, i) => (
+                <a
+                  key={i}
+                  href={href || "#"}
+                  target={href ? "_blank" : undefined}
+                  rel={href ? "noopener noreferrer" : undefined}
+                  className="grid h-10 w-10 place-items-center rounded-full bg-ocean-50 text-ocean-700 transition-colors hover:bg-ocean-500 hover:text-white"
+                >
                   <Icon className="h-4 w-4" />
                 </a>
               ))}
