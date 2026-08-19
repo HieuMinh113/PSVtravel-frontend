@@ -85,10 +85,10 @@ function TestimonialCard({ t }) {
           </div>
         )}
         <Quote className="h-5 w-5 text-ocean-200" />
-        <p className="mt-2 flex-1 text-sm leading-relaxed text-deep-800/80">&ldquo;{t.quote}&rdquo;</p>
+        <p className="mt-2 flex-1 text-sm leading-relaxed text-ink">&ldquo;{t.quote}&rdquo;</p>
         <div className="mt-4 border-t border-ocean-100 pt-3">
           <p className="text-sm font-semibold text-deep-900">{t.name}</p>
-          {t.trip && <p className="text-xs text-deep-800/50">{t.trip}</p>}
+          {t.trip && <p className="text-xs text-ink-subtle">{t.trip}</p>}
         </div>
       </div>
     </div>
@@ -107,7 +107,7 @@ export default function Testimonials({ reviews = [] }) {
         <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
           Hơn <span className="text-gradient-ocean">18.000 hành trình</span> đã được viết nên
         </h2>
-        <p className="mt-3 text-deep-800/60">
+        <p className="mt-3 text-ink-muted">
           Những trải nghiệm thật từ khách hàng đã đồng hành cùng PSVTravel trên khắp mọi miền.
         </p>
       </SectionReveal>

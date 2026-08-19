@@ -55,7 +55,7 @@ export default function Contact({ settings = {} }) {
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-deep-900">Hotline 24/7</p>
-                  <p className="text-sm text-deep-800/60">{hotline}</p>
+                  <p className="text-sm text-ink-muted">{hotline}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 rounded-2xl bg-white p-4 shadow-sm">
@@ -64,7 +64,7 @@ export default function Contact({ settings = {} }) {
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-deep-900">Email hỗ trợ</p>
-                  <p className="text-sm text-deep-800/60">{contactEmail}</p>
+                  <p className="text-sm text-ink-muted">{contactEmail}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 rounded-2xl bg-white p-4 shadow-sm">
@@ -73,7 +73,7 @@ export default function Contact({ settings = {} }) {
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-deep-900">Giờ làm việc</p>
-                  <p className="text-sm text-deep-800/60">{workingHours}</p>
+                  <p className="text-sm text-ink-muted">{workingHours}</p>
                 </div>
               </div>
             </div>
@@ -84,7 +84,7 @@ export default function Contact({ settings = {} }) {
                 {offices.map((o) => (
                   <div key={o.city} className="flex items-start gap-3 text-sm">
                     <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-ocean-500" />
-                    <p className="text-deep-800/70"><span className="font-semibold text-deep-900">{o.city}</span> — {o.address} · {o.phone}</p>
+                    <p className="text-ink-muted"><span className="font-semibold text-deep-900">{o.city}</span> — {o.address} · {o.phone}</p>
                   </div>
                 ))}
               </div>
@@ -115,7 +115,7 @@ export default function Contact({ settings = {} }) {
               >
                 <CheckCircle2 className="h-14 w-14 text-ocean-500" />
                 <h3 className="mt-4 font-display text-xl font-bold text-deep-900">Đã gửi thành công!</h3>
-                <p className="mt-2 max-w-sm text-sm text-deep-800/60">
+                <p className="mt-2 max-w-sm text-sm text-ink-muted">
                   Cảm ơn bạn đã liên hệ. Đội ngũ tư vấn viên sẽ phản hồi trong vòng 15 phút làm việc.
                 </p>
                 <button onClick={() => setSubmitted(false)} className="mt-6 text-sm font-semibold text-ocean-600 hover:text-ocean-700">
@@ -127,20 +127,20 @@ export default function Contact({ settings = {} }) {
                 <h3 className="font-display text-xl font-bold text-deep-900">Gửi lời nhắn cho chúng tôi</h3>
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <div>
-                    <label className="text-xs font-semibold text-deep-800/60">Họ và tên</label>
+                    <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
                     <input required placeholder="Nguyễn Văn A" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-deep-800/60">Số điện thoại</label>
+                    <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
                     <input required placeholder="09xx xxx xxx" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-deep-800/60">Email</label>
+                  <label className="text-xs font-semibold text-ink-muted">Email</label>
                   <input required type="email" placeholder="ban@email.com" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-deep-800/60">Chủ đề quan tâm</label>
+                  <label className="text-xs font-semibold text-ink-muted">Chủ đề quan tâm</label>
                   <select className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm outline-none focus:border-ocean-400 focus:bg-white">
                     <option>Tư vấn tour trong nước</option>
                     <option>Tư vấn tour nước ngoài</option>
@@ -150,7 +150,7 @@ export default function Contact({ settings = {} }) {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-deep-800/60">Lời nhắn</label>
+                  <label className="text-xs font-semibold text-ink-muted">Lời nhắn</label>
                   <textarea required rows={4} placeholder="Nội dung bạn muốn trao đổi..." className="mt-1.5 w-full resize-none rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
                 </div>
                 <button type="submit" className="btn-cta w-full !py-3.5">

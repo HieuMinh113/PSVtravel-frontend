@@ -54,7 +54,7 @@ export default function SearchBar() {
             value={dest}
             onChange={(e) => setDest(e.target.value)}
             placeholder="Bạn muốn đi đâu?"
-            className="w-full rounded-2xl border border-ocean-100 bg-ocean-50/50 py-3.5 pl-11 pr-4 text-sm text-deep-900 outline-none transition-colors placeholder:text-deep-800/40 focus:border-ocean-400 focus:bg-white"
+            className="w-full rounded-2xl border border-ocean-100 bg-ocean-50/50 py-3.5 pl-11 pr-4 text-sm text-deep-900 outline-none transition-colors placeholder:text-ink-subtle focus:border-ocean-400 focus:bg-white"
           />
           <datalist id="destinations">
             {destinations.map((d) => (

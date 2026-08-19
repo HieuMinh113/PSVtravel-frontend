@@ -646,7 +646,7 @@ function Gallery({ photos = [] }) {
                     className: "mx-auto max-w-7xl px-5 sm:px-8",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$SectionReveal$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                            className: "mb-10 flex items-center justify-center gap-2 text-center text-sm text-deep-800/55",
+                            className: "mb-10 flex items-center justify-center gap-2 text-center text-sm text-ink-muted",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$camera$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Camera$3e$__["Camera"], {
                                     className: "h-4 w-4 text-teal-500"
@@ -750,7 +750,7 @@ function Gallery({ photos = [] }) {
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 p.trip && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                    className: "text-[11px] text-white/60",
+                                                                    className: "text-xs text-white/60",
                                                                     children: p.trip
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/pages/Gallery.jsx",
@@ -990,7 +990,7 @@ function Gallery({ photos = [] }) {
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                            className: "text-xs text-deep-800/50",
+                                                            className: "text-xs text-ink-subtle",
                                                             children: [
                                                                 active.trip,
                                                                 active.date ? ` · ${active.date}` : ""
@@ -1036,7 +1036,7 @@ function Gallery({ photos = [] }) {
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "mt-2 flex-1 text-sm leading-relaxed text-deep-800/75",
+                                            className: "mt-2 flex-1 text-sm leading-relaxed text-ink",
                                             children: active.caption
                                         }, void 0, false, {
                                             fileName: "[project]/components/pages/Gallery.jsx",

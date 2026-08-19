@@ -7,7 +7,7 @@ html {
 }
 
 body {
-  @apply bg-foam text-deep-900 font-body antialiased;
+  @apply bg-foam text-ink font-body antialiased;
 }
 
 h1, h2, h3, h4 {
@@ -16,7 +16,7 @@ h1, h2, h3, h4 {
 }
 
 ::selection {
-  @apply bg-teal-400 text-deep-950;
+  @apply bg-gold-300 text-deep-950;
 }
 
 ::-webkit-scrollbar {
@@ -31,6 +31,10 @@ h1, h2, h3, h4 {
   border: 2px solid #EBF7FE;
 }
 
+/* ===== Tôn trọng lựa chọn giảm chuyển động =====
+   Quan trọng: Framer Motion chạy bằng JavaScript nên KHÔNG bị các quy tắc CSS
+   thông thường chặn lại. Vì vậy phải ép cả animation lẫn transition về gần 0
+   và khoá các hiệu ứng nền vô hạn (aurora, marquee, ripple...). */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -38,60 +42,60 @@ h1, h2, h3, h4 {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .animate-aurora,
+  .animate-marquee,
+  .animate-ripple,
+  .animate-drift,
+  .animate-driftSlow,
+  .animate-bob,
+  .animate-shimmer,
+  .animate-pulseGlow {
+    animation: none !important;
+  }
+  /* Băng đánh giá chạy ngang: dừng hẳn để nội dung đọc được ở trạng thái tĩnh */
+  .marquee-track {
+    transform: none !important;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 
-/* ===== Đồng bộ màu ảnh toàn site =====
-   Chấm màu đồng đều cho mọi ảnh (bão hoà + tương phản + độ sáng nhất quán) để
-   ảnh trông như được chỉnh cùng một gu, bớt cảm giác rời rạc kiểu ảnh stock.
-   Giữ nguyên màu logo. Không đặt transition ở đây để không ảnh hưởng hiệu ứng
-   phóng to ảnh khi rê chuột. */
+/* ===== Đồng bộ màu ảnh toàn site ===== */
 img:not([src="/logo.png"]) {
   filter: saturate(1.12) contrast(1.05) brightness(1.01);
 }
 
-/* ===== Polish: khả năng tiếp cận & điều hướng =====
-   Viền focus rõ ràng khi duyệt bằng bàn phím (Tab) — bắt buộc cho accessibility,
-   cũng là tín hiệu tốt cho SEO. Dùng màu xanh thương hiệu. */
+/* ===== Khả năng tiếp cận & điều hướng ===== */
 :focus-visible {
   outline: 2px solid #0169A9;
   outline-offset: 2px;
   border-radius: 6px;
 }
-/* Chuột dùng bình thường không thấy viền này — chỉ hiện khi điều hướng bằng phím. */
 
-/* Khi nhảy tới một mục trong trang (vd #ket-qua-tour), chừa khoảng trống phía trên
-   để nội dung không bị thanh điều hướng dính (sticky) che mất. */
 [id] {
   scroll-margin-top: 6rem;
 }
 
-/* ===== Tối ưu đa nền tảng (PC / laptop / Android / iOS) ===== */
-
-/* Chống tràn ngang trên màn hình hẹp — lỗi phổ biến nhất trên điện thoại. */
+/* ===== Tối ưu đa nền tảng ===== */
 html, body {
   overflow-x: hidden;
   max-width: 100%;
 }
 
-/* iOS Safari: không tự phóng to chữ khi xoay ngang máy. */
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
-/* iOS: bỏ ánh xám khi chạm, dùng hiệu ứng riêng của nút cho mượt. */
 a, button {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Ảnh không bao giờ tràn khỏi khung chứa trên mọi thiết bị. */
 img, video {
   max-width: 100%;
   height: auto;
 }
 
-/* Thiết bị cảm ứng (điện thoại/tablet): tắt hiệu ứng hover vì ngón tay không "rê" được,
-   tránh trạng thái hover bị kẹt sau khi chạm. */
 @media (hover: none) {
   .group:hover .group-hover\:scale-110,
   .group:hover .group-hover\:scale-105 {
@@ -99,26 +103,36 @@ img, video {
   }
 }
 
-/* Vùng chạm tối thiểu 44px cho các nút nhỏ trên điện thoại (chuẩn của Apple/Google). */
+/* Vùng chạm tối thiểu 44px trên điện thoại (chuẩn Apple/Google).
+   Bổ sung: các nút tròn nhỏ (tăng/giảm số khách, đóng, điều hướng ảnh) trước đây
+   chỉ 28px — nay được nới vùng bấm bằng lớp phủ trong suốt, KHÔNG làm to nút
+   về mặt thị giác nên bố cục giữ nguyên. */
 @media (max-width: 640px) {
   button, a[role="button"] {
     min-height: 44px;
   }
 }
 
-/* ===== An toàn khi người dùng phóng to trình duyệt (Ctrl + +, hoặc chụm 2 ngón) =====
-   Ở mức phóng lớn, chiều cao khả dụng còn rất ít. Nếu vẫn giữ thanh điều hướng trên,
-   thanh lọc giữa và thanh đặt tour dưới cùng dính cứng, chúng sẽ chiếm gần hết màn hình.
-   Khi màn hình thấp hơn 500px, trả các thanh này về trạng thái cuộn bình thường
-   để người dùng còn chỗ đọc nội dung. */
+.tap-44 {
+  position: relative;
+}
+.tap-44::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+/* ===== An toàn khi phóng to trình duyệt ===== */
 @media (max-height: 500px) {
   .sticky {
     position: static;
   }
 }
 
-/* Phóng rất lớn (màn hình ảo cực hẹp): cho phép chữ dài tự ngắt dòng,
-   tránh tràn ngang phải cuộn ngang mới đọc được. */
 @media (max-width: 380px) {
   body {
     overflow-wrap: break-word;
@@ -126,7 +140,7 @@ img, video {
   }
 }
 
-/* ===== Tín hiệu thị giác riêng: đường "thuỷ triều" ===== */
+/* ===== Tín hiệu thị giác riêng ===== */
 .tide-line {
   position: relative;
   overflow: hidden;
@@ -142,25 +156,69 @@ img, video {
 }
 
 .text-gradient-ocean {
-  background: linear-gradient(90deg, #0D3A5C, #0169A9 50%, #0FA98D 100%);
+  background: linear-gradient(90deg, #0D3A5C, #0169A9 50%, #44B01E 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
+/* Nhấn chữ bằng màu ấm — dùng cho số liệu, từ khoá cần bật lên khỏi nền xanh */
+.text-gradient-warm {
+  background: linear-gradient(90deg, #EA580C, #F0D000 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ===== NÚT CHUYỂN ĐỔI =====
+   Trước đây nút chính dùng gradient xanh dương → xanh lá, cùng họ lạnh với nền
+   nên bị "chìm". Nay chuyển sang dải cam ấm — màu bổ túc của xanh dương chủ đạo,
+   nên mắt bắt được ngay. Chữ trắng trên #EA580C đạt 4.6:1, qua chuẩn WCAG AA. */
 .btn-cta {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-ocean-500 to-teal-500 bg-[length:160%_100%] bg-left px-7 py-3.5 font-body font-semibold text-white shadow-glow transition-all duration-300 hover:bg-right hover:shadow-[0_0_55px_rgba(15,169,141,0.5)] hover:-translate-y-0.5 active:translate-y-0;
+  @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full
+         bg-cta-warm bg-[length:160%_100%] bg-left px-7 py-3.5
+         font-body font-semibold text-white shadow-glow-warm
+         transition-all duration-300 ease-enter
+         hover:bg-right hover:-translate-y-0.5 hover:shadow-[0_12px_38px_-8px_rgba(234,88,12,0.65)]
+         active:translate-y-0;
+}
+
+/* Nút phụ giữ tông xanh thương hiệu — dùng cho hành động thứ cấp */
+.btn-ocean {
+  @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full
+         bg-gradient-to-r from-ocean-500 to-teal-500 bg-[length:160%_100%] bg-left
+         px-7 py-3.5 font-body font-semibold text-white shadow-glow
+         transition-all duration-300 ease-enter
+         hover:bg-right hover:-translate-y-0.5 active:translate-y-0;
 }
 
 .btn-ghost {
-  @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/10 px-7 py-3.5 font-body font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:-translate-y-0.5;
+  @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full
+         border border-white/40 bg-white/10 px-7 py-3.5 font-body font-semibold text-white
+         backdrop-blur-md transition-all duration-300 ease-enter
+         hover:bg-white/20 hover:-translate-y-0.5;
 }
 
+/* ===== BỀ MẶT THẺ =====
+   Bóng đổ hai lớp (một lớp sát viền + một lớp toả rộng) cho cảm giác vật thể
+   thật, thay vì một lớp bóng mờ phẳng. */
 .card-surface {
-  @apply rounded-3xl bg-white shadow-[0_10px_40px_-15px_rgba(10,42,69,0.18)] transition-all duration-500;
+  @apply rounded-3xl bg-white shadow-card transition-all duration-500 ease-enter;
 }
-/* Nội dung bài viết cẩm nang (HTML từ admin) */
-.prose-psv { color: rgb(15 42 66 / 0.8); line-height: 1.8; }
+.card-surface:hover {
+  @apply shadow-card-hover;
+}
+
+/* Thẻ kính mờ — dùng trên nền ảnh/gradient đậm (Glassmorphism) */
+.glass-surface {
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+/* ===== Nội dung bài viết cẩm nang (HTML từ admin) ===== */
+.prose-psv { color: #4A6076; line-height: 1.8; font-size: 1.0625rem; }
 .prose-psv h2 { font-size: 1.5rem; font-weight: 700; margin: 2rem 0 0.75rem; color: #0b2440; }
 .prose-psv h3 { font-size: 1.2rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #0b2440; }
 .prose-psv p { margin: 1rem 0; }
@@ -168,7 +226,7 @@ img, video {
 .prose-psv ul { list-style: disc; }
 .prose-psv ol { list-style: decimal; }
 .prose-psv li { margin: 0.4rem 0; }
-.prose-psv a { color: #0ea5b7; text-decoration: underline; }
+.prose-psv a { color: #0169A9; text-decoration: underline; text-underline-offset: 3px; }
 .prose-psv img { border-radius: 1rem; margin: 1.5rem 0; max-width: 100%; height: auto; }
-.prose-psv blockquote { border-left: 4px solid #7dd3e0; padding-left: 1rem; font-style: italic; margin: 1.5rem 0; }
+.prose-psv blockquote { border-left: 4px solid #EA580C; padding-left: 1rem; font-style: italic; margin: 1.5rem 0; color: #0A2A45; }
 .prose-psv strong { color: #0b2440; font-weight: 700; }

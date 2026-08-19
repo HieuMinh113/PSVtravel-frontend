@@ -37,7 +37,7 @@ function FaqItem({ item, isOpen, onToggle }) {
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        <p className="px-5 pb-5 text-sm leading-relaxed text-deep-800/70">{item.a}</p>
+        <p className="px-5 pb-5 text-sm leading-relaxed text-ink-muted">{item.a}</p>
       </motion.div>
     </div>
   );
@@ -89,10 +89,10 @@ export default function Visa({ countries: apiCountries = [] }) {
                   )}
                   <div>
                     <p className="font-display text-base font-semibold text-deep-900">{c.name}</p>
-                    {c.rate && <p className="text-xs text-deep-800/50">Tỷ lệ đậu {c.rate}</p>}
+                    {c.rate && <p className="text-xs text-ink-subtle">Tỷ lệ đậu {c.rate}</p>}
                   </div>
                 </div>
-                <div className="mt-4 flex items-center justify-between border-t border-ocean-100 pt-3 text-xs text-deep-800/60">
+                <div className="mt-4 flex items-center justify-between border-t border-ocean-100 pt-3 text-xs text-ink-muted">
                   <span className="flex items-center gap-1">
                     <Clock className="h-3.5 w-3.5 text-ocean-500" /> {c.time || "—"}
                   </span>
@@ -122,7 +122,7 @@ export default function Visa({ countries: apiCountries = [] }) {
                   {i + 1}
                 </div>
                 <h3 className="mt-4 font-display text-base font-semibold text-deep-900">{s.title}</h3>
-                <p className="mt-2 text-sm text-deep-800/60">{s.desc}</p>
+                <p className="mt-2 text-sm text-ink-muted">{s.desc}</p>
               </SectionReveal>
             ))}
           </div>

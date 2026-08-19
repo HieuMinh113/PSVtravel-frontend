@@ -42,7 +42,7 @@ export default function Guides({ guides: apiGuides = [] }) {
           </SectionReveal>
 
           {filtered.length === 0 ? (
-            <p className="mt-12 rounded-2xl border border-dashed border-ocean-200 bg-white py-16 text-center text-sm text-deep-800/55">
+            <p className="mt-12 rounded-2xl border border-dashed border-ocean-200 bg-white py-16 text-center text-sm text-ink-muted">
               Chưa có bài viết trong mục này.
             </p>
           ) : (
@@ -74,8 +74,8 @@ export default function Guides({ guides: apiGuides = [] }) {
                       <h3 className="font-display text-lg font-semibold leading-snug text-deep-900 transition-colors group-hover:text-ocean-600">
                         {g.title}
                       </h3>
-                      <p className="mt-2 line-clamp-2 flex-1 text-sm text-deep-800/60">{g.excerpt}</p>
-                      <div className="mt-4 flex items-center justify-between border-t border-ocean-100 pt-3 text-xs text-deep-800/45">
+                      <p className="mt-2 line-clamp-2 flex-1 text-sm text-ink-muted">{g.excerpt}</p>
+                      <div className="mt-4 flex items-center justify-between border-t border-ocean-100 pt-3 text-xs text-ink-subtle">
                         <span className="flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" /> {g.date}</span>
                         <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {g.readTime || `${g.views ?? 0} lượt xem`}</span>
                       </div>

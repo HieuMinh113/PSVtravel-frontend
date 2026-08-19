@@ -795,7 +795,7 @@ function MegaPanel({ config }) {
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                        className: "mt-1 text-[11px] text-white/75",
+                                        className: "mt-1 text-xs text-white/75",
                                         children: config.subheading
                                     }, void 0, false, {
                                         fileName: "[project]/components/Navbar.jsx",
@@ -866,7 +866,7 @@ function MegaPanel({ config }) {
                                             columnNumber: 19
                                         }, this),
                                         item.region && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "text-[11px] font-medium text-deep-800/40",
+                                            className: "text-xs font-medium text-ink-subtle",
                                             children: item.region
                                         }, void 0, false, {
                                             fileName: "[project]/components/Navbar.jsx",
@@ -1157,7 +1157,7 @@ function Navbar() {
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                     onClick: ()=>setMobileMegaOpenKey((k)=>k === l.mega ? null : l.mega),
-                                                    className: "grid h-9 w-9 place-items-center text-deep-800/50",
+                                                    className: "grid h-9 w-9 place-items-center text-ink-subtle",
                                                     "aria-label": `Xem danh sách ${l.label}`,
                                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
                                                         className: `h-4 w-4 transition-transform duration-300 ${mobileMegaOpenKey === l.mega ? "rotate-180" : ""}`
@@ -1206,7 +1206,7 @@ function Navbar() {
                                                             state: {
                                                                 query: item.name
                                                             },
-                                                            className: "flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-deep-800/80 hover:bg-ocean-50",
+                                                            className: "flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-ocean-50",
                                                             children: [
                                                                 item.Flag ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(item.Flag, {
                                                                     className: "h-[18px] w-6 shrink-0 rounded ring-1 ring-black/5"

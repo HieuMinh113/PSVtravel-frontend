@@ -665,7 +665,7 @@ function FaqItem({ item, isOpen, onToggle }) {
                 },
                 className: "overflow-hidden",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                    className: "px-5 pb-5 text-sm leading-relaxed text-deep-800/70",
+                    className: "px-5 pb-5 text-sm leading-relaxed text-ink-muted",
                     children: item.a
                 }, void 0, false, {
                     fileName: "[project]/components/pages/Visa.jsx",
@@ -788,7 +788,7 @@ function Visa({ countries: apiCountries = [] }) {
                                                             columnNumber: 21
                                                         }, this),
                                                         c.rate && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                            className: "text-xs text-deep-800/50",
+                                                            className: "text-xs text-ink-subtle",
                                                             children: [
                                                                 "Tỷ lệ đậu ",
                                                                 c.rate
@@ -811,7 +811,7 @@ function Visa({ countries: apiCountries = [] }) {
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "mt-4 flex items-center justify-between border-t border-ocean-100 pt-3 text-xs text-deep-800/60",
+                                            className: "mt-4 flex items-center justify-between border-t border-ocean-100 pt-3 text-xs text-ink-muted",
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     className: "flex items-center gap-1",
@@ -928,7 +928,7 @@ function Visa({ countries: apiCountries = [] }) {
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                className: "mt-2 text-sm text-deep-800/60",
+                                                className: "mt-2 text-sm text-ink-muted",
                                                 children: s.desc
                                             }, void 0, false, {
                                                 fileName: "[project]/components/pages/Visa.jsx",

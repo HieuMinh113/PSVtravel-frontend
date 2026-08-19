@@ -64,7 +64,7 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
           <p className="font-display text-base font-semibold text-deep-900">{day.title}</p>
         </div>
         <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
-          <ChevronDown className="h-5 w-5 text-deep-800/40" />
+          <ChevronDown className="h-5 w-5 text-ink-subtle" />
         </motion.span>
       </button>
       <AnimatePresence initial={false}>
@@ -77,7 +77,7 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
             className="overflow-hidden"
           >
             <div className="flex flex-col gap-4 px-5 pb-5 sm:pl-[4.25rem]">
-              <p className="text-sm leading-relaxed text-deep-800/70">{day.desc}</p>
+              <p className="text-sm leading-relaxed text-ink-muted">{day.desc}</p>
               {day.images && day.images.length > 0 && (
                 <div className="grid grid-cols-3 gap-2.5">
                   {day.images.slice(0, 3).map((img, k) => (
@@ -116,7 +116,7 @@ function ReviewCard({ r, index }) {
           </span>
           <div className="flex-1">
             <p className="text-sm font-semibold text-deep-900">{r.name}</p>
-            <p className="text-xs text-deep-800/45">{r.date}</p>
+            <p className="text-xs text-ink-subtle">{r.date}</p>
           </div>
           <div className="flex gap-0.5">
             {Array.from({ length: r.rating || 0 }).map((_, i) => (
@@ -125,11 +125,11 @@ function ReviewCard({ r, index }) {
           </div>
         </div>
         <Quote className="mt-3 h-4 w-4 text-ocean-200" />
-        <p className="mt-1.5 flex-1 text-sm leading-relaxed text-deep-800/75">{r.comment}</p>
+        <p className="mt-1.5 flex-1 text-sm leading-relaxed text-ink">{r.comment}</p>
         {r.reply && (
           <div className="mt-3 rounded-xl bg-ocean-50/70 p-3">
             <p className="text-xs font-semibold text-ocean-700">Phản hồi từ PSV Travel</p>
-            <p className="mt-1 text-sm text-deep-800/70">{r.reply}</p>
+            <p className="mt-1 text-sm text-ink-muted">{r.reply}</p>
           </div>
         )}
       </div>
@@ -155,7 +155,7 @@ function FaqItem({ item, isOpen, onToggle }) {
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        <p className="px-4 pb-4 pl-11 text-sm leading-relaxed text-deep-800/70 sm:px-5 sm:pb-5">{item.a}</p>
+        <p className="px-4 pb-4 pl-11 text-sm leading-relaxed text-ink-muted sm:px-5 sm:pb-5">{item.a}</p>
       </motion.div>
     </div>
   );
@@ -335,7 +335,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                       <button
                         type="button"
                         onClick={() => { setDetailSearchOpen(false); setDetailQuery(""); }}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-deep-800/40 hover:text-deep-800"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-deep-800"
                         aria-label="Đóng tìm kiếm"
                       >
                         <X className="h-4 w-4" />
@@ -377,7 +377,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                 {tour.highlights.map((h) => (
                   <div key={h} className="flex items-start gap-2.5 rounded-xl bg-ocean-50/60 p-3">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-600" />
-                    <span className="text-sm text-deep-800/80">{h}</span>
+                    <span className="text-sm text-ink">{h}</span>
                   </div>
                 ))}
               </div>
@@ -385,7 +385,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
 
             <SectionReveal delay={0.1} className="mt-8">
               <h2 className="font-display text-xl font-bold text-deep-900">Lịch trình chi tiết</h2>
-              <p className="mt-1 text-sm text-deep-800/50">Kèm hình ảnh thực tế các điểm đến, món ăn theo từng ngày.</p>
+              <p className="mt-1 text-sm text-ink-subtle">Kèm hình ảnh thực tế các điểm đến, món ăn theo từng ngày.</p>
               <div className="mt-5 space-y-3">
                 {tour.itinerary.map((day, i) => (
                   <ItineraryItem key={day.day} day={{ ...day, images: dayImages[i] }} index={i} isOpen={openDay === i} onToggle={() => setOpenDay(openDay === i ? -1 : i)} />
@@ -398,7 +398,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <p className="text-sm font-semibold text-ocean-700">Giá tour bao gồm</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-deep-800/70">
+                  <ul className="mt-2 space-y-1.5 text-sm text-ink-muted">
                     <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-ocean-500" /> Vé máy bay khứ hồi, thuế phí</li>
                     <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-ocean-500" /> Khách sạn theo tiêu chuẩn tour</li>
                     <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-ocean-500" /> Xe đưa đón, hướng dẫn viên</li>
@@ -407,7 +407,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-rose-600">Giá tour không bao gồm</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-deep-800/70">
+                  <ul className="mt-2 space-y-1.5 text-sm text-ink-muted">
                     <li className="flex gap-2"><span className="mt-0.5 h-4 w-4 shrink-0 text-center text-rose-400">–</span> Chi phí cá nhân ngoài chương trình</li>
                     <li className="flex gap-2"><span className="mt-0.5 h-4 w-4 shrink-0 text-center text-rose-400">–</span> Phụ thu phòng đơn (nếu có)</li>
                     <li className="flex gap-2"><span className="mt-0.5 h-4 w-4 shrink-0 text-center text-rose-400">–</span> Tiền tip cho HDV, tài xế</li>
@@ -430,9 +430,9 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                 {visaInfo.required ? (
                   <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex flex-wrap gap-4 text-sm">
-                      <span className="flex items-center gap-1.5 text-deep-800/70"><Clock className="h-4 w-4 text-ocean-500" /> Thời gian xử lý: <strong className="text-deep-900">{visaInfo.time}</strong></span>
-                      <span className="flex items-center gap-1.5 text-deep-800/70"><BadgeCheck className="h-4 w-4 text-teal-500" /> Tỷ lệ đậu: <strong className="text-deep-900">{visaInfo.rate}</strong></span>
-                      <span className="flex items-center gap-1.5 text-deep-800/70"><FileCheck2 className="h-4 w-4 text-ocean-500" /> Phí dịch vụ từ: <strong className="text-deep-900">{visaInfo.price}</strong></span>
+                      <span className="flex items-center gap-1.5 text-ink-muted"><Clock className="h-4 w-4 text-ocean-500" /> Thời gian xử lý: <strong className="text-deep-900">{visaInfo.time}</strong></span>
+                      <span className="flex items-center gap-1.5 text-ink-muted"><BadgeCheck className="h-4 w-4 text-teal-500" /> Tỷ lệ đậu: <strong className="text-deep-900">{visaInfo.rate}</strong></span>
+                      <span className="flex items-center gap-1.5 text-ink-muted"><FileCheck2 className="h-4 w-4 text-ocean-500" /> Phí dịch vụ từ: <strong className="text-deep-900">{visaInfo.price}</strong></span>
                     </div>
                     <Link href="/lam-visa" className="flex shrink-0 items-center justify-center gap-2 rounded-full bg-ocean-50 px-5 py-2.5 text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-100">
                       Xem dịch vụ làm visa <ArrowRight className="h-4 w-4" />
@@ -443,7 +443,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                     <span className="flex items-center gap-2 text-sm font-medium text-teal-700">
                       <BadgeCheck className="h-5 w-5 text-teal-500" /> {visaInfo.note}
                     </span>
-                    <span className="text-xs text-deep-800/45">Vui lòng kiểm tra hộ chiếu còn hạn tối thiểu 6 tháng.</span>
+                    <span className="text-xs text-ink-subtle">Vui lòng kiểm tra hộ chiếu còn hạn tối thiểu 6 tháng.</span>
                   </div>
                 )}
               </SectionReveal>
@@ -474,7 +474,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                   <motion.div key="success" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center px-6 py-10 text-center">
                     <CheckCircle2 className="h-12 w-12 text-teal-500" />
                     <p className="mt-3 font-display text-base font-bold text-deep-900">Đã gửi yêu cầu giữ chỗ!</p>
-                    <p className="mt-1.5 text-sm text-deep-800/60">Tư vấn viên sẽ liên hệ {form.name} qua {form.contact} trong 15 phút để xác nhận.</p>
+                    <p className="mt-1.5 text-sm text-ink-muted">Tư vấn viên sẽ liên hệ {form.name} qua {form.contact} trong 15 phút để xác nhận.</p>
                     {bookingCode && (
                       <p className="mt-2 rounded-lg bg-ocean-50 px-3 py-2 text-sm font-semibold text-ocean-700">Mã đơn: {bookingCode}</p>
                     )}
@@ -483,21 +483,21 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                 ) : (
                   <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 p-5">
                     <div>
-                      <label className="text-xs font-semibold text-deep-800/60">Họ và tên</label>
+                      <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
                       <div className="relative mt-1.5">
                         <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                         <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Nguyễn Văn A" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-deep-800/60">Số điện thoại</label>
+                      <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
                       <div className="relative mt-1.5">
                         <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                         <input value={form.contact} onChange={(e) => setForm((f) => ({ ...f, contact: e.target.value }))} placeholder="09xx xxx xxx" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-deep-800/60">Ngày khởi hành</label>
+                      <label className="text-xs font-semibold text-ink-muted">Ngày khởi hành</label>
                       {tour.departures && tour.departures.length > 0 ? (
                         <div className="relative mt-1.5">
                           <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-500" />
@@ -518,29 +518,29 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                       )}
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-deep-800/60">Người lớn</label>
+                      <label className="text-xs font-semibold text-ink-muted">Người lớn</label>
                       <div className="mt-1.5 flex items-center justify-between rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2">
                         <span className="flex items-center gap-2 text-sm"><Users2 className="h-4 w-4 text-ocean-500" /> {formatVND(tour.price)}</span>
                         <div className="flex items-center gap-3">
-                          <button onClick={() => setAdults((g) => Math.max(1, g - 1))} className="grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">−</button>
+                          <button onClick={() => setAdults((g) => Math.max(1, g - 1))} className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">−</button>
                           <span className="w-4 text-center text-sm font-semibold">{adults}</span>
-                          <button onClick={() => setAdults((g) => Math.min((tour.seatsLeft || 99), g + 1))} className="grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">+</button>
+                          <button onClick={() => setAdults((g) => Math.min((tour.seatsLeft || 99), g + 1))} className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">+</button>
                         </div>
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-deep-800/60">Trẻ em (dưới 12 tuổi)</label>
+                      <label className="text-xs font-semibold text-ink-muted">Trẻ em (dưới 12 tuổi)</label>
                       <div className="mt-1.5 flex items-center justify-between rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2">
                         <span className="flex items-center gap-2 text-sm"><Baby className="h-4 w-4 text-teal-500" /> {formatVND(childPrice)}</span>
                         <div className="flex items-center gap-3">
-                          <button onClick={() => setChildren((g) => Math.max(0, g - 1))} className="grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">−</button>
+                          <button onClick={() => setChildren((g) => Math.max(0, g - 1))} className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">−</button>
                           <span className="w-4 text-center text-sm font-semibold">{children}</span>
-                          <button onClick={() => setChildren((g) => g + 1)} className="grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">+</button>
+                          <button onClick={() => setChildren((g) => g + 1)} className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow hover:bg-ocean-100">+</button>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center justify-between border-t border-ocean-100 pt-4 text-sm">
-                      <span className="text-deep-800/60">Tạm tính</span>
+                      <span className="text-ink-muted">Tạm tính</span>
                       <span className="font-display text-lg font-bold text-ocean-700">{formatVND(total)}</span>
                     </div>
                     {formError && <p className="text-xs font-medium text-rose-600">{formError}</p>}
@@ -550,7 +550,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                     <a href="tel:19001177" className="flex w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-50">
                       <Phone className="h-4 w-4" /> Gọi tư vấn: 1900 1177
                     </a>
-                    <p className="flex items-center gap-2 text-xs text-deep-800/50"><ShieldCheck className="h-4 w-4 text-ocean-500" /> Thanh toán an toàn, hoàn tiền nếu tour bị huỷ</p>
+                    <p className="flex items-center gap-2 text-xs text-ink-subtle"><ShieldCheck className="h-4 w-4 text-ocean-500" /> Thanh toán an toàn, hoàn tiền nếu tour bị huỷ</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -562,7 +562,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
       {/* ===== GALLERY ẢNH THỰC TẾ (đã chuyển xuống dưới nội dung tour) ===== */}
       <section className="bg-foam pb-12 sm:pb-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <SectionReveal className="mb-4 flex items-center gap-2 text-sm font-semibold text-deep-800/60">
+          <SectionReveal className="mb-4 flex items-center gap-2 text-sm font-semibold text-ink-muted">
             <Images className="h-4 w-4 text-ocean-500" /> Hình ảnh thực tế của hành trình
           </SectionReveal>
           <SectionReveal delay={0.05} className="grid grid-cols-4 grid-rows-2 gap-2.5 sm:gap-3">
@@ -617,7 +617,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                 <motion.div key="ask-success" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center py-8 text-center">
                   <CheckCircle2 className="h-11 w-11 text-teal-500" />
                   <p className="mt-3 font-display text-base font-bold text-deep-900">Đã ghi nhận câu hỏi của bạn!</p>
-                  <p className="mt-1.5 text-sm text-deep-800/60">Tư vấn viên sẽ gọi lại cho {askForm.name} sớm nhất.</p>
+                  <p className="mt-1.5 text-sm text-ink-muted">Tư vấn viên sẽ gọi lại cho {askForm.name} sớm nhất.</p>
                   <button onClick={() => { setAskSubmitted(false); setAskForm({ name: "", phone: "" }); }} className="mt-5 text-sm font-semibold text-ocean-600 hover:text-ocean-700">
                     Gửi câu hỏi khác
                   </button>
@@ -626,24 +626,24 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                 <motion.form key="ask-form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={handleAskSubmit} className="space-y-4">
                   <div>
                     <h3 className="font-display text-lg font-bold text-deep-900">Vẫn còn thắc mắc?</h3>
-                    <p className="mt-1 text-sm text-deep-800/55">Để lại thông tin, tư vấn viên sẽ liên hệ giải đáp miễn phí.</p>
+                    <p className="mt-1 text-sm text-ink-muted">Để lại thông tin, tư vấn viên sẽ liên hệ giải đáp miễn phí.</p>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-deep-800/60">Họ và tên</label>
+                    <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
                     <div className="relative mt-1.5">
                       <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                       <input required value={askForm.name} onChange={(e) => setAskForm((f) => ({ ...f, name: e.target.value }))} placeholder="Nguyễn Văn A" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-deep-800/60">Số điện thoại</label>
+                    <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
                     <div className="relative mt-1.5">
                       <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                       <input required value={askForm.phone} onChange={(e) => setAskForm((f) => ({ ...f, phone: e.target.value }))} placeholder="09xx xxx xxx" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-deep-800/60">Câu hỏi của bạn (không bắt buộc)</label>
+                    <label className="text-xs font-semibold text-ink-muted">Câu hỏi của bạn (không bắt buộc)</label>
                     <textarea rows={3} placeholder="Ví dụ: Tour có hỗ trợ ăn chay không?" className="mt-1.5 w-full resize-none rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2.5 text-sm outline-none focus:border-ocean-400 focus:bg-white" />
                   </div>
                   <button type="submit" className="btn-cta w-full !py-3">Gửi câu hỏi <ArrowRight className="h-4 w-4" /></button>
@@ -665,11 +665,11 @@ export default function TourDetail({ basePath, tour, related = [] }) {
             <div className="flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 shadow-sm">
               <Star className="h-5 w-5 fill-teal-500 text-teal-500" />
               <span className="font-display text-xl font-bold text-deep-900">{tour.rating}</span>
-              <span className="text-sm text-deep-800/50">/5 · {tour.reviews} đánh giá</span>
+              <span className="text-sm text-ink-subtle">/5 · {tour.reviews} đánh giá</span>
             </div>
           </SectionReveal>
           {reviews.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-ocean-200 bg-white py-12 text-center text-sm text-deep-800/55">
+            <p className="rounded-2xl border border-dashed border-ocean-200 bg-white py-12 text-center text-sm text-ink-muted">
               Chưa có đánh giá cho tour này.
             </p>
           ) : (
@@ -695,7 +695,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
           >
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                {tour.oldPrice && <p className="truncate text-[11px] text-deep-800/40 line-through">{formatVND(tour.oldPrice)}</p>}
+                {tour.oldPrice && <p className="truncate text-xs text-ink-subtle line-through">{formatVND(tour.oldPrice)}</p>}
                 <p className="truncate font-display text-lg font-bold text-ocean-700">{formatVND(tour.price)}</p>
               </div>
               <button

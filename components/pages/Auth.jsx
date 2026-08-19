@@ -222,11 +222,11 @@ export default function Auth() {
               >
                 <div>
                   <h1 className="font-display text-2xl font-bold text-deep-900">Chào mừng trở lại</h1>
-                  <p className="mt-1 text-sm text-deep-800/55">Đăng nhập để tiếp tục hành trình của bạn.</p>
+                  <p className="mt-1 text-sm text-ink-muted">Đăng nhập để tiếp tục hành trình của bạn.</p>
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-deep-800/60">Email, tên đăng nhập hoặc số điện thoại</label>
+                  <label className="text-xs font-semibold text-ink-muted">Email, tên đăng nhập hoặc số điện thoại</label>
                   <div className="relative mt-1.5">
                     <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                     <input
@@ -240,7 +240,7 @@ export default function Auth() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-deep-800/60">Mật khẩu</label>
+                  <label className="text-xs font-semibold text-ink-muted">Mật khẩu</label>
                   <div className="relative mt-1.5">
                     <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                     <input
@@ -261,7 +261,7 @@ export default function Auth() {
                   {dangGui ? <><Loader2 className="h-4 w-4 animate-spin" /> Đang xử lý...</> : <>Đăng nhập <ArrowRight className="h-4 w-4" /></>}
                 </button>
 
-                <p className="text-center text-xs text-deep-800/50">
+                <p className="text-center text-xs text-ink-subtle">
                   Chưa có tài khoản?{" "}
                   <button type="button" onClick={() => doiMode("register")} className="font-semibold text-ocean-600 hover:text-ocean-700">
                     Đăng ký ngay
@@ -283,12 +283,12 @@ export default function Auth() {
               >
                 <div>
                   <h1 className="font-display text-2xl font-bold text-deep-900">Tạo tài khoản mới</h1>
-                  <p className="mt-1 text-sm text-deep-800/55">Chỉ mất chưa đầy 1 phút để bắt đầu.</p>
+                  <p className="mt-1 text-sm text-ink-muted">Chỉ mất chưa đầy 1 phút để bắt đầu.</p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="text-xs font-semibold text-deep-800/60">Họ và tên</label>
+                    <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
                     <div className="relative mt-1.5">
                       <User className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                       <input
@@ -301,7 +301,7 @@ export default function Auth() {
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-deep-800/60">Tên đăng nhập</label>
+                    <label className="text-xs font-semibold text-ink-muted">Tên đăng nhập</label>
                     <div className="relative mt-1.5">
                       <AtSign className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                       <input
@@ -317,7 +317,7 @@ export default function Auth() {
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="text-xs font-semibold text-deep-800/60">Số điện thoại</label>
+                    <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
                     <div className="relative mt-1.5">
                       <Phone className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                       <input
@@ -330,7 +330,7 @@ export default function Auth() {
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-deep-800/60">Email</label>
+                    <label className="text-xs font-semibold text-ink-muted">Email</label>
                     <div className="relative mt-1.5">
                       <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                       <input
@@ -346,7 +346,7 @@ export default function Auth() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-deep-800/60">Mật khẩu</label>
+                  <label className="text-xs font-semibold text-ink-muted">Mật khẩu</label>
                   <div className="relative mt-1.5">
                     <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                     <input
@@ -364,7 +364,7 @@ export default function Auth() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-deep-800/60">Nhập lại mật khẩu</label>
+                  <label className="text-xs font-semibold text-ink-muted">Nhập lại mật khẩu</label>
                   <div className="relative mt-1.5">
                     <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                     <input
@@ -378,7 +378,7 @@ export default function Auth() {
                   </div>
                 </div>
 
-                <label className="flex items-start gap-2 text-xs text-deep-800/60">
+                <label className="flex items-start gap-2 text-xs text-ink-muted">
                   <input required type="checkbox" className="mt-0.5 rounded border-ocean-300 text-ocean-500 focus:ring-ocean-400" />
                   <span>
                     Tôi đồng ý với{" "}
@@ -393,7 +393,7 @@ export default function Auth() {
                   {dangGui ? <><Loader2 className="h-4 w-4 animate-spin" /> Đang xử lý...</> : <>Tạo tài khoản <ArrowRight className="h-4 w-4" /></>}
                 </button>
 
-                <p className="text-center text-xs text-deep-800/50">
+                <p className="text-center text-xs text-ink-subtle">
                   Đã có tài khoản?{" "}
                   <button type="button" onClick={() => doiMode("login")} className="font-semibold text-ocean-600 hover:text-ocean-700">
                     Đăng nhập
@@ -418,7 +418,7 @@ export default function Auth() {
                     <ShieldCheck className="h-7 w-7 text-ocean-600" />
                   </div>
                   <h1 className="mt-4 font-display text-2xl font-bold text-deep-900">Xác thực email</h1>
-                  <p className="mt-1 text-sm text-deep-800/55">
+                  <p className="mt-1 text-sm text-ink-muted">
                     Chúng tôi đã gửi mã gồm 6 chữ số tới<br />
                     <span className="font-semibold text-deep-900">{emailChoXacThuc}</span>
                   </p>
@@ -434,14 +434,14 @@ export default function Auth() {
                     placeholder="000000"
                     className="w-full rounded-xl border border-ocean-100 bg-ocean-50/40 py-4 text-center font-display text-3xl font-bold tracking-[0.5em] outline-none focus:border-ocean-400 focus:bg-white"
                   />
-                  <p className="mt-2 text-center text-xs text-deep-800/45">Mã có hiệu lực trong 10 phút</p>
+                  <p className="mt-2 text-center text-xs text-ink-subtle">Mã có hiệu lực trong 10 phút</p>
                 </div>
 
                 <button type="submit" disabled={dangGui || maOtp.length !== 6} className="btn-cta w-full !py-3.5 disabled:opacity-60">
                   {dangGui ? <><Loader2 className="h-4 w-4 animate-spin" /> Đang kiểm tra...</> : <>Xác thực <ArrowRight className="h-4 w-4" /></>}
                 </button>
 
-                <div className="text-center text-xs text-deep-800/55">
+                <div className="text-center text-xs text-ink-muted">
                   Không nhận được mã?{" "}
                   <button
                     type="button"
@@ -453,7 +453,7 @@ export default function Auth() {
                   </button>
                 </div>
 
-                <p className="text-center text-xs text-deep-800/50">
+                <p className="text-center text-xs text-ink-subtle">
                   <button type="button" onClick={() => doiMode("login")} className="font-semibold text-ocean-600 hover:text-ocean-700">
                     Quay lại đăng nhập
                   </button>

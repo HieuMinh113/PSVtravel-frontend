@@ -32,7 +32,7 @@ export default function Gallery({ photos = [] }) {
 
       <section className="bg-foam py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <SectionReveal className="mb-10 flex items-center justify-center gap-2 text-center text-sm text-deep-800/55">
+          <SectionReveal className="mb-10 flex items-center justify-center gap-2 text-center text-sm text-ink-muted">
             <Camera className="h-4 w-4 text-teal-500" />
             {list.length} khoảnh khắc được chia sẻ bởi du khách PSVTravel — chạm vào ảnh để xem đầy đủ
           </SectionReveal>
@@ -72,7 +72,7 @@ export default function Gallery({ photos = [] }) {
                     )}
                     <div>
                       <p className="text-xs font-semibold text-white">{p.name}</p>
-                      {p.trip && <p className="text-[11px] text-white/60">{p.trip}</p>}
+                      {p.trip && <p className="text-xs text-white/60">{p.trip}</p>}
                     </div>
                   </div>
                 </div>
@@ -162,7 +162,7 @@ export default function Gallery({ photos = [] }) {
                   )}
                   <div>
                     <p className="font-display text-base font-semibold text-deep-900">{active.name}</p>
-                    <p className="text-xs text-deep-800/50">{active.trip}{active.date ? ` · ${active.date}` : ""}</p>
+                    <p className="text-xs text-ink-subtle">{active.trip}{active.date ? ` · ${active.date}` : ""}</p>
                   </div>
                 </div>
                 {active.rating ? (
@@ -173,7 +173,7 @@ export default function Gallery({ photos = [] }) {
                   </div>
                 ) : null}
                 <Quote className="mt-4 h-6 w-6 text-ocean-200" />
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-deep-800/75">{active.caption}</p>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-ink">{active.caption}</p>
               </div>
             </motion.div>
           </motion.div>

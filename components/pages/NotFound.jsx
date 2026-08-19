@@ -13,7 +13,7 @@ export default function NotFound() {
         <Compass className="h-20 w-20 text-ocean-400" />
       </motion.div>
       <h1 className="mt-6 font-display text-5xl font-bold text-deep-900">404</h1>
-      <p className="mt-2 max-w-sm text-deep-800/60">
+      <p className="mt-2 max-w-sm text-ink-muted">
         Có vẻ như bạn đã lạc vào vùng biển chưa có trên bản đồ. Hãy quay lại để tiếp tục hành trình.
       </p>
       <Link href="/" className="btn-cta mt-8">

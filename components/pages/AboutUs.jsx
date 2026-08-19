@@ -82,13 +82,13 @@ export default function AboutUs() {
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
               Bắt đầu từ tình yêu <span className="text-gradient-ocean">xê dịch</span>
             </h2>
-            <p className="mt-4 text-deep-800/70 leading-relaxed">
+            <p className="mt-4 text-ink-muted leading-relaxed">
               PSVTravel được thành lập năm 2014 bởi một nhóm bạn trẻ có chung niềm đam mê khám phá.
               Từ những chuyến đi tự túc đầu tiên, chúng tôi nhận ra mong muốn được chia sẻ trải nghiệm ấy
               đến với nhiều người hơn — không chỉ là đưa khách đến một điểm đến, mà là mang đến một câu
               chuyện đáng nhớ.
             </p>
-            <p className="mt-4 text-deep-800/70 leading-relaxed">
+            <p className="mt-4 text-ink-muted leading-relaxed">
               Hơn một thập kỷ sau, PSVTravel tự hào là đơn vị lữ hành được hàng chục nghìn khách hàng tin
               chọn mỗi năm, với mạng lưới hơn 320 tuyến tour trong nước và quốc tế, đội ngũ hướng dẫn viên
               giàu kinh nghiệm và hệ thống đặt tour trực tuyến hiện đại.
@@ -101,7 +101,7 @@ export default function AboutUs() {
               ].map((s) => (
                 <div key={s.label}>
                   <p className="font-display text-2xl font-bold text-ocean-700 sm:text-3xl"><CountUp to={s.to} suffix={s.suffix} /></p>
-                  <p className="text-xs text-deep-800/55">{s.label}</p>
+                  <p className="text-xs text-ink-muted">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -165,7 +165,7 @@ export default function AboutUs() {
                   </span>
                   <p className="font-display text-xl font-bold text-ocean-700">{m.year}</p>
                   <p className="font-display text-base font-semibold text-deep-900">{m.title}</p>
-                  <p className="text-sm text-deep-800/60">{m.desc}</p>
+                  <p className="text-sm text-ink-muted">{m.desc}</p>
                 </SectionReveal>
               ))}
             </div>
@@ -179,7 +179,7 @@ export default function AboutUs() {
           <SectionReveal className="text-center">
             <span className="text-xs font-bold uppercase tracking-[0.25em] text-teal-500">Con người PSVTravel</span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">Đội ngũ đứng sau mỗi hành trình</h2>
-            <p className="mx-auto mt-3 max-w-xl text-deep-800/60">
+            <p className="mx-auto mt-3 max-w-xl text-ink-muted">
               Những con người tận tâm, giàu kinh nghiệm — luôn sẵn sàng biến chuyến đi của bạn thành kỷ niệm khó quên.
             </p>
           </SectionReveal>
@@ -207,7 +207,7 @@ export default function AboutUs() {
                   </div>
                 </div>
                 <p className="mt-3 font-display text-sm font-semibold text-deep-900">{t.name}</p>
-                <p className="text-xs text-deep-800/50">{t.role}</p>
+                <p className="text-xs text-ink-subtle">{t.role}</p>
               </motion.div>
             ))}
           </div>
@@ -220,7 +220,7 @@ export default function AboutUs() {
           <SectionReveal className="text-center">
             <span className="text-xs font-bold uppercase tracking-[0.25em] text-teal-500">Hậu trường</span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">Khoảnh khắc đáng nhớ</h2>
-            <p className="mx-auto mt-3 max-w-xl text-deep-800/60">
+            <p className="mx-auto mt-3 max-w-xl text-ink-muted">
               Những khoảnh khắc gắn kết đội ngũ PSVTravel — từ văn phòng đến từng chuyến khảo sát tour thực tế.
             </p>
           </SectionReveal>
@@ -261,7 +261,7 @@ export default function AboutUs() {
             <p className="mt-4 font-display text-xl font-semibold leading-relaxed text-deep-900 sm:text-2xl">
               "Chúng tôi không chỉ bán những chuyến đi — chúng tôi trao đi những kỷ niệm."
             </p>
-            <p className="mt-3 text-sm font-medium text-deep-800/60">Nguyễn Anh Vũ — Nhà sáng lập PSVTravel</p>
+            <p className="mt-3 text-sm font-medium text-ink-muted">Nguyễn Anh Vũ — Nhà sáng lập PSVTravel</p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Link href="/tour-trong-nuoc" className="btn-cta">
                 Khám phá tour ngay <ArrowRight className="h-4 w-4" />

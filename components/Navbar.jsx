@@ -103,7 +103,7 @@ function MegaPanel({ config }) {
           </span>
           <div>
             <p className="text-sm font-bold leading-none">{config.heading}</p>
-            <p className="mt-1 text-[11px] text-white/75">{config.subheading}</p>
+            <p className="mt-1 text-xs text-white/75">{config.subheading}</p>
           </div>
         </div>
       </div>
@@ -131,7 +131,7 @@ function MegaPanel({ config }) {
                     {item.name}
                   </span>
                   {item.region && (
-                    <span className="text-[11px] font-medium text-deep-800/40">{item.region}</span>
+                    <span className="text-xs font-medium text-ink-subtle">{item.region}</span>
                   )}
                 </span>
                 <ArrowRight className="h-3.5 w-3.5 shrink-0 -translate-x-1 text-ocean-500 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" />
@@ -320,7 +320,7 @@ export default function Navbar() {
                         onClick={() =>
                           setMobileMegaOpenKey((k) => (k === l.mega ? null : l.mega))
                         }
-                        className="grid h-9 w-9 place-items-center text-deep-800/50"
+                        className="grid h-9 w-9 place-items-center text-ink-subtle"
                         aria-label={`Xem danh sách ${l.label}`}
                       >
                         <ChevronDown
@@ -348,7 +348,7 @@ export default function Navbar() {
                                   key={item.name}
                                   href={megaConfig[l.mega].to}
                                   state={{ query: item.name }}
-                                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-deep-800/80 hover:bg-ocean-50"
+                                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-ocean-50"
                                 >
                                   {item.Flag ? (
                                     <item.Flag className="h-[18px] w-6 shrink-0 rounded ring-1 ring-black/5" />

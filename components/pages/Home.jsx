@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ShieldCheck, Clock3, HeartHandshake, BadgePercent, ArrowRight,
-  Plane, Sparkles, MapPinned, ChevronDown,
+  Plane, Sparkles, MapPinned, ChevronDown, Star, Users2,
 } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import TourCard from "@/components/TourCard";
@@ -44,7 +44,13 @@ const whyUs = [
   { icon: Clock3, title: "Xác nhận tức thì", desc: "Đặt chỗ và nhận xác nhận tour chỉ trong vài phút." },
 ];
 
-
+// Bằng chứng tin cậy đặt ngay dưới ô tìm kiếm — theo mẫu Hero-Centric + Social Proof,
+// khách thấy lý do tin tưởng ngay màn hình đầu tiên mà không cần cuộn
+const trustSignals = [
+  { icon: Users2, text: "18.000+ khách mỗi năm" },
+  { icon: Star, text: "4.8/5 từ hơn 2.400 đánh giá" },
+  { icon: ShieldCheck, text: "Giấy phép lữ hành quốc tế" },
+];
 
 
 export default function Home({ upcoming = [], banner = null, reviews = [] }) {
@@ -60,8 +66,10 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
     <div>
       {/* ===== HERO — vòng ảnh xoay bao quanh khối tiêu đề + tìm kiếm ===== */}
       <section className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-deep-gradient py-28">
-        {/* Quầng sáng đôi màu chủ đạo */}
-        <div className="absolute inset-0 bg-duotone-glow" />
+        {/* Nền Aurora: mesh gradient nhiều điểm dừng trôi chậm 14s, có cặp bổ túc
+            xanh–cam để nền có chiều sâu thay vì một mảng xanh phẳng */}
+        <div className="absolute inset-0 bg-aurora-deep bg-[length:180%_180%] animate-aurora" />
+        <div className="absolute inset-0 bg-duotone-glow opacity-70" />
 
         {/* Lưới chấm nhẹ tạo chiều sâu, không phải ảnh chụp */}
         <div
@@ -96,13 +104,14 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
         />
 
         <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-5 text-center sm:px-8">
+          {/* Nhãn ưu đãi dùng màu ấm — bật hẳn khỏi nền xanh, mắt bắt được đầu tiên */}
           <motion.span
             initial={{ opacity: 0, y: -14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
-            className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white/90 backdrop-blur"
+            className="inline-flex items-center gap-2 rounded-full bg-sunset-600/95 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-white shadow-glow-warm backdrop-blur"
           >
-            <Sparkles className="h-3.5 w-3.5 text-teal-300" />
+            <Sparkles className="h-3.5 w-3.5" />
             Ưu đãi hè 2026 — giảm đến 20%
           </motion.span>
 
@@ -119,7 +128,7 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="mt-5 max-w-xl text-base text-white/75 sm:text-lg"
+            className="mt-5 max-w-xl text-base text-white/85 sm:text-lg"
           >
             Từ những bãi biển Việt Nam trong vắt đến chân trời Á – Âu xa xôi.
             PSVTravel đồng hành cùng hơn 18.000 hành trình mỗi năm.
@@ -128,12 +137,27 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
           <div className="mt-10 w-full">
             <SearchBar />
           </div>
+
+          {/* Bằng chứng tin cậy — đặt ngay dưới ô tìm kiếm */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.55 }}
+            className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5"
+          >
+            {trustSignals.map((t) => (
+              <span key={t.text} className="flex items-center gap-1.5 text-xs font-medium text-white/80 sm:text-sm">
+                <t.icon className="h-4 w-4 shrink-0 text-gold-400" />
+                {t.text}
+              </span>
+            ))}
+          </motion.div>
         </div>
 
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          className="relative z-10 mt-10 flex flex-col items-center gap-1 text-xs font-semibold text-white/70"
+          className="relative z-10 mt-10 flex flex-col items-center gap-1 text-xs font-semibold text-white/75"
         >
           Cuộn xuống để khám phá thêm
           <ChevronDown className="h-4 w-4" />
@@ -143,7 +167,7 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
       {/* ===== BANNER KHUYẾN MÃI ===== */}
       <section className="bg-foam px-5 pt-10 sm:px-8">
         <SectionReveal className="mx-auto max-w-7xl">
-          <div className="relative overflow-hidden rounded-3xl shadow-deep">
+          <div className="group relative overflow-hidden rounded-3xl shadow-deep">
             <motion.img
                             src={promo.image}
               alt={promo.title || "Ưu đãi PSVTravel"}
@@ -153,7 +177,7 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
               transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
               className="h-[260px] w-full object-cover sm:h-[300px]"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-deep-950/85 via-deep-950/55 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-deep-950/90 via-deep-950/60 to-transparent" />
 
             <div className="absolute inset-0 flex flex-col items-start justify-center gap-3 px-6 sm:px-12">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-500 px-3.5 py-1 text-xs font-bold uppercase tracking-wide text-deep-950">
@@ -163,11 +187,11 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
                 {promo.title}
               </h2>
                             {promo.subtitle && (
-                <p className="max-w-sm text-sm text-white/75">{promo.subtitle}</p>
+                <p className="max-w-sm text-sm text-white/85">{promo.subtitle}</p>
               )}
               <Link
                 href={promo.link || "/tour-nuoc-ngoai"}
-                className="mt-2 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ocean-700 transition-transform hover:-translate-y-0.5"
+                className="btn-cta mt-2 !px-6 !py-3 text-sm"
               >
                 Xem ưu đãi ngay <ArrowRight className="h-4 w-4" />
               </Link>
@@ -181,15 +205,16 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-teal-500">
+              <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">
                 <Clock3 className="h-3.5 w-3.5" /> Sắp khởi hành
               </span>
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
-                Tour sát ngày — <span className="text-gradient-ocean">đặt ngay kẻo lỡ</span>
+                Tour sát ngày — <span className="text-gradient-warm">đặt ngay kẻo lỡ</span>
               </h2>
             </div>
-            <Link href="/tour-trong-nuoc" className="flex items-center gap-1 text-sm font-semibold text-ocean-600 hover:text-ocean-700">
-              Xem tất cả tour <ArrowRight className="h-4 w-4" />
+            <Link href="/tour-trong-nuoc" className="group flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800">
+              Xem tất cả tour
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 ease-enter group-hover:translate-x-1" />
             </Link>
           </SectionReveal>
 
@@ -210,7 +235,7 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
       <section className="bg-ocean-50/50 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <span className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-teal-500">
+            <span className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-teal-600">
               <MapPinned className="h-3.5 w-3.5" /> Điểm đến nổi bật
             </span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
@@ -225,15 +250,19 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: i * 0.06 }}
+                transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -6 }}
-                className="group relative aspect-[3/4] overflow-hidden rounded-2xl shadow-md"
+                className="group relative aspect-[3/4] overflow-hidden rounded-2xl shadow-card"
               >
-                <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-t from-deep-950/85 via-deep-950/10 to-transparent" />
+                <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-deep-950/90 via-deep-950/15 to-transparent" />
+
+                {/* Vạch nhấn màu ấm trượt lên khi rê chuột — tín hiệu "chọn được" */}
+                <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-sunset-500 transition-transform duration-400 ease-enter group-hover:scale-x-100" />
+
                 <div className="absolute inset-x-0 bottom-0 p-3">
                   <p className="font-display text-sm font-bold text-white sm:text-base">{d.name}</p>
-                  <p className="text-[11px] text-white/70">{d.count}</p>
+                  <p className="text-xs text-white/80">{d.count}</p>
                 </div>
               </motion.div>
             ))}
@@ -243,10 +272,11 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
 
       {/* ===== VÌ SAO CHỌN CHÚNG TÔI ===== */}
       <section className="relative overflow-hidden bg-deep-gradient py-20 text-white">
+        <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora opacity-60" />
         <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-ocean-500/20 blur-3xl" />
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="mx-auto max-w-2xl text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-teal-400">Vì sao chọn chúng tôi</span>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Vì sao chọn chúng tôi</span>
             <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">
               Đồng hành đáng tin cậy cho mọi hành trình
             </h2>
@@ -254,12 +284,12 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
 
           <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {whyUs.map((w, i) => (
-              <SectionReveal key={w.title} delay={i * 0.1} className="text-center">
-                <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white/10 backdrop-blur">
-                  <w.icon className="h-6 w-6 text-teal-400" />
+              <SectionReveal key={w.title} delay={i * 0.1} className="group text-center">
+                <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white/10 backdrop-blur transition-all duration-400 ease-enter group-hover:scale-110 group-hover:bg-white/20">
+                  <w.icon className="h-6 w-6 text-teal-300" />
                 </div>
                 <h3 className="mt-4 font-display text-lg font-semibold">{w.title}</h3>
-                <p className="mt-2 text-sm text-white/60">{w.desc}</p>
+                <p className="mt-2 text-sm text-white/75">{w.desc}</p>
               </SectionReveal>
             ))}
           </div>
@@ -275,11 +305,11 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
             { to: 12, suffix: " năm", label: "Kinh nghiệm vận hành" },
             { to: 98, suffix: "%", label: "Khách hàng hài lòng" },
           ].map((s, i) => (
-            <SectionReveal key={s.label} delay={i * 0.08} className="text-center">
+            <SectionReveal key={s.label} delay={i * 0.08} className="rounded-2xl bg-white px-4 py-6 text-center shadow-card">
               <p className="font-display text-3xl font-bold text-ocean-700 sm:text-4xl">
                 <CountUp to={s.to} suffix={s.suffix} />
               </p>
-              <p className="mt-1 text-xs text-deep-800/55 sm:text-sm">{s.label}</p>
+              <p className="mt-1.5 text-xs text-ink-muted sm:text-sm">{s.label}</p>
             </SectionReveal>
 
           ))}
@@ -288,22 +318,27 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
 
             <Testimonials reviews={reviews} />
 
-      {/* ===== CTA CUỐI TRANG ===== */}
-      <section className="relative overflow-hidden bg-horizon py-20">
+      {/* ===== CTA CUỐI TRANG =====
+          Đổi sang nền tối có Aurora: nút chuyển đổi màu ấm cần nền lạnh/tối để bật lên.
+          Nền vàng–xanh lá trước đây cùng họ ấm với nút nên làm nút chìm. */}
+      <section className="relative overflow-hidden bg-deep-gradient py-20">
+        <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora" />
+        <div className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-gold-500/10 blur-3xl" />
+
         <div className="relative mx-auto max-w-3xl px-5 text-center sm:px-8">
           <SectionReveal>
-            <Plane className="mx-auto h-10 w-10 text-deep-900/70 animate-bob" />
-            <h2 className="mt-4 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+            <Plane className="mx-auto h-10 w-10 text-gold-400 animate-bob" />
+            <h2 className="mt-4 font-display text-3xl font-bold text-white sm:text-4xl">
               Sẵn sàng cho chuyến đi tiếp theo?
             </h2>
-            <p className="mx-auto mt-3 max-w-md text-deep-900/70">
+            <p className="mx-auto mt-3 max-w-md text-white/80">
               Để lại thông tin, đội ngũ tư vấn viên của chúng tôi sẽ liên hệ trong vòng 15 phút.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Link href="/tour-trong-nuoc" className="btn-cta">
                 Khám phá tour ngay <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href="/lien-he" className="rounded-full border-2 border-white/50 bg-white/30 px-7 py-3.5 font-semibold text-deep-900 backdrop-blur-md transition-colors hover:bg-white/50">
+              <Link href="/lien-he" className="btn-ghost">
                 Liên hệ tư vấn
               </Link>
             </div>

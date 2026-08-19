@@ -81,7 +81,7 @@ export default function TourListPage({
                     />
                     <button
                       onClick={() => { setSearchOpen(false); setQuery(""); }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-deep-800/40 hover:text-deep-800"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-deep-800"
                       aria-label="Đóng tìm kiếm"
                     >
                       <X className="h-4 w-4" />
@@ -119,14 +119,14 @@ export default function TourListPage({
             </div>
           </SectionReveal>
 
-          <p className="mb-6 text-sm text-deep-800/55">
+          <p className="mb-6 text-sm text-ink-muted">
             Tìm thấy <span className="font-semibold text-ocean-700">{filtered.length}</span> tour phù hợp
           </p>
 
           {filtered.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-ocean-200 bg-white py-20 text-center">
               <p className="font-display text-lg font-semibold text-deep-900">Không tìm thấy tour phù hợp</p>
-              <p className="mt-1 text-sm text-deep-800/55">Hãy thử từ khoá khác hoặc chọn lại điểm đến.</p>
+              <p className="mt-1 text-sm text-ink-muted">Hãy thử từ khoá khác hoặc chọn lại điểm đến.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

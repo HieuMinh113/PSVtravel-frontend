@@ -1,7 +1,3 @@
 {
-  "/(site)/page": "app/(site)/page.js",
-  "/(site)/khoanh-khac-du-khach/page": "app/(site)/khoanh-khac-du-khach/page.js",
-  "/(site)/lam-visa/page": "app/(site)/lam-visa/page.js",
-  "/(site)/ve-may-bay/page": "app/(site)/ve-may-bay/page.js",
-  "/(site)/lien-he/page": "app/(site)/lien-he/page.js"
+  "/(site)/page": "app/(site)/page.js"
 }

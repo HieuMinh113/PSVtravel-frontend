@@ -48,7 +48,7 @@ export default function Privacy() {
 
       <section className="bg-foam py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
-          <SectionReveal className="rounded-2xl border border-ocean-100 bg-ocean-50/60 p-5 text-sm text-deep-800/70">
+          <SectionReveal className="rounded-2xl border border-ocean-100 bg-ocean-50/60 p-5 text-sm text-ink-muted">
             PSVTravel tôn trọng quyền riêng tư của khách hàng. Tài liệu này giải thích cách chúng tôi thu thập,
             sử dụng và bảo vệ thông tin cá nhân khi bạn sử dụng website và dịch vụ của chúng tôi.
           </SectionReveal>
@@ -61,7 +61,7 @@ export default function Privacy() {
                 </span>
                 <div>
                   <h2 className="font-display text-lg font-semibold text-deep-900">{s.title}</h2>
-                  <p className="mt-2 text-sm leading-relaxed text-deep-800/70">{s.content}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-muted">{s.content}</p>
                 </div>
               </SectionReveal>
             ))}

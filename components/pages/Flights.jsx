@@ -78,10 +78,10 @@ export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = 
                 </div>
                 <div className="p-4">
                   <p className="text-sm font-semibold text-deep-900">{d.route}</p>
-                  {d.airlineName && <p className="text-[11px] text-deep-800/45">{d.airlineName}</p>}
-                  <p className="mt-1 text-xs text-deep-800/50">Giá chỉ từ</p>
+                  {d.airlineName && <p className="text-xs text-ink-subtle">{d.airlineName}</p>}
+                  <p className="mt-1 text-xs text-ink-subtle">Giá chỉ từ</p>
                   <div className="flex items-baseline gap-2">
-                    {d.oldPrice && <span className="text-xs text-deep-800/40 line-through">{d.oldPrice}</span>}
+                    {d.oldPrice && <span className="text-xs text-ink-subtle line-through">{d.oldPrice}</span>}
                     <p className="font-display text-lg font-bold text-ocean-700">{d.price}</p>
                   </div>
                 </div>
@@ -94,7 +94,7 @@ export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = 
       {/* Hãng hàng không đối tác */}
       <section className="bg-ocean-50/50 py-14">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-deep-800/40">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-ink-subtle">
             Đối tác hàng không
           </p>
           <div className="mt-8 grid grid-cols-3 gap-4 sm:grid-cols-6">
@@ -109,7 +109,7 @@ export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = 
                     {a.logo || a.code}
                   </div>
                 )}
-                <span className="text-center text-[11px] text-deep-800/55">{a.name}</span>
+                <span className="text-center text-xs text-ink-muted">{a.name}</span>
               </div>
             ))}
           </div>
@@ -126,7 +126,7 @@ export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = 
                   <p.icon className="h-6 w-6 text-ocean-600" />
                 </div>
                 <h3 className="mt-4 font-display text-base font-semibold text-deep-900">{p.title}</h3>
-                <p className="mt-2 text-sm text-deep-800/60">{p.desc}</p>
+                <p className="mt-2 text-sm text-ink-muted">{p.desc}</p>
               </SectionReveal>
             ))}
           </div>

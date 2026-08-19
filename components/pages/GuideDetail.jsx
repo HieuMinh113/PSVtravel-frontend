@@ -54,7 +54,7 @@ export default function GuideDetail({ guide }) {
       <section className="bg-foam py-12 sm:py-16">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           {guide.excerpt && (
-            <p className="border-l-4 border-ocean-400 bg-white/70 p-5 font-display text-lg leading-relaxed text-deep-800/80">
+            <p className="border-l-4 border-ocean-400 bg-white/70 p-5 font-display text-lg leading-relaxed text-ink">
               {guide.excerpt}
             </p>
           )}
@@ -65,7 +65,7 @@ export default function GuideDetail({ guide }) {
               dangerouslySetInnerHTML={{ __html: guide.content }}
             />
           ) : (
-            <p className="mt-8 text-deep-800/60">Nội dung bài viết đang được cập nhật.</p>
+            <p className="mt-8 text-ink-muted">Nội dung bài viết đang được cập nhật.</p>
           )}
 
           <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-ocean-100 pt-8">

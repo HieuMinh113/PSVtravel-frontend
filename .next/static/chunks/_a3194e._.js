@@ -698,7 +698,7 @@ function Flights({ airlines: apiAirlines = [], deals: apiDeals = [] }) {
                                                     columnNumber: 19
                                                 }, this),
                                                 d.airlineName && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    className: "text-[11px] text-deep-800/45",
+                                                    className: "text-xs text-ink-subtle",
                                                     children: d.airlineName
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/pages/Flights.jsx",
@@ -706,7 +706,7 @@ function Flights({ airlines: apiAirlines = [], deals: apiDeals = [] }) {
                                                     columnNumber: 37
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    className: "mt-1 text-xs text-deep-800/50",
+                                                    className: "mt-1 text-xs text-ink-subtle",
                                                     children: "Giá chỉ từ"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/pages/Flights.jsx",
@@ -717,7 +717,7 @@ function Flights({ airlines: apiAirlines = [], deals: apiDeals = [] }) {
                                                     className: "flex items-baseline gap-2",
                                                     children: [
                                                         d.oldPrice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                            className: "text-xs text-deep-800/40 line-through",
+                                                            className: "text-xs text-ink-subtle line-through",
                                                             children: d.oldPrice
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/pages/Flights.jsx",
@@ -772,7 +772,7 @@ function Flights({ airlines: apiAirlines = [], deals: apiDeals = [] }) {
                     className: "mx-auto max-w-6xl px-5 sm:px-8",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "text-center text-xs font-semibold uppercase tracking-[0.2em] text-deep-800/40",
+                            className: "text-center text-xs font-semibold uppercase tracking-[0.2em] text-ink-subtle",
                             children: "Đối tác hàng không"
                         }, void 0, false, {
                             fileName: "[project]/components/pages/Flights.jsx",
@@ -808,7 +808,7 @@ function Flights({ airlines: apiAirlines = [], deals: apiDeals = [] }) {
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "text-center text-[11px] text-deep-800/55",
+                                            className: "text-center text-xs text-ink-muted",
                                             children: a.name
                                         }, void 0, false, {
                                             fileName: "[project]/components/pages/Flights.jsx",
@@ -870,7 +870,7 @@ function Flights({ airlines: apiAirlines = [], deals: apiDeals = [] }) {
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                        className: "mt-2 text-sm text-deep-800/60",
+                                        className: "mt-2 text-sm text-ink-muted",
                                         children: p.desc
                                     }, void 0, false, {
                                         fileName: "[project]/components/pages/Flights.jsx",
