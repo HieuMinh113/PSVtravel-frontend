@@ -230,3 +230,33 @@ img, video {
 .prose-psv img { border-radius: 1rem; margin: 1.5rem 0; max-width: 100%; height: auto; }
 .prose-psv blockquote { border-left: 4px solid #EA580C; padding-left: 1rem; font-style: italic; margin: 1.5rem 0; color: #0A2A45; }
 .prose-psv strong { color: #0b2440; font-weight: 700; }
+
+/* ===== HERO — kiểm soát vòng ảnh xoay và dải tour theo cỡ màn hình =====
+   Vòng ảnh là lớp trang trí: nó phải nhường chỗ cho chữ, không được đè lên.
+   Giảm độ đậm để chữ luôn nổi bật hơn ảnh nền. */
+.orbit-layer {
+  opacity: 0.6;
+}
+
+/* Màn hình thấp (laptop 13", cửa sổ thu nhỏ, điện thoại xoay ngang):
+   ẩn vòng ảnh để tiêu đề, ô tìm kiếm và dải tour có đủ chỗ hiển thị. */
+@media (max-height: 800px) {
+  .orbit-layer {
+    display: none;
+  }
+}
+
+/* Màn hình rất thấp: ẩn luôn dải tour, ưu tiên ô tìm kiếm — chức năng
+   quan trọng nhất — được hiển thị trọn vẹn. */
+@media (max-height: 620px) {
+  .hero-tours {
+    display: none;
+  }
+}
+
+/* Tablet dọc: vòng ảnh dễ chạm mép chữ, giảm thêm độ đậm cho an toàn */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .orbit-layer {
+    opacity: 0.45;
+  }
+}
