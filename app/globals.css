@@ -230,3 +230,24 @@ img, video {
 .prose-psv img { border-radius: 1rem; margin: 1.5rem 0; max-width: 100%; height: auto; }
 .prose-psv blockquote { border-left: 4px solid #EA580C; padding-left: 1rem; font-style: italic; margin: 1.5rem 0; color: #0A2A45; }
 .prose-psv strong { color: #0b2440; font-weight: 700; }
+
+/* ===== Hero co giãn theo chiều CAO màn hình =====
+   Chiều rộng đã có Tailwind lo. Còn lại là chiều cao: laptop 13" mở thêm
+   thanh bookmark, hoặc điện thoại xoay ngang, thì Hero chỉ còn ~500px —
+   lúc đó vòng ảnh xoay và dải tour phải nhường chỗ cho chữ và ô tìm kiếm. */
+.orbit-layer { opacity: 0.6; }
+
+/* Màn hình thấp: bỏ vòng ảnh trước, vì nó chỉ trang trí */
+@media (max-height: 800px) {
+  .orbit-layer { display: none; }
+}
+
+/* Rất thấp (điện thoại nằm ngang): bỏ luôn dải tour, giữ chữ + ô tìm kiếm */
+@media (max-height: 620px) {
+  .hero-tours { display: none; }
+}
+
+/* iPad dọc: vòng ảnh mờ bớt để không tranh chấp với tiêu đề */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .orbit-layer { opacity: 0.45; }
+}
