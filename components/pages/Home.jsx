@@ -68,13 +68,11 @@ export default function Home({ upcoming = [], banner = null, orbitImages = [], r
   // Ưu tiên ảnh do công ty tự upload trong admin; chưa có thì dùng ảnh dự phòng
   const anhVongXoay = orbitImages.length ? orbitImages : ORBIT_DU_PHONG;
 
-  // Nếu DB chưa có banner nào thì dùng banner mặc định để trang không bị trống
-  const promo = banner ?? {
-    image: "https://images.unsplash.com/photo-1512100356356-de1b84283e18?q=80&w=1600&auto=format&fit=crop",
-    title: "Săn vé Đông Nam Á — giảm đến 25% cho 100 khách đặt sớm",
-    subtitle: "Áp dụng cho tour Thái Lan, Singapore, Đài Loan khởi hành trước 30/09/2026.",
-    link: "/tour-nuoc-ngoai",
-  };
+  // Chưa tạo banner trong admin thì KHÔNG hiện khối này.
+  // Trước đây có một banner mặc định viết cứng trong code ("giảm 25%…") —
+  // một khuyến mãi không có thật vẫn hiện lên trang, nhân viên không tắt được
+  // vì nó không nằm trong admin. Giờ có banner thì hiện, không có thì bỏ qua.
+  const promo = banner;
 
   // Ảnh nền Hero lấy từ chính các tour sắp khởi hành — nền luôn phản ánh đúng
   // thứ đang bán. Lấy tối đa 4 ảnh để không tải quá nặng ở màn hình đầu.
@@ -275,7 +273,8 @@ export default function Home({ upcoming = [], banner = null, orbitImages = [], r
       {/* ===== DẢI CAM KẾT — ngay dưới Hero, trả lời câu hỏi "có tin được không" ===== */}
       <TrustBar />
 
-      {/* ===== BANNER KHUYẾN MÃI ===== */}
+      {/* ===== BANNER KHUYẾN MÃI — chỉ hiện khi admin đã tạo banner ===== */}
+      {promo && (
       <section className="bg-foam px-5 pt-10 sm:px-8">
         <SectionReveal className="mx-auto max-w-7xl">
           <div className="group relative overflow-hidden rounded-3xl shadow-deep">
@@ -310,6 +309,7 @@ export default function Home({ upcoming = [], banner = null, orbitImages = [], r
           </div>
         </SectionReveal>
       </section>
+      )}
 
       {/* ===== TOUR SÁT NGÀY KHỞI HÀNH ===== */}
       <section className="bg-foam py-16 sm:py-20">
