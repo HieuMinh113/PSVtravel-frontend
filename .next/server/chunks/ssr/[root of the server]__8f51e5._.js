@@ -424,212 +424,14 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ScrollToTop$2e
 __turbopack_export_namespace__(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ScrollToTop$2e$jsx__$28$client__proxy$29$__);
 
 })()),
-"[project]/app/lib/api.js [app-rsc] (ecmascript)": (({ r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__ }) => (() => {
-"use strict";
+"[project]/app/lib/api.js [app-rsc] (ecmascript)": (function({ r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, m: module, e: exports, t: require }) { !function() {
 
-// Mọi lời gọi tới backend Laravel đi qua đây. Đổi domain khi lên production.
-__turbopack_esm__({
-    "createBooking": ()=>createBooking,
-    "getAirlines": ()=>getAirlines,
-    "getBanners": ()=>getBanners,
-    "getFeaturedReviews": ()=>getFeaturedReviews,
-    "getFlightDeals": ()=>getFlightDeals,
-    "getGuideBySlug": ()=>getGuideBySlug,
-    "getGuideSlugs": ()=>getGuideSlugs,
-    "getGuides": ()=>getGuides,
-    "getMoments": ()=>getMoments,
-    "getSettings": ()=>getSettings,
-    "getTourBySlug": ()=>getTourBySlug,
-    "getTours": ()=>getTours,
-    "getVisaCountries": ()=>getVisaCountries
-});
-const API_URL = ("TURBOPACK compile-time value", "http://localhost:8000/api/v1") || "http://localhost:8000/api/v1";
-const REVALIDATE = 60; // giây — chậm nhất 1 phút thấy thay đổi từ admin
-async function layJSON(duongDan) {
-    const res = await fetch(`${API_URL}${duongDan}`, {
-        next: {
-            revalidate: REVALIDATE
-        },
-        headers: {
-            Accept: "application/json"
-        }
-    });
-    if (!res.ok) {
-        if (res.status === 404) return null;
-        throw new Error(`API lỗi ${res.status}: ${duongDan}`);
-    }
-    return res.json();
-}
-// Chuyển dữ liệu tour từ backend sang đúng hình dạng giao diện quen dùng
-function mapTour(t) {
-    if (!t) return null;
-    const dep = Array.isArray(t.departures) && t.departures.length ? t.departures[0] : null;
-    return {
-        id: t.id,
-        slug: t.slug,
-        name: t.name,
-        type: t.type,
-        region: t.region,
-        country: t.country,
-        days: `${t.duration_days} ngày ${t.duration_nights} đêm`,
-        departure: t.departure_from ? `Từ ${t.departure_from}` : "",
-        price: t.adult_price,
-        childPrice: t.child_price ?? null,
-        oldPrice: t.old_price,
-        rating: Number(t.rating) || 0,
-        reviews: t.review_count ?? 0,
-        seatsLeft: dep?.seats_left ?? t.next_seats_left ?? null,
-        startDate: dep?.start_date_display ?? t.next_start_date ?? null,
-        image: t.cover_image,
-        tag: t.tag,
-        highlights: t.highlights ?? [],
-        itinerary: (t.itineraries ?? []).map((it)=>({
-                day: `Ngày ${it.day_number}`,
-                title: it.title,
-                desc: it.description
-            })),
-        departures: (t.departures ?? []).map((d)=>({
-                id: d.id,
-                startDate: d.start_date_display ?? d.start_date,
-                price: d.price,
-                seatsLeft: d.seats_left
-            })),
-        images: (t.images ?? []).map((img)=>img.url),
-        reviewsList: (t.reviews ?? []).map((r)=>({
-                name: r.customer_name,
-                rating: r.rating,
-                comment: r.content,
-                reply: r.admin_reply,
-                date: r.created_at
-            })),
-        description: t.description
-    };
-}
-async function getTours({ type, featured, category } = {}) {
-    const q = new URLSearchParams();
-    if (type) q.set("type", type);
-    if (featured) q.set("featured", "true");
-    if (category) q.set("category", category);
-    q.set("per_page", "50");
-    const json = await layJSON(`/tours?${q.toString()}`);
-    return (json?.data ?? []).map(mapTour);
-}
-async function getTourBySlug(slug) {
-    const json = await layJSON(`/tours/${slug}`);
-    return mapTour(json?.data ?? json);
-}
-async function createBooking(payload) {
-    const res = await fetch(`${API_URL}/bookings`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json"
-        },
-        body: JSON.stringify(payload)
-    });
-    const json = await res.json().catch(()=>({}));
-    if (!res.ok) {
-        throw new Error(json?.message || "Đặt tour thất bại, vui lòng thử lại.");
-    }
-    return json;
-}
-async function getBanners() {
-    const json = await layJSON(`/banners`);
-    return json?.data ?? [];
-}
-async function getFeaturedReviews() {
-    const json = await layJSON(`/reviews/featured`);
-    return (json?.data ?? []).map((r)=>({
-            name: r.name,
-            trip: r.tour_name,
-            quote: r.content,
-            rating: r.rating,
-            photo: r.tour_image
-        }));
-}
-async function getMoments() {
-    const json = await layJSON(`/moments`);
-    return (json?.data ?? []).map((m, i)=>({
-            id: i,
-            name: m.customer_name,
-            trip: m.tour_name,
-            photo: m.image,
-            caption: m.caption,
-            avatar: null,
-            rating: null,
-            date: null
-        }));
-}
-async function getVisaCountries() {
-    const json = await layJSON(`/visa-countries`);
-    return (json?.data ?? []).map((c)=>({
-            slug: c.slug,
-            name: c.name,
-            flagImage: c.flag_image,
-            rate: c.success_rate ? `${c.success_rate}%` : null,
-            time: c.processing_time,
-            price: c.price ? `${Number(c.price).toLocaleString("vi-VN")}đ` : "Liên hệ",
-            required: true
-        }));
-}
-async function getAirlines() {
-    const json = await layJSON(`/airlines`);
-    return (json?.data ?? []).map((a)=>({
-            name: a.name,
-            code: a.code,
-            logoImage: a.logo
-        }));
-}
-async function getFlightDeals() {
-    const json = await layJSON(`/flight-deals`);
-    return (json?.data ?? []).map((d, i)=>({
-            id: i,
-            route: `${d.from_city} → ${d.to_city}`,
-            price: d.price ? `${Number(d.price).toLocaleString("vi-VN")}đ` : "Liên hệ",
-            oldPrice: d.old_price ? `${Number(d.old_price).toLocaleString("vi-VN")}đ` : null,
-            airlineName: d.airline?.name ?? null,
-            airlineLogo: d.airline?.logo ?? null,
-            note: d.note ?? null,
-            image: null
-        }));
-}
-async function getSettings() {
-    const json = await layJSON(`/settings`);
-    return json?.data ?? {};
-}
-function mapGuide(g) {
-    if (!g) return null;
-    return {
-        slug: g.slug,
-        title: g.title,
-        excerpt: g.excerpt,
-        image: g.cover_image,
-        category: g.category,
-        author: g.author_name ?? null,
-        views: g.view_count ?? 0,
-        date: g.published_at ? g.published_at.split("-").reverse().join("/") : null,
-        content: g.content ?? null,
-        metaTitle: g.meta_title ?? g.title,
-        metaDescription: g.meta_description ?? g.excerpt
-    };
-}
-async function getGuides({ category } = {}) {
-    const q = new URLSearchParams();
-    if (category) q.set("category", category);
-    q.set("per_page", "30");
-    const json = await layJSON(`/guides?${q.toString()}`);
-    return (json?.data ?? []).map(mapGuide);
-}
-async function getGuideBySlug(slug) {
-    const json = await layJSON(`/guides/${slug}`);
-    return mapGuide(json?.data ?? json);
-}
-async function getGuideSlugs() {
-    const json = await layJSON(`/guides-slugs`);
-    return json ?? [];
-}
+const e = new Error(`Could not parse module '[project]/app/lib/api.js'
 
-})()),
+Merge conflict marker encountered.`);
+e.code = 'MODULE_UNPARSEABLE';
+throw e;
+}.call(this) }),
 "[project]/app/(site)/layout.jsx [app-rsc] (ecmascript)": (({ r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__ }) => (() => {
 "use strict";
 
@@ -658,7 +460,9 @@ async function SiteLayout({ children }) {
                 lineNumber: 11,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$future$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
+                settings: settings
+            }, void 0, false, {
                 fileName: "[project]/app/(site)/layout.jsx",
                 lineNumber: 12,
                 columnNumber: 7

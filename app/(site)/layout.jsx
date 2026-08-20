@@ -9,7 +9,7 @@ export default async function SiteLayout({ children }) {
   return (
     <>
       <ScrollToTop />
-      <Navbar />
+      <Navbar settings={settings} />
       <main>{children}</main>
       <Footer settings={settings} />
       <FloatingContact settings={settings} />

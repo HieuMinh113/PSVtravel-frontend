@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -13,16 +12,7 @@ import Testimonials from "@/components/Testimonials";
 import SectionReveal from "@/components/SectionReveal";
 import CountUp from "@/components/CountUp";
 import OrbitGallery from "@/components/OrbitGallery";
-import { formatVND } from "@/data/tours";
-
-// Ảnh nền Hero dự phòng — CHỈ dùng khi chưa có tour nào sắp khởi hành.
-// Bình thường Hero lấy ảnh từ chính các tour đang bán (xem heroImages bên dưới),
-// nên nền tự đổi theo mùa và theo tour mới mà không phải sửa code.
-const HERO_FALLBACK =
-  "https://images.unsplash.com/photo-1573270689103-d7a4e42b609a?q=80&w=2000&auto=format&fit=crop";
-
-// Mỗi ảnh nền hiển thị bao lâu trước khi chuyển sang ảnh kế (mili giây)
-const HERO_DOI_ANH_MS = 6500;
+import TrustBar from "@/components/TrustBar";
 
 // Ảnh điểm đến thật, lấy lại từ dữ liệu tour có sẵn để đảm bảo luôn tải được
 const orbitImages = [
@@ -37,6 +27,7 @@ const orbitImages = [
   "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=400&auto=format&fit=crop", // Singapore
   "https://images.unsplash.com/photo-1470004914212-05527e49370b?q=80&w=400&auto=format&fit=crop", // Đài Loan
 ];
+
 
 const destinations = [
   { name: "Phú Quốc", image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=800&auto=format&fit=crop", count: "24 tour" },
@@ -72,208 +63,117 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
     link: "/tour-nuoc-ngoai",
   };
 
-  // Ảnh nền Hero lấy từ chính các tour sắp khởi hành — nền luôn phản ánh đúng
-  // thứ đang bán. Lấy tối đa 4 ảnh để không tải quá nặng ở màn hình đầu.
-  const heroImages = useMemo(() => {
-    const tuTour = upcoming.map((t) => t.image).filter(Boolean);
-    const khongTrung = [...new Set(tuTour)].slice(0, 4);
-    return khongTrung.length ? khongTrung : [HERO_FALLBACK];
-  }, [upcoming]);
-
-  const [heroIndex, setHeroIndex] = useState(0);
-
-  // Chuyển cảnh chậm giữa các ảnh. Người dùng bật giảm chuyển động thì giữ
-  // nguyên một ảnh — không có gì nhấp nháy.
-  useEffect(() => {
-    if (heroImages.length < 2) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const id = setInterval(
-      () => setHeroIndex((i) => (i + 1) % heroImages.length),
-      HERO_DOI_ANH_MS
-    );
-    return () => clearInterval(id);
-  }, [heroImages.length]);
-
   return (
     <div>
-      {/* ===== HERO — bố cục co giãn, luôn vừa mọi màn hình =====
-          Dùng flex dọc thay cho chiều cao ép cứng: phần chữ chiếm khoảng giữa,
-          dải tour bám đáy TRONG luồng (không position absolute) nên không bao giờ
-          bị đẩy ra ngoài tầm nhìn. min-h-svh dùng đơn vị viewport nhỏ nhất —
-          an toàn với thanh địa chỉ trình duyệt trên điện thoại. */}
-      <section className="relative flex min-h-svh flex-col overflow-hidden bg-deep-gradient">
-        {/* Ảnh nền lấy từ tour đang bán, chuyển cảnh chậm.
-            Tất cả ảnh render sẵn và chỉ đổi độ mờ — không gắn/tháo phần tử liên tục
-            nên không giật. Ảnh đầu đặt priority để giữ điểm LCP tốt. */}
-        {heroImages.map((img, i) => (
-          <Image
-            key={img}
-            src={img}
-            alt=""
-            aria-hidden
-            fill
-            priority={i === 0}
-            sizes="100vw"
-            className={`object-cover transition-opacity duration-[1600ms] ease-in-out ${
-              i === heroIndex ? "opacity-35" : "opacity-0"
-            }`}
-          />
-        ))}
+      {/* ===== HERO — vòng ảnh xoay bao quanh khối tiêu đề + tìm kiếm ===== */}
+      <section className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-deep-gradient py-28">
+        {/* Nền Aurora: mesh gradient nhiều điểm dừng trôi chậm 14s, có cặp bổ túc
+            xanh–cam để nền có chiều sâu thay vì một mảng xanh phẳng */}
+        <div className="absolute inset-0 bg-aurora-deep bg-[length:180%_180%] animate-aurora" />
+        <div className="absolute inset-0 bg-duotone-glow opacity-70" />
 
-        {/* Nền Aurora: mesh gradient nhiều điểm dừng trôi chậm, có cặp bổ túc xanh–cam */}
-        <div className="absolute inset-0 bg-aurora-deep bg-[length:180%_180%] animate-aurora opacity-80" />
-        <div className="absolute inset-0 bg-duotone-glow opacity-60" />
-
-        {/* Lưới chấm nhẹ tạo chiều sâu */}
+        {/* Lưới chấm nhẹ tạo chiều sâu, không phải ảnh chụp */}
         <div
-          className="absolute inset-0 opacity-[0.12]"
+          className="absolute inset-0 opacity-[0.15]"
           style={{
             backgroundImage: "radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px)",
             backgroundSize: "34px 34px",
           }}
         />
 
-        {/* Vòng ảnh xoay — lớp .orbit-layer tự ẩn khi màn hình thấp hoặc hẹp
-            (xem globals.css), tránh ảnh đè lên tiêu đề và thanh điều hướng */}
-        <div className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
+        {/* Vòng ảnh xoay bao quanh toàn bộ khối nội dung — điểm nhấn chính của Hero */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <OrbitGallery
             images={orbitImages}
-            radiusLg={560}
-            radiusMd={380}
-            radiusSm={190}
-            cardSizeLg={92}
-            cardSizeMd={72}
-            cardSizeSm={48}
+            radiusLg={430}
+            radiusMd={320}
+            radiusSm={175}
+            cardSizeLg={104}
+            cardSizeMd={82}
+            cardSizeSm={52}
             showCenter={false}
           />
         </div>
 
-        {/* Lớp phủ tối giữa vòng ảnh và chữ — đảm bảo chữ luôn đọc rõ */}
+        {/* Lớp phủ tối giữa vòng ảnh và chữ — đảm bảo chữ luôn đọc rõ dù ảnh phía sau sáng */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 640px 500px at center, rgba(4,15,31,0.86) 0%, rgba(4,15,31,0.6) 45%, rgba(4,15,31,0.18) 68%, transparent 80%)",
+              "radial-gradient(ellipse 620px 480px at center, rgba(4,15,31,0.8) 0%, rgba(4,15,31,0.55) 45%, rgba(4,15,31,0.15) 68%, transparent 80%)",
           }}
         />
 
-        {/* KHỐI CHỮ — chiếm phần giữa, tự căn giữa theo chiều cao còn lại */}
-        <div className="relative z-10 flex flex-1 items-center justify-center px-5 pb-6 pt-[clamp(6rem,13vh,7.5rem)] sm:px-8">
-          <div className="flex w-full max-w-3xl flex-col items-center text-center">
-            {/* Nhãn ưu đãi màu ấm — bật hẳn khỏi nền xanh, mắt bắt được đầu tiên */}
-            <motion.span
-              initial={{ opacity: 0, y: -14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="inline-flex items-center gap-2 rounded-full bg-sunset-600/95 px-4 py-1.5 text-[clamp(0.65rem,1.6vw,0.75rem)] font-bold uppercase tracking-[0.18em] text-white shadow-glow-warm backdrop-blur"
-            >
-              <Sparkles className="h-3.5 w-3.5 shrink-0" />
-              Ưu đãi hè 2026 — giảm đến 20%
-            </motion.span>
+        <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-5 text-center sm:px-8">
+          {/* Nhãn ưu đãi dùng màu ấm — bật hẳn khỏi nền xanh, mắt bắt được đầu tiên */}
+          <motion.span
+            initial={{ opacity: 0, y: -14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="inline-flex items-center gap-2 rounded-full bg-sunset-600/95 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-white shadow-glow-warm backdrop-blur"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Ưu đãi hè 2026 — giảm đến 20%
+          </motion.span>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.12 }}
-              className="mt-[clamp(1rem,3vh,1.5rem)] font-display text-[clamp(1.9rem,5.2vw,3.6rem)] font-bold leading-[1.1] text-white"
-            >
-              Đắm mình vào <span className="bg-gradient-to-r from-ocean-300 to-teal-300 bg-clip-text text-transparent">sắc xanh</span><br className="hidden sm:block" /> của những vùng đất mới
-            </motion.h1>
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.15 }}
+            className="mt-6 font-display text-4xl font-bold leading-[1.1] text-white sm:text-6xl"
+          >
+            Đắm mình vào <span className="bg-gradient-to-r from-ocean-300 to-teal-300 bg-clip-text text-transparent">sắc xanh</span><br className="hidden sm:block" /> của những vùng đất mới
+          </motion.h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.26 }}
-              className="mt-[clamp(0.75rem,2vh,1.25rem)] max-w-xl text-[clamp(0.9rem,1.9vw,1.125rem)] text-white/85"
-            >
-              <strong className="font-semibold text-white">320+ tuyến tour</strong> trong nước và quốc tế,
-              giá trọn gói minh bạch — đồng hành cùng hơn 18.000 hành trình mỗi năm.
-            </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="mt-5 max-w-xl text-base text-white/85 sm:text-lg"
+          >
+            Từ những bãi biển Việt Nam trong vắt đến chân trời Á – Âu xa xôi.
+            PSVTravel đồng hành cùng hơn 18.000 hành trình mỗi năm.
+          </motion.p>
 
-            <div className="mt-[clamp(1.25rem,3.5vh,2.25rem)] w-full">
-              <SearchBar />
-            </div>
-
-            {/* Bằng chứng tin cậy — đặt ngay dưới ô tìm kiếm */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="mt-[clamp(0.9rem,2.2vh,1.5rem)] flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
-            >
-              {trustSignals.map((t) => (
-                <span key={t.text} className="flex items-center gap-1.5 text-[clamp(0.7rem,1.6vw,0.875rem)] font-medium text-white/85">
-                  <t.icon className="h-4 w-4 shrink-0 text-gold-400" />
-                  {t.text}
-                </span>
-              ))}
-            </motion.div>
+          <div className="mt-10 w-full">
+            <SearchBar />
           </div>
+
+          {/* Bằng chứng tin cậy — đặt ngay dưới ô tìm kiếm */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.55 }}
+            className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5"
+          >
+            {trustSignals.map((t) => (
+              <span key={t.text} className="flex items-center gap-1.5 text-xs font-medium text-white/80 sm:text-sm">
+                <t.icon className="h-4 w-4 shrink-0 text-gold-400" />
+                {t.text}
+              </span>
+            ))}
+          </motion.div>
         </div>
 
-        {/* ===== DẢI TOUR BÁM ĐÁY HERO =====
-            Nằm TRONG luồng flex nên luôn hiển thị đủ, không bị cắt.
-            Khách thấy ảnh + tên + giá tour thật ngay màn hình đầu tiên. */}
-        {upcoming.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="hero-tours relative z-10 w-full px-5 pb-[clamp(1rem,3vh,1.75rem)] sm:px-8"
-          >
-            <div className="mx-auto max-w-6xl">
-              <div className="mb-2.5 flex items-end justify-between">
-                <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-white/85">
-                  <Clock3 className="h-3.5 w-3.5 text-gold-400" /> Sắp khởi hành
-                </p>
-                <Link href="/tour-trong-nuoc" className="group flex items-center gap-1.5 text-xs font-semibold text-white/85 transition-colors hover:text-gold-300">
-                  Xem tất cả
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 ease-enter group-hover:translate-x-1" />
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {upcoming.slice(0, 3).map((tour, i) => (
-                  <Link
-                    key={tour.slug}
-                    href={`${tour.type === "domestic" ? "/tour-trong-nuoc" : "/tour-nuoc-ngoai"}/${tour.slug}`}
-                    className={`glass-surface group flex items-center gap-3 rounded-2xl p-2.5 transition-all duration-300 ease-enter hover:-translate-y-1 hover:bg-white/25 ${
-                      i === 0 ? "" : i === 1 ? "hidden sm:flex" : "hidden lg:flex"
-                    }`}
-                  >
-                    <div className="relative h-14 w-16 shrink-0 overflow-hidden rounded-xl">
-                      <Image
-                        src={tour.image}
-                        alt={tour.name}
-                        fill
-                        sizes="64px"
-                        className="object-cover transition-transform duration-500 ease-enter group-hover:scale-110"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-white">{tour.name}</p>
-                      <p className="mt-0.5 truncate text-xs text-white/70">
-                        {tour.days}
-                        {tour.startDate ? ` · ${tour.startDate}` : ""}
-                      </p>
-                      <p className="mt-1 font-display text-sm font-bold text-gold-300">{formatVND(tour.price)}</p>
-                    </div>
-                    <ArrowRight className="h-4 w-4 shrink-0 -translate-x-1 text-white/60 opacity-0 transition-all duration-300 ease-enter group-hover:translate-x-0 group-hover:opacity-100" />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          className="relative z-10 mt-10 flex flex-col items-center gap-1 text-xs font-semibold text-white/75"
+        >
+          Cuộn xuống để khám phá thêm
+          <ChevronDown className="h-4 w-4" />
+        </motion.div>
       </section>
+
+      {/* ===== DẢI CAM KẾT — ngay dưới Hero, trả lời câu hỏi "có tin được không" ===== */}
+      <TrustBar />
 
       {/* ===== BANNER KHUYẾN MÃI ===== */}
       <section className="bg-foam px-5 pt-10 sm:px-8">
         <SectionReveal className="mx-auto max-w-7xl">
           <div className="group relative overflow-hidden rounded-3xl shadow-deep">
             <motion.img
-              src={promo.image}
+                            src={promo.image}
               alt={promo.title || "Ưu đãi PSVTravel"}
               initial={{ scale: 1.08 }}
               whileInView={{ scale: 1 }}
@@ -290,7 +190,7 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
               <h2 className="max-w-md font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
                 {promo.title}
               </h2>
-              {promo.subtitle && (
+                            {promo.subtitle && (
                 <p className="max-w-sm text-sm text-white/85">{promo.subtitle}</p>
               )}
               <Link
@@ -339,7 +239,7 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
       <section className="bg-ocean-50/50 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <span className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-teal-700">
+            <span className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-teal-600">
               <MapPinned className="h-3.5 w-3.5" /> Điểm đến nổi bật
             </span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
@@ -415,13 +315,16 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
               </p>
               <p className="mt-1.5 text-xs text-ink-muted sm:text-sm">{s.label}</p>
             </SectionReveal>
+
           ))}
         </div>
       </section>
 
-      <Testimonials reviews={reviews} />
+            <Testimonials reviews={reviews} />
 
-      {/* ===== CTA CUỐI TRANG ===== */}
+      {/* ===== CTA CUỐI TRANG =====
+          Đổi sang nền tối có Aurora: nút chuyển đổi màu ấm cần nền lạnh/tối để bật lên.
+          Nền vàng–xanh lá trước đây cùng họ ấm với nút nên làm nút chìm. */}
       <section className="relative overflow-hidden bg-deep-gradient py-20">
         <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora" />
         <div className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-gold-500/10 blur-3xl" />

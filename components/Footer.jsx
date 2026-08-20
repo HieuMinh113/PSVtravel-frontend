@@ -2,7 +2,10 @@
 import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
-import { Phone, Mail, MapPin, Send, CheckCircle2, ArrowRight } from "lucide-react";
+import {
+  Phone, Mail, MapPin, Send, CheckCircle2, ArrowRight,
+  BadgeCheck, Building2, FileSearch, CreditCard,
+} from "lucide-react";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "./SocialIcons";
 
 export default function Footer({ settings = {} }) {
@@ -13,11 +16,30 @@ export default function Footer({ settings = {} }) {
   const contactEmail = settings.email || "hi@psvtravel.vn";
   const address = settings.address || "190 Pasteur, Phường Võ Thị Sáu, Quận 3, TP. Hồ Chí Minh";
 
+  // ==== Khối pháp lý — lấy từ Cài đặt trong admin (nhóm "Pháp lý") ====
+  // Cố ý KHÔNG đặt giá trị mặc định giả: dòng nào chưa nhập trong admin thì
+  // đơn giản là không hiển thị. Ghi số giấy phép sai lên web thương mại
+  // là vi phạm Luật Quảng cáo, và khách tra ra sai thì mất trắng niềm tin.
+  const phapLy = [
+    { label: "Tên pháp nhân", value: settings.legal_name },
+    { label: "Giấy CN ĐKKD số", value: settings.business_registration, extra: settings.business_registration_place },
+    { label: "Mã số thuế", value: settings.tax_code },
+    { label: "Giấy phép lữ hành quốc tế số", value: settings.license_number, extra: settings.license_issuer },
+    { label: "Người đại diện", value: settings.legal_representative },
+  ].filter((d) => d.value);
+
+  const chiNhanh = (settings.branch_addresses || "")
+    .split("\n")
+    .map((d) => d.trim())
+    .filter(Boolean);
+
   const socials = [
     { Icon: FacebookIcon, href: settings.facebook },
     { Icon: InstagramIcon, href: settings.instagram },
     { Icon: YoutubeIcon, href: settings.youtube },
   ];
+
+  const thanhToan = ["Chuyển khoản ngân hàng", "Thẻ VISA / MasterCard", "Tiền mặt tại văn phòng"];
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -85,6 +107,20 @@ export default function Footer({ settings = {} }) {
                 </a>
               ))}
             </div>
+
+            {/* Phương thức thanh toán — khách Việt tìm dòng này trước khi bấm đặt */}
+            <div className="mt-6">
+              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-white/50">
+                <CreditCard className="h-3.5 w-3.5" /> Thanh toán
+              </p>
+              <div className="mt-2.5 flex flex-wrap gap-2">
+                {thanhToan.map((t) => (
+                  <span key={t} className="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] text-white/70">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div>
@@ -100,23 +136,27 @@ export default function Footer({ settings = {} }) {
           </div>
 
           <div>
-            <h4 className="font-display text-base font-semibold text-white/90">Công ty</h4>
+            <h4 className="font-display text-base font-semibold text-white/90">Hỗ trợ khách hàng</h4>
             <ul className="mt-4 space-y-2.5 text-sm text-white/65">
+              <li>
+                <Link href="/tra-cuu-booking" className="flex items-center gap-1.5 font-semibold text-teal-400 transition-colors hover:text-teal-300">
+                  <FileSearch className="h-3.5 w-3.5" /> Tra cứu đơn đặt tour
+                </Link>
+              </li>
               <li><Link href="/ve-chung-toi" className="transition-colors hover:text-teal-400">Về chúng tôi</Link></li>
               <li><Link href="/lien-he" className="transition-colors hover:text-teal-400">Liên hệ</Link></li>
               <li><Link href="/chinh-sach-bao-mat" className="transition-colors hover:text-teal-400">Chính sách bảo mật</Link></li>
-              <li><a href="#" className="transition-colors hover:text-teal-400">Tuyển dụng</a></li>
             </ul>
 
             <h4 className="mt-6 font-display text-base font-semibold text-white/90">Liên hệ</h4>
             <ul className="mt-4 space-y-3 text-sm text-white/65">
               <li className="flex items-center gap-2.5">
                 <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10"><Phone className="h-3.5 w-3.5 text-teal-400" /></span>
-                {hotline} (24/7)
+                <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="hover:text-teal-400">{hotline}</a> (24/7)
               </li>
               <li className="flex items-center gap-2.5">
                 <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10"><Mail className="h-3.5 w-3.5 text-teal-400" /></span>
-                {contactEmail}
+                <a href={`mailto:${contactEmail}`} className="hover:text-teal-400">{contactEmail}</a>
               </li>
             </ul>
           </div>
@@ -148,12 +188,75 @@ export default function Footer({ settings = {} }) {
             >
               Chỉ đường trên Google Maps <ArrowRight className="h-3 w-3" />
             </a>
+
+            {chiNhanh.length > 0 && (
+              <div className="mt-5">
+                <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-white/50">
+                  <Building2 className="h-3.5 w-3.5" /> Chi nhánh
+                </p>
+                <ul className="mt-2 space-y-1.5 text-xs leading-relaxed text-white/60">
+                  {chiNhanh.map((cn) => (
+                    <li key={cn}>{cn}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/75 sm:flex-row">
-          <p>© 2026 {settings.company_name || "PSVTravel"}. Bảo lưu mọi quyền.</p>
-          <p>Giấy phép kinh doanh lữ hành quốc tế số 79-234/2026/TCDL-GP LHQT</p>
+        {/* ===== KHỐI PHÁP LÝ =====
+            Đây là thứ phân biệt một website lữ hành thật với một trang lừa đảo.
+            Khách cẩn thận sẽ copy mã số thuế / số giấy phép đem đi tra —
+            nên mọi con số ở đây phải khớp giấy tờ. */}
+        {(phapLy.length > 0 || settings.moit_url) && (
+          <div className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0">
+                <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-teal-400">
+                  <BadgeCheck className="h-3.5 w-3.5" /> Thông tin pháp lý
+                </p>
+                <dl className="mt-3 space-y-1.5 text-xs leading-relaxed text-white/65">
+                  {phapLy.map((d) => (
+                    <div key={d.label} className="flex flex-wrap gap-x-1.5">
+                      <dt className="text-white/45">{d.label}:</dt>
+                      <dd className="font-medium text-white/85">
+                        {d.value}
+                        {d.extra && <span className="font-normal text-white/50"> — {d.extra}</span>}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+
+              {/* Huy hiệu "Đã thông báo Bộ Công Thương" chỉ hiện khi đã có link xác nhận thật
+                  ở online.gov.vn. Muốn dùng ảnh huy hiệu chính thức thì tải file PNG mà
+                  online.gov.vn cấp về đặt vào /public rồi thay <span> bằng <Image>. */}
+              {settings.moit_url && (
+                <a
+                  href={settings.moit_url}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="flex shrink-0 items-center gap-2.5 self-start rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 transition-colors hover:border-teal-400/50 hover:bg-white/10"
+                >
+                  <BadgeCheck className="h-7 w-7 shrink-0 text-teal-400" />
+                  <span className="text-left text-[11px] leading-tight text-white/75">
+                    Đã thông báo
+                    <br />
+                    <strong className="text-xs text-white">Bộ Công Thương</strong>
+                  </span>
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/75 sm:flex-row">
+          <p>© {new Date().getFullYear()} {settings.legal_name || settings.company_name || "PSVTravel"}. Bảo lưu mọi quyền.</p>
+          <p className="text-white/55">
+            {settings.license_number
+              ? `Giấy phép lữ hành quốc tế số ${settings.license_number}`
+              : "Kinh doanh dịch vụ lữ hành theo giấy phép do cơ quan quản lý du lịch cấp"}
+          </p>
         </div>
       </div>
     </footer>
