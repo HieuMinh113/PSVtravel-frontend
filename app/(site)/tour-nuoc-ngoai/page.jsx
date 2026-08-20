@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import AbroadTours from "@/components/pages/AbroadTours";
 import { pageMeta } from "@/app/lib/seo";
-import { getTours } from "@/app/lib/api";
+import { getTours, getOrbitImages } from "@/app/lib/api";
 
 export const revalidate = 60;
 
@@ -12,10 +12,13 @@ export const metadata = pageMeta({
 });
 
 export default async function Page() {
-  const tours = await getTours({ type: "abroad" });
+  const [tours, orbitImages] = await Promise.all([
+    getTours({ type: "abroad" }),
+    getOrbitImages("orbit_abroad"),
+  ]);
   return (
     <Suspense fallback={null}>
-      <AbroadTours tours={tours} />
+      <AbroadTours tours={tours} orbitImages={orbitImages} />
     </Suspense>
   );
 }

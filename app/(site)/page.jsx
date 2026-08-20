@@ -1,6 +1,6 @@
 import Home from "@/components/pages/Home";
 import { pageMeta } from "@/app/lib/seo";
-import { getTours, getBanners, getFeaturedReviews } from "@/app/lib/api";
+import { getTours, getBanners, getOrbitImages, getFeaturedReviews } from "@/app/lib/api";
 
 export const revalidate = 60;
 
@@ -10,10 +10,11 @@ export const metadata = pageMeta({
 });
 
 export default async function Page() {
-  const [domestic, abroad, banners, reviews] = await Promise.all([
+  const [domestic, abroad, banners, orbitImages, reviews] = await Promise.all([
     getTours({ type: "domestic" }),
     getTours({ type: "abroad" }),
     getBanners(),
+    getOrbitImages("orbit_home"),
     getFeaturedReviews(),
   ]);
 
@@ -27,6 +28,11 @@ export default async function Page() {
     .slice(0, 6);
 
   return (
-    <Home upcoming={upcoming} banner={banners[0] ?? null} reviews={reviews} />
+    <Home
+      upcoming={upcoming}
+      banner={banners[0] ?? null}
+      orbitImages={orbitImages}
+      reviews={reviews}
+    />
   );
 }
