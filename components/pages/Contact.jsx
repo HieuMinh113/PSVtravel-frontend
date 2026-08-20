@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Phone, Mail, MapPin, Clock, Send, CheckCircle2, MessageCircle, Building2,
+  Loader2, AlertCircle,
 } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
@@ -16,6 +17,18 @@ const offices = [
 
 export default function Contact({ settings = {} }) {
   const [submitted, setSubmitted] = useState(false);
+  const [dangGui, setDangGui] = useState(false);
+  const [loi, setLoi] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    subject: "Tư vấn tour trong nước",
+    message: "",
+    website: "", // ô bẫy chống bot, người thật không nhìn thấy
+  });
+
+  const doiO = (ten) => (e) => setForm((f) => ({ ...f, [ten]: e.target.value }));
 
   const hotline = settings.hotline || "1900 1177";
   const contactEmail = settings.email || "hi@psvtravel.vn";
@@ -27,9 +40,39 @@ export default function Contact({ settings = {} }) {
     { Icon: YoutubeIcon, href: settings.youtube, label: "YouTube" },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (dangGui) return;
+
+    setDangGui(true);
+    setLoi("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        if (res.status === 429) {
+          setLoi("Bạn đã gửi nhiều lời nhắn liên tiếp. Vui lòng gọi hotline để được hỗ trợ ngay.");
+          return;
+        }
+        // Laravel trả lỗi theo từng ô trong `errors` — gom lại thành một dòng
+        const chiTiet = data?.errors ? Object.values(data.errors).flat().join(" ") : null;
+        setLoi(chiTiet || data?.message || "Gửi lời nhắn thất bại. Vui lòng thử lại.");
+        return;
+      }
+
+      setSubmitted(true);
+      setForm({ name: "", phone: "", email: "", subject: "Tư vấn tour trong nước", message: "", website: "" });
+    } catch {
+      setLoi("Không kết nối được máy chủ. Vui lòng gọi hotline giúp chúng tôi.");
+    } finally {
+      setDangGui(false);
+    }
   };
 
   // Ba kênh liên hệ chính — trình bày thành thẻ bấm được thay vì dòng chữ tĩnh,
@@ -169,7 +212,7 @@ export default function Contact({ settings = {} }) {
                   </button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="relative space-y-5">
                   <div>
                     <h3 className="font-display text-xl font-bold text-deep-900">Gửi lời nhắn cho chúng tôi</h3>
                     <p className="mt-1 text-sm text-ink-muted">Chúng tôi phản hồi trong vòng 15 phút làm việc.</p>
@@ -177,20 +220,20 @@ export default function Contact({ settings = {} }) {
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     <div>
                       <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
-                      <input required placeholder="Nguyễn Văn A" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                      <input required value={form.name} onChange={doiO("name")} placeholder="Nguyễn Văn A" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
-                      <input required placeholder="09xx xxx xxx" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                      <input required type="tel" inputMode="tel" value={form.phone} onChange={doiO("phone")} placeholder="09xx xxx xxx" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-ink-muted">Email</label>
-                    <input required type="email" placeholder="ban@email.com" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                    <label className="text-xs font-semibold text-ink-muted">Email <span className="font-normal text-ink-subtle">(không bắt buộc)</span></label>
+                    <input type="email" value={form.email} onChange={doiO("email")} placeholder="ban@email.com" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-ink-muted">Chủ đề quan tâm</label>
-                    <select className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white">
+                    <select value={form.subject} onChange={doiO("subject")} className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white">
                       <option>Tư vấn tour trong nước</option>
                       <option>Tư vấn tour nước ngoài</option>
                       <option>Dịch vụ visa</option>
@@ -200,10 +243,28 @@ export default function Contact({ settings = {} }) {
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-ink-muted">Lời nhắn</label>
-                    <textarea required rows={4} placeholder="Nội dung bạn muốn trao đổi..." className="mt-1.5 w-full resize-none rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                    <textarea required rows={4} minLength={10} maxLength={2000} value={form.message} onChange={doiO("message")} placeholder="Nội dung bạn muốn trao đổi..." className="mt-1.5 w-full resize-none rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                   </div>
-                  <button type="submit" className="btn-cta w-full !py-3.5">
-                    Gửi lời nhắn <Send className="h-4 w-4" />
+                  {/* Ô bẫy chống bot: ẩn khỏi mắt người và khỏi trình đọc màn hình.
+                      Bot điền hết mọi ô sẽ tự lộ ra và bị backend từ chối. */}
+                  <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
+                    <label htmlFor="website">Đừng điền ô này</label>
+                    <input id="website" name="website" tabIndex={-1} autoComplete="off" value={form.website} onChange={doiO("website")} />
+                  </div>
+
+                  {loi && (
+                    <div className="flex items-start gap-2.5 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700 ring-1 ring-rose-200">
+                      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                      <span>{loi}</span>
+                    </div>
+                  )}
+
+                  <button type="submit" disabled={dangGui} className="btn-cta w-full !py-3.5 disabled:opacity-60">
+                    {dangGui ? (
+                      <><Loader2 className="h-4 w-4 animate-spin" /> Đang gửi...</>
+                    ) : (
+                      <>Gửi lời nhắn <Send className="h-4 w-4" /></>
+                    )}
                   </button>
                   <p className="text-center text-xs text-ink-subtle">
                     Hoặc gọi trực tiếp <a href={`tel:${hotline.replace(/[^0-9]/g, "")}`} className="font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.

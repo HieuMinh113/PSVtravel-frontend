@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import NavLink from "./NavLink";
 import TopBar from "./TopBar";
-import { usePathname } from "next/navigation";
+import UserMenu from "./UserMenu";
+import useNguoiDung from "@/app/lib/useNguoiDung";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu, X, User, ChevronDown, Compass, ArrowRight,
@@ -160,6 +162,8 @@ export default function Navbar({ settings = {} }) {
   const [megaOpenKey, setMegaOpenKey] = useState(null);
   const [mobileMegaOpenKey, setMobileMegaOpenKey] = useState(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const { nguoiDung, datLai } = useNguoiDung();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -282,16 +286,7 @@ export default function Navbar({ settings = {} }) {
         </div>
 
         <div className="hidden items-center gap-2 lg:flex xl:gap-3">
-          <Link
-            href="/dang-nhap"
-            className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold transition-all duration-300 xl:px-4 ${
-              solid
-                ? "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
-                : "bg-white/15 text-white backdrop-blur-md hover:bg-white/25"
-            }`}
-          >
-            <User className="h-4 w-4" /> <span className="hidden xl:inline">Đăng nhập</span>
-          </Link>
+          <UserMenu solid={solid} />
         </div>
 
         <button
@@ -391,12 +386,44 @@ export default function Navbar({ settings = {} }) {
                   </NavLink>
                 )
               )}
-              <Link
-                href="/dang-nhap"
-                className="mt-2 rounded-xl bg-ocean-500 px-4 py-3 text-center text-sm font-semibold text-white"
-              >
-                Đăng nhập / Đăng ký
-              </Link>
+              {nguoiDung ? (
+                <>
+                  <div className="mt-2 flex items-center gap-2.5 rounded-xl bg-ocean-50 px-4 py-3">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-ocean-600 text-xs font-bold text-white">
+                      {(nguoiDung.name || "?").trim().charAt(0).toUpperCase()}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-deep-900">{nguoiDung.name}</p>
+                      <p className="truncate text-xs text-ink-subtle">{nguoiDung.email}</p>
+                    </div>
+                  </div>
+                  <Link href="/tai-khoan" className="rounded-xl px-4 py-3 text-sm font-medium text-deep-800">
+                    Đơn đặt tour của tôi
+                  </Link>
+                  <Link href="/tai-khoan?tab=ho-so" className="rounded-xl px-4 py-3 text-sm font-medium text-deep-800">
+                    Hồ sơ &amp; mật khẩu
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+                      datLai(null);
+                      router.push("/");
+                      router.refresh();
+                    }}
+                    className="rounded-xl px-4 py-3 text-left text-sm font-semibold text-rose-600"
+                  >
+                    Đăng xuất
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/dang-nhap"
+                  className="mt-2 rounded-xl bg-ocean-500 px-4 py-3 text-center text-sm font-semibold text-white"
+                >
+                  Đăng nhập / Đăng ký
+                </Link>
+              )}
             </div>
           </motion.div>
         )}

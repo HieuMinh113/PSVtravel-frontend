@@ -17,6 +17,7 @@ import { domesticRegions, abroadRegions } from "@/data/filters";
 import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwan } from "@/components/FlagIcons";
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
+import ReviewForm from "@/components/ReviewForm";
 
 const flagBySlug = {
   "Thái Lan": FlagThailand,
@@ -758,6 +759,9 @@ export default function TourDetail({ basePath, tour, related = [] }) {
               ))}
             </div>
           )}
+
+          {/* Ô gửi đánh giá — tự ẩn nếu khách chưa đăng nhập hoặc chưa đi tour này */}
+          <ReviewForm slug={tour.slug} tourName={tour.name} />
         </div>
       </section>
 
