@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import NavLink from "./NavLink";
+import TopBar from "./TopBar";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -153,7 +154,7 @@ function MegaPanel({ config }) {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({ settings = {} }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [megaOpenKey, setMegaOpenKey] = useState(null);
@@ -177,6 +178,16 @@ export default function Navbar() {
         solid ? "bg-white/85 shadow-md backdrop-blur-lg" : "bg-transparent"
       }`}
     >
+      {/* Thanh hotline: hiện khi ở đầu trang, tự thu lại khi khách cuộn xuống
+          để trả chỗ cho nội dung — giữ nguyên hành vi header cũ. */}
+      <div
+        className={`overflow-hidden transition-[max-height,opacity] duration-500 ease-enter ${
+          solid ? "max-h-0 opacity-0" : "max-h-12 opacity-100"
+        }`}
+      >
+        <TopBar settings={settings} />
+      </div>
+
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
         <Link href="/" className="group flex items-center">
           <Image

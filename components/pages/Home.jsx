@@ -12,6 +12,7 @@ import Testimonials from "@/components/Testimonials";
 import SectionReveal from "@/components/SectionReveal";
 import CountUp from "@/components/CountUp";
 import OrbitGallery from "@/components/OrbitGallery";
+import TrustBar from "@/components/TrustBar";
 
 // Ảnh điểm đến thật, lấy lại từ dữ liệu tour có sẵn để đảm bảo luôn tải được
 const orbitImages = [
@@ -163,6 +164,9 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
           <ChevronDown className="h-4 w-4" />
         </motion.div>
       </section>
+
+      {/* ===== DẢI CAM KẾT — ngay dưới Hero, trả lời câu hỏi "có tin được không" ===== */}
+      <TrustBar />
 
       {/* ===== BANNER KHUYẾN MÃI ===== */}
       <section className="bg-foam px-5 pt-10 sm:px-8">

@@ -3,15 +3,22 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1
 const REVALIDATE = 60; // giây — chậm nhất 1 phút thấy thay đổi từ admin
 
 async function layJSON(duongDan) {
-  const res = await fetch(`${API_URL}${duongDan}`, {
-    next: { revalidate: REVALIDATE },
-    headers: { Accept: "application/json" },
-  });
-  if (!res.ok) {
-    if (res.status === 404) return null;
-    throw new Error(`API lỗi ${res.status}: ${duongDan}`);
+  // Backend chết KHÔNG được kéo sập cả website: trả null để trang vẫn dựng
+  // với phần dữ liệu còn lại, thay vì ném lỗi làm Next trả 500 toàn trang.
+  try {
+    const res = await fetch(`${API_URL}${duongDan}`, {
+      next: { revalidate: REVALIDATE },
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) {
+      if (res.status !== 404) console.error(`API lỗi ${res.status}: ${duongDan}`);
+      return null;
+    }
+    return res.json();
+  } catch (e) {
+    console.error(`Không gọi được API: ${duongDan}`, e?.cause?.code || e?.message);
+    return null;
   }
-  return res.json();
 }
 
 // Chuyển dữ liệu tour từ backend sang đúng hình dạng giao diện quen dùng
