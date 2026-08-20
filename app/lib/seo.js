@@ -1,5 +1,8 @@
 // Cấu hình SEO dùng chung. Đổi SITE_URL sang domain thật khi lên production.
-export const SITE_URL = "https://psvtravel.vercel.app";
+// Đổi qua biến NEXT_PUBLIC_SITE_URL trong .env.local khi lên domain thật.
+// Sai giá trị này thì thẻ canonical, Open Graph và sitemap đều trỏ nhầm chỗ.
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://psvtravel.vercel.app";
 export const SITE_NAME = "PSV Travel";
 export const SITE_DESCRIPTION =
   "PSV Travel — công ty lữ hành chuyên tour trong nước và nước ngoài, vé máy bay, làm visa. Giá trọn gói minh bạch, hỗ trợ 24/7.";

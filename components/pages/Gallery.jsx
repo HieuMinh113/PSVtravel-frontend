@@ -8,7 +8,8 @@ import { customerPhotos } from "@/data/customerPhotos";
 
 const chuCaiDau = (ten) => (ten || "?").trim().charAt(0).toUpperCase();
 
-export default function Gallery({ photos = [] }) {
+export default function Gallery({ photos = [], settings = {} }) {
+  const email = settings.email || "hi@psvtravel.vn";
   // Ưu tiên ảnh thật từ API; nếu DB chưa có thì dùng data mẫu để trang không trống
   const list = photos.length ? photos : customerPhotos;
 
@@ -106,7 +107,7 @@ export default function Gallery({ photos = [] }) {
               <p className="mx-auto mt-2 max-w-md text-sm text-white/85">
                 Gửi ảnh và cảm nhận của bạn để cùng xuất hiện trong trang khoảnh khắc du khách nhé!
               </p>
-              <a href="mailto:hi@psvtravel.vn" className="btn-cta mt-7 !px-6 !py-3 text-sm">
+              <a href={`mailto:${email}`} className="btn-cta mt-7 !px-6 !py-3 text-sm">
                 Chia sẻ khoảnh khắc của bạn <ArrowRight className="h-4 w-4" />
               </a>
             </div>

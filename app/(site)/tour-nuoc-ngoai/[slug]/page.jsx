@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import TourDetail from "@/components/pages/TourDetail";
 import { tourMeta, tourJsonLd, JsonLd } from "@/app/lib/seo";
-import { getTours, getTourBySlug } from "@/app/lib/api";
+import { getTours, getTourBySlug, getSettings } from "@/app/lib/api";
 
 const BASE = "/tour-nuoc-ngoai";
 export const revalidate = 60;
@@ -22,7 +22,10 @@ export default async function Page({ params }) {
   const tour = await getTourBySlug(slug);
   if (!tour || tour.type !== "abroad") notFound();
 
-  const all = await getTours({ type: "abroad" });
+  const [all, settings] = await Promise.all([
+    getTours({ type: "abroad" }),
+    getSettings(),
+  ]);
   const related = all
     .filter((t) => t.slug !== tour.slug && t.region === tour.region)
     .slice(0, 3);
@@ -30,7 +33,7 @@ export default async function Page({ params }) {
   return (
     <>
       <JsonLd data={tourJsonLd(tour, BASE)} />
-      <TourDetail basePath={BASE} tour={tour} related={related} />
+      <TourDetail basePath={BASE} tour={tour} related={related} settings={settings} />
     </>
   );
 }

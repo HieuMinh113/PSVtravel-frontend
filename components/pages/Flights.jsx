@@ -28,7 +28,8 @@ const perks = [
   { icon: Headset, title: "Hỗ trợ đổi/huỷ vé", desc: "Đội ngũ chăm sóc khách hàng hỗ trợ xử lý phát sinh 24/7." },
 ];
 
-export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = [] }) {
+export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = [], settings = {} }) {
+  const hotline = settings.hotline || "1900 1177";
   const airlines = apiAirlines.length ? apiAirlines : fallbackAirlines;
   const deals = apiDeals.length ? apiDeals : fallbackDeals;
 
@@ -159,7 +160,7 @@ export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = 
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
             <a href="tel:19001177" className="btn-cta">
-              <Phone className="h-4 w-4" /> Gọi ngay: 1900 1177
+              <Phone className="h-4 w-4" /> Gọi ngay: {hotline}
             </a>
             <a href="/lien-he" className="btn-ghost">
               Gửi yêu cầu <ArrowRight className="h-4 w-4" />

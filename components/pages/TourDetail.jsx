@@ -162,7 +162,9 @@ function FaqItem({ item, isOpen, onToggle }) {
   );
 }
 
-export default function TourDetail({ basePath, tour, related = [] }) {
+export default function TourDetail({ basePath, tour, related = [], settings = {} }) {
+  // Hotline lấy từ Cài đặt trong admin — đổi một chỗ là đổi khắp site
+  const hotline = settings.hotline || "1900 1177";
   const router = useRouter();
   const [openDay, setOpenDay] = useState(0);
   const [adults, setAdults] = useState(2);
@@ -605,7 +607,7 @@ export default function TourDetail({ basePath, tour, related = [] }) {
                     </button>
 
                     <a href="tel:19001177" className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
-                      <Phone className="h-4 w-4" /> Gọi tư vấn: 1900 1177
+                      <Phone className="h-4 w-4" /> Gọi tư vấn: {hotline}
                     </a>
 
                     {/* Ba cam kết ngắn — gỡ nốt do dự cuối cùng trước khi bấm nút */}
