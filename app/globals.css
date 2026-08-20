@@ -232,18 +232,32 @@ img, video {
 .prose-psv strong { color: #0b2440; font-weight: 700; }
 
 /* ===== Hero co giãn theo chiều CAO màn hình =====
-   Chiều rộng đã có Tailwind lo. Còn lại là chiều cao: laptop 13" mở thêm
-   thanh bookmark, hoặc điện thoại xoay ngang, thì Hero chỉ còn ~500px —
-   lúc đó vòng ảnh xoay và dải tour phải nhường chỗ cho chữ và ô tìm kiếm. */
-.orbit-layer { opacity: 0.6; }
-
-/* Màn hình thấp: bỏ vòng ảnh trước, vì nó chỉ trang trí */
-@media (max-height: 800px) {
-  .orbit-layer { display: none; }
+   Chiều rộng đã có Tailwind lo. Còn lại là chiều cao: laptop Windows để
+   tỉ lệ hiển thị 125% thì viewport chỉ còn khoảng 700–750px, chưa kể
+   thanh bookmark. Ở đó vòng ảnh xoay phải THU NHỎ để không đè lên tiêu đề
+   — không ẩn đi, vì đó là điểm nhấn chính của trang chủ.
+   Chỉ ẩn hẳn khi màn hình thấp tới mức không còn chỗ cho chữ (điện thoại
+   xoay ngang). transform: scale co cả vòng quanh tâm, không phá bố cục. */
+.orbit-layer {
+  opacity: 0.65;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* Rất thấp (điện thoại nằm ngang): bỏ luôn dải tour, giữ chữ + ô tìm kiếm */
-@media (max-height: 620px) {
+@media (max-height: 860px) {
+  .orbit-layer { transform: scale(0.88); opacity: 0.58; }
+}
+
+@media (max-height: 740px) {
+  .orbit-layer { transform: scale(0.76); opacity: 0.52; }
+}
+
+@media (max-height: 640px) {
+  .orbit-layer { transform: scale(0.64); opacity: 0.45; }
+}
+
+/* Quá thấp (điện thoại nằm ngang): nhường hết chỗ cho chữ + ô tìm kiếm */
+@media (max-height: 520px) {
+  .orbit-layer { display: none; }
   .hero-tours { display: none; }
 }
 
