@@ -140,11 +140,11 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
           <OrbitGallery
             images={orbitImages}
             radiusLg={560}
-            radiusMd={380}
-            radiusSm={190}
+            radiusMd={330}
+            radiusSm={172}
             cardSizeLg={92}
-            cardSizeMd={72}
-            cardSizeSm={48}
+            cardSizeMd={68}
+            cardSizeSm={54}
             showCenter={false}
           />
         </div>

@@ -25,9 +25,21 @@ export default function OrbitGallery({
   useEffect(() => {
     const handleResize = () => {
       const w = window.innerWidth;
-      if (w < 480) setDims({ radius: radiusSm, cardSize: cardSizeSm });
-      else if (w < 768) setDims({ radius: radiusMd, cardSize: cardSizeMd });
-      else setDims({ radius: radiusLg, cardSize: cardSizeLg });
+
+      // iPad dọc (768–1023px) phải dùng cỡ vừa, không dùng cỡ desktop —
+      // bán kính desktop lớn hơn nửa màn hình nên ảnh hai bên văng hết ra ngoài.
+      let radius, cardSize;
+      if (w < 480) [radius, cardSize] = [radiusSm, cardSizeSm];
+      else if (w < 1024) [radius, cardSize] = [radiusMd, cardSizeMd];
+      else [radius, cardSize] = [radiusLg, cardSizeLg];
+
+      // Chốt chặn cuối: bán kính không bao giờ được vượt quá nửa màn hình,
+      // nếu không hai ảnh trái/phải bị cắt mất hoặc biến khỏi khung nhìn.
+      // Đây là lưới an toàn cho MỌI kích thước, kể cả cửa sổ thu nhỏ bất thường.
+      const gioiHan = Math.floor(w / 2 - cardSize / 2 - 10);
+      radius = Math.max(Math.min(radius, gioiHan), 84);
+
+      setDims({ radius, cardSize });
     };
     handleResize();
     window.addEventListener("resize", handleResize);
