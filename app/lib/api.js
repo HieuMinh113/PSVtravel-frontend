@@ -96,9 +96,17 @@ export async function createBooking(payload) {
   }
   return json;
 }
-export async function getBanners() {
-  const json = await layJSON(`/banners`);
+// viTri: promo | orbit_home | orbit_domestic | orbit_abroad
+export async function getBanners(viTri = "promo") {
+  const json = await layJSON(`/banners?position=${viTri}`);
   return json?.data ?? [];
+}
+
+// Ảnh cho vòng xoay ở đầu trang, quản lý trong admin (Banner → chọn vị trí).
+// Trả mảng URL. Chưa upload ảnh nào thì trả mảng rỗng để trang tự dùng ảnh dự phòng.
+export async function getOrbitImages(viTri) {
+  const banners = await getBanners(viTri);
+  return banners.map((b) => b.image).filter(Boolean);
 }
 export async function getFeaturedReviews() {
   const json = await layJSON(`/reviews/featured`);

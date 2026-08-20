@@ -35,15 +35,15 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
       {hasOrbit ? (
         <>
           {/* Vòng ảnh xoay bao quanh khối chữ — cùng kích thước với Hero trang chủ */}
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
             <OrbitGallery
               images={orbitImages}
-              radiusLg={430}
-              radiusMd={320}
-              radiusSm={175}
-              cardSizeLg={104}
-              cardSizeMd={82}
-              cardSizeSm={52}
+              radiusLg={470}
+              radiusMd={330}
+              radiusSm={172}
+              cardSizeLg={96}
+              cardSizeMd={68}
+              cardSizeSm={54}
               showCenter={false}
             />
           </div>

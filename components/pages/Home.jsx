@@ -25,8 +25,9 @@ const HERO_FALLBACK =
 // Mỗi ảnh nền hiển thị bao lâu trước khi chuyển sang ảnh kế (mili giây)
 const HERO_DOI_ANH_MS = 6500;
 
-// Ảnh điểm đến thật, lấy lại từ dữ liệu tour có sẵn để đảm bảo luôn tải được
-const orbitImages = [
+// Ảnh vòng xoay DỰ PHÒNG — chỉ dùng khi admin chưa upload ảnh nào.
+// Ảnh thật quản lý trong admin: Banner → Vị trí "Ảnh vòng xoay — Trang chủ".
+const ORBIT_DU_PHONG = [
   "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=400&auto=format&fit=crop", // Phú Quốc
   "https://images.unsplash.com/photo-1528127269322-539801943592?q=80&w=400&auto=format&fit=crop", // Sa Pa
   "https://images.unsplash.com/photo-1573270689103-d7a4e42b609a?q=80&w=400&auto=format&fit=crop", // Hạ Long
@@ -63,7 +64,10 @@ const trustSignals = [
   { icon: ShieldCheck, text: "Giấy phép lữ hành quốc tế" },
 ];
 
-export default function Home({ upcoming = [], banner = null, reviews = [] }) {
+export default function Home({ upcoming = [], banner = null, orbitImages = [], reviews = [] }) {
+  // Ưu tiên ảnh do công ty tự upload trong admin; chưa có thì dùng ảnh dự phòng
+  const anhVongXoay = orbitImages.length ? orbitImages : ORBIT_DU_PHONG;
+
   // Nếu DB chưa có banner nào thì dùng banner mặc định để trang không bị trống
   const promo = banner ?? {
     image: "https://images.unsplash.com/photo-1512100356356-de1b84283e18?q=80&w=1600&auto=format&fit=crop",
@@ -138,7 +142,7 @@ export default function Home({ upcoming = [], banner = null, reviews = [] }) {
             (xem globals.css), tránh ảnh đè lên tiêu đề và thanh điều hướng */}
         <div className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
           <OrbitGallery
-            images={orbitImages}
+            images={anhVongXoay}
             radiusLg={560}
             radiusMd={330}
             radiusSm={172}
