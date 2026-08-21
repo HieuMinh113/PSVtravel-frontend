@@ -87,7 +87,10 @@ export async function getTourBySlug(slug) {
 }
 // Gọi từ trình duyệt (form đặt tour). Server tự tính tiền & đặt trạng thái.
 export async function createBooking(payload) {
-  const res = await fetch(`${API_URL}/bookings`, {
+  // Gọi route handler của Next chứ KHÔNG gọi thẳng Laravel: chỉ ở phía máy chủ
+  // Next mới đọc được cookie token để gắn vào yêu cầu, nhờ đó đơn của khách
+  // đã đăng nhập mới nối được vào tài khoản.
+  const res = await fetch(`/api/bookings`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(payload),

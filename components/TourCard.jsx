@@ -91,7 +91,13 @@ export default function TourCard({ tour, basePath, index = 0 }) {
             <div className={`mt-3 flex items-center gap-1.5 text-xs font-medium ${sapHetCho ? "text-sunset-700" : "text-ink-subtle"}`}>
               <Users2 className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">
-                {sapHetCho ? `Chỉ còn ${tour.seatsLeft} chỗ` : tour.seatsLeft ? `Còn ${tour.seatsLeft} chỗ` : "Nhận đặt chỗ"}
+                {sapHetCho
+                  ? `Chỉ còn ${tour.seatsLeft} chỗ`
+                  : tour.seatsLeft > 0
+                  ? `Còn ${tour.seatsLeft} chỗ`
+                  : tour.seatsLeft === 0
+                  ? "Hết chỗ"
+                  : "Nhận đặt chỗ"}
                 {tour.startDate ? ` · Khởi hành ${tour.startDate}` : ""}
               </span>
             </div>

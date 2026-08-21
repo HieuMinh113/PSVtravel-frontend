@@ -1,9 +1,14 @@
 import "./globals.css";
-import { Playfair_Display, Roboto } from "next/font/google";
+import { Be_Vietnam_Pro, Roboto } from "next/font/google";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, organizationJsonLd, JsonLd } from "./lib/seo";
 
-// Font tiêu đề: Playfair Display (editorial, sang) — có hỗ trợ tiếng Việt
-const display = Playfair_Display({
+// Font tiêu đề: Be Vietnam Pro — thiết kế riêng cho tiếng Việt.
+//
+// Trước đây dùng Playfair Display. Đó là serif báo chí nét mảnh, đẹp ở tiêu đề
+// cỡ lớn nhưng xuống cỡ nhỏ (tên ngày trong lịch trình, tên thẻ tour, nhãn) thì
+// dấu tiếng Việt bết vào thân chữ, rất khó đọc — tester ghi nhận ở nhiều chỗ.
+// Be Vietnam Pro có dấu vẽ riêng, cân ở mọi cỡ chữ mà vẫn giữ nét hiện đại.
+const display = Be_Vietnam_Pro({
   subsets: ["latin", "latin-ext", "vietnamese"],
   weight: ["500", "600", "700", "800"],
   variable: "--font-display",

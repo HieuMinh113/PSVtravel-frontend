@@ -89,7 +89,7 @@ export default {
         foam: "#F5FBFC",
       },
       fontFamily: {
-        display: ["var(--font-display)", "Georgia", "serif"],
+        display: ["var(--font-display)", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
         body: ["var(--font-body)", "system-ui", "sans-serif"],
       },
       backgroundImage: {

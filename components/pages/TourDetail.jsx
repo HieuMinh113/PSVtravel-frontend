@@ -470,13 +470,21 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
                 <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora opacity-70" />
 
                 <div className="relative">
-                  {tour.seatsLeft ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-sunset-600 px-2.5 py-1 text-xs font-bold text-white">
+                  {/* seatsLeft = 0 nghĩa là HẾT CHỖ. Trước đây viết `tour.seatsLeft ? ...`
+                      nên số 0 bị JavaScript coi là rỗng và rơi vào nhánh "Đang nhận đặt
+                      chỗ" — khách thấy còn nhận, bấm đặt xong mới bị máy chủ từ chối.
+                      Phải phân biệt rõ: null/undefined = chưa rõ, 0 = hết. */}
+                  {tour.seatsLeft == null ? (
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-white/90">
+                      <Users2 className="h-3.5 w-3.5" /> Đang nhận đặt chỗ
+                    </span>
+                  ) : tour.seatsLeft > 0 ? (
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-gold-300">
                       <Users2 className="h-3.5 w-3.5" /> Chỉ còn {tour.seatsLeft} chỗ
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
-                      <Users2 className="h-3.5 w-3.5" /> Đang nhận đặt chỗ
+                    <span className="flex items-center gap-1.5 rounded-full bg-rose-500/90 px-2.5 py-1 text-xs font-bold text-white">
+                      <Users2 className="h-3.5 w-3.5" /> Hết chỗ
                     </span>
                   )}
 
@@ -562,7 +570,7 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
                         <div className="flex items-center gap-3">
                           <button onClick={() => setAdults((g) => Math.max(1, g - 1))} aria-label="Bớt một người lớn" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">−</button>
                           <span className="w-4 text-center text-sm font-bold text-deep-900">{adults}</span>
-                          <button onClick={() => setAdults((g) => Math.min((tour.seatsLeft || 99), g + 1))} aria-label="Thêm một người lớn" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">+</button>
+                          <button onClick={() => setAdults((g) => Math.min(tour.seatsLeft ?? 99, g + 1))} aria-label="Thêm một người lớn" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">+</button>
                         </div>
                       </div>
                     </div>

@@ -66,8 +66,13 @@ export default function Auth() {
     setDangGui(false);
 
     if (ok) {
-      router.push("/tai-khoan");
-      router.refresh();
+      // Dùng điều hướng cứng thay cho router.push: cookie phiên vừa được đặt
+      // trong phản hồi, nhưng bộ nhớ đệm định tuyến phía trình duyệt vẫn giữ
+      // bản /tai-khoan render lúc CHƯA đăng nhập, nên lần bấm đầu bị đá ngược
+      // về trang đăng nhập — phải đăng nhập lần hai mới vào được. Tải lại cả
+      // trang thì máy chủ chắc chắn thấy cookie mới, và thanh điều hướng cũng
+      // vẽ lại đúng trạng thái đã đăng nhập.
+      window.location.assign("/tai-khoan");
       return;
     }
 
@@ -113,8 +118,7 @@ export default function Auth() {
     setDangGui(false);
 
     if (ok) {
-      router.push("/tai-khoan");
-      router.refresh();
+      window.location.assign("/tai-khoan");
       return;
     }
 
