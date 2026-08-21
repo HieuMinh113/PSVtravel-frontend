@@ -70,12 +70,14 @@ function mapTour(t) {
   };
 }
 
-export async function getTours({ type, featured, category } = {}) {
+export async function getTours({ type, featured, category, perPage = 50 } = {}) {
   const q = new URLSearchParams();
   if (type) q.set("type", type);
   if (featured) q.set("featured", "true");
   if (category) q.set("category", category);
-  q.set("per_page", "50");
+  // Trang nào chỉ cần vài tour thì truyền perPage nhỏ — tải 50 tour kèm đợt
+  // khởi hành rồi vứt đi gần hết là phần chậm dễ bỏ sót nhất.
+  q.set("per_page", String(perPage));
 
   const json = await layJSON(`/tours?${q.toString()}`);
   return (json?.data ?? []).map(mapTour);

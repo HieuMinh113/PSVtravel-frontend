@@ -22,8 +22,10 @@ export default async function Page({ params }) {
   const tour = await getTourBySlug(slug);
   if (!tour || tour.type !== "domestic") notFound();
 
+  // Chỉ lấy đúng số tour cần cho khối "Tour liên quan" thay vì tải cả 50 tour
+  // rồi vứt đi 47 cái. Lấy dư vài tour để sau khi loại chính nó ra vẫn đủ 3.
   const [all, settings] = await Promise.all([
-    getTours({ type: "domestic" }),
+    getTours({ type: "domestic", perPage: 8 }),
     getSettings(),
   ]);
   const related = all
