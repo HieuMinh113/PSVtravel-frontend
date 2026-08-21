@@ -32,10 +32,15 @@ export default async function Page({ params }) {
     .filter((t) => t.slug !== tour.slug && t.region === tour.region)
     .slice(0, 3);
 
+  // Danh mục cho thanh lọc đi tắt, lấy từ chính các tour vừa tải
+  const regions = [...new Set(all.map((t) => t.region).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, "vi")
+  );
+
   return (
     <>
       <JsonLd data={tourJsonLd(tour, BASE)} />
-      <TourDetail basePath={BASE} tour={tour} related={related} settings={settings} />
+      <TourDetail basePath={BASE} tour={tour} related={related} regions={regions} settings={settings} />
     </>
   );
 }

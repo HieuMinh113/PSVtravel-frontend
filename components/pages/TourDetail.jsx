@@ -13,7 +13,6 @@ import {
 import { createBooking } from "@/app/lib/api";
 import { formatVND } from "@/data/tours";
 import { getVisaInfo } from "@/data/visa";
-import { domesticRegions, abroadRegions } from "@/data/filters";
 import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwan } from "@/components/FlagIcons";
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
@@ -162,7 +161,7 @@ function FaqItem({ item, isOpen, onToggle }) {
   );
 }
 
-export default function TourDetail({ basePath, tour, related = [], settings = {} }) {
+export default function TourDetail({ basePath, tour, related = [], regions = [], settings = {} }) {
   // Hotline lấy từ Cài đặt trong admin — đổi một chỗ là đổi khắp site
   const hotline = settings.hotline || "0907 870 707";
   const router = useRouter();
@@ -192,8 +191,10 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
     router.push(`${basePath}?q=${encodeURIComponent(detailQuery.trim())}&scroll=1`);
   };
 
-  // Danh mục lọc đổi theo loại tour đang xem — trong nước hiện vùng miền, nước ngoài hiện quốc gia
-  const detailRegions = basePath === "/tour-trong-nuoc" ? domesticRegions : abroadRegions;
+  // Danh mục lọc lấy từ tour thật đang bán (trang cha truyền xuống), không viết
+  // cứng nữa. Đây là thanh đi tắt sang trang danh sách — thiếu vài mục cũng không
+  // sao, sang bên đó là thấy đủ.
+  const detailRegions = regions.length ? ["Tất cả", ...regions] : [];
   const handleDetailRegion = (r) => {
     router.push(`${basePath}?region=${encodeURIComponent(r)}&scroll=1`);
   };
