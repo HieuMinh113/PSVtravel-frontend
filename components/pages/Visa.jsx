@@ -47,7 +47,9 @@ function FaqItem({ item, isOpen, onToggle }) {
   );
 }
 
-export default function Visa({ countries: apiCountries = [] }) {
+export default function Visa({ countries: apiCountries = [], settings = {} }) {
+  // Hotline lấy từ Cài đặt trong admin — đổi một chỗ là đổi khắp site
+  const hotline = settings.hotline || "0907 870 707";
   const [openFaq, setOpenFaq] = useState(0);
 
   // Ưu tiên dữ liệu từ API; nếu DB trống thì dùng data mẫu (chỉ nước cần visa)
@@ -81,7 +83,7 @@ export default function Visa({ countries: apiCountries = [] }) {
             <div className="mt-10 rounded-3xl border border-dashed border-ocean-200 bg-white py-16 text-center">
               <Globe2 className="mx-auto h-10 w-10 text-ocean-300" />
               <p className="mt-4 font-display text-lg font-semibold text-deep-900">Đang cập nhật danh sách quốc gia</p>
-              <a href="tel:19001177" className="btn-cta mt-6 !px-6 !py-3 text-sm">
+              <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="btn-cta mt-6 !px-6 !py-3 text-sm">
                 <Phone className="h-4 w-4" /> Gọi tư vấn ngay
               </a>
             </div>
@@ -186,7 +188,7 @@ export default function Visa({ countries: apiCountries = [] }) {
             Gửi thông tin để chuyên viên visa liên hệ tư vấn miễn phí trong 15 phút.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
-            <a href="tel:19001177" className="btn-cta">
+            <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="btn-cta">
               <Phone className="h-4 w-4" /> Gọi tư vấn miễn phí
             </a>
             <a href="/lien-he" className="btn-ghost">

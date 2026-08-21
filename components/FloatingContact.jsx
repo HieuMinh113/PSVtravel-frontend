@@ -5,7 +5,7 @@ import { Phone, MessageCircle } from "lucide-react";
 // Nút liên hệ nổi — giúp khách chốt tour nhanh qua gọi điện / Zalo,
 // kênh chuyển đổi rất quan trọng với thị trường du lịch Việt Nam.
 export default function FloatingContact({ settings = {} }) {
-  const hotline = settings.hotline || "1900 1177";
+  const hotline = settings.hotline || "0907 870 707";
   const telHref = `tel:${hotline.replace(/[^0-9]/g, "")}`;
 
   const zaloRaw = settings.zalo;

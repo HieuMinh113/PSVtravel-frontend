@@ -12,9 +12,10 @@ export default function Footer({ settings = {} }) {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
-  const hotline = settings.hotline || "1900 1177";
+  const hotline = settings.hotline || "0907 870 707";
   const contactEmail = settings.email || "hi@psvtravel.vn";
-  const address = settings.address || "190 Pasteur, Phường Võ Thị Sáu, Quận 3, TP. Hồ Chí Minh";
+  const address =
+    settings.address || "529 Huỳnh Tấn Phát, Phường Tân Thuận, Quận 7, TP. Hồ Chí Minh";
 
   // ==== Khối pháp lý — lấy từ Cài đặt trong admin (nhóm "Pháp lý") ====
   // Cố ý KHÔNG đặt giá trị mặc định giả: dòng nào chưa nhập trong admin thì
@@ -24,7 +25,7 @@ export default function Footer({ settings = {} }) {
     { label: "Tên pháp nhân", value: settings.legal_name },
     { label: "Giấy CN ĐKKD số", value: settings.business_registration, extra: settings.business_registration_place },
     { label: "Mã số thuế", value: settings.tax_code },
-    { label: "Giấy phép lữ hành quốc tế số", value: settings.license_number, extra: settings.license_issuer },
+    { label: "Giấy phép kinh doanh dịch vụ lữ hành số", value: settings.license_number, extra: settings.license_issuer },
     { label: "Người đại diện", value: settings.legal_representative },
   ].filter((d) => d.value);
 
@@ -181,7 +182,7 @@ export default function Footer({ settings = {} }) {
               />
             </div>
             <a
-              href="https://www.google.com/maps?q=190+Pasteur,+Quan+3,+TP.HCM"
+              href={`https://www.google.com/maps?q=${encodeURIComponent(address)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-teal-400 hover:text-teal-300"
@@ -252,11 +253,13 @@ export default function Footer({ settings = {} }) {
 
         <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/75 sm:flex-row">
           <p>© {new Date().getFullYear()} {settings.legal_name || settings.company_name || "PSVTravel"}. Bảo lưu mọi quyền.</p>
-          <p className="text-white/55">
-            {settings.license_number
-              ? `Giấy phép lữ hành quốc tế số ${settings.license_number}`
-              : "Kinh doanh dịch vụ lữ hành theo giấy phép do cơ quan quản lý du lịch cấp"}
-          </p>
+          {/* Chỉ ghi số giấy phép khi thật sự đã có. Không có câu mặc định nào
+              ám chỉ công ty đã được cấp phép — ghi vậy là quảng cáo sai sự thật. */}
+          {settings.license_number && (
+            <p className="text-white/55">
+              Giấy phép kinh doanh dịch vụ lữ hành số {settings.license_number}
+            </p>
+          )}
         </div>
       </div>
     </footer>

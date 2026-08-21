@@ -10,7 +10,7 @@ import { Phone, Mail, FileSearch, Clock3 } from "lucide-react";
  * mạnh hơn mọi huy hiệu hay lời cam kết trên trang.
  */
 export default function TopBar({ settings = {} }) {
-  const hotline = settings.hotline || "1900 1177";
+  const hotline = settings.hotline || "0907 870 707";
   const email = settings.email || "hi@psvtravel.vn";
   const gioLamViec = settings.working_hours || "Hỗ trợ 24/7, kể cả cuối tuần";
 

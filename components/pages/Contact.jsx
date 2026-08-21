@@ -30,7 +30,7 @@ export default function Contact({ settings = {} }) {
 
   const doiO = (ten) => (e) => setForm((f) => ({ ...f, [ten]: e.target.value }));
 
-  const hotline = settings.hotline || "1900 1177";
+  const hotline = settings.hotline || "0907 870 707";
   const contactEmail = settings.email || "hi@psvtravel.vn";
   const workingHours = settings.working_hours || "Thứ 2 – Chủ nhật: 7:30 – 21:30";
 

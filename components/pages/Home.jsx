@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ShieldCheck, Clock3, HeartHandshake, BadgePercent, ArrowRight,
-  Plane, Sparkles, MapPinned, Star, Users2,
+  Plane, Sparkles, MapPinned, Building2, Headset,
 } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import TourCard from "@/components/TourCard";
@@ -56,12 +56,16 @@ const whyUs = [
   { icon: Clock3, title: "Xác nhận tức thì", desc: "Đặt chỗ và nhận xác nhận tour chỉ trong vài phút." },
 ];
 
-// Bằng chứng tin cậy đặt ngay dưới ô tìm kiếm — theo mẫu Hero-Centric + Social Proof,
-// khách thấy lý do tin tưởng ngay màn hình đầu tiên mà không cần cuộn
+// Bằng chứng tin cậy đặt ngay dưới ô tìm kiếm — khách thấy lý do tin tưởng
+// ngay màn hình đầu tiên mà không cần cuộn.
+//
+// Cố ý dùng danh tính pháp nhân thật thay cho các con số thành tích:
+// khách cẩn thận copy mã số thuế đem tra được ngay, còn "4.8/5 từ 2.400 đánh giá"
+// mà đếm trên trang chỉ có vài chục bài thì phản tác dụng.
 const trustSignals = [
-  { icon: Users2, text: "18.000+ khách mỗi năm" },
-  { icon: Star, text: "4.8/5 từ hơn 2.400 đánh giá" },
-  { icon: ShieldCheck, text: "Giấy phép lữ hành quốc tế" },
+  { icon: Building2, text: "Công ty CP Du lịch P.S.V Travel" },
+  { icon: ShieldCheck, text: "MST 0314542363" },
+  { icon: Headset, text: "Hotline 24/7: 0907 870 707" },
 ];
 
 export default function Home({ upcoming = [], banner = null, orbitImages = [], reviews = [] }) {

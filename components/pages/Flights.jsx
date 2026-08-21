@@ -29,7 +29,7 @@ const perks = [
 ];
 
 export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = [], settings = {} }) {
-  const hotline = settings.hotline || "1900 1177";
+  const hotline = settings.hotline || "0907 870 707";
   const airlines = apiAirlines.length ? apiAirlines : fallbackAirlines;
   const deals = apiDeals.length ? apiDeals : fallbackDeals;
 
@@ -95,7 +95,7 @@ export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = 
                     <p className="font-display text-xl font-bold text-sunset-700">{d.price}</p>
                   </div>
                   <a
-                    href="tel:19001177"
+                    href={`tel:${hotline.replace(/[^0-9+]/g, "")}`}
                     className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-full border border-ocean-200 text-xs font-semibold text-ocean-700 transition-colors group-hover:border-sunset-600 group-hover:bg-sunset-600 group-hover:text-white"
                   >
                     <Phone className="h-3.5 w-3.5" /> Đặt vé ngay
@@ -159,7 +159,7 @@ export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = 
             Gọi hotline để nhân viên dò giá tốt nhất theo đúng ngày bay và ngân sách của bạn.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
-            <a href="tel:19001177" className="btn-cta">
+            <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="btn-cta">
               <Phone className="h-4 w-4" /> Gọi ngay: {hotline}
             </a>
             <a href="/lien-he" className="btn-ghost">

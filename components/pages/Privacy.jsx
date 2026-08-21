@@ -32,7 +32,7 @@ const sections = [
   {
     icon: Mail,
     title: "6. Liên hệ về chính sách bảo mật",
-    content: "Nếu có bất kỳ thắc mắc nào về chính sách bảo mật này, vui lòng liên hệ qua email hi@psvtravel.vn hoặc hotline 1900 1177 để được hỗ trợ.",
+    content: "Nếu có bất kỳ thắc mắc nào về chính sách bảo mật này, vui lòng liên hệ qua email hi@psvtravel.vn hoặc hotline 0907 870 707 để được hỗ trợ.",
   },
 ];
 
