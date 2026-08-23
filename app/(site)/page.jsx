@@ -26,6 +26,12 @@ export default async function Page() {
     getCategories(),
   ]);
 
+  // Gợi ý cho ô tìm kiếm: tên tour + vùng miền/quốc gia của tour thật đang bán
+  const goiY = (ds, truong) =>
+    [...new Set(ds.flatMap((t) => [t[truong], t.name]).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, "vi"))
+      .slice(0, 30);
+
   const upcoming = [...domestic, ...abroad]
     .filter((t) => t.startDate)
     .sort(
@@ -41,6 +47,8 @@ export default async function Page() {
       banner={banners[0] ?? null}
       orbitImages={orbitImages}
       diemDen={danhMuc.slice(0, 6)}
+      goiYTrongNuoc={goiY(domestic, "region")}
+      goiYNuocNgoai={goiY(abroad, "country")}
       reviews={reviews}
     />
   );

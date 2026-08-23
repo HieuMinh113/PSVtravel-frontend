@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { createBooking } from "@/app/lib/api";
 import { formatVND } from "@/data/tours";
-import { getVisaInfo } from "@/data/visa";
 import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwan } from "@/components/FlagIcons";
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
@@ -161,7 +160,7 @@ function FaqItem({ item, isOpen, onToggle }) {
   );
 }
 
-export default function TourDetail({ basePath, tour, related = [], regions = [], settings = {} }) {
+export default function TourDetail({ basePath, tour, related = [], regions = [], visaList = [], settings = {} }) {
   // Hotline lấy từ Cài đặt trong admin — đổi một chỗ là đổi khắp site
   const hotline = settings.hotline || "0907 870 707";
   const router = useRouter();
@@ -248,7 +247,29 @@ export default function TourDetail({ basePath, tour, related = [], regions = [],
   }, [tour, galleryImages]);
 
   const reviews = tour?.reviewsList ?? [];
-  const visaInfo = useMemo(() => (tour?.country ? getVisaInfo(tour.country) : null), [tour]);
+  // Thông tin visa lấy từ DỮ LIỆU THẬT trong admin, không còn đọc file mẫu.
+  //
+  // Trước đây trang này đọc data/visa.js viết cứng 10 quốc gia, trong khi trang
+  // /lam-visa đã dùng API — admin sửa giá hay thời gian xử lý thì hai trang hiện
+  // hai con số khác nhau cho cùng một nước.
+  const visaInfo = useMemo(() => {
+    if (!tour?.country) return null;
+
+    const nuoc = visaList.find(
+      (v) => v.name?.trim().toLowerCase() === tour.country.trim().toLowerCase()
+    );
+
+    // Không có trong danh sách visa nghĩa là nước đó miễn visa cho hộ chiếu
+    // Việt Nam, hoặc công ty chưa nhận làm — không bịa thông tin ra.
+    if (!nuoc) return null;
+
+    return {
+      required: true,
+      time: nuoc.time || "Liên hệ",
+      rate: nuoc.rate || "—",
+      price: nuoc.price || "Liên hệ",
+    };
+  }, [tour, visaList]);
   const VisaFlag = tour?.country ? flagBySlug[tour.country] : null;
   const faqs = useMemo(() => (tour ? tourFaqs(tour, !!tour.country) : []), [tour]);
 
