@@ -421,7 +421,9 @@ export default function Home({ upcoming = [], banner = null, orbitImages = [], r
             { to: 98, suffix: "%", label: "Khách hàng hài lòng" },
           ].map((s, i) => (
             <SectionReveal key={s.label} delay={i * 0.08} className="rounded-2xl bg-white px-4 py-6 text-center shadow-card">
-              <p className="font-display text-3xl font-bold text-ocean-700 sm:text-4xl">
+              {/* Cỡ chữ co theo bề ngang: ô hai cột trên điện thoại chỉ rộng
+                  khoảng 118px, số dài như 18.400+ ở cỡ cứng sẽ tràn ra ngoài. */}
+              <p className="font-display text-[clamp(1.35rem,6vw,2.25rem)] font-bold leading-tight text-ocean-700">
                 <CountUp to={s.to} suffix={s.suffix} />
               </p>
               <p className="mt-1.5 text-xs text-ink-muted sm:text-sm">{s.label}</p>

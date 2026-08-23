@@ -101,9 +101,14 @@ export default function AboutUs() {
                 { to: 18400, suffix: "+", label: "Khách/năm" },
                 { to: 60, suffix: "+", label: "Nhân sự" },
               ].map((s) => (
-                <div key={s.label} className="rounded-2xl bg-white px-3 py-4 text-center shadow-card">
-                  <p className="font-display text-2xl font-bold text-ocean-700 sm:text-3xl"><CountUp to={s.to} suffix={s.suffix} /></p>
-                  <p className="mt-1 text-xs text-ink-muted">{s.label}</p>
+                <div key={s.label} className="rounded-2xl bg-white px-2 py-4 text-center shadow-card sm:px-3">
+                  {/* Cỡ chữ co theo bề ngang màn hình. Để cứng text-2xl thì trên
+                      máy 360px mỗi ô chỉ còn khoảng 72px, "18.400+" không thể vừa
+                      — hoặc dấu + rớt xuống dòng, hoặc số tràn khỏi ô. */}
+                  <p className="font-display text-[clamp(0.95rem,4.6vw,1.875rem)] font-bold leading-tight text-ocean-700">
+                    <CountUp to={s.to} suffix={s.suffix} />
+                  </p>
+                  <p className="mt-1 text-[11px] leading-snug text-ink-muted sm:text-xs">{s.label}</p>
                 </div>
               ))}
             </div>
