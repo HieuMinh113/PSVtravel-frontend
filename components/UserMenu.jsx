@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { User, LogOut, Ticket, Settings, ChevronDown, Loader2 } from "lucide-react";
+import { User, LogOut, Ticket, Settings, ChevronDown, Loader2, ShieldCheck, ExternalLink } from "lucide-react";
 import useNguoiDung from "@/app/lib/useNguoiDung";
 
 /**
@@ -122,7 +122,14 @@ export default function UserMenu({ solid = false }) {
             className="absolute right-0 top-full mt-2 w-60 overflow-hidden rounded-2xl bg-white shadow-deep ring-1 ring-black/5"
           >
             <div className="border-b border-ocean-50 bg-ocean-50/50 px-4 py-3">
-              <p className="truncate text-sm font-bold text-deep-900">{user.name}</p>
+              <div className="flex items-center gap-2">
+                <p className="truncate text-sm font-bold text-deep-900">{user.name}</p>
+                {user.la_nhan_vien && (
+                  <span className="shrink-0 rounded-full bg-ocean-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                    Nhân viên
+                  </span>
+                )}
+              </div>
               <p className="truncate text-xs text-ink-subtle">{user.email}</p>
             </div>
 
@@ -146,6 +153,27 @@ export default function UserMenu({ solid = false }) {
                 Hồ sơ &amp; mật khẩu
               </Link>
             </div>
+
+            {/* Lối tắt sang trang quản trị — chỉ hiện với nhân viên và quản trị
+                viên. Họ hay xem website như khách rồi cần nhảy sang admin xử lý
+                đơn; trước đây phải tự gõ địa chỉ ở cổng khác.
+                Mở tab mới để không mất trang đang xem bên website. */}
+            {user.la_nhan_vien && user.admin_url && (
+              <div className="border-t border-ocean-50 p-1.5">
+                <a
+                  href={user.admin_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  role="menuitem"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-50"
+                >
+                  <ShieldCheck className="h-4 w-4 text-ocean-600" />
+                  <span className="flex-1">Vào trang quản trị</span>
+                  <ExternalLink className="h-3.5 w-3.5 text-ink-subtle" />
+                </a>
+              </div>
+            )}
 
             <div className="border-t border-ocean-50 p-1.5">
               <button
