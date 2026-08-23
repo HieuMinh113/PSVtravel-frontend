@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Ticket, UserCog, CalendarDays, Users2, Wallet, ArrowRight,
-  Loader2, CheckCircle2, AlertCircle, KeyRound, Save,
+  Loader2, CheckCircle2, AlertCircle, KeyRound, Save, Star,
 } from "lucide-react";
+import ReviewForm from "@/components/ReviewForm";
 
 const tienVN = (v) => (typeof v === "number" ? v.toLocaleString("vi-VN") + "đ" : v);
 
@@ -23,6 +24,8 @@ function TheDon({ don, index }) {
   const duongDan = don.tour_slug
     ? `${don.tour_type === "domestic" ? "/tour-trong-nuoc" : "/tour-nuoc-ngoai"}/${don.tour_slug}`
     : null;
+
+  const [moDanhGia, setMoDanhGia] = useState(false);
 
   return (
     <motion.article
@@ -72,13 +75,54 @@ function TheDon({ don, index }) {
 
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-ocean-50 pt-3">
             <p className="text-xs text-ink-subtle">Đặt lúc {don.created_at}</p>
-            {duongDan && (
-              <Link href={duongDan} className="group flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800">
-                Xem lại tour
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 ease-enter group-hover:translate-x-1" />
-              </Link>
-            )}
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              {/* Đơn đã đi xong thì mời khách đánh giá — đây là lúc họ còn nhớ
+                  rõ chuyến đi nhất. Đã đánh giá rồi thì chỉ ghi nhận, không cho
+                  gửi trùng. */}
+              {don.da_danh_gia && (
+                <span className="flex items-center gap-1.5 text-sm font-semibold text-teal-700">
+                  <Star className="h-4 w-4 fill-teal-600 text-teal-600" />
+                  Đã đánh giá
+                </span>
+              )}
+
+              {don.co_the_danh_gia && don.tour_slug && (
+                <button
+                  type="button"
+                  onClick={() => setMoDanhGia(true)}
+                  className="flex items-center gap-1.5 rounded-full bg-sunset-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sunset-500"
+                >
+                  <Star className="h-4 w-4" />
+                  Đánh giá tour
+                </button>
+              )}
+
+              {duongDan && (
+                <Link href={duongDan} className="group flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800">
+                  Xem lại tour
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 ease-enter group-hover:translate-x-1" />
+                </Link>
+              )}
+            </div>
           </div>
+
+          {/* Ô đánh giá mở ngay trong thẻ đơn, không phải nhảy sang trang tour */}
+          <AnimatePresence>
+            {moDanhGia && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="overflow-hidden"
+              >
+                <div className="mt-4 border-t border-ocean-50 pt-2">
+                  <ReviewForm slug={don.tour_slug} tourName={don.tour_name} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </motion.article>
