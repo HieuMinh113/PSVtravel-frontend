@@ -20,7 +20,11 @@ export default function OrbitGallery({
   showCenter = true,
   showRing = true,
 }) {
-  const [{ radius, cardSize }, setDims] = useState({ radius: radiusLg, cardSize: cardSizeLg });
+  const [{ radiusX, radiusY, cardSize }, setDims] = useState({
+    radiusX: radiusLg,
+    radiusY: Math.round(radiusLg * 0.72),
+    cardSize: cardSizeLg,
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -33,17 +37,25 @@ export default function OrbitGallery({
       else if (w < 1024) [radius, cardSize] = [radiusMd, cardSizeMd];
       else [radius, cardSize] = [radiusLg, cardSizeLg];
 
-      // Chốt chặn cuối: vòng ảnh phải nằm gọn trong khung nhìn theo CẢ HAI chiều.
+      // Quỹ đạo là hình BẦU DỤC chứ không phải hình tròn.
       //
-      // Trước đây chỉ chốt chiều ngang nên trên iPad mini và khi phóng trình
-      // duyệt lên 125% (làm khung nhìn thấp đi) thì ảnh trên/dưới bị cắt cụt.
-      // Trừ hao thêm 96px chiều cao cho thanh điều hướng cố định phía trên.
+      // Màn hình luôn rộng hơn cao, mà khối chữ + ô tìm kiếm cũng nằm ngang.
+      // Dùng một bán kính chung thì phải lấy theo chiều nhỏ nhất (chiều cao),
+      // vòng co lại nằm chen sau chữ thay vì bao quanh. Tách hai trục: trục
+      // ngang bám bề rộng để ôm trọn khối chữ, trục dọc bám chiều cao để ảnh
+      // trên/dưới không bị cắt cụt.
       const h = window.innerHeight;
-      const gioiHanNgang = Math.floor(w / 2 - cardSize / 2 - 12);
-      const gioiHanDoc = Math.floor((h - 96) / 2 - cardSize / 2 - 12);
-      radius = Math.max(Math.min(radius, gioiHanNgang, gioiHanDoc), 84);
 
-      setDims({ radius, cardSize });
+      // Trừ hao 96px chiều cao cho thanh điều hướng cố định phía trên
+      const tranNgang = Math.floor(w / 2 - cardSize / 2 - 12);
+      const tranDoc = Math.floor((h - 96) / 2 - cardSize / 2 - 12);
+
+      const radiusX = Math.max(Math.min(radius, tranNgang), 84);
+      // Trục dọc thấp hơn trục ngang một chút cho dáng bầu dục tự nhiên,
+      // nhưng không được nhỏ quá kẻo ảnh dồn cục hai bên
+      const radiusY = Math.max(Math.min(Math.round(radius * 0.72), tranDoc), 70);
+
+      setDims({ radiusX, radiusY, cardSize });
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -55,13 +67,13 @@ export default function OrbitGallery({
   return (
     <div
       className="relative mx-auto"
-      style={{ width: radius * 2 + cardSize, height: radius * 2 + cardSize, maxWidth: "100%" }}
+      style={{ width: radiusX * 2 + cardSize, height: radiusY * 2 + cardSize, maxWidth: "100%" }}
     >
       {/* Vòng tròn dẫn hướng mờ phía sau, tạo cảm giác quỹ đạo */}
       {showRing && (
         <div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/25"
-          style={{ width: radius * 2, height: radius * 2 }}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-dashed border-white/25"
+          style={{ width: radiusX * 2, height: radiusY * 2 }}
         />
       )}
 
@@ -73,8 +85,8 @@ export default function OrbitGallery({
         {images.map((src, i) => {
           const angle = angleStep * i;
           const rad = (angle * Math.PI) / 180;
-          const x = Math.cos(rad) * radius;
-          const y = Math.sin(rad) * radius;
+          const x = Math.cos(rad) * radiusX;
+          const y = Math.sin(rad) * radiusY;
           return (
             <motion.div
               key={i}

@@ -233,29 +233,30 @@ img, video {
 
 /* ===== Vòng ảnh xoay — điểm nhấn thương hiệu, LUÔN hiển thị =====
    Không ẩn ở bất kỳ kích thước nào: đây là thứ khách nhớ về PSV Travel.
-   Chiều rộng do OrbitGallery tự lo (bán kính bị chốt không vượt nửa màn hình).
-   Ở đây chỉ lo chiều cao: màn hình càng thấp thì vòng thu nhỏ dần bằng
-   transform: scale để không lấn vào tiêu đề, nhưng vẫn thấy rõ. */
+   Kích thước do OrbitGallery tự lo: quỹ đạo là hình bầu dục, trục ngang bám
+   bề rộng màn hình, trục dọc bám chiều cao — nên tự vừa mọi thiết bị mà vẫn
+   ôm trọn khối chữ. Ở đây chỉ chỉnh độ đậm nhạt.
+
+   Trước đây còn thu nhỏ thêm bằng transform: scale theo chiều cao. Cộng với
+   việc trục dọc đã tự co, vòng bị co hai lần nên teo lại nằm chen sau chữ
+   thay vì bao quanh. Đã bỏ. */
 .orbit-layer {
   opacity: 0.85;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
-@media (max-height: 860px) {
-  .orbit-layer { transform: scale(0.92); opacity: 0.8; }
-}
-
+/* Màn hình thấp: làm mờ bớt để chữ nổi lên, không thu nhỏ nữa */
 @media (max-height: 740px) {
-  .orbit-layer { transform: scale(0.82); opacity: 0.76; }
+  .orbit-layer { opacity: 0.7; }
 }
 
-@media (max-height: 640px) {
-  .orbit-layer { transform: scale(0.7); opacity: 0.7; }
-}
-
-/* Điện thoại nằm ngang: vòng ảnh vẫn giữ, chỉ dải tour phải nhường chỗ
-   vì nó chiếm cả một hàng chiều cao mà màn hình không còn dư. */
+/* Điện thoại nằm ngang: dải tour phải nhường chỗ cho chữ và ô tìm kiếm */
 @media (max-height: 520px) {
-  .orbit-layer { transform: scale(0.58); opacity: 0.62; }
+  .orbit-layer { opacity: 0.55; }
   .hero-tours { display: none; }
+}
+
+/* iPad dọc: vòng ảnh mờ bớt để không tranh chấp với tiêu đề */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .orbit-layer { opacity: 0.5; }
 }
