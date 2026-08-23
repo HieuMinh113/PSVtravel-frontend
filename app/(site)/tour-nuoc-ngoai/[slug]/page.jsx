@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import TourDetail from "@/components/pages/TourDetail";
 import { tourMeta, tourJsonLd, JsonLd } from "@/app/lib/seo";
-import { getTours, getTourBySlug, getSettings } from "@/app/lib/api";
+import { getTours, getTourBySlug, getSettings, getVisaCountries } from "@/app/lib/api";
 
 const BASE = "/tour-nuoc-ngoai";
 export const revalidate = 60;
@@ -24,9 +24,11 @@ export default async function Page({ params }) {
 
   // Chỉ lấy đúng số tour cần cho khối "Tour liên quan" thay vì tải cả 50 tour
   // rồi vứt đi 47 cái. Lấy dư vài tour để sau khi loại chính nó ra vẫn đủ 3.
-  const [all, settings] = await Promise.all([
+  const [all, settings, visaList] = await Promise.all([
     getTours({ type: "abroad", perPage: 8 }),
     getSettings(),
+    // Thông tin visa thật từ admin, dùng cho khối Hướng dẫn visa
+    getVisaCountries(),
   ]);
   const related = all
     .filter((t) => t.slug !== tour.slug && t.region === tour.region)
@@ -40,7 +42,7 @@ export default async function Page({ params }) {
   return (
     <>
       <JsonLd data={tourJsonLd(tour, BASE)} />
-      <TourDetail basePath={BASE} tour={tour} related={related} regions={regions} settings={settings} />
+      <TourDetail basePath={BASE} tour={tour} related={related} regions={regions} visaList={visaList} settings={settings} />
     </>
   );
 }

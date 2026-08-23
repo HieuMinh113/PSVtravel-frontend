@@ -6,7 +6,6 @@ import {
 } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
-import { visaCountries } from "@/data/visa";
 
 const steps = [
   { title: "Tư vấn hồ sơ", desc: "Chuyên viên visa đánh giá hồ sơ và tư vấn loại visa phù hợp." },
@@ -52,10 +51,10 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
   const hotline = settings.hotline || "0907 870 707";
   const [openFaq, setOpenFaq] = useState(0);
 
-  // Ưu tiên dữ liệu từ API; nếu DB trống thì dùng data mẫu (chỉ nước cần visa)
-  const countries = apiCountries.length
-    ? apiCountries
-    : visaCountries.filter((c) => c.required);
+  // Chỉ dùng dữ liệu thật từ admin. Trước đây DB trống thì đổ ra 10 quốc gia
+  // mẫu kèm giá bịa — khách gọi hỏi theo giá đó là công ty đuối lý. Chưa nhập
+  // quốc gia nào thì hiện trạng thái trống, xử lý ở phần hiển thị bên dưới.
+  const countries = apiCountries;
 
   return (
     <div>

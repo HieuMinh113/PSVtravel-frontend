@@ -60,7 +60,15 @@ const trustSignals = [
   { icon: Headset, text: "Hotline 24/7: 0907 870 707" },
 ];
 
-export default function Home({ upcoming = [], banner = null, orbitImages = [], diemDen = [], reviews = [] }) {
+export default function Home({
+  upcoming = [],
+  banner = null,
+  orbitImages = [],
+  diemDen = [],
+  goiYTrongNuoc = [],
+  goiYNuocNgoai = [],
+  reviews = [],
+}) {
   // Ưu tiên ảnh do công ty tự upload trong admin; chưa có thì dùng ảnh dự phòng
   const anhVongXoay = orbitImages.length ? orbitImages : ORBIT_DU_PHONG;
 
@@ -190,7 +198,7 @@ export default function Home({ upcoming = [], banner = null, orbitImages = [], d
             </motion.p>
 
             <div className="mt-[clamp(1.25rem,3.5vh,2.25rem)] w-full">
-              <SearchBar />
+              <SearchBar diemDenTrongNuoc={goiYTrongNuoc} diemDenNuocNgoai={goiYNuocNgoai} />
             </div>
 
             {/* Bằng chứng tin cậy — đặt ngay dưới ô tìm kiếm */}

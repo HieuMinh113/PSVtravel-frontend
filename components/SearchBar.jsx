@@ -4,14 +4,20 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { MapPin, CalendarDays, Users2, Search } from "lucide-react";
 
-const destinations = [
-  "Phú Quốc", "Đà Nẵng", "Sa Pa", "Hạ Long", "Thái Lan", "Hàn Quốc", "Nhật Bản", "Singapore",
-];
-
-export default function SearchBar() {
+export default function SearchBar({ diemDenTrongNuoc = [], diemDenNuocNgoai = [] }) {
   const [dest, setDest] = useState("");
   const [type, setType] = useState("trong-nuoc");
   const router = useRouter();
+
+  // Gợi ý phải khớp tab đang chọn: đang ở "Tour trong nước" mà gợi ý Thái Lan
+  // thì khách bấm vào chỉ nhận kết quả rỗng. Danh sách lấy từ tour thật đang
+  // bán, không viết cứng nữa.
+  const goiY = type === "trong-nuoc" ? diemDenTrongNuoc : diemDenNuocNgoai;
+
+  const doiTab = (t) => {
+    setType(t);
+    setDest(""); // từ khoá của tab cũ không còn nghĩa ở tab mới
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,7 +42,7 @@ export default function SearchBar() {
           <button
             type="button"
             key={t.id}
-            onClick={() => setType(t.id)}
+            onClick={() => doiTab(t.id)}
             className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
               type === t.id ? "bg-ocean-500 text-white" : "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
             }`}
@@ -57,7 +63,7 @@ export default function SearchBar() {
             className="w-full rounded-2xl border border-ocean-100 bg-ocean-50/50 py-3.5 pl-11 pr-4 text-sm text-deep-900 outline-none transition-colors placeholder:text-ink-subtle focus:border-ocean-400 focus:bg-white"
           />
           <datalist id="destinations">
-            {destinations.map((d) => (
+            {goiY.map((d) => (
               <option key={d} value={d} />
             ))}
           </datalist>
