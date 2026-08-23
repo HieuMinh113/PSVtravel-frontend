@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // POST /api/bookings/lookup — proxy sang Laravel để tra cứu đơn đặt tour.
 // Đi qua đây thay vì gọi thẳng từ trình duyệt: giấu domain backend,

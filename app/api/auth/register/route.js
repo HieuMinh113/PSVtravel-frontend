@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // POST /api/auth/register — chuyển tiếp sang backend.
 // Chưa cấp token ở bước này vì tài khoản cần xác thực OTP trước.

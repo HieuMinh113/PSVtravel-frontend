@@ -1,5 +1,5 @@
 // Mọi lời gọi tới backend Laravel đi qua đây. Đổi domain khi lên production.
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 const REVALIDATE = 60; // giây — chậm nhất 1 phút thấy thay đổi từ admin
 
 async function layJSON(duongDan) {

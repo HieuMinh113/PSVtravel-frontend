@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { TEN_COOKIE, cauHinhCookie } from "@/app/lib/auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // POST /api/auth/verify-otp — xác thực mã. Đúng mã thì backend trả token,
 // đăng nhập luôn cho khách khỏi phải nhập lại mật khẩu.

@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // POST /api/auth/resend-otp — xin gửi lại mã.
 // Giới hạn chống spam nằm ở backend (chờ 60 giây, tối đa 5 mã/giờ).

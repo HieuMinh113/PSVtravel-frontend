@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 // KHÔNG đọc được — kể cả khi trang bị chèn mã độc (XSS) cũng không lấy được token.
 export const TEN_COOKIE = "psv_token";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // Cấu hình cookie dùng chung khi đăng nhập
 export const cauHinhCookie = {

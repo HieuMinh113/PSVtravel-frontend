@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { TEN_COOKIE, cauHinhCookie } from "@/app/lib/auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // POST /api/auth/login — nhận email/username/SĐT + mật khẩu từ form,
 // gọi backend Laravel, rồi CẤT TOKEN VÀO COOKIE httpOnly.

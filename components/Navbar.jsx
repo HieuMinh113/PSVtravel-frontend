@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import NavLink from "./NavLink";
 import TopBar from "./TopBar";
@@ -35,42 +35,41 @@ const regionStyle = {
   "Miền Nam": { icon: Palmtree, bg: "bg-teal-50", text: "text-teal-600" },
 };
 
-const domesticDestinations = [
-  { name: "Phú Quốc", region: "Miền Nam" },
-  { name: "Hạ Long", region: "Miền Bắc" },
-  { name: "Sa Pa", region: "Miền Bắc" },
-  { name: "Hà Giang", region: "Miền Bắc" },
-  { name: "Đà Nẵng", region: "Miền Trung" },
-  { name: "Cần Thơ", region: "Miền Nam" },
-];
-
-// Quốc gia lấy đúng theo dữ liệu tour nước ngoài hiện có (src/data/tours.js)
-// Dùng SVG cờ tự vẽ thay vì emoji vì Windows/Edge hiển thị emoji cờ thành chữ (TH, KR...).
-const countries = [
-  { name: "Thái Lan", Flag: FlagThailand },
-  { name: "Hàn Quốc", Flag: FlagKorea },
-  { name: "Nhật Bản", Flag: FlagJapan },
-  { name: "Singapore", Flag: FlagSingapore },
-  { name: "Trung Quốc", Flag: FlagChina },
-  { name: "Đài Loan", Flag: FlagTaiwan },
-];
-
-const megaConfig = {
-  domestic: {
-    heading: "Khám phá theo điểm đến",
-    subheading: "6 điểm đến nổi bật trong nước",
-    items: domesticDestinations,
-    to: "/tour-trong-nuoc",
-    ctaLabel: "Xem tất cả tour trong nước",
-  },
-  abroad: {
-    heading: "Khám phá theo điểm đến",
-    subheading: "6 quốc gia được yêu thích nhất",
-    items: countries,
-    to: "/tour-nuoc-ngoai",
-    ctaLabel: "Xem tất cả tour nước ngoài",
-  },
+// Cờ tự vẽ bằng SVG thay vì emoji, vì Windows/Edge hiển thị emoji cờ thành
+// chữ viết tắt (TH, KR...). Quốc gia nào chưa có cờ thì để trống, mục vẫn hiện.
+const coQuocGia = {
+  "Thái Lan": FlagThailand,
+  "Hàn Quốc": FlagKorea,
+  "Nhật Bản": FlagJapan,
+  Singapore: FlagSingapore,
+  "Trung Quốc": FlagChina,
+  "Đài Loan": FlagTaiwan,
 };
+
+// Danh sách trong mega menu dựng từ tour THẬT đang bán, không viết cứng nữa.
+// Admin thêm tour ở vùng miền hoặc quốc gia mới là menu tự có mục đó.
+function taoMegaConfig(vungMien = [], quocGia = []) {
+  return {
+    domestic: {
+      heading: "Khám phá theo điểm đến",
+      subheading: vungMien.length
+        ? `${vungMien.length} vùng miền đang có tour`
+        : "Chưa có tour trong nước",
+      items: vungMien.map((ten) => ({ name: ten, region: ten })),
+      to: "/tour-trong-nuoc",
+      ctaLabel: "Xem tất cả tour trong nước",
+    },
+    abroad: {
+      heading: "Khám phá theo điểm đến",
+      subheading: quocGia.length
+        ? `${quocGia.length} quốc gia đang có tour`
+        : "Chưa có tour nước ngoài",
+      items: quocGia.map((ten) => ({ name: ten, Flag: coQuocGia[ten] })),
+      to: "/tour-nuoc-ngoai",
+      ctaLabel: "Xem tất cả tour nước ngoài",
+    },
+  };
+}
 
 const panelVariants = {
   hidden: { opacity: 0, y: 10, scale: 0.97 },
@@ -118,8 +117,10 @@ function MegaPanel({ config }) {
           return (
             <motion.div key={item.name} variants={itemVariants}>
               <Link
-                href={config.to}
-                state={{ query: item.name }}
+                // Bấm vào phải LỌC. Trước đây dùng state={{query}} — cú pháp của
+                // React Router, sang Next không có tác dụng nên bấm mục nào cũng
+                // ra trang danh sách đầy đủ, không lọc gì.
+                href={`${config.to}?region=${encodeURIComponent(item.name)}&scroll=1`}
                 className="group flex items-center gap-3 rounded-2xl p-2.5 transition-colors duration-200 hover:bg-ocean-50/60"
               >
                 {item.Flag ? (
@@ -156,7 +157,10 @@ function MegaPanel({ config }) {
   );
 }
 
-export default function Navbar({ settings = {} }) {
+export default function Navbar({ settings = {}, vungMien = [], quocGia = [] }) {
+  // Dựng lại chỉ khi danh sách đổi, không dựng lại mỗi lần rê chuột
+  const megaConfig = useMemo(() => taoMegaConfig(vungMien, quocGia), [vungMien, quocGia]);
+
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [megaOpenKey, setMegaOpenKey] = useState(null);
@@ -358,8 +362,7 @@ export default function Navbar({ settings = {} }) {
                               return (
                                 <Link
                                   key={item.name}
-                                  href={megaConfig[l.mega].to}
-                                  state={{ query: item.name }}
+                                  href={`${megaConfig[l.mega].to}?region=${encodeURIComponent(item.name)}&scroll=1`}
                                   className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-ocean-50"
                                 >
                                   {item.Flag ? (
