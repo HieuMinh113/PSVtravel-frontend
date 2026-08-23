@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays, Eye, User, ArrowLeft, ArrowRight, Quote } from "lucide-react";
+import GhiNhanLuotXem from "@/components/GhiNhanLuotXem";
 
 // Trang chi tiết bài viết cẩm nang — component phía server (không cần "use client")
 // để nội dung bài viết được render sẵn trong HTML, tốt cho SEO.
@@ -8,7 +9,11 @@ export default function GuideDetail({ guide }) {
   if (!guide) return null;
 
   return (
-    <article>
+    <>
+      {/* Không hiển thị gì — chỉ báo cho máy chủ biết bài vừa được mở */}
+      <GhiNhanLuotXem slug={guide.slug} />
+
+      <article>
       {/* Ảnh bìa + tiêu đề */}
       <section className="relative h-[52dvh] min-h-[380px] overflow-hidden">
         {guide.image ? (
@@ -107,5 +112,6 @@ export default function GuideDetail({ guide }) {
         </div>
       </section>
     </article>
+    </>
   );
 }
