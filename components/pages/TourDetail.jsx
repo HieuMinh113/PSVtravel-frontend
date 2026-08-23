@@ -169,33 +169,39 @@ export default function TourDetail({ basePath, tour, related = [], regions = [],
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
 
-  // Số chỗ tối đa cho phép chọn. Đợt còn chỗ thì chặn theo đúng số chỗ còn lại,
-  // chưa chọn đợt thì lấy trần 50 cho khớp giới hạn của máy chủ.
-  const tranKhach = tour?.seatsLeft ?? 50;
-
-  // Người dùng gõ tay: nhận chuỗi rỗng trong lúc đang xoá, chỉ ép về khoảng
-  // hợp lệ khi rời ô. Ép ngay lúc gõ thì xoá số cuối là ô tự nhảy về 1,
-  // không sao gõ số mới được — đúng cái tester gặp.
-  const doiSoKhach = (raw, setter, toiThieu) => {
-    if (raw === "") {
-      setter("");
-      return;
-    }
-    const so = parseInt(raw.replace(/[^0-9]/g, ""), 10);
-    if (Number.isNaN(so)) return;
-    setter(Math.min(so, tranKhach));
-  };
-
-  const chotSoKhach = (giaTri, setter, toiThieu) => {
-    const so = parseInt(giaTri, 10);
-    setter(Number.isNaN(so) ? toiThieu : Math.max(toiThieu, Math.min(so, tranKhach)));
-  };
   const [form, setForm] = useState({ name: "", contact: "" });
   const [formError, setFormError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [bookingCode, setBookingCode] = useState("");
   const [depId, setDepId] = useState(tour?.departures?.[0]?.id ?? null);
+  // Điền sẵn tên và số điện thoại cho khách đã đăng nhập.
+  //
+  // Cố ý lấy ở phía trình duyệt chứ không lấy lúc dựng trang: trang chi tiết
+  // tour được dựng tĩnh sẵn cho Google đọc, đọc cookie lúc dựng sẽ biến nó
+  // thành trang động, mất luôn lợi thế SEO của những trang quan trọng nhất.
+  useEffect(() => {
+    let huy = false;
+
+    fetch("/api/auth/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        const nguoiDung = json?.user;
+        if (huy || !nguoiDung) return;
+
+        // Chỉ điền vào ô còn trống — không đè lên thứ khách đang gõ dở
+        setForm((f) => ({
+          name: f.name || nguoiDung.name || "",
+          contact: f.contact || nguoiDung.phone || "",
+        }));
+      })
+      .catch(() => {});
+
+    return () => {
+      huy = true;
+    };
+  }, []);
+
   const [lightboxImg, setLightboxImg] = useState(null);
   const [openFaq, setOpenFaq] = useState(0);
   const [showMobileBar, setShowMobileBar] = useState(false);
@@ -248,12 +254,43 @@ export default function TourDetail({ basePath, tour, related = [], regions = [],
 
   if (!tour) return notFound();
 
-  const childPrice = tour.childPrice ?? Math.round((tour.price * 0.6) / 1000) * 1000;
+  // Đợt khởi hành đang chọn quyết định GIÁ và SỐ CHỖ.
+  //
+  // Trước đây mọi chỗ đều lấy tour.price và tour.seatsLeft — tức là giá và số
+  // chỗ của đợt ĐẦU TIÊN. Đặt giá riêng cho từng đợt trong admin xong ra web
+  // vẫn thấy một giá duy nhất, và đổi đợt thì số chỗ không đổi theo.
+  const dotDangChon = tour.departures?.find((d) => d.id === depId) ?? null;
+  const donGiaNguoiLon = dotDangChon?.price ?? tour.price;
+  const choConLai = dotDangChon?.seatsLeft ?? tour.seatsLeft;
+
+  // Số chỗ tối đa cho phép chọn. Đợt còn chỗ thì chặn theo đúng số chỗ còn lại,
+  // chưa chọn đợt thì lấy trần 50 cho khớp giới hạn của máy chủ.
+  const tranKhach = choConLai ?? 50;
+
+  // Người dùng gõ tay: nhận chuỗi rỗng trong lúc đang xoá, chỉ ép về khoảng
+  // hợp lệ khi rời ô. Ép ngay lúc gõ thì xoá số cuối là ô tự nhảy về 1,
+  // không sao gõ số mới được — đúng cái tester gặp.
+  const doiSoKhach = (raw, setter, toiThieu) => {
+    if (raw === "") {
+      setter("");
+      return;
+    }
+    const so = parseInt(raw.replace(/[^0-9]/g, ""), 10);
+    if (Number.isNaN(so)) return;
+    setter(Math.min(so, tranKhach));
+  };
+
+  const chotSoKhach = (giaTri, setter, toiThieu) => {
+    const so = parseInt(giaTri, 10);
+    setter(Number.isNaN(so) ? toiThieu : Math.max(toiThieu, Math.min(so, tranKhach)));
+  };
+
+  const childPrice = tour.childPrice ?? Math.round((donGiaNguoiLon * 0.6) / 1000) * 1000;
   // adults/children có thể là chuỗi rỗng trong lúc người dùng đang xoá để gõ số
   // mới — quy về số trước khi tính, tránh hiện NaN trên bảng giá.
   const soNguoiLon = parseInt(adults, 10) || 0;
   const soTreEm = parseInt(children, 10) || 0;
-  const total = soNguoiLon * tour.price + soTreEm * childPrice;
+  const total = soNguoiLon * donGiaNguoiLon + soTreEm * childPrice;
 
   const scrollToBooking = () => {
     document.getElementById("booking-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -278,8 +315,8 @@ export default function TourDetail({ basePath, tour, related = [], regions = [],
       return;
     }
 
-    if (tour.seatsLeft != null && soNguoiLon + soTreEm > tour.seatsLeft) {
-      setFormError(`Đợt này chỉ còn ${tour.seatsLeft} chỗ, không đủ cho ${soNguoiLon + soTreEm} khách.`);
+    if (choConLai != null && soNguoiLon + soTreEm > choConLai) {
+      setFormError(`Đợt này chỉ còn ${choConLai} chỗ, không đủ cho ${soNguoiLon + soTreEm} khách.`);
       return;
     }
 
@@ -520,13 +557,13 @@ export default function TourDetail({ basePath, tour, related = [], regions = [],
                       nên số 0 bị JavaScript coi là rỗng và rơi vào nhánh "Đang nhận đặt
                       chỗ" — khách thấy còn nhận, bấm đặt xong mới bị máy chủ từ chối.
                       Phải phân biệt rõ: null/undefined = chưa rõ, 0 = hết. */}
-                  {tour.seatsLeft == null ? (
+                  {choConLai == null ? (
                     <span className="flex items-center gap-1.5 text-xs font-semibold text-white/90">
                       <Users2 className="h-3.5 w-3.5" /> Đang nhận đặt chỗ
                     </span>
-                  ) : tour.seatsLeft > 0 ? (
+                  ) : choConLai > 0 ? (
                     <span className="flex items-center gap-1.5 text-xs font-semibold text-gold-300">
-                      <Users2 className="h-3.5 w-3.5" /> Chỉ còn {tour.seatsLeft} chỗ
+                      <Users2 className="h-3.5 w-3.5" /> Chỉ còn {choConLai} chỗ
                     </span>
                   ) : (
                     <span className="flex items-center gap-1.5 rounded-full bg-rose-500/90 px-2.5 py-1 text-xs font-bold text-white">
@@ -538,14 +575,14 @@ export default function TourDetail({ basePath, tour, related = [], regions = [],
                     {tour.oldPrice && (
                       <span className="text-sm text-white/60 line-through">{formatVND(tour.oldPrice)}</span>
                     )}
-                    <span className="font-display text-[2rem] font-bold leading-none">{formatVND(tour.price)}</span>
+                    <span className="font-display text-[2rem] font-bold leading-none">{formatVND(donGiaNguoiLon)}</span>
                   </div>
 
                   {/* Số tiền tiết kiệm nêu thành con số cụ thể — thuyết phục hơn nhiều
                       so với chỉ gạch ngang giá cũ */}
-                  {tour.oldPrice && tour.oldPrice > tour.price && (
+                  {tour.oldPrice && tour.oldPrice > donGiaNguoiLon && (
                     <p className="mt-2 inline-block rounded-lg bg-gold-500/20 px-2 py-1 text-xs font-bold text-gold-300">
-                      Tiết kiệm {formatVND(tour.oldPrice - tour.price)}
+                      Tiết kiệm {formatVND(tour.oldPrice - donGiaNguoiLon)}
                     </p>
                   )}
 
@@ -635,7 +672,7 @@ export default function TourDetail({ basePath, tour, related = [], regions = [],
                     <div>
                       <label className="text-xs font-semibold text-ink-muted">Người lớn</label>
                       <div className="mt-1.5 flex items-center justify-between rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2">
-                        <span className="flex items-center gap-2 text-sm text-ink"><Users2 className="h-4 w-4 text-ocean-500" /> {formatVND(tour.price)}</span>
+                        <span className="flex items-center gap-2 text-sm text-ink"><Users2 className="h-4 w-4 text-ocean-500" /> {formatVND(donGiaNguoiLon)}</span>
                         <div className="flex items-center gap-3">
                           <button type="button" onClick={() => setAdults((g) => Math.max(1, (parseInt(g, 10) || 1) - 1))} aria-label="Bớt một người lớn" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">−</button>
                           {/* Gõ tay được: đoàn 50 khách không thể bắt bấm 50 lần */}
@@ -679,8 +716,8 @@ export default function TourDetail({ basePath, tour, related = [], regions = [],
                         Minh bạch giá là yếu tố tin cậy hàng đầu khi đặt tour trực tuyến. */}
                     <div className="space-y-1.5 rounded-xl bg-ocean-50/60 p-3.5 text-sm">
                       <div className="flex items-center justify-between text-ink-muted">
-                        <span>{soNguoiLon} người lớn × {formatVND(tour.price)}</span>
-                        <span className="font-medium text-ink">{formatVND(soNguoiLon * tour.price)}</span>
+                        <span>{soNguoiLon} người lớn × {formatVND(donGiaNguoiLon)}</span>
+                        <span className="font-medium text-ink">{formatVND(soNguoiLon * donGiaNguoiLon)}</span>
                       </div>
                       {soTreEm > 0 && (
                         <div className="flex items-center justify-between text-ink-muted">
