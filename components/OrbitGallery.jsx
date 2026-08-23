@@ -33,11 +33,15 @@ export default function OrbitGallery({
       else if (w < 1024) [radius, cardSize] = [radiusMd, cardSizeMd];
       else [radius, cardSize] = [radiusLg, cardSizeLg];
 
-      // Chốt chặn cuối: bán kính không bao giờ được vượt quá nửa màn hình,
-      // nếu không hai ảnh trái/phải bị cắt mất hoặc biến khỏi khung nhìn.
-      // Đây là lưới an toàn cho MỌI kích thước, kể cả cửa sổ thu nhỏ bất thường.
-      const gioiHan = Math.floor(w / 2 - cardSize / 2 - 10);
-      radius = Math.max(Math.min(radius, gioiHan), 84);
+      // Chốt chặn cuối: vòng ảnh phải nằm gọn trong khung nhìn theo CẢ HAI chiều.
+      //
+      // Trước đây chỉ chốt chiều ngang nên trên iPad mini và khi phóng trình
+      // duyệt lên 125% (làm khung nhìn thấp đi) thì ảnh trên/dưới bị cắt cụt.
+      // Trừ hao thêm 96px chiều cao cho thanh điều hướng cố định phía trên.
+      const h = window.innerHeight;
+      const gioiHanNgang = Math.floor(w / 2 - cardSize / 2 - 12);
+      const gioiHanDoc = Math.floor((h - 96) / 2 - cardSize / 2 - 12);
+      radius = Math.max(Math.min(radius, gioiHanNgang, gioiHanDoc), 84);
 
       setDims({ radius, cardSize });
     };
