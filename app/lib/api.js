@@ -46,6 +46,7 @@ function mapTour(t) {
     startDate: dep?.start_date_display ?? t.next_start_date ?? null,
     image: t.cover_image,
     tag: t.tag,
+    categorySlugs: t.category_slugs ?? [],
     highlights: t.highlights ?? [],
     itinerary: (t.itineraries ?? []).map((it) => ({
       day: `Ngày ${it.day_number}`,
@@ -228,4 +229,20 @@ export async function getPage(slug) {
     metaDescription: p.meta_description ?? null,
     updatedAt: p.updated_at ?? null,
   };
+}
+
+// Điểm đến nổi bật ở trang chủ — lấy từ Danh mục tour trong admin.
+// Mỗi danh mục là một điểm đến: có tên, ảnh riêng và SỐ TOUR THẬT do máy chủ đếm.
+export async function getCategories(loai) {
+  const q = loai ? `?type=${loai}` : "";
+  const json = await layJSON(`/categories${q}`);
+
+  return (json?.data ?? []).map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    type: c.type,
+    image: c.image,
+    description: c.description,
+    tourCount: c.tours_count ?? 0,
+  }));
 }

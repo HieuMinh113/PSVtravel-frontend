@@ -40,14 +40,6 @@ const ORBIT_DU_PHONG = [
   "https://images.unsplash.com/photo-1470004914212-05527e49370b?q=80&w=400&auto=format&fit=crop", // Đài Loan
 ];
 
-const destinations = [
-  { name: "Phú Quốc", image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=800&auto=format&fit=crop", count: "24 tour" },
-  { name: "Đà Nẵng", image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=800&auto=format&fit=crop", count: "31 tour" },
-  { name: "Sa Pa", image: "https://images.unsplash.com/photo-1528127269322-539801943592?q=80&w=800&auto=format&fit=crop", count: "18 tour" },
-  { name: "Thái Lan", image: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=800&auto=format&fit=crop", count: "15 tour" },
-  { name: "Hàn Quốc", image: "https://images.unsplash.com/photo-1517154421773-0529f29ea451?q=80&w=800&auto=format&fit=crop", count: "22 tour" },
-  { name: "Nhật Bản", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop", count: "12 tour" },
-];
 
 const whyUs = [
   { icon: ShieldCheck, title: "Cam kết minh bạch", desc: "Giá tour trọn gói, không phụ thu ẩn, huỷ/đổi lịch linh hoạt." },
@@ -68,7 +60,7 @@ const trustSignals = [
   { icon: Headset, text: "Hotline 24/7: 0907 870 707" },
 ];
 
-export default function Home({ upcoming = [], banner = null, orbitImages = [], reviews = [] }) {
+export default function Home({ upcoming = [], banner = null, orbitImages = [], diemDen = [], reviews = [] }) {
   // Ưu tiên ảnh do công ty tự upload trong admin; chưa có thì dùng ảnh dự phòng
   const anhVongXoay = orbitImages.length ? orbitImages : ORBIT_DU_PHONG;
 
@@ -346,7 +338,8 @@ export default function Home({ upcoming = [], banner = null, orbitImages = [], r
         </div>
       </section>
 
-      {/* ===== ĐIỂM ĐẾN NỔI BẬT ===== */}
+      {/* ===== ĐIỂM ĐẾN NỔI BẬT — lấy từ Danh mục tour trong admin ===== */}
+      {diemDen.length > 0 && (
       <section className="bg-ocean-50/50 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="text-center">
@@ -359,9 +352,9 @@ export default function Home({ upcoming = [], banner = null, orbitImages = [], r
           </SectionReveal>
 
           <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {destinations.map((d, i) => (
+            {diemDen.map((d, i) => (
               <motion.div
-                key={d.name}
+                key={d.slug}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
@@ -369,7 +362,18 @@ export default function Home({ upcoming = [], banner = null, orbitImages = [], r
                 whileHover={{ y: -6 }}
                 className="group relative aspect-[3/4] overflow-hidden rounded-2xl shadow-card"
               >
-                <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
+                {/* Bấm vào đi thẳng sang trang danh sách đã lọc theo điểm đến đó */}
+                <Link
+                  href={`${d.type === "abroad" ? "/tour-nuoc-ngoai" : "/tour-trong-nuoc"}?category=${encodeURIComponent(d.slug)}&scroll=1`}
+                  className="absolute inset-0 z-10"
+                  aria-label={`Xem tour ${d.name}`}
+                />
+                {d.image ? (
+                  <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
+                ) : (
+                  // Danh mục chưa có ảnh thì để nền thương hiệu, không để ô trắng
+                  <div className="h-full w-full bg-deep-gradient" />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-deep-950/90 via-deep-950/15 to-transparent" />
 
                 {/* Vạch nhấn màu ấm trượt lên khi rê chuột — tín hiệu "chọn được" */}
@@ -377,13 +381,16 @@ export default function Home({ upcoming = [], banner = null, orbitImages = [], r
 
                 <div className="absolute inset-x-0 bottom-0 p-3">
                   <p className="font-display text-sm font-bold text-white sm:text-base">{d.name}</p>
-                  <p className="text-xs text-white/80">{d.count}</p>
+                  <p className="text-xs text-white/80">
+                    {d.tourCount > 0 ? `${d.tourCount} tour` : "Sắp có tour"}
+                  </p>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
+      )}
 
       {/* ===== VÌ SAO CHỌN CHÚNG TÔI ===== */}
       <section className="relative overflow-hidden bg-deep-gradient py-20 text-white">

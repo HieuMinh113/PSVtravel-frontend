@@ -20,6 +20,8 @@ export default function TourListPage({
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
   const initialRegion = searchParams.get("region") || "Tất cả";
+  // Bấm một điểm đến ở trang chủ sẽ tới đây kèm ?category=slug
+  const categorySlug = searchParams.get("category");
   const [query, setQuery] = useState(initialQuery);
   const [searchOpen, setSearchOpen] = useState(Boolean(initialQuery));
   const [region, setRegion] = useState(initialRegion);
@@ -41,9 +43,12 @@ export default function TourListPage({
         t.name.toLowerCase().includes(query.toLowerCase()) ||
         (t.country || "").toLowerCase().includes(query.toLowerCase());
       const matchRegion = region === "Tất cả" || isMatch(t, region);
-      return matchQuery && matchRegion;
+      // Lọc theo danh mục khi khách bấm từ khối "Điểm đến nổi bật" ở trang chủ
+      const matchCategory =
+        !categorySlug || (t.categorySlugs || []).includes(categorySlug);
+      return matchQuery && matchRegion && matchCategory;
     });
-  }, [tours, query, region]);
+  }, [tours, query, region, categorySlug]);
 
   // Có đang lọc gì không — dùng để hiện nút xoá lọc
   const dangLoc = query.trim() !== "" || region !== "Tất cả";

@@ -1,6 +1,12 @@
 import Home from "@/components/pages/Home";
 import { pageMeta } from "@/app/lib/seo";
-import { getTours, getBanners, getOrbitImages, getFeaturedReviews } from "@/app/lib/api";
+import {
+  getTours,
+  getBanners,
+  getOrbitImages,
+  getFeaturedReviews,
+  getCategories,
+} from "@/app/lib/api";
 
 export const revalidate = 60;
 
@@ -10,12 +16,14 @@ export const metadata = pageMeta({
 });
 
 export default async function Page() {
-  const [domestic, abroad, banners, orbitImages, reviews] = await Promise.all([
+  const [domestic, abroad, banners, orbitImages, reviews, danhMuc] = await Promise.all([
     getTours({ type: "domestic" }),
     getTours({ type: "abroad" }),
     getBanners(),
     getOrbitImages("orbit_home"),
     getFeaturedReviews(),
+    // Điểm đến nổi bật = Danh mục tour trong admin, số tour do máy chủ đếm thật
+    getCategories(),
   ]);
 
   const upcoming = [...domestic, ...abroad]
@@ -32,6 +40,7 @@ export default async function Page() {
       upcoming={upcoming}
       banner={banners[0] ?? null}
       orbitImages={orbitImages}
+      diemDen={danhMuc.slice(0, 6)}
       reviews={reviews}
     />
   );
