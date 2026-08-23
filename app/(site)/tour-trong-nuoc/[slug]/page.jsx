@@ -22,18 +22,25 @@ export default async function Page({ params }) {
   const tour = await getTourBySlug(slug);
   if (!tour || tour.type !== "domestic") notFound();
 
+  // Chỉ lấy đúng số tour cần cho khối "Tour liên quan" thay vì tải cả 50 tour
+  // rồi vứt đi 47 cái. Lấy dư vài tour để sau khi loại chính nó ra vẫn đủ 3.
   const [all, settings] = await Promise.all([
-    getTours({ type: "domestic" }),
+    getTours({ type: "domestic", perPage: 8 }),
     getSettings(),
   ]);
   const related = all
     .filter((t) => t.slug !== tour.slug && t.region === tour.region)
     .slice(0, 3);
 
+  // Danh mục cho thanh lọc đi tắt, lấy từ chính các tour vừa tải
+  const regions = [...new Set(all.map((t) => t.region).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, "vi")
+  );
+
   return (
     <>
       <JsonLd data={tourJsonLd(tour, BASE)} />
-      <TourDetail basePath={BASE} tour={tour} related={related} settings={settings} />
+      <TourDetail basePath={BASE} tour={tour} related={related} regions={regions} settings={settings} />
     </>
   );
 }

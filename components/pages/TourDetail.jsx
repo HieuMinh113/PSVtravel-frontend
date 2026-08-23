@@ -13,7 +13,6 @@ import {
 import { createBooking } from "@/app/lib/api";
 import { formatVND } from "@/data/tours";
 import { getVisaInfo } from "@/data/visa";
-import { domesticRegions, abroadRegions } from "@/data/filters";
 import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwan } from "@/components/FlagIcons";
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
@@ -162,13 +161,35 @@ function FaqItem({ item, isOpen, onToggle }) {
   );
 }
 
-export default function TourDetail({ basePath, tour, related = [], settings = {} }) {
+export default function TourDetail({ basePath, tour, related = [], regions = [], settings = {} }) {
   // Hotline lấy từ Cài đặt trong admin — đổi một chỗ là đổi khắp site
   const hotline = settings.hotline || "0907 870 707";
   const router = useRouter();
   const [openDay, setOpenDay] = useState(0);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
+
+  // Số chỗ tối đa cho phép chọn. Đợt còn chỗ thì chặn theo đúng số chỗ còn lại,
+  // chưa chọn đợt thì lấy trần 50 cho khớp giới hạn của máy chủ.
+  const tranKhach = tour?.seatsLeft ?? 50;
+
+  // Người dùng gõ tay: nhận chuỗi rỗng trong lúc đang xoá, chỉ ép về khoảng
+  // hợp lệ khi rời ô. Ép ngay lúc gõ thì xoá số cuối là ô tự nhảy về 1,
+  // không sao gõ số mới được — đúng cái tester gặp.
+  const doiSoKhach = (raw, setter, toiThieu) => {
+    if (raw === "") {
+      setter("");
+      return;
+    }
+    const so = parseInt(raw.replace(/[^0-9]/g, ""), 10);
+    if (Number.isNaN(so)) return;
+    setter(Math.min(so, tranKhach));
+  };
+
+  const chotSoKhach = (giaTri, setter, toiThieu) => {
+    const so = parseInt(giaTri, 10);
+    setter(Number.isNaN(so) ? toiThieu : Math.max(toiThieu, Math.min(so, tranKhach)));
+  };
   const [form, setForm] = useState({ name: "", contact: "" });
   const [formError, setFormError] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -192,8 +213,10 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
     router.push(`${basePath}?q=${encodeURIComponent(detailQuery.trim())}&scroll=1`);
   };
 
-  // Danh mục lọc đổi theo loại tour đang xem — trong nước hiện vùng miền, nước ngoài hiện quốc gia
-  const detailRegions = basePath === "/tour-trong-nuoc" ? domesticRegions : abroadRegions;
+  // Danh mục lọc lấy từ tour thật đang bán (trang cha truyền xuống), không viết
+  // cứng nữa. Đây là thanh đi tắt sang trang danh sách — thiếu vài mục cũng không
+  // sao, sang bên đó là thấy đủ.
+  const detailRegions = regions.length ? ["Tất cả", ...regions] : [];
   const handleDetailRegion = (r) => {
     router.push(`${basePath}?region=${encodeURIComponent(r)}&scroll=1`);
   };
@@ -226,7 +249,11 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
   if (!tour) return notFound();
 
   const childPrice = tour.childPrice ?? Math.round((tour.price * 0.6) / 1000) * 1000;
-  const total = adults * tour.price + children * childPrice;
+  // adults/children có thể là chuỗi rỗng trong lúc người dùng đang xoá để gõ số
+  // mới — quy về số trước khi tính, tránh hiện NaN trên bảng giá.
+  const soNguoiLon = parseInt(adults, 10) || 0;
+  const soTreEm = parseInt(children, 10) || 0;
+  const total = soNguoiLon * tour.price + soTreEm * childPrice;
 
   const scrollToBooking = () => {
     document.getElementById("booking-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -237,6 +264,25 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
       setFormError("Vui lòng nhập họ tên và số điện thoại.");
       return;
     }
+
+    // Số điện thoại Việt Nam: 10 số bắt đầu bằng 0, hoặc dạng +84.
+    // Chặn ngay ở đây thay vì để khách bấm xong mới nhận lỗi từ máy chủ.
+    const soDienThoai = form.contact.replace(/[^0-9+]/g, "");
+    if (!/^(0[0-9]{9}|\+84[0-9]{9})$/.test(soDienThoai)) {
+      setFormError("Số điện thoại không hợp lệ. Nhập 10 số bắt đầu bằng 0, ví dụ 0907870707.");
+      return;
+    }
+
+    if (soNguoiLon < 1) {
+      setFormError("Đoàn phải có ít nhất 1 người lớn.");
+      return;
+    }
+
+    if (tour.seatsLeft != null && soNguoiLon + soTreEm > tour.seatsLeft) {
+      setFormError(`Đợt này chỉ còn ${tour.seatsLeft} chỗ, không đủ cho ${soNguoiLon + soTreEm} khách.`);
+      return;
+    }
+
     setFormError("");
     setSubmitting(true);
     try {
@@ -244,9 +290,9 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
         tour_id: tour.id,
         tour_departure_id: depId,
         customer_name: form.name.trim(),
-        customer_phone: form.contact.trim(),
-        adults,
-        children,
+        customer_phone: soDienThoai,
+        adults: soNguoiLon,
+        children: soTreEm,
       });
       setBookingCode(res?.data?.booking_code || "");
       setSubmitted(true);
@@ -530,14 +576,37 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
                       <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
                       <div className="relative mt-1.5">
                         <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                        <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Nguyễn Văn A" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                        <input
+                          value={form.name}
+                          onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                          maxLength={100}
+                          autoComplete="name"
+                          placeholder="Nguyễn Văn A"
+                          className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white"
+                        />
                       </div>
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
                       <div className="relative mt-1.5">
                         <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                        <input value={form.contact} onChange={(e) => setForm((f) => ({ ...f, contact: e.target.value }))} placeholder="09xx xxx xxx" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                        <input
+                          value={form.contact}
+                          onChange={(e) =>
+                            setForm((f) => ({
+                              // Số điện thoại chỉ gồm chữ số, dấu + và khoảng trắng.
+                              // Lọc ngay khi gõ thay vì chờ bấm Đặt tour mới báo lỗi.
+                              ...f,
+                              contact: e.target.value.replace(/[^0-9+ ]/g, "").slice(0, 15),
+                            }))
+                          }
+                          type="tel"
+                          inputMode="tel"
+                          maxLength={15}
+                          autoComplete="tel"
+                          placeholder="09xx xxx xxx"
+                          className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white"
+                        />
                       </div>
                     </div>
                     <div>
@@ -568,9 +637,19 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
                       <div className="mt-1.5 flex items-center justify-between rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2">
                         <span className="flex items-center gap-2 text-sm text-ink"><Users2 className="h-4 w-4 text-ocean-500" /> {formatVND(tour.price)}</span>
                         <div className="flex items-center gap-3">
-                          <button onClick={() => setAdults((g) => Math.max(1, g - 1))} aria-label="Bớt một người lớn" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">−</button>
-                          <span className="w-4 text-center text-sm font-bold text-deep-900">{adults}</span>
-                          <button onClick={() => setAdults((g) => Math.min(tour.seatsLeft ?? 99, g + 1))} aria-label="Thêm một người lớn" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">+</button>
+                          <button type="button" onClick={() => setAdults((g) => Math.max(1, (parseInt(g, 10) || 1) - 1))} aria-label="Bớt một người lớn" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">−</button>
+                          {/* Gõ tay được: đoàn 50 khách không thể bắt bấm 50 lần */}
+                          <input
+                            value={adults}
+                            onChange={(e) => doiSoKhach(e.target.value, setAdults, 1)}
+                            onBlur={() => chotSoKhach(adults, setAdults, 1)}
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={2}
+                            aria-label="Số người lớn"
+                            className="w-9 rounded-lg border border-transparent bg-transparent text-center text-sm font-bold text-deep-900 outline-none focus:border-ocean-300 focus:bg-white"
+                          />
+                          <button type="button" onClick={() => setAdults((g) => Math.min(tranKhach, (parseInt(g, 10) || 0) + 1))} aria-label="Thêm một người lớn" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">+</button>
                         </div>
                       </div>
                     </div>
@@ -580,9 +659,18 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
                       <div className="mt-1.5 flex items-center justify-between rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2">
                         <span className="flex items-center gap-2 text-sm text-ink"><Baby className="h-4 w-4 text-teal-600" /> {formatVND(childPrice)}</span>
                         <div className="flex items-center gap-3">
-                          <button onClick={() => setChildren((g) => Math.max(0, g - 1))} aria-label="Bớt một trẻ em" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">−</button>
-                          <span className="w-4 text-center text-sm font-bold text-deep-900">{children}</span>
-                          <button onClick={() => setChildren((g) => g + 1)} aria-label="Thêm một trẻ em" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">+</button>
+                          <button type="button" onClick={() => setChildren((g) => Math.max(0, (parseInt(g, 10) || 0) - 1))} aria-label="Bớt một trẻ em" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">−</button>
+                          <input
+                            value={children}
+                            onChange={(e) => doiSoKhach(e.target.value, setChildren, 0)}
+                            onBlur={() => chotSoKhach(children, setChildren, 0)}
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={2}
+                            aria-label="Số trẻ em"
+                            className="w-9 rounded-lg border border-transparent bg-transparent text-center text-sm font-bold text-deep-900 outline-none focus:border-ocean-300 focus:bg-white"
+                          />
+                          <button type="button" onClick={() => setChildren((g) => Math.min(tranKhach, (parseInt(g, 10) || 0) + 1))} aria-label="Thêm một trẻ em" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">+</button>
                         </div>
                       </div>
                     </div>
@@ -591,13 +679,13 @@ export default function TourDetail({ basePath, tour, related = [], settings = {}
                         Minh bạch giá là yếu tố tin cậy hàng đầu khi đặt tour trực tuyến. */}
                     <div className="space-y-1.5 rounded-xl bg-ocean-50/60 p-3.5 text-sm">
                       <div className="flex items-center justify-between text-ink-muted">
-                        <span>{adults} người lớn × {formatVND(tour.price)}</span>
-                        <span className="font-medium text-ink">{formatVND(adults * tour.price)}</span>
+                        <span>{soNguoiLon} người lớn × {formatVND(tour.price)}</span>
+                        <span className="font-medium text-ink">{formatVND(soNguoiLon * tour.price)}</span>
                       </div>
-                      {children > 0 && (
+                      {soTreEm > 0 && (
                         <div className="flex items-center justify-between text-ink-muted">
-                          <span>{children} trẻ em × {formatVND(childPrice)}</span>
-                          <span className="font-medium text-ink">{formatVND(children * childPrice)}</span>
+                          <span>{soTreEm} trẻ em × {formatVND(childPrice)}</span>
+                          <span className="font-medium text-ink">{formatVND(soTreEm * childPrice)}</span>
                         </div>
                       )}
                       <div className="flex items-center justify-between border-t border-ocean-200/70 pt-2">
