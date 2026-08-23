@@ -22,8 +22,10 @@ export default function CountUp({ to, suffix = "", duration = 1.8, className = "
     return () => cancelAnimationFrame(raf);
   }, [inView, to, duration]);
 
+  // whitespace-nowrap: số dài như 18.400 làm hậu tố "+" bị đẩy xuống dòng
+  // riêng, nhìn như một dấu cộng lạc lõng. Giữ số và hậu tố luôn cùng một dòng.
   return (
-    <motion.span ref={ref} className={className}>
+    <motion.span ref={ref} className={`whitespace-nowrap ${className || ""}`}>
       {value.toLocaleString("vi-VN")}
       {suffix}
     </motion.span>

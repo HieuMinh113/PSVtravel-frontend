@@ -291,8 +291,14 @@ export default function Navbar({ settings = {} }) {
 
         <button
           onClick={() => setOpen((o) => !o)}
-          className={`grid h-10 w-10 place-items-center rounded-full lg:hidden ${
-            solid ? "text-deep-900" : "text-white"
+          // Ở đầu trang (chưa cuộn) thanh điều hướng trong suốt. Trước đây nút
+          // này để chữ trắng trơn nên trên những trang có nền sáng ngay từ đầu
+          // (Tài khoản, Đăng nhập) thì trắng trên trắng — nút biến mất, khách
+          // phải cuộn xuống mới thấy. Cho nó một nền tối mờ để nổi trên mọi nền.
+          className={`grid h-10 w-10 place-items-center rounded-full transition-colors lg:hidden ${
+            solid
+              ? "text-deep-900 hover:bg-ocean-50"
+              : "bg-deep-950/55 text-white backdrop-blur-sm"
           }`}
           aria-label="Mở menu"
         >
