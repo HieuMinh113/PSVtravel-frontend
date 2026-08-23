@@ -178,7 +178,15 @@ export default function Navbar({ settings = {}, vungMien = [], quocGia = [] }) {
 
   useEffect(() => setOpen(false), [pathname]);
 
-  const solid = scrolled || open;
+  // Những trang KHÔNG có ảnh nền tối ở đầu trang.
+  //
+  // Thanh điều hướng để trong suốt với chữ trắng khi chưa cuộn — hợp với trang
+  // có Hero tối, nhưng trên trang nền sáng thì thành trắng trên trắng, cả menu
+  // biến mất. Ép nền trắng ngay từ đầu cho những trang này.
+  const TRANG_NEN_SANG = ["/tai-khoan"];
+  const nenSang = TRANG_NEN_SANG.some((p) => pathname === p || pathname.startsWith(p + "/"));
+
+  const solid = scrolled || open || nenSang;
 
   return (
     <header

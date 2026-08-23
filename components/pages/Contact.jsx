@@ -9,11 +9,6 @@ import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/SocialIcons";
 
-const offices = [
-  { city: "TP. Hồ Chí Minh", address: "190 Pasteur, Quận 3, TP.HCM", phone: "028 7305 6789" },
-  { city: "Hà Nội", address: "56 Trần Nhân Tông, Hai Bà Trưng, Hà Nội", phone: "024 3512 3388" },
-  { city: "Cần Thơ", address: "12 Hòa Bình, Ninh Kiều, Cần Thơ", phone: "090 393 3788" },
-];
 
 export default function Contact({ settings = {} }) {
   const [submitted, setSubmitted] = useState(false);
@@ -31,6 +26,36 @@ export default function Contact({ settings = {} }) {
   const doiO = (ten) => (e) => setForm((f) => ({ ...f, [ten]: e.target.value }));
 
   const hotline = settings.hotline || "0907 870 707";
+
+  // Danh sách văn phòng lấy từ Cài đặt trong admin.
+  //
+  // Trước đây viết cứng ba văn phòng ở TP.HCM, Hà Nội và Cần Thơ — công ty chỉ
+  // có một trụ sở, và địa chỉ ghi ở đây còn sai luôn so với giấy tờ. Khách gọi
+  // vào số không có thật hoặc tìm tới địa chỉ không tồn tại là mất khách ngay.
+  //
+  // Trụ sở chính lấy từ ô "Địa chỉ", chi nhánh lấy từ ô "Địa chỉ chi nhánh"
+  // (mỗi dòng một chi nhánh, có thể ghi kèm số điện thoại sau dấu gạch đứng).
+  const vanPhong = [
+    {
+      city: "Trụ sở chính",
+      address:
+        settings.address || "529 Huỳnh Tấn Phát, Phường Tân Thuận, Quận 7, TP. Hồ Chí Minh",
+      phone: hotline,
+    },
+    ...(settings.branch_addresses || "")
+      .split("\n")
+      .map((d) => d.trim())
+      .filter(Boolean)
+      .map((dong, i) => {
+        // Cho phép ghi "Tên chi nhánh | Địa chỉ | Số điện thoại"
+        const phan = dong.split("|").map((x) => x.trim());
+        return {
+          city: phan.length > 1 ? phan[0] : `Chi nhánh ${i + 1}`,
+          address: phan.length > 1 ? phan[1] : dong,
+          phone: phan[2] || hotline,
+        };
+      }),
+  ];
   const contactEmail = settings.email || "hi@psvtravel.vn";
   const workingHours = settings.working_hours || "Thứ 2 – Chủ nhật: 7:30 – 21:30";
 
@@ -142,7 +167,7 @@ export default function Contact({ settings = {} }) {
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900">Ghé thăm chúng tôi</h2>
 
               <div className="mt-7 space-y-3">
-                {offices.map((o) => (
+                {vanPhong.map((o) => (
                   <div key={o.city} className="card-surface group flex items-start gap-4 p-4">
                     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-ocean-50 text-ocean-700 transition-colors group-hover:bg-ocean-100">
                       <Building2 className="h-5 w-5" />
@@ -282,7 +307,7 @@ export default function Contact({ settings = {} }) {
           title="Bản đồ văn phòng"
           className="h-full w-full grayscale-[15%]"
           loading="lazy"
-          src="https://www.google.com/maps?q=190+Pasteur,+Quan+3,+TP.HCM&output=embed"
+          src={`https://www.google.com/maps?q=${encodeURIComponent(vanPhong[0].address)}&output=embed`}
         />
       </section>
     </div>
