@@ -210,3 +210,22 @@ export async function getGuideSlugs() {
   const json = await layJSON(`/guides-slugs`);
   return json ?? [];
 }
+
+// Trang tĩnh do admin soạn (điều khoản, chính sách...). Nội dung nằm trong
+// mục Trang tĩnh của trang quản trị, bộ phận pháp chế tự sửa không cần lập
+// trình viên. Chưa soạn thì trả về bản ghi có body rỗng, không phải null.
+export async function getPage(slug) {
+  const json = await layJSON(`/pages/${slug}`);
+  const p = json?.data ?? json;
+  if (!p) return null;
+
+  return {
+    slug: p.slug,
+    title: p.title,
+    body: p.body || "",
+    heroImage: p.hero_image ?? null,
+    metaTitle: p.meta_title || p.title,
+    metaDescription: p.meta_description ?? null,
+    updatedAt: p.updated_at ?? null,
+  };
+}

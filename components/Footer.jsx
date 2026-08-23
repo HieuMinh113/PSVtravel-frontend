@@ -147,6 +147,9 @@ export default function Footer({ settings = {} }) {
               <li><Link href="/ve-chung-toi" className="transition-colors hover:text-teal-400">Về chúng tôi</Link></li>
               <li><Link href="/lien-he" className="transition-colors hover:text-teal-400">Liên hệ</Link></li>
               <li><Link href="/chinh-sach-bao-mat" className="transition-colors hover:text-teal-400">Chính sách bảo mật</Link></li>
+              <li><Link href="/dieu-khoan-su-dung" className="transition-colors hover:text-teal-400">Điều khoản sử dụng</Link></li>
+              <li><Link href="/chinh-sach-thanh-toan" className="transition-colors hover:text-teal-400">Chính sách thanh toán</Link></li>
+              <li><Link href="/chinh-sach-huy-hoan" className="transition-colors hover:text-teal-400">Chính sách huỷ &amp; hoàn tiền</Link></li>
             </ul>
 
             <h4 className="mt-6 font-display text-base font-semibold text-white/90">Liên hệ</h4>

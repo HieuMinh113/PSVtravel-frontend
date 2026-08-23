@@ -9,7 +9,10 @@ export default async function sitemap() {
 
   const staticPaths = [
     "", "/tour-trong-nuoc", "/tour-nuoc-ngoai", "/ve-may-bay",
-    "/lam-visa", "/cam-nang", "/khoanh-khac-du-khach", "/ve-chung-toi", "/lien-he", "/chinh-sach-bao-mat",
+    "/lam-visa", "/cam-nang", "/khoanh-khac-du-khach", "/ve-chung-toi", "/lien-he",
+    // Các trang pháp lý bắt buộc — cần Google lập chỉ mục để chứng minh website
+    // đã công khai đầy đủ theo quy định
+    "/chinh-sach-bao-mat", "/dieu-khoan-su-dung", "/chinh-sach-thanh-toan", "/chinh-sach-huy-hoan",
   ];
 
   const staticEntries = staticPaths.map((p) => ({
