@@ -13,6 +13,11 @@ try {
 
 const nextConfig = {
   images: {
+    // Next 16 chặn tối ưu ảnh từ IP nội bộ (127.0.0.1, 172.x...) để phòng SSRF.
+    // Trên máy lập trình, backend Laravel chạy ở 127.0.0.1:8000 nên ảnh admin
+    // upload bị chặn hết. Chỉ mở khi chạy dev; lên production backend là tên
+    // miền thật nên vẫn giữ nguyên lớp bảo vệ.
+    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
     remotePatterns: [
       ...mayChuAnh,
       // Máy lập trình: tuỳ người mà .env ghi localhost hay 127.0.0.1

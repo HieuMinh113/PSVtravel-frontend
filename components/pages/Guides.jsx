@@ -6,11 +6,12 @@ import { motion } from "framer-motion";
 import { CalendarDays, Eye, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
-import { guides as fallbackGuides } from "@/data/guides";
 
 export default function Guides({ guides: apiGuides = [] }) {
-  // Ưu tiên bài viết thật từ API; nếu DB trống thì dùng data mẫu
-  const list = apiGuides.length ? apiGuides : fallbackGuides;
+  // Chỉ hiện bài viết thật từ admin. Trước đây DB trống thì đổ ra 6 bài mẫu
+  // với ảnh Unsplash — khách đọc tưởng bài thật, bấm vào lỗi 404, mà một trong
+  // số ảnh đó nay đã bị xoá khỏi Unsplash nên trang báo lỗi ảnh.
+  const list = apiGuides;
   const categories = ["Tất cả", ...Array.from(new Set(list.map((g) => g.category).filter(Boolean)))];
 
   const [category, setCategory] = useState("Tất cả");

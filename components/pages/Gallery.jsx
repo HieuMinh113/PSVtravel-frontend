@@ -4,14 +4,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Star, X, ChevronLeft, ChevronRight, Quote, Camera, ArrowRight } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
-import { customerPhotos } from "@/data/customerPhotos";
 
 const chuCaiDau = (ten) => (ten || "?").trim().charAt(0).toUpperCase();
 
 export default function Gallery({ photos = [], settings = {} }) {
   const email = settings.email || "hi@psvtravel.vn";
-  // Ưu tiên ảnh thật từ API; nếu DB chưa có thì dùng data mẫu để trang không trống
-  const list = photos.length ? photos : customerPhotos;
+  // Chỉ hiện ảnh thật khách gửi. Ảnh mẫu kèm lời khen do máy tự dựng là chứng
+  // thực giả — trang này nói "chân thực, không dàn dựng" nên càng không được có.
+  const list = photos;
 
   const [activeIndex, setActiveIndex] = useState(null);
 
