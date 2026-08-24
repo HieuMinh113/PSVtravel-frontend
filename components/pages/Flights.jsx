@@ -5,33 +5,18 @@ import { BadgeCheck, Wallet, Headset, Plane, ArrowRight, Phone } from "lucide-re
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 
-// Data mẫu — chỉ dùng làm fallback khi DB chưa có
-const fallbackAirlines = [
-  { name: "Vietnam Airlines", logo: "VN", color: "bg-amber-500" },
-  { name: "Vietjet Air", logo: "VJ", color: "bg-rose-500" },
-  { name: "Bamboo Airways", logo: "QH", color: "bg-emerald-600" },
-  { name: "Korean Air", logo: "KE", color: "bg-sky-600" },
-  { name: "China Southern", logo: "CZ", color: "bg-indigo-600" },
-  { name: "AirAsia", logo: "AK", color: "bg-red-600" },
-];
-
-const fallbackDeals = [
-  { route: "TP.HCM → Phú Quốc", price: "590.000đ", image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=800&auto=format&fit=crop" },
-  { route: "Hà Nội → Đà Nẵng", price: "690.000đ", image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=800&auto=format&fit=crop" },
-  { route: "TP.HCM → Bangkok", price: "1.290.000đ", image: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=800&auto=format&fit=crop" },
-  { route: "TP.HCM → Seoul", price: "4.590.000đ", image: "https://images.unsplash.com/photo-1517154421773-0529f29ea451?q=80&w=800&auto=format&fit=crop" },
-];
-
 const perks = [
   { icon: Wallet, title: "Giá vé cạnh tranh", desc: "So sánh giá từ 20+ hãng hàng không trong một lần tìm kiếm." },
   { icon: BadgeCheck, title: "Xuất vé tức thì", desc: "Nhận email xác nhận và mã đặt chỗ ngay sau khi thanh toán." },
   { icon: Headset, title: "Hỗ trợ đổi/huỷ vé", desc: "Đội ngũ chăm sóc khách hàng hỗ trợ xử lý phát sinh 24/7." },
 ];
 
-export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = [], settings = {} }) {
+export default function Flights({ airlines = [], deals = [], settings = {} }) {
   const hotline = settings.hotline || "0907 870 707";
-  const airlines = apiAirlines.length ? apiAirlines : fallbackAirlines;
-  const deals = apiDeals.length ? apiDeals : fallbackDeals;
+  // Chỉ hiện chặng bay và hãng bay admin đã nhập (Vé máy bay → Chặng Bay Ưu Đãi
+  // / Hãng Bay). Trước đây DB trống thì đổ ra 4 chặng với giá bịa
+  // ("TP.HCM → Phú Quốc 590.000đ") và 6 hãng chưa ký hợp tác — khách gọi hotline
+  // đòi đúng giá đó thì công ty phải chịu. Chưa nhập thì ẩn cả khối.
 
   return (
     <div>
@@ -43,6 +28,7 @@ export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = 
       />
 
       {/* Ưu đãi vé hot */}
+      {deals.length > 0 && (
       <section className="bg-foam pb-16 pt-14 sm:pb-20 sm:pt-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="text-center">
@@ -106,8 +92,10 @@ export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = 
           </div>
         </div>
       </section>
+      )}
 
       {/* Hãng hàng không đối tác */}
+      {airlines.length > 0 && (
       <section className="bg-ocean-50/50 py-14">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-ink-subtle">
@@ -131,6 +119,7 @@ export default function Flights({ airlines: apiAirlines = [], deals: apiDeals = 
           </div>
         </div>
       </section>
+      )}
 
       {/* Lợi ích */}
       <section className="bg-foam py-16 sm:py-20">
