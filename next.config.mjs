@@ -12,6 +12,9 @@ try {
 }
 
 const nextConfig = {
+  // Gói sẵn mọi thứ cần khi chạy vào .next/standalone để đóng ảnh Docker nhẹ.
+  // Không ảnh hưởng gì lúc chạy `npm run dev` trên máy lập trình.
+  output: "standalone",
   images: {
     // Next 16 chặn tối ưu ảnh từ IP nội bộ (127.0.0.1, 172.x...) để phòng SSRF.
     // Trên máy lập trình, backend Laravel chạy ở 127.0.0.1:8000 nên ảnh admin
