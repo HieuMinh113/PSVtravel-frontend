@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import DomesticTours from "@/components/pages/DomesticTours";
 import { pageMeta } from "@/app/lib/seo";
-import { getTours, getOrbitImages } from "@/app/lib/api";
+import { getTours, getOrbitImages, getCategories } from "@/app/lib/api";
 
 export const revalidate = 60;
 
@@ -12,13 +12,15 @@ export const metadata = pageMeta({
 });
 
 export default async function Page() {
-  const [tours, orbitImages] = await Promise.all([
+  const [tours, orbitImages, danhMuc] = await Promise.all([
     getTours({ type: "domestic" }),
     getOrbitImages("orbit_domestic"),
+    // Nút lọc = Danh Mục Tour trong admin, cùng nguồn với mega menu
+    getCategories("domestic"),
   ]);
   return (
     <Suspense fallback={null}>
-      <DomesticTours tours={tours} orbitImages={orbitImages} />
+      <DomesticTours tours={tours} orbitImages={orbitImages} danhMuc={danhMuc} />
     </Suspense>
   );
 }
