@@ -35,6 +35,12 @@ const regionStyle = {
   "Miền Nam": { icon: Palmtree, bg: "bg-teal-50", text: "text-teal-600" },
 };
 
+// Ô "Vùng / khu vực" trong admin nhập tự do, quốc gia thì có nước chưa vẽ cờ.
+// Trước đây gặp giá trị lạ ("Đà Nẵng", "Malaysia") là style = null rồi đọc
+// style.bg -> vỡ cả thanh navbar. Giờ luôn có kiểu mặc định để không bao giờ vỡ.
+const kieuMacDinh = { icon: Compass, bg: "bg-ocean-50", text: "text-ocean-600" };
+const layKieuVung = (ten) => regionStyle[ten] ?? kieuMacDinh;
+
 // Cờ tự vẽ bằng SVG thay vì emoji, vì Windows/Edge hiển thị emoji cờ thành
 // chữ viết tắt (TH, KR...). Quốc gia nào chưa có cờ thì để trống, mục vẫn hiện.
 const coQuocGia = {
@@ -112,8 +118,8 @@ function MegaPanel({ config }) {
 
       <div className="grid grid-cols-2 gap-1.5 p-3">
         {config.items.map((item) => {
-          const style = item.region ? regionStyle[item.region] : null;
-          const RegionIcon = style?.icon;
+          const style = layKieuVung(item.region);
+          const RegionIcon = style.icon;
           return (
             <motion.div key={item.name} variants={itemVariants}>
               <Link
@@ -130,13 +136,8 @@ function MegaPanel({ config }) {
                     <RegionIcon className="h-4 w-4" />
                   </span>
                 )}
-                <span className="flex flex-1 flex-col leading-tight">
-                  <span className="text-sm font-semibold text-deep-900 transition-colors group-hover:text-ocean-700">
-                    {item.name}
-                  </span>
-                  {item.region && (
-                    <span className="text-xs font-medium text-ink-subtle">{item.region}</span>
-                  )}
+                <span className="flex-1 text-sm font-semibold leading-tight text-deep-900 transition-colors group-hover:text-ocean-700">
+                  {item.name}
                 </span>
                 <ArrowRight className="h-3.5 w-3.5 shrink-0 -translate-x-1 text-ocean-500 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" />
               </Link>
@@ -365,8 +366,8 @@ export default function Navbar({ settings = {}, vungMien = [], quocGia = [] }) {
                         >
                           <div className="grid grid-cols-2 gap-1 py-1 pl-3">
                             {megaConfig[l.mega].items.map((item) => {
-                              const style = item.region ? regionStyle[item.region] : null;
-                              const RegionIcon = style?.icon;
+                              const style = layKieuVung(item.region);
+                              const RegionIcon = style.icon;
                               return (
                                 <Link
                                   key={item.name}
