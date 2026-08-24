@@ -11,7 +11,7 @@ import { Phone, Mail, FileSearch, Clock3 } from "lucide-react";
  */
 export default function TopBar({ settings = {} }) {
   const hotline = settings.hotline || "0907 870 707";
-  const email = settings.email || "hi@psvtravel.vn";
+  const email = settings.email || "hi@psvtravel.com";
   const gioLamViec = settings.working_hours || "Hỗ trợ 24/7, kể cả cuối tuần";
 
   // tel: phải bỏ hết khoảng trắng thì máy Android/iOS mới bấm gọi được

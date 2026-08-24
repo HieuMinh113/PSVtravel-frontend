@@ -56,7 +56,7 @@ export default function Contact({ settings = {} }) {
         };
       }),
   ];
-  const contactEmail = settings.email || "hi@psvtravel.vn";
+  const contactEmail = settings.email || "hi@psvtravel.com";
   const workingHours = settings.working_hours || "Thứ 2 – Chủ nhật: 7:30 – 21:30";
 
   const socials = [
