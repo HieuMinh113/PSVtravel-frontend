@@ -2,25 +2,29 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
 import ScrollToTop from "@/components/ScrollToTop";
-import { getSettings, getTours } from "@/app/lib/api";
+import { getSettings, getCategories } from "@/app/lib/api";
 
 export default async function SiteLayout({ children }) {
-  const [settings, tourTrongNuoc, tourNuocNgoai] = await Promise.all([
+  // Mega menu lấy thẳng từ Danh Mục Tour trong admin: mỗi danh mục có tên,
+  // ảnh riêng và thứ tự do admin sắp.
+  //
+  // Trước đây menu suy ra từ ô "Vùng / khu vực" gõ tay của từng tour, nên gõ
+  // lệch một chữ ("Hàn quốc" / "Hàn Quốc") là menu mọc ra hai mục riêng, bấm
+  // vào mỗi mục chỉ ra một nửa số tour mà không ai phát hiện được. Giờ tour
+  // được gán vào danh mục bằng ô chọn có sẵn nên không thể sai.
+  //
+  // Đổi luôn được hai lượt tải toàn bộ tour ở mọi trang thành hai lượt tải
+  // danh mục — nhẹ hơn hẳn.
+  const [settings, dmTrongNuoc, dmNuocNgoai] = await Promise.all([
     getSettings(),
-    getTours({ type: "domestic" }),
-    getTours({ type: "abroad" }),
+    getCategories("domestic"),
+    getCategories("abroad"),
   ]);
 
-  // Mục trong mega menu lấy từ tour thật đang bán, sắp theo bảng chữ cái tiếng Việt
-  const sapXep = (ds) =>
-    [...new Set(ds.filter(Boolean))].sort((a, b) => a.localeCompare(b, "vi"));
-
-  const vungMien = sapXep(tourTrongNuoc.map((t) => t.region));
-  const quocGia = sapXep(tourNuocNgoai.map((t) => t.country));
   return (
     <>
       <ScrollToTop />
-      <Navbar settings={settings} vungMien={vungMien} quocGia={quocGia} />
+      <Navbar settings={settings} dmTrongNuoc={dmTrongNuoc} dmNuocNgoai={dmNuocNgoai} />
       <main>{children}</main>
       <Footer settings={settings} />
       <FloatingContact settings={settings} />

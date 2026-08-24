@@ -1,18 +1,9 @@
 "use client";
 import TourListPage from "./TourListPage";
 
-export default function DomesticTours({ tours = [], orbitImages = [] }) {
+export default function DomesticTours({ tours = [], orbitImages = [], danhMuc = [] }) {
   // Ưu tiên ảnh công ty tự upload trong admin (Banner → vị trí "Ảnh vòng xoay").
   // Chưa upload thì lấy tạm ảnh bìa của chính các tour đang bán — vẫn là ảnh thật.
-  // Danh mục lọc tự sinh từ tour thật đang bán, không viết cứng nữa.
-  // Admin thêm tour ở vùng miền mới là nút lọc tự có, khỏi sửa code.
-  const regions = [
-    "Tất cả",
-    ...[...new Set(tours.map((t) => t.region).filter(Boolean))].sort((a, b) =>
-      a.localeCompare(b, "vi")
-    ),
-  ];
-
   const anhVongXoay = orbitImages.length
     ? orbitImages
     : tours.length
@@ -26,7 +17,7 @@ export default function DomesticTours({ tours = [], orbitImages = [] }) {
       eyebrow="Tour trong nước"
       title="Khám phá Việt Nam từ Bắc chí Nam"
       description="Từ vịnh Hạ Long kỳ vĩ đến đảo Ngọc Phú Quốc rực nắng — mỗi vùng đất đều mang một câu chuyện riêng."
-      regions={regions}
+      danhMuc={danhMuc}
       orbitImages={anhVongXoay}
     />
   );

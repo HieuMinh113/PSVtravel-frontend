@@ -160,7 +160,7 @@ function FaqItem({ item, isOpen, onToggle }) {
   );
 }
 
-export default function TourDetail({ basePath, tour, related = [], regions = [], visaList = [], settings = {} }) {
+export default function TourDetail({ basePath, tour, related = [], danhMuc = [], visaList = [], settings = {} }) {
   // Hotline lấy từ Cài đặt trong admin — đổi một chỗ là đổi khắp site
   const hotline = settings.hotline || "0907 870 707";
   const router = useRouter();
@@ -218,12 +218,12 @@ export default function TourDetail({ basePath, tour, related = [], regions = [],
     router.push(`${basePath}?q=${encodeURIComponent(detailQuery.trim())}&scroll=1`);
   };
 
-  // Danh mục lọc lấy từ tour thật đang bán (trang cha truyền xuống), không viết
-  // cứng nữa. Đây là thanh đi tắt sang trang danh sách — thiếu vài mục cũng không
-  // sao, sang bên đó là thấy đủ.
-  const detailRegions = regions.length ? ["Tất cả", ...regions] : [];
-  const handleDetailRegion = (r) => {
-    router.push(`${basePath}?region=${encodeURIComponent(r)}&scroll=1`);
+  // Thanh đi tắt sang trang danh sách, dùng đúng Danh Mục Tour trong admin —
+  // cùng nguồn với mega menu nên bấm ở đâu cũng ra đúng một kết quả.
+  const detailDanhMuc = danhMuc.length ? [{ slug: "", name: "Tất cả" }, ...danhMuc] : [];
+  const handleDetailDanhMuc = (d) => {
+    const loc = d.slug ? `?category=${encodeURIComponent(d.slug)}&scroll=1` : "?scroll=1";
+    router.push(`${basePath}${loc}`);
   };
 
   useEffect(() => {
@@ -465,13 +465,13 @@ export default function TourDetail({ basePath, tour, related = [], regions = [],
 
                 <div className="flex flex-1 flex-wrap items-center gap-2">
                   <SlidersHorizontal className="h-4 w-4 shrink-0 text-ocean-500" />
-                  {detailRegions.map((r) => (
+                  {detailDanhMuc.map((d) => (
                     <button
-                      key={r}
-                      onClick={() => handleDetailRegion(r)}
+                      key={d.slug || "tat-ca"}
+                      onClick={() => handleDetailDanhMuc(d)}
                       className="flex-1 whitespace-nowrap rounded-full bg-ocean-50 px-3.5 py-1.5 text-center text-xs font-semibold text-ocean-700 transition-colors hover:bg-ocean-100"
                     >
-                      {r}
+                      {d.name}
                     </button>
                   ))}
                 </div>

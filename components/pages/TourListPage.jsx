@@ -13,20 +13,19 @@ export default function TourListPage({
   title,
   eyebrow,
   description,
-  regions,
+  danhMuc = [], // Danh Mục Tour trong admin — cùng nguồn với mega menu
   orbitImages,
-  matchFilter, // (tour, selectedOption) => boolean — mặc định lọc theo vùng miền
 }) {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
-  const initialRegion = searchParams.get("region") || "Tất cả";
-  // Bấm một điểm đến ở trang chủ sẽ tới đây kèm ?category=slug
-  const categorySlug = searchParams.get("category");
+  // Tới đây từ mega menu, trang chủ hay trang chi tiết đều kèm ?category=slug.
+  // Lọc theo slug danh mục (quan hệ thật trong CSDL) thay vì so tên dạng chữ —
+  // trước đây gõ "Hàn quốc" khác "Hàn Quốc" là lọc trượt mà không ai biết.
   const [query, setQuery] = useState(initialQuery);
   const [searchOpen, setSearchOpen] = useState(Boolean(initialQuery));
-  const [region, setRegion] = useState(initialRegion);
+  const [slug, setSlug] = useState(searchParams.get("category") || "");
 
-  const isMatch = matchFilter || ((t, r) => t.region === r);
+  const tenDangChon = danhMuc.find((d) => d.slug === slug)?.name ?? "";
 
   // Khi đến từ thanh lọc ở trang chi tiết tour (?scroll=1), cuộn thẳng xuống khu vực kết quả.
   useEffect(() => {
@@ -42,20 +41,17 @@ export default function TourListPage({
       const matchQuery = query.trim() === "" ||
         t.name.toLowerCase().includes(query.toLowerCase()) ||
         (t.country || "").toLowerCase().includes(query.toLowerCase());
-      const matchRegion = region === "Tất cả" || isMatch(t, region);
-      // Lọc theo danh mục khi khách bấm từ khối "Điểm đến nổi bật" ở trang chủ
-      const matchCategory =
-        !categorySlug || (t.categorySlugs || []).includes(categorySlug);
-      return matchQuery && matchRegion && matchCategory;
+      const matchDanhMuc = slug === "" || (t.categorySlugs || []).includes(slug);
+      return matchQuery && matchDanhMuc;
     });
-  }, [tours, query, region, categorySlug]);
+  }, [tours, query, slug]);
 
   // Có đang lọc gì không — dùng để hiện nút xoá lọc
-  const dangLoc = query.trim() !== "" || region !== "Tất cả";
+  const dangLoc = query.trim() !== "" || slug !== "";
 
   const xoaLoc = () => {
     setQuery("");
-    setRegion("Tất cả");
+    setSlug("");
     setSearchOpen(false);
   };
 
@@ -118,12 +114,12 @@ export default function TourListPage({
 
               <div className="flex flex-1 items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
                 <SlidersHorizontal className="h-4 w-4 shrink-0 text-ocean-500" />
-                {regions.map((r) => {
-                  const dangChon = region === r;
+                {[{ slug: "", name: "Tất cả" }, ...danhMuc].map((d) => {
+                  const dangChon = slug === d.slug;
                   return (
                     <button
-                      key={r}
-                      onClick={() => setRegion(r)}
+                      key={d.slug || "tat-ca"}
+                      onClick={() => setSlug(d.slug)}
                       aria-pressed={dangChon}
                       className={`relative shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-300 ease-enter ${
                         dangChon
@@ -131,7 +127,7 @@ export default function TourListPage({
                           : "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
                       }`}
                     >
-                      {r}
+                      {d.name}
                     </button>
                   );
                 })}
@@ -159,7 +155,7 @@ export default function TourListPage({
             <span className="font-display text-2xl font-bold text-ocean-700">{filtered.length}</span>
             <span className="text-sm text-ink-muted">
               tour phù hợp
-              {region !== "Tất cả" && <> tại <strong className="font-semibold text-ink">{region}</strong></>}
+              {tenDangChon && <> tại <strong className="font-semibold text-ink">{tenDangChon}</strong></>}
               {query.trim() !== "" && <> cho từ khoá &ldquo;<strong className="font-semibold text-ink">{query}</strong>&rdquo;</>}
             </span>
           </div>

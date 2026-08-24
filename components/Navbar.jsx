@@ -8,13 +8,7 @@ import UserMenu from "./UserMenu";
 import useNguoiDung from "@/app/lib/useNguoiDung";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Menu, X, User, ChevronDown, Compass, ArrowRight,
-  Mountain, Landmark, Palmtree,
-} from "lucide-react";
-import {
-  FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwan,
-} from "./FlagIcons";
+import { Menu, X, User, ChevronDown, Compass, ArrowRight } from "lucide-react";
 
 const links = [
   { to: "/", label: "Trang chủ" },
@@ -27,55 +21,34 @@ const links = [
   { to: "/lien-he", label: "Liên hệ" },
 ];
 
-// Điểm đến trong nước tiêu biểu — trùng đúng từ khoá có trong tên tour (src/data/tours.js)
-// để bấm vào là lọc được ngay. Icon + màu đổi theo vùng miền để dễ quét mắt.
-const regionStyle = {
-  "Miền Bắc": { icon: Mountain, bg: "bg-ocean-50", text: "text-ocean-600" },
-  "Miền Trung": { icon: Landmark, bg: "bg-gold-50", text: "text-gold-600" },
-  "Miền Nam": { icon: Palmtree, bg: "bg-teal-50", text: "text-teal-600" },
-};
-
-// Ô "Vùng / khu vực" trong admin nhập tự do, quốc gia thì có nước chưa vẽ cờ.
-// Trước đây gặp giá trị lạ ("Đà Nẵng", "Malaysia") là style = null rồi đọc
-// style.bg -> vỡ cả thanh navbar. Giờ luôn có kiểu mặc định để không bao giờ vỡ.
-const kieuMacDinh = { icon: Compass, bg: "bg-ocean-50", text: "text-ocean-600" };
-const layKieuVung = (ten) => regionStyle[ten] ?? kieuMacDinh;
-
-// Cờ tự vẽ bằng SVG thay vì emoji, vì Windows/Edge hiển thị emoji cờ thành
-// chữ viết tắt (TH, KR...). Quốc gia nào chưa có cờ thì để trống, mục vẫn hiện.
-const coQuocGia = {
-  "Thái Lan": FlagThailand,
-  "Hàn Quốc": FlagKorea,
-  "Nhật Bản": FlagJapan,
-  Singapore: FlagSingapore,
-  "Trung Quốc": FlagChina,
-  "Đài Loan": FlagTaiwan,
-};
-
-// Danh sách trong mega menu dựng từ tour THẬT đang bán, không viết cứng nữa.
-// Admin thêm tour ở vùng miền hoặc quốc gia mới là menu tự có mục đó.
-function taoMegaConfig(vungMien = [], quocGia = []) {
+// Mục trong mega menu = Danh Mục Tour trong admin (tên + ảnh + thứ tự).
+// Admin thêm danh mục là menu tự có mục đó, khỏi sửa code.
+function taoMegaConfig(dmTrongNuoc = [], dmNuocNgoai = []) {
   return {
     domestic: {
       heading: "Khám phá theo điểm đến",
-      subheading: vungMien.length
-        ? `${vungMien.length} vùng miền đang có tour`
-        : "Chưa có tour trong nước",
-      items: vungMien.map((ten) => ({ name: ten, region: ten })),
+      subheading: dmTrongNuoc.length
+        ? `${dmTrongNuoc.length} điểm đến trong nước`
+        : "Chưa có điểm đến nào",
+      items: dmTrongNuoc,
       to: "/tour-trong-nuoc",
       ctaLabel: "Xem tất cả tour trong nước",
     },
     abroad: {
       heading: "Khám phá theo điểm đến",
-      subheading: quocGia.length
-        ? `${quocGia.length} quốc gia đang có tour`
-        : "Chưa có tour nước ngoài",
-      items: quocGia.map((ten) => ({ name: ten, Flag: coQuocGia[ten] })),
+      subheading: dmNuocNgoai.length
+        ? `${dmNuocNgoai.length} điểm đến nước ngoài`
+        : "Chưa có điểm đến nào",
+      items: dmNuocNgoai,
       to: "/tour-nuoc-ngoai",
       ctaLabel: "Xem tất cả tour nước ngoài",
     },
   };
 }
+
+// Bấm vào một điểm đến thì sang trang danh sách đã lọc sẵn theo danh mục đó.
+const duongDanDanhMuc = (config, item) =>
+  `${config.to}?category=${encodeURIComponent(item.slug)}&scroll=1`;
 
 const panelVariants = {
   hidden: { opacity: 0, y: 10, scale: 0.97 },
@@ -117,33 +90,41 @@ function MegaPanel({ config }) {
       </div>
 
       <div className="grid grid-cols-2 gap-1.5 p-3">
-        {config.items.map((item) => {
-          const style = layKieuVung(item.region);
-          const RegionIcon = style.icon;
-          return (
-            <motion.div key={item.name} variants={itemVariants}>
-              <Link
-                // Bấm vào phải LỌC. Trước đây dùng state={{query}} — cú pháp của
-                // React Router, sang Next không có tác dụng nên bấm mục nào cũng
-                // ra trang danh sách đầy đủ, không lọc gì.
-                href={`${config.to}?region=${encodeURIComponent(item.name)}&scroll=1`}
-                className="group flex items-center gap-3 rounded-2xl p-2.5 transition-colors duration-200 hover:bg-ocean-50/60"
-              >
-                {item.Flag ? (
-                  <item.Flag className="h-7 w-9 shrink-0 rounded-md object-cover shadow-sm ring-1 ring-black/5" />
-                ) : (
-                  <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${style.bg} ${style.text}`}>
-                    <RegionIcon className="h-4 w-4" />
-                  </span>
-                )}
-                <span className="flex-1 text-sm font-semibold leading-tight text-deep-900 transition-colors group-hover:text-ocean-700">
+        {config.items.map((item) => (
+          <motion.div key={item.slug} variants={itemVariants}>
+            <Link
+              // Bấm vào phải LỌC. Trước đây dùng state={{query}} — cú pháp của
+              // React Router, sang Next không có tác dụng nên bấm mục nào cũng
+              // ra trang danh sách đầy đủ, không lọc gì.
+              href={duongDanDanhMuc(config, item)}
+              className="group flex items-center gap-3 rounded-2xl p-2.5 transition-colors duration-200 hover:bg-ocean-50/60"
+            >
+              {item.image ? (
+                <Image
+                  src={item.image}
+                  alt=""
+                  width={36}
+                  height={36}
+                  className="h-9 w-9 shrink-0 rounded-xl object-cover ring-1 ring-black/5"
+                />
+              ) : (
+                // Danh mục chưa upload ảnh — vẫn hiện được, không để ô trống
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-ocean-50 text-ocean-600">
+                  <Compass className="h-4 w-4" />
+                </span>
+              )}
+              <span className="flex flex-1 flex-col leading-tight">
+                <span className="text-sm font-semibold text-deep-900 transition-colors group-hover:text-ocean-700">
                   {item.name}
                 </span>
-                <ArrowRight className="h-3.5 w-3.5 shrink-0 -translate-x-1 text-ocean-500 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" />
-              </Link>
-            </motion.div>
-          );
-        })}
+                <span className="text-xs font-medium text-ink-subtle">
+                  {item.tourCount > 0 ? `${item.tourCount} tour` : "Sắp có tour"}
+                </span>
+              </span>
+              <ArrowRight className="h-3.5 w-3.5 shrink-0 -translate-x-1 text-ocean-500 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" />
+            </Link>
+          </motion.div>
+        ))}
       </div>
 
       <div className="px-3 pb-3">
@@ -158,9 +139,12 @@ function MegaPanel({ config }) {
   );
 }
 
-export default function Navbar({ settings = {}, vungMien = [], quocGia = [] }) {
+export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = [] }) {
   // Dựng lại chỉ khi danh sách đổi, không dựng lại mỗi lần rê chuột
-  const megaConfig = useMemo(() => taoMegaConfig(vungMien, quocGia), [vungMien, quocGia]);
+  const megaConfig = useMemo(
+    () => taoMegaConfig(dmTrongNuoc, dmNuocNgoai),
+    [dmTrongNuoc, dmNuocNgoai]
+  );
 
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -365,26 +349,28 @@ export default function Navbar({ settings = {}, vungMien = [], quocGia = [] }) {
                           className="overflow-hidden"
                         >
                           <div className="grid grid-cols-2 gap-1 py-1 pl-3">
-                            {megaConfig[l.mega].items.map((item) => {
-                              const style = layKieuVung(item.region);
-                              const RegionIcon = style.icon;
-                              return (
-                                <Link
-                                  key={item.name}
-                                  href={`${megaConfig[l.mega].to}?region=${encodeURIComponent(item.name)}&scroll=1`}
-                                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-ocean-50"
-                                >
-                                  {item.Flag ? (
-                                    <item.Flag className="h-[18px] w-6 shrink-0 rounded ring-1 ring-black/5" />
-                                  ) : (
-                                    <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-md ${style.bg} ${style.text}`}>
-                                      <RegionIcon className="h-3.5 w-3.5" />
-                                    </span>
-                                  )}
-                                  {item.name}
-                                </Link>
-                              );
-                            })}
+                            {megaConfig[l.mega].items.map((item) => (
+                              <Link
+                                key={item.slug}
+                                href={duongDanDanhMuc(megaConfig[l.mega], item)}
+                                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-ocean-50"
+                              >
+                                {item.image ? (
+                                  <Image
+                                    src={item.image}
+                                    alt=""
+                                    width={24}
+                                    height={24}
+                                    className="h-6 w-6 shrink-0 rounded-md object-cover ring-1 ring-black/5"
+                                  />
+                                ) : (
+                                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-ocean-50 text-ocean-600">
+                                    <Compass className="h-3.5 w-3.5" />
+                                  </span>
+                                )}
+                                {item.name}
+                              </Link>
+                            ))}
                           </div>
                         </motion.div>
                       )}
