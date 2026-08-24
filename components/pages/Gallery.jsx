@@ -8,7 +8,7 @@ import SectionReveal from "@/components/SectionReveal";
 const chuCaiDau = (ten) => (ten || "?").trim().charAt(0).toUpperCase();
 
 export default function Gallery({ photos = [], settings = {} }) {
-  const email = settings.email || "hi@psvtravel.vn";
+  const email = settings.email || "hi@psvtravel.com";
   // Chỉ hiện ảnh thật khách gửi. Ảnh mẫu kèm lời khen do máy tự dựng là chứng
   // thực giả — trang này nói "chân thực, không dàn dựng" nên càng không được có.
   const list = photos;

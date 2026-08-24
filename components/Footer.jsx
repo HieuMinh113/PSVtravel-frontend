@@ -13,7 +13,7 @@ export default function Footer({ settings = {} }) {
   const [subscribed, setSubscribed] = useState(false);
 
   const hotline = settings.hotline || "0907 870 707";
-  const contactEmail = settings.email || "hi@psvtravel.vn";
+  const contactEmail = settings.email || "hi@psvtravel.com";
   const address =
     settings.address || "529 Huỳnh Tấn Phát, Phường Tân Thuận, Quận 7, TP. Hồ Chí Minh";
 
