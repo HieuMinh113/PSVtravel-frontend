@@ -126,14 +126,20 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
             className="overflow-hidden"
           >
             <div className="flex flex-col gap-4 px-5 pb-5 sm:pl-[4.25rem]">
+              {/* Nhãn buổi và nội dung nằm hai cột riêng: dòng thứ hai trở đi
+                  thẳng hàng với dòng đầu thay vì tụt về sát lề trái, mắt đọc
+                  không bị vấp. Nhãn có bề rộng cố định để các buổi thẳng cột
+                  với nhau — "Sáng" và "Chiều" dài ngắn khác nhau. */}
               <div className="flex flex-col gap-3">
                 {tachBuoi(day.desc).map((doan, k) => (
-                  <p key={k} className="text-sm leading-relaxed text-ink-muted">
+                  <div key={k} className="flex gap-2 text-sm leading-relaxed">
                     {doan.buoi && (
-                      <span className="mr-1.5 font-semibold text-ocean-700">{doan.buoi}</span>
+                      <span className="w-[3.25rem] shrink-0 font-semibold text-ocean-700">
+                        {doan.buoi}
+                      </span>
                     )}
-                    {toDamDiemDen(doan.noiDung)}
-                  </p>
+                    <p className="flex-1 text-ink-muted">{toDamDiemDen(doan.noiDung)}</p>
+                  </div>
                 ))}
               </div>
               {day.images && day.images.length > 0 && (
