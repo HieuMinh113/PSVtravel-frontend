@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { SlidersHorizontal, Search, X, MapPinned, RotateCcw } from "lucide-react";
 import PageHero from "@/components/PageHero";
@@ -17,15 +17,37 @@ export default function TourListPage({
   orbitImages,
 }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const initialQuery = searchParams.get("q") || "";
-  // Tới đây từ mega menu, trang chủ hay trang chi tiết đều kèm ?category=slug.
-  // Lọc theo slug danh mục (quan hệ thật trong CSDL) thay vì so tên dạng chữ —
-  // trước đây gõ "Hàn quốc" khác "Hàn Quốc" là lọc trượt mà không ai biết.
   const [query, setQuery] = useState(initialQuery);
   const [searchOpen, setSearchOpen] = useState(Boolean(initialQuery));
-  const [slug, setSlug] = useState(searchParams.get("category") || "");
 
+  // Danh mục đang chọn ĐỌC THẲNG TỪ ĐỊA CHỈ, không sao chép vào trạng thái.
+  //
+  // Trước đây dùng useState(searchParams.get("category")): giá trị chỉ được đọc
+  // một lần lúc thành phần được tạo ra. Đang đứng ở /tour-trong-nuoc mà bấm một
+  // mục trên mega menu thì địa chỉ đổi nhưng thành phần không được tạo lại, nên
+  // bộ lọc đứng im — bấm mãi không thấy gì thay đổi.
+  //
+  // Đọc thẳng từ địa chỉ thì bấm ở mega menu, ở trang chủ hay ở nút lọc bên
+  // dưới đều cho cùng kết quả, và nút Lùi của trình duyệt cũng chạy đúng.
+  const slug = searchParams.get("category") || "";
   const tenDangChon = danhMuc.find((d) => d.slug === slug)?.name ?? "";
+
+  // Bấm nút lọc thì ghi vào địa chỉ, để địa chỉ luôn là nguồn duy nhất.
+  // Nhờ vậy sao chép link gửi cho người khác vẫn ra đúng kết quả đang xem.
+  const chonDanhMuc = (slugMoi) => {
+    const thamSo = new URLSearchParams(searchParams.toString());
+    if (slugMoi) {
+      thamSo.set("category", slugMoi);
+    } else {
+      thamSo.delete("category");
+    }
+    thamSo.delete("scroll");
+    const chuoi = thamSo.toString();
+    router.replace(chuoi ? `${pathname}?${chuoi}` : pathname, { scroll: false });
+  };
 
   // Khi đến từ thanh lọc ở trang chi tiết tour (?scroll=1), cuộn thẳng xuống khu vực kết quả.
   useEffect(() => {
@@ -51,8 +73,8 @@ export default function TourListPage({
 
   const xoaLoc = () => {
     setQuery("");
-    setSlug("");
     setSearchOpen(false);
+    chonDanhMuc("");
   };
 
   return (
@@ -119,7 +141,7 @@ export default function TourListPage({
                   return (
                     <button
                       key={d.slug || "tat-ca"}
-                      onClick={() => setSlug(d.slug)}
+                      onClick={() => chonDanhMuc(d.slug)}
                       aria-pressed={dangChon}
                       className={`relative shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-300 ease-enter ${
                         dangChon

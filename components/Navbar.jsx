@@ -141,9 +141,45 @@ function MegaPanel({ config }) {
 
 export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = [] }) {
   // Dựng lại chỉ khi danh sách đổi, không dựng lại mỗi lần rê chuột
+  // Danh mục do layout dựng sẵn ở phía máy chủ truyền xuống.
+  //
+  // Layout KHÔNG được dựng lại khi chuyển trang bằng cách bấm link — nó giữ
+  // nguyên dữ liệu của lần dựng đầu tiên. Nếu trang đầu tiên khách mở lại là
+  // bản lưu tạm sinh ra lúc chưa có danh mục nào (ngay sau khi triển khai, hoặc
+  // sau khi dọn cơ sở dữ liệu), navbar sẽ trống suốt cả phiên cho tới khi bấm
+  // F5 — trong khi các nút lọc bên dưới lại hiện đủ, vì chúng thuộc về trang.
+  //
+  // Nên: nhận danh sách rỗng thì tự lấy lại ở phía trình duyệt đúng một lần.
+  // Có dữ liệu sẵn thì không tốn thêm lượt gọi nào.
+  const [dmTuLay, setDmTuLay] = useState(null);
+
+  useEffect(() => {
+    if (dmTrongNuoc.length || dmNuocNgoai.length || dmTuLay) return;
+
+    let conHieuLuc = true;
+    Promise.all([
+      fetch("/api/categories?type=domestic").then((r) => (r.ok ? r.json() : [])),
+      fetch("/api/categories?type=abroad").then((r) => (r.ok ? r.json() : [])),
+    ])
+      .then(([trongNuoc, nuocNgoai]) => {
+        if (conHieuLuc && (trongNuoc.length || nuocNgoai.length)) {
+          setDmTuLay({ trongNuoc, nuocNgoai });
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      conHieuLuc = false;
+    };
+  }, [dmTrongNuoc.length, dmNuocNgoai.length, dmTuLay]);
+
   const megaConfig = useMemo(
-    () => taoMegaConfig(dmTrongNuoc, dmNuocNgoai),
-    [dmTrongNuoc, dmNuocNgoai]
+    () =>
+      taoMegaConfig(
+        dmTuLay?.trongNuoc ?? dmTrongNuoc,
+        dmTuLay?.nuocNgoai ?? dmNuocNgoai
+      ),
+    [dmTrongNuoc, dmNuocNgoai, dmTuLay]
   );
 
   const [scrolled, setScrolled] = useState(false);
