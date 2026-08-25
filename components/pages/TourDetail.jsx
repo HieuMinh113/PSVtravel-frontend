@@ -51,6 +51,32 @@ const tourFaqs = (tour, isAbroad) => [
   },
 ];
 
+// Tô đậm tên điểm tham quan.
+//
+// Nhân viên bọc tên điểm đến trong dấu sao khi nhập trong admin:
+//   "Đoàn tham quan *Tòa nhà Quốc Hội*, sau đó tới *Công viên sư tử biển*."
+// Ra trang khách thì hai cái tên đó in đậm, khách quét mắt là thấy ngay hôm
+// đó đi đâu mà không phải đọc hết đoạn văn.
+//
+// Cố ý để nhân viên tự đánh dấu chứ không cho máy tự đoán: trong một đoạn
+// tiếng Việt, "Quý khách", "Đoàn", "Sau đó" cũng viết hoa chữ đầu y như tên
+// địa danh — máy đoán sẽ tô nhầm gần hết, nhìn còn rối hơn không tô.
+//
+// Dấu sao lẻ không thành cặp thì giữ nguyên như chữ thường, không vỡ trang.
+function toDamDiemDen(chu) {
+  return String(chu || "")
+    .split(/\*([^*\n]+)\*/g)
+    .map((phan, i) =>
+      i % 2 === 1 ? (
+        <strong key={i} className="font-semibold text-deep-900">
+          {phan}
+        </strong>
+      ) : (
+        phan
+      )
+    );
+}
+
 // Tách nội dung một ngày thành từng buổi cho dễ đọc.
 //
 // Nhân viên nhập cả ngày vào một ô văn bản: "Sáng: ... Trưa: ... Tối: ...".
@@ -106,7 +132,7 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
                     {doan.buoi && (
                       <span className="mr-1.5 font-semibold text-ocean-700">{doan.buoi}</span>
                     )}
-                    {doan.noiDung}
+                    {toDamDiemDen(doan.noiDung)}
                   </p>
                 ))}
               </div>

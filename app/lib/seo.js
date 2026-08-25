@@ -63,13 +63,16 @@ export function organizationJsonLd() {
 }
 
 // JSON-LD cho một tour (TouristTrip + Offer)
+// Gỡ dấu sao bọc tên điểm tham quan trong nội dung lịch trình.
+const boDauSao = (chu) => String(chu || "").replace(/\*([^*\n]+)\*/g, "$1");
+
 export function tourJsonLd(tour, basePath) {
   const url = `${SITE_URL}${basePath}/${tour.slug}`;
   return {
     "@context": "https://schema.org",
     "@type": "TouristTrip",
     name: tour.name,
-    description: (tour.highlights || []).join(", "),
+    description: boDauSao((tour.highlights || []).join(", ")),
     image: tour.image,
     url,
     touristType: "Leisure",
@@ -77,7 +80,9 @@ export function tourJsonLd(tour, basePath) {
       "@type": "ListItem",
       position: i + 1,
       name: d.title,
-      description: d.desc,
+      // Bỏ dấu sao đánh dấu điểm tham quan: đó là quy ước nội bộ để tô đậm
+      // ngoài giao diện, không được lọt vào dữ liệu gửi cho công cụ tìm kiếm.
+      description: boDauSao(d.desc),
     })),
     offers: {
       "@type": "Offer",

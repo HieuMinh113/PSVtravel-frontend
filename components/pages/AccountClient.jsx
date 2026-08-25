@@ -9,6 +9,7 @@ import {
   Loader2, CheckCircle2, AlertCircle, KeyRound, Save, Star,
 } from "lucide-react";
 import ReviewForm from "@/components/ReviewForm";
+import { baoNguoiDungDoi } from "@/app/lib/useNguoiDung";
 
 const tienVN = (v) => (typeof v === "number" ? v.toLocaleString("vi-VN") + "đ" : v);
 
@@ -191,6 +192,8 @@ export default function AccountClient({ user, donBanDau = [], loiTaiDon = false,
       }
 
       setTbHoSo({ loai: "ok", noiDung: data?.message || "Đã cập nhật hồ sơ." });
+      // Báo cho thanh điều hướng lấy lại tên mới, khỏi phải F5
+      baoNguoiDungDoi();
       router.refresh();
     } catch {
       setTbHoSo({ loai: "loi", noiDung: "Không kết nối được máy chủ." });
