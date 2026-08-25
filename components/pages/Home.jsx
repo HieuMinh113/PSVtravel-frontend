@@ -55,7 +55,9 @@ const whyUs = [
 // khách cẩn thận copy mã số thuế đem tra được ngay, còn "4.8/5 từ 2.400 đánh giá"
 // mà đếm trên trang chỉ có vài chục bài thì phản tác dụng.
 const trustSignals = [
-  { icon: Building2, text: "Công ty CP Du lịch P.S.V Travel" },
+  // Ghi đúng tên pháp nhân như trên giấy chứng nhận đăng ký doanh nghiệp —
+  // khách đem tra cứu là khớp từng chữ.
+  { icon: Building2, text: "CÔNG TY CỔ PHẦN DU LỊCH P.S.V TRAVEL" },
   { icon: ShieldCheck, text: "MST 0314542363" },
   { icon: Headset, text: "Hotline 24/7: 0907 870 707" },
 ];
