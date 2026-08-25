@@ -53,7 +53,7 @@ export default function Flights({ airlines = [], deals = [], settings = {} }) {
                 <div className="relative h-32 overflow-hidden">
                   {d.image ? (
                     <>
-                      <Image src={d.image} alt={d.route} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
+                      <Image src={d.image} alt={d.route} fill sizes="(max-width: 640px) 100vw, 33vw" quality={90} className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
                       <div className="absolute inset-0 bg-gradient-to-t from-deep-950/70 to-transparent" />
                     </>
                   ) : (

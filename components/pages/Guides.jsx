@@ -84,6 +84,7 @@ export default function Guides({ guides: apiGuides = [] }) {
                             src={baiNoiBat.image}
                             alt={baiNoiBat.title}
                             fill
+                            quality={90}
                             sizes="(max-width: 1024px) 100vw, 50vw"
                             className="object-cover transition-transform duration-700 ease-enter group-hover:scale-105"
                           />
@@ -137,7 +138,7 @@ export default function Guides({ guides: apiGuides = [] }) {
                       <Link href={`/cam-nang/${g.slug}`} className="flex flex-1 flex-col">
                         <div className="relative h-48 overflow-hidden">
                           {g.image ? (
-                            <Image src={g.image} alt={g.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
+                            <Image src={g.image} alt={g.title} fill sizes="(max-width: 640px) 100vw, 33vw" quality={90} className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
                           ) : (
                             <div className="h-full w-full bg-gradient-to-br from-ocean-100 to-teal-100" />
                           )}

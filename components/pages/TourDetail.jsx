@@ -371,7 +371,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     <div>
       {/* Hero ảnh lớn */}
       <section className="relative h-[62dvh] min-h-[460px] overflow-hidden">
-        <Image src={tour.image} alt={tour.name} fill priority sizes="100vw" className="object-cover" />
+        <Image src={tour.image} alt={tour.name} fill priority sizes="100vw" quality={90} className="object-cover" />
         <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-deep-950/80 via-deep-950/30 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-deep-950/85 via-deep-950/20 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-5 pb-10 pt-24 sm:px-8">

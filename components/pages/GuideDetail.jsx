@@ -17,7 +17,7 @@ export default function GuideDetail({ guide }) {
       {/* Ảnh bìa + tiêu đề */}
       <section className="relative h-[52dvh] min-h-[380px] overflow-hidden">
         {guide.image ? (
-          <Image src={guide.image} alt={guide.title} fill priority sizes="100vw" className="object-cover" />
+          <Image src={guide.image} alt={guide.title} fill priority sizes="100vw" quality={90} className="object-cover" />
         ) : (
           <div className="h-full w-full bg-deep-gradient" />
         )}

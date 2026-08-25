@@ -16,11 +16,21 @@ const nextConfig = {
   // Không ảnh hưởng gì lúc chạy `npm run dev` trên máy lập trình.
   output: "standalone",
   images: {
-    // Next 16 chặn tối ưu ảnh từ IP nội bộ (127.0.0.1, 172.x...) để phòng SSRF.
-    // Trên máy lập trình, backend Laravel chạy ở 127.0.0.1:8000 nên ảnh admin
-    // upload bị chặn hết. Chỉ mở khi chạy dev; lên production backend là tên
-    // miền thật nên vẫn giữ nguyên lớp bảo vệ.
-    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
+    // Next 16 chặn tối ưu ảnh từ IP nội bộ để phòng SSRF. Ở đây phải mở, cả
+    // khi chạy thật:
+    //
+    //  - Máy lập trình: backend Laravel ở 127.0.0.1:8000
+    //  - Máy chủ thật: api.psvtravel.com được đặt bí danh trỏ thẳng vào
+    //    container nginx trong mạng Docker (172.x), vì VPS chặn kiểu gọi vòng
+    //    ra Internet rồi quay về chính mình.
+    //
+    // Lớp bảo vệ thật nằm ở remotePatterns bên dưới: chỉ đúng những tên miền
+    // liệt kê ở đó mới được tối ưu, không phải mọi địa chỉ nội bộ.
+    dangerouslyAllowLocalIP: true,
+
+    // Next 16 bắt buộc khai báo trước các mức chất lượng được phép dùng.
+    // Mặc định chỉ có [75]; thêm 90 cho ảnh bìa tour và ảnh lớn cho nét.
+    qualities: [75, 90],
     remotePatterns: [
       ...mayChuAnh,
       // Máy lập trình: tuỳ người mà .env ghi localhost hay 127.0.0.1

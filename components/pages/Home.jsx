@@ -377,7 +377,7 @@ export default function Home({
                   aria-label={`Xem tour ${d.name}`}
                 />
                 {d.image ? (
-                  <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
+                  <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 50vw, 25vw" quality={90} className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
                 ) : (
                   // Danh mục chưa có ảnh thì để nền thương hiệu, không để ô trắng
                   <div className="h-full w-full bg-deep-gradient" />
