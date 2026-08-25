@@ -2,25 +2,66 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 const REVALIDATE = 60; // giây — chậm nhất 1 phút thấy thay đổi từ admin
 
-async function layJSON(duongDan) {
-  // Backend chết KHÔNG được kéo sập cả website: trả null để trang vẫn dựng
-  // với phần dữ liệu còn lại, thay vì ném lỗi làm Next trả 500 toàn trang.
-  try {
-    const res = await fetch(`${API_URL}${duongDan}`, {
-      next: { revalidate: REVALIDATE },
-      headers: { Accept: "application/json" },
-    });
+const CHO_GIUA_CAC_LAN = [0, 250, 750]; // mili giây trước lần gọi thứ 1, 2, 3
 
-    if (!res.ok) {
-      if (res.status !== 404) console.error(`API lỗi ${res.status}: ${duongDan}`);
-      return null;
+const nghi = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Gọi backend Laravel.
+ *
+ * `batBuoc: true` dùng cho dữ liệu mà thiếu nó thì trang trở nên VÔ NGHĨA —
+ * danh sách tour, danh mục. Gọi không được thì NÉM LỖI thay vì trả rỗng.
+ *
+ * Vì sao phải ném lỗi: Next lưu lại kết quả dựng trang rồi phục vụ cho mọi
+ * khách trong 60 giây. Nếu nuốt lỗi rồi trả mảng rỗng, trang vẫn "dựng thành
+ * công" với 0 tour — và **cái trang rỗng đó bị lưu lại**. Một cú chớp mạng
+ * 50 mili giây biến thành 60 giây cả website hiện "Không tìm thấy tour phù
+ * hợp" cho tất cả khách. Tệ hơn: việc dựng lại chạy ngầm mỗi khi có người
+ * truy cập, nên trúng cú chớp nào là bản rỗng thay thế bản tốt, bất kể lúc nào.
+ *
+ * Ném lỗi thì Next bỏ lần dựng đó và **giữ nguyên bản tốt trước đó**. Cú chớp
+ * mạng trở nên vô hình thay vì đóng băng thành trang rỗng.
+ *
+ * Dữ liệu phụ (banner, khoảnh khắc, visa...) vẫn trả null như cũ: thiếu chúng
+ * thì ẩn một khối, không việc gì phải bỏ cả trang.
+ */
+async function layJSON(duongDan, { batBuoc = false } = {}) {
+  let loiCuoi = null;
+
+  for (let lan = 0; lan < CHO_GIUA_CAC_LAN.length; lan++) {
+    if (CHO_GIUA_CAC_LAN[lan]) await nghi(CHO_GIUA_CAC_LAN[lan]);
+
+    try {
+      const res = await fetch(`${API_URL}${duongDan}`, {
+        next: { revalidate: REVALIDATE },
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.ok) return res.json();
+
+      // 404 là câu trả lời hợp lệ (trang tĩnh chưa tạo), không thử lại
+      if (res.status === 404) return null;
+
+      // 4xx khác là lỗi phía mình, thử lại cũng vậy
+      if (res.status < 500) {
+        console.error(`API lỗi ${res.status}: ${duongDan}`);
+        loiCuoi = new Error(`API trả về ${res.status}`);
+        break;
+      }
+
+      loiCuoi = new Error(`API trả về ${res.status}`);
+    } catch (e) {
+      loiCuoi = e;
     }
-
-    return res.json();
-  } catch (e) {
-    console.error(`Không gọi được API: ${duongDan}`, e?.cause?.code || e?.message);
-    return null;
   }
+
+  const lyDo = loiCuoi?.cause?.code || loiCuoi?.message || "không rõ";
+  console.error(`Không gọi được API sau ${CHO_GIUA_CAC_LAN.length} lần: ${duongDan}`, lyDo);
+
+  if (batBuoc) {
+    throw new Error(`Không lấy được dữ liệu bắt buộc từ API: ${duongDan} (${lyDo})`);
+  }
+  return null;
 }
 
 // Chuyển dữ liệu tour từ backend sang đúng hình dạng giao diện quen dùng
@@ -81,7 +122,8 @@ export async function getTours({ type, featured, category, perPage = 50 } = {}) 
   // khởi hành rồi vứt đi gần hết là phần chậm dễ bỏ sót nhất.
   q.set("per_page", String(perPage));
 
-  const json = await layJSON(`/tours?${q.toString()}`);
+  // Bắt buộc: trang danh sách tour mà không có tour thì không còn là trang nữa
+  const json = await layJSON(`/tours?${q.toString()}`, { batBuoc: true });
   return (json?.data ?? []).map(mapTour);
 }
 
@@ -236,7 +278,8 @@ export async function getPage(slug) {
 // Mỗi danh mục là một điểm đến: có tên, ảnh riêng và SỐ TOUR THẬT do máy chủ đếm.
 export async function getCategories(loai) {
   const q = loai ? `?type=${loai}` : "";
-  const json = await layJSON(`/categories${q}`);
+  // Bắt buộc: danh mục dựng nên mega menu và các nút lọc
+  const json = await layJSON(`/categories${q}`, { batBuoc: true });
 
   return (json?.data ?? []).map((c) => ({
     slug: c.slug,
