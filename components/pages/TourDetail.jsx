@@ -51,6 +51,30 @@ const tourFaqs = (tour, isAbroad) => [
   },
 ];
 
+// Tách nội dung một ngày thành từng buổi cho dễ đọc.
+//
+// Nhân viên nhập cả ngày vào một ô văn bản: "Sáng: ... Trưa: ... Tối: ...".
+// Đổ nguyên khối ra trang khách thì thành một đoạn chữ dày đặc, đọc rất mệt.
+// Ở đây cắt tại các mốc buổi rồi tô đậm nhãn buổi, không đụng gì tới dữ liệu
+// đã nhập trong admin.
+const MOC_BUOI = /(?=(?:^|\s)(?:Sáng|Trưa|Chiều|Tối|Đêm)\s*:)/g;
+
+function tachBuoi(noiDung) {
+  const chu = (noiDung || "").trim();
+  if (!chu) return [];
+
+  return chu
+    .split(MOC_BUOI)
+    .map((phan) => phan.trim())
+    .filter(Boolean)
+    .map((phan) => {
+      const khop = phan.match(/^(Sáng|Trưa|Chiều|Tối|Đêm)\s*:\s*/);
+      return khop
+        ? { buoi: `${khop[1]}:`, noiDung: phan.slice(khop[0].length) }
+        : { buoi: null, noiDung: phan };
+    });
+}
+
 function ItineraryItem({ day, index, isOpen, onToggle }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-ocean-100 bg-white">
@@ -76,10 +100,19 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
             className="overflow-hidden"
           >
             <div className="flex flex-col gap-4 px-5 pb-5 sm:pl-[4.25rem]">
-              <p className="text-sm leading-relaxed text-ink-muted">{day.desc}</p>
+              <div className="flex flex-col gap-3">
+                {tachBuoi(day.desc).map((doan, k) => (
+                  <p key={k} className="text-sm leading-relaxed text-ink-muted">
+                    {doan.buoi && (
+                      <span className="mr-1.5 font-semibold text-ocean-700">{doan.buoi}</span>
+                    )}
+                    {doan.noiDung}
+                  </p>
+                ))}
+              </div>
               {day.images && day.images.length > 0 && (
-                <div className="grid grid-cols-3 gap-2.5">
-                  {day.images.slice(0, 3).map((img, k) => (
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                  {day.images.map((img, k) => (
                     <img
                       key={k}
                       src={img}
@@ -232,19 +265,13 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Thư viện ảnh hiện ĐỦ số ảnh admin đã tải lên, đúng thứ tự đã sắp.
+  // Trước đây cắt còn 6 tấm nên tải 10 ảnh mà chỉ thấy 5.
   const galleryImages = useMemo(() => {
     if (!tour) return [];
     const fromApi = (tour.images || []).filter(Boolean);
-    return [...new Set([tour.image, ...fromApi].filter(Boolean))].slice(0, 6);
+    return [...new Set([tour.image, ...fromApi].filter(Boolean))];
   }, [tour]);
-
-  const dayImages = useMemo(() => {
-    if (!tour || galleryImages.length === 0) return [];
-    const count = Math.min(3, galleryImages.length);
-    return tour.itinerary.map((_, i) =>
-      Array.from({ length: count }, (_, k) => galleryImages[(i + 1 + k) % galleryImages.length])
-    );
-  }, [tour, galleryImages]);
 
   const reviews = tour?.reviewsList ?? [];
   // Thông tin visa lấy từ DỮ LIỆU THẬT trong admin, không còn đọc file mẫu.
@@ -484,7 +511,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                 {tour.highlights.map((h) => (
                   <div key={h} className="flex items-start gap-2.5 rounded-xl bg-ocean-50/60 p-3">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-600" />
-                    <span className="text-sm text-ink">{h}</span>
+                    <span className="text-sm font-semibold text-deep-900">{h}</span>
                   </div>
                 ))}
               </div>
@@ -495,7 +522,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
               <p className="mt-1 text-sm text-ink-subtle">Kèm hình ảnh thực tế các điểm đến, món ăn theo từng ngày.</p>
               <div className="mt-5 space-y-3">
                 {tour.itinerary.map((day, i) => (
-                  <ItineraryItem key={day.day} day={{ ...day, images: dayImages[i] }} index={i} isOpen={openDay === i} onToggle={() => setOpenDay(openDay === i ? -1 : i)} />
+                  <ItineraryItem key={day.day} day={day} index={i} isOpen={openDay === i} onToggle={() => setOpenDay(openDay === i ? -1 : i)} />
                 ))}
               </div>
             </SectionReveal>

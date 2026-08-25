@@ -43,7 +43,7 @@ const ORBIT_DU_PHONG = [
 
 const whyUs = [
   { icon: ShieldCheck, title: "Cam kết minh bạch", desc: "Giá tour trọn gói, không phụ thu ẩn, huỷ/đổi lịch linh hoạt." },
-  { icon: BadgePercent, title: "Giá tốt mỗi ngày", desc: "So sánh giá trực tiếp với hơn 200 đối tác lữ hành trên toàn quốc." },
+  { icon: BadgePercent, title: "Giá tốt mỗi ngày", desc: "Giá trọn gói minh bạch, so sánh trực tiếp giữa các tuyến để bạn chọn được mức phù hợp." },
   { icon: HeartHandshake, title: "Hỗ trợ 24/7", desc: "Đội ngũ tư vấn viên đồng hành xuyên suốt hành trình của bạn." },
   { icon: Clock3, title: "Xác nhận tức thì", desc: "Đặt chỗ và nhận xác nhận tour chỉ trong vài phút." },
 ];
@@ -193,8 +193,8 @@ export default function Home({
               transition={{ duration: 0.8, delay: 0.26 }}
               className="mt-[clamp(0.75rem,2vh,1.25rem)] max-w-xl text-[clamp(0.9rem,1.9vw,1.125rem)] text-white/85"
             >
-              <strong className="font-semibold text-white">320+ tuyến tour</strong> trong nước và quốc tế,
-              giá trọn gói minh bạch — đồng hành cùng hơn 18.000 hành trình mỗi năm.
+              <strong className="font-semibold text-white">300+ tuyến tour</strong> trong nước và quốc tế,
+              giá trọn gói minh bạch — đồng hành cùng hơn 10.000 lượt khách mỗi năm.
             </motion.p>
 
             <div className="mt-[clamp(1.25rem,3.5vh,2.25rem)] w-full">
@@ -428,12 +428,14 @@ export default function Home({
 
       {/* ===== SỐ LIỆU ===== */}
       <section className="bg-foam py-14">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-5 sm:grid-cols-4 sm:px-8">
+        {/* Chỉ ba con số, đều là số liệu công ty cung cấp. Trước đây còn ô
+            "98% khách hàng hài lòng" — con số không ai đo được và không có
+            nguồn, nên bỏ thay vì bịa tiếp. */}
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-5 sm:grid-cols-3 sm:px-8">
           {[
-            { to: 18400, suffix: "+", label: "Khách hàng mỗi năm" },
-            { to: 320, suffix: "+", label: "Tuyến tour trong & ngoài nước" },
-            { to: 12, suffix: " năm", label: "Kinh nghiệm vận hành" },
-            { to: 98, suffix: "%", label: "Khách hàng hài lòng" },
+            { to: 10000, suffix: "+", label: "Lượt khách mỗi năm" },
+            { to: 300, suffix: "+", label: "Tuyến tour trong & ngoài nước" },
+            { to: 9, suffix: " năm", label: "Hoạt động trong ngành" },
           ].map((s, i) => (
             <SectionReveal key={s.label} delay={i * 0.08} className="rounded-2xl bg-white px-4 py-6 text-center shadow-card">
               {/* Cỡ chữ co theo bề ngang: ô hai cột trên điện thoại chỉ rộng

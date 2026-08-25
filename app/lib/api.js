@@ -52,6 +52,7 @@ function mapTour(t) {
       day: `Ngày ${it.day_number}`,
       title: it.title,
       desc: it.description,
+      images: it.images ?? [],
     })),
     departures: (t.departures ?? []).map((d) => ({
       id: d.id,
