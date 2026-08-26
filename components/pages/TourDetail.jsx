@@ -85,6 +85,10 @@ function toDamDiemDen(chu) {
 // đã nhập trong admin.
 const MOC_BUOI = /(?=(?:^|\s)(?:Sáng|Trưa|Chiều|Tối|Đêm)\s*:)/g;
 
+// Số ảnh tối đa gom từ lịch trình khi Thư viện ảnh còn trống. 9 = một ô lớn
+// (2 cột × 2 hàng) + 8 ô nhỏ, vừa khít lưới 4 cột × 3 hàng, không dư ô trống.
+const TOI_DA_ANH_GALLERY = 9;
+
 function tachBuoi(noiDung) {
   const chu = (noiDung || "").trim();
   if (!chu) return [];
@@ -299,10 +303,35 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
 
   // Thư viện ảnh hiện ĐỦ số ảnh admin đã tải lên, đúng thứ tự đã sắp.
   // Trước đây cắt còn 6 tấm nên tải 10 ảnh mà chỉ thấy 5.
+  //
+  // Chưa kịp dựng Thư viện riêng thì lấy tạm ảnh của các ngày trong lịch trình.
+  // Nếu không, mục "hình ảnh thực tế" chỉ còn mỗi tấm poster quảng cáo phình ra
+  // chiếm nửa lưới, trong khi ảnh thật đã có sẵn ở phần lịch trình ngay phía trên.
   const galleryImages = useMemo(() => {
     if (!tour) return [];
-    const fromApi = (tour.images || []).filter(Boolean);
-    return [...new Set([tour.image, ...fromApi].filter(Boolean))];
+
+    const thuVien = (tour.images || []).filter(Boolean);
+    // Admin đã tự chọn ảnh cho Thư viện thì tôn trọng đúng lựa chọn đó,
+    // không chèn thêm ảnh ngày vào giữa.
+    if (thuVien.length > 0) {
+      return [...new Set([tour.image, ...thuVien].filter(Boolean))];
+    }
+
+    // Lấy xoay vòng: ảnh đầu của mỗi ngày trước, hết một lượt mới quay lại lấy
+    // ảnh thứ hai. Lấy tuần tự thì tour nào có một ngày nhiều ảnh sẽ chiếm sạch
+    // chỗ, khách nhìn 9 tấm đều là một thành phố.
+    const theoNgay = (tour.itinerary || []).map((ngay) => (ngay.images || []).filter(Boolean));
+    const nhieuNhat = Math.max(0, ...theoNgay.map((anh) => anh.length));
+    const gom = [];
+    for (let vong = 0; vong < nhieuNhat; vong++) {
+      for (const anhCuaNgay of theoNgay) {
+        if (anhCuaNgay[vong]) gom.push(anhCuaNgay[vong]);
+      }
+    }
+
+    // Bỏ ảnh bìa ra: đây là mục ảnh THỰC TẾ, mà ảnh bìa thường là poster quảng
+    // cáo và đã hiện to ở đầu trang rồi.
+    return [...new Set(gom)].slice(0, TOI_DA_ANH_GALLERY);
   }, [tour]);
 
   const reviews = tour?.reviewsList ?? [];
@@ -850,12 +879,18 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
       </section>
 
       {/* ===== GALLERY ẢNH THỰC TẾ (đã chuyển xuống dưới nội dung tour) ===== */}
+      {/* Tour chưa có ảnh nào thì ẩn hẳn: một tấm bìa lẻ loi phình ra chiếm nửa
+          lưới trông như trang bị lỗi, thà không hiện còn hơn. */}
+      {galleryImages.length > 0 && (
       <section className="bg-foam pb-12 sm:pb-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="mb-4 flex items-center gap-2 text-sm font-semibold text-ink-muted">
             <Images className="h-4 w-4 text-ocean-500" /> Hình ảnh thực tế của hành trình
           </SectionReveal>
-          <SectionReveal delay={0.05} className="grid grid-cols-4 grid-rows-2 gap-2.5 sm:gap-3">
+          {/* auto-rows cố định thay cho grid-rows-2: quá 5 tấm thì các hàng dư
+              không còn tự co lại lùn hơn hàng trên. Ô lớn chiếm 2 hàng nên cao
+              gấp đôi ô nhỏ cộng khoảng cách giữa hai hàng. */}
+          <SectionReveal delay={0.05} className="grid grid-cols-4 auto-rows-[6.5rem] gap-2.5 sm:auto-rows-[9rem] sm:gap-3">
             {galleryImages.map((img, i) => (
               <button
                 key={i}
@@ -867,7 +902,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                   src={img}
                   alt={`${tour.name} - ảnh ${i + 1}`}
                   loading="lazy"
-                  className="h-full min-h-[100px] w-full object-cover transition-transform duration-500 ease-enter group-hover:scale-110"
+                  className="h-full w-full object-cover transition-transform duration-500 ease-enter group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-deep-950/0 transition-colors duration-300 group-hover:bg-deep-950/20" />
                 {/* Dấu phóng to hiện khi rê chuột — cho biết ảnh bấm được */}
@@ -879,6 +914,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
           </SectionReveal>
         </div>
       </section>
+      )}
 
       {related.length > 0 && (
         <section className="bg-ocean-50/50 py-16">
