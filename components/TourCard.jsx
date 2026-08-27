@@ -13,6 +13,10 @@ const tagStyles = {
   "Cao cấp": "bg-deep-800",
 };
 
+// Số ngày khởi hành hiện trên thẻ. Nhiều hơn thì gộp thành nhãn "+n" để dãy
+// ngày không xuống thành hai hàng làm cao thấp các thẻ lệch nhau.
+const SO_NGAY_HIEN = 5;
+
 export default function TourCard({ tour, basePath, index = 0 }) {
   const discount = tour.oldPrice
     ? Math.round((1 - tour.price / tour.oldPrice) * 100)
@@ -21,6 +25,11 @@ export default function TourCard({ tour, basePath, index = 0 }) {
   // Còn ít chỗ thì mới cảnh báo — dùng màu ấm để tạo cảm giác cấp thiết đúng lúc,
   // tránh bôi đỏ mọi thẻ khiến tín hiệu mất giá trị
   const sapHetCho = typeof tour.seatsLeft === "number" && tour.seatsLeft > 0 && tour.seatsLeft <= 5;
+
+  // Ngày khởi hành sắp tới, dạng dd/mm. Backend đã lọc còn mở, còn hạn và sắp
+  // theo ngày; ở đây chỉ cắt cho vừa bề rộng thẻ.
+  const ngayKhoiHanh = (tour.departureDates ?? []).slice(0, SO_NGAY_HIEN);
+  const conNua = Math.max(0, (tour.departureCount ?? ngayKhoiHanh.length) - ngayKhoiHanh.length);
 
   return (
     <motion.div
@@ -86,8 +95,10 @@ export default function TourCard({ tour, basePath, index = 0 }) {
             </span>
           </div>
 
-          {/* Dòng cấp thiết: chỉ tô ấm khi thật sự sắp hết chỗ */}
-          {(sapHetCho || tour.startDate) && (
+          {/* Dòng cấp thiết: chỉ tô ấm khi thật sự sắp hết chỗ.
+              Ngày khởi hành đã tách xuống dãy ô riêng bên dưới nên không nhắc
+              lại ở đây nữa. */}
+          {(sapHetCho || typeof tour.seatsLeft === "number") && (
             <div className={`mt-3 flex items-center gap-1.5 text-xs font-medium ${sapHetCho ? "text-sunset-700" : "text-ink-subtle"}`}>
               <Users2 className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">
@@ -95,11 +106,28 @@ export default function TourCard({ tour, basePath, index = 0 }) {
                   ? `Chỉ còn ${tour.seatsLeft} chỗ`
                   : tour.seatsLeft > 0
                   ? `Còn ${tour.seatsLeft} chỗ`
-                  : tour.seatsLeft === 0
-                  ? "Hết chỗ"
-                  : "Nhận đặt chỗ"}
-                {tour.startDate ? ` · Khởi hành ${tour.startDate}` : ""}
+                  : "Hết chỗ"}
               </span>
+            </div>
+          )}
+
+          {/* Dãy ngày khởi hành: nhìn một hàng ngày là biết tour chạy đều đặn,
+              có nhiều lựa chọn — thuyết phục hơn hẳn một ngày lẻ. Chỉ để xem,
+              không bấm được: cả thẻ đã là một liên kết, lồng nút vào trong dễ
+              bấm nhầm trên điện thoại. */}
+          {ngayKhoiHanh.length > 0 && (
+            <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+              {ngayKhoiHanh.map((ngay) => (
+                <span
+                  key={ngay}
+                  className="rounded-md bg-ocean-50 px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-ocean-700"
+                >
+                  {ngay}
+                </span>
+              ))}
+              {conNua > 0 && (
+                <span className="text-[11px] font-medium text-ink-subtle">+{conNua}</span>
+              )}
             </div>
           )}
 

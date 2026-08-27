@@ -85,6 +85,9 @@ function mapTour(t) {
     reviews: t.review_count ?? 0,
     seatsLeft: dep?.seats_left ?? t.next_seats_left ?? null,
     startDate: dep?.start_date_display ?? t.next_start_date ?? null,
+    // Dãy ngày khởi hành cho thẻ tour ngoài trang danh sách (dạng dd/mm)
+    departureDates: t.departure_dates ?? [],
+    departureCount: t.departure_count ?? 0,
     image: t.cover_image,
     tag: t.tag,
     categorySlugs: t.category_slugs ?? [],
@@ -102,6 +105,11 @@ function mapTour(t) {
       seatsLeft: d.seats_left,
     })),
     images: (t.images ?? []).map((img) => img.url),
+    // Khối "Những thông tin cần lưu ý" ở cuối trang tour
+    included: t.included ?? [],
+    excluded: t.excluded ?? [],
+    cancellationPolicy: t.cancellation_policy ?? "",
+    notes: (t.notes ?? []).map((n) => ({ title: n.title, content: n.content })),
     reviewsList: (t.reviews ?? []).map((r) => ({
       name: r.customer_name,
       rating: r.rating,

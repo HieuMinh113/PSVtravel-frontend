@@ -46,8 +46,10 @@ const tourFaqs = (tour, isAbroad) => [
       }]
     : []),
   {
-    q: "Giá tour đã bao gồm vé máy bay chưa?",
-    a: "Đã bao gồm vé máy bay khứ hồi và các khoản thuế phí sân bay theo đúng như mục Chính sách giá tour ở trên.",
+    // KHÔNG khẳng định tour nào cũng có vé máy bay — tour đi xe thì không.
+    // Câu trả lời cũ vừa bịa vừa trỏ tới khối "Chính sách giá tour" đã gỡ bỏ.
+    q: "Giá tour đã bao gồm những gì?",
+    a: 'Xem đầy đủ ở mục "Giá tour bao gồm" và "Giá tour không bao gồm" trong khối Những thông tin cần lưu ý ở cuối trang. Còn thắc mắc, gọi hotline để được tư vấn viên giải đáp.',
   },
 ];
 
@@ -205,6 +207,47 @@ function ReviewCard({ r, index }) {
   );
 }
 
+// Một dòng trong khối "Những thông tin cần lưu ý".
+//
+// Nội dung do nhân viên gõ trong admin nên phải giữ nguyên cách xuống dòng —
+// bảng phí huỷ tour mà dồn hết thành một đoạn thì không ai đọc nổi. Danh sách
+// (bao gồm / không bao gồm) truyền vào qua `muc` thay vì `noiDung`.
+function LuuYItem({ tieuDe, noiDung, muc, isOpen, onToggle }) {
+  return (
+    <div className="border-b border-ocean-100 last:border-b-0">
+      <button
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        className="flex w-full items-center justify-between gap-4 py-3.5 text-left"
+      >
+        <span className="text-sm font-medium text-deep-900">{tieuDe}</span>
+        <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
+          <ChevronDown className="h-4 w-4 shrink-0 text-ink-subtle" />
+        </motion.span>
+      </button>
+      <motion.div
+        initial={false}
+        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        className="overflow-hidden"
+      >
+        {muc ? (
+          <ul className="space-y-1.5 pb-4 text-sm leading-relaxed text-ink-muted">
+            {muc.map((dong, i) => (
+              <li key={i} className="flex gap-2">
+                <span className="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-ocean-400" />
+                <span>{dong}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="whitespace-pre-line pb-4 text-sm leading-relaxed text-ink-muted">{noiDung}</p>
+        )}
+      </motion.div>
+    </div>
+  );
+}
+
 function FaqItem({ item, isOpen, onToggle }) {
   return (
     <div className="rounded-2xl border border-ocean-100 bg-white">
@@ -272,6 +315,8 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
 
   const [lightboxImg, setLightboxImg] = useState(null);
   const [openFaq, setOpenFaq] = useState(0);
+  // Mặc định đóng hết: 9-11 mục mà mở sẵn thì trang dài lê thê
+  const [openLuuY, setOpenLuuY] = useState(-1);
   const [showMobileBar, setShowMobileBar] = useState(false);
   const [detailSearchOpen, setDetailSearchOpen] = useState(false);
   const [detailQuery, setDetailQuery] = useState("");
@@ -332,6 +377,29 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     // Bỏ ảnh bìa ra: đây là mục ảnh THỰC TẾ, mà ảnh bìa thường là poster quảng
     // cáo và đã hiện to ở đầu trang rồi.
     return [...new Set(gom)].slice(0, TOI_DA_ANH_GALLERY);
+  }, [tour]);
+
+  // Các mục của khối "Những thông tin cần lưu ý" ở cuối trang.
+  //
+  // Ghép từ đúng dữ liệu nhân viên đã nhập trong admin. Trước đây khối "Chính
+  // sách giá tour" ở giữa trang là văn bản VIẾT CỨNG — mọi tour đều hiện chung
+  // bốn dòng "vé máy bay khứ hồi, khách sạn tiêu chuẩn tour…" kể cả tour đi xe
+  // không có vé máy bay, còn thứ nhân viên gõ vào admin thì không hiện ra đâu cả.
+  const cacMucLuuY = useMemo(() => {
+    if (!tour) return [];
+    const ds = [];
+
+    if (tour.included?.length) ds.push({ tieuDe: "Giá tour bao gồm", muc: tour.included });
+    if (tour.excluded?.length) ds.push({ tieuDe: "Giá tour không bao gồm", muc: tour.excluded });
+    if (tour.cancellationPolicy?.trim()) {
+      ds.push({ tieuDe: "Chính sách huỷ tour", noiDung: tour.cancellationPolicy });
+    }
+
+    for (const muc of tour.notes ?? []) {
+      if (muc?.title && muc?.content) ds.push({ tieuDe: muc.title, noiDung: muc.content });
+    }
+
+    return ds;
   }, [tour]);
 
   const reviews = tour?.reviewsList ?? [];
@@ -585,29 +653,6 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                 {tour.itinerary.map((day, i) => (
                   <ItineraryItem key={day.day} day={day} index={i} isOpen={openDay === i} onToggle={() => setOpenDay(openDay === i ? -1 : i)} />
                 ))}
-              </div>
-            </SectionReveal>
-
-            <SectionReveal delay={0.15} className="mt-8 card-surface p-6 sm:p-8">
-              <h2 className="font-display text-xl font-bold text-deep-900">Chính sách giá tour</h2>
-              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <p className="text-sm font-semibold text-teal-700">Giá tour bao gồm</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-ink-muted">
-                    <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-teal-600" /> Vé máy bay khứ hồi, thuế phí</li>
-                    <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-teal-600" /> Khách sạn theo tiêu chuẩn tour</li>
-                    <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-teal-600" /> Xe đưa đón, hướng dẫn viên</li>
-                    <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-teal-600" /> Bảo hiểm du lịch trọn tour</li>
-                  </ul>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-sunset-700">Giá tour không bao gồm</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-ink-muted">
-                    <li className="flex gap-2"><span className="mt-0.5 h-4 w-4 shrink-0 text-center text-sunset-500">–</span> Chi phí cá nhân ngoài chương trình</li>
-                    <li className="flex gap-2"><span className="mt-0.5 h-4 w-4 shrink-0 text-center text-sunset-500">–</span> Phụ thu phòng đơn (nếu có)</li>
-                    <li className="flex gap-2"><span className="mt-0.5 h-4 w-4 shrink-0 text-center text-sunset-500">–</span> Tiền tip cho HDV, tài xế</li>
-                  </ul>
-                </div>
               </div>
             </SectionReveal>
 
@@ -914,6 +959,32 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
           </SectionReveal>
         </div>
       </section>
+      )}
+
+      {/* ===== NHỮNG THÔNG TIN CẦN LƯU Ý =====
+          Toàn bộ nội dung lấy từ admin: Dịch vụ bao gồm, Không bao gồm, Chính
+          sách huỷ tour và các mục tự đặt trong khối "Những thông tin cần lưu ý"
+          của từng tour. Tour chưa nhập gì thì ẩn hẳn. */}
+      {cacMucLuuY.length > 0 && (
+        <section className="bg-foam pb-14 sm:pb-16">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+            <SectionReveal className="card-surface px-5 py-2 sm:px-8 sm:py-3">
+              <h2 className="border-b border-ocean-100 py-3.5 font-display text-lg font-bold text-deep-900">
+                Những thông tin cần lưu ý
+              </h2>
+              {cacMucLuuY.map((muc, i) => (
+                <LuuYItem
+                  key={`${muc.tieuDe}-${i}`}
+                  tieuDe={muc.tieuDe}
+                  noiDung={muc.noiDung}
+                  muc={muc.muc}
+                  isOpen={openLuuY === i}
+                  onToggle={() => setOpenLuuY(openLuuY === i ? -1 : i)}
+                />
+              ))}
+            </SectionReveal>
+          </div>
+        </section>
       )}
 
       {related.length > 0 && (
