@@ -85,9 +85,12 @@ function mapTour(t) {
     reviews: t.review_count ?? 0,
     seatsLeft: dep?.seats_left ?? t.next_seats_left ?? null,
     startDate: dep?.start_date_display ?? t.next_start_date ?? null,
-    // Dãy ngày khởi hành cho thẻ tour ngoài trang danh sách (dạng dd/mm)
+    // Dãy ngày khởi hành cho thẻ tour ngoài trang danh sách (dạng Y-m-d)
     departureDates: t.departure_dates ?? [],
     departureCount: t.departure_count ?? 0,
+    // Đợt xa nhất và số chỗ nhiều nhất — dùng để lọc theo ngày và số khách
+    lastDepartureDate: t.last_departure_date ?? null,
+    maxSeatsLeft: t.max_seats_left ?? null,
     image: t.cover_image,
     tag: t.tag,
     categorySlugs: t.category_slugs ?? [],

@@ -17,6 +17,13 @@ const tagStyles = {
 // ngày không xuống thành hai hàng làm cao thấp các thẻ lệch nhau.
 const SO_NGAY_HIEN = 5;
 
+// API trả Y-m-d (để trang kết quả so sánh được với ngày khách chọn), ô hiển
+// thị thì chỉ cần ngày/tháng — thêm năm vào 5 ô liền nhau là chật và thừa.
+const ngayGon = (iso) => {
+  const [, thang, ngay] = String(iso).split("-");
+  return ngay && thang ? `${ngay}/${thang}` : iso;
+};
+
 export default function TourCard({ tour, basePath, index = 0 }) {
   const discount = tour.oldPrice
     ? Math.round((1 - tour.price / tour.oldPrice) * 100)
@@ -122,7 +129,7 @@ export default function TourCard({ tour, basePath, index = 0 }) {
                   key={ngay}
                   className="rounded-md bg-ocean-50 px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-ocean-700"
                 >
-                  {ngay}
+                  {ngayGon(ngay)}
                 </span>
               ))}
               {conNua > 0 && (

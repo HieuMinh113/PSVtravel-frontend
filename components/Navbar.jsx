@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import NavLink from "./NavLink";
 import TopBar from "./TopBar";
@@ -186,6 +186,45 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
   const [open, setOpen] = useState(false);
   const [megaOpenKey, setMegaOpenKey] = useState(null);
   const [mobileMegaOpenKey, setMobileMegaOpenKey] = useState(null);
+
+  // Chiều cao tối đa của ngăn kéo trên điện thoại — ĐO chứ không đoán.
+  //
+  // Thanh điều hướng là position:fixed, nên phần ngăn kéo tràn quá đáy màn hình
+  // nằm ngoài luồng cuộn của trang — cuộn kiểu gì cũng không tới. Trên máy cao
+  // dưới ~700px (iPhone SE, Android đời cũ, hay trình duyệt máy tính thu nhỏ),
+  // khách đã đăng nhập không tài nào bấm được nút Đăng xuất.
+  //
+  // Không viết cứng một con số: chiều cao thanh điều hướng thay đổi theo cỡ
+  // logo, theo breakpoint, và theo việc thanh hotline phía trên đang mở hay đã
+  // thu lại. Đo đúng vị trí ngăn kéo rồi lấy phần còn lại của màn hình.
+  const ngamKeoRef = useRef(null);
+  const [caoToiDa, setCaoToiDa] = useState(undefined);
+
+  useEffect(() => {
+    if (!open) {
+      setCaoToiDa(undefined);
+      return;
+    }
+    const doLai = () => {
+      const el = ngamKeoRef.current;
+      if (!el) return;
+      const dinh = el.getBoundingClientRect().top;
+      // visualViewport phản ánh đúng phần màn hình đang thấy khi bàn phím ảo
+      // hoặc thanh địa chỉ đang chiếm chỗ
+      const caoManHinh = window.visualViewport?.height ?? window.innerHeight;
+      setCaoToiDa(Math.max(200, Math.floor(caoManHinh - dinh - 8)));
+    };
+    doLai();
+    // Thanh hotline thu lại trong 500ms khi mở menu — đo lại sau khi xong
+    const hen = setTimeout(doLai, 560);
+    window.addEventListener("resize", doLai);
+    window.visualViewport?.addEventListener("resize", doLai);
+    return () => {
+      clearTimeout(hen);
+      window.removeEventListener("resize", doLai);
+      window.visualViewport?.removeEventListener("resize", doLai);
+    };
+  }, [open]);
   const pathname = usePathname();
   const router = useRouter();
   const { nguoiDung, datLai } = useNguoiDung();
@@ -348,7 +387,12 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
             transition={{ duration: 0.35, ease: "easeInOut" }}
             className="overflow-hidden bg-white lg:hidden"
           >
-            <div className="flex flex-col gap-1 px-5 pb-6 pt-2">
+            {/* Ngăn kéo tự cuộn được — xem ghi chú ở chỗ tính caoToiDa */}
+            <div
+              ref={ngamKeoRef}
+              style={{ maxHeight: caoToiDa }}
+              className="flex flex-col gap-1 overflow-y-auto overscroll-contain px-5 pb-6 pt-2"
+            >
               {links.map((l) =>
                 l.mega ? (
                   <div key={l.to}>
