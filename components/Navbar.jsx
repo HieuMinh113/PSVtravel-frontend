@@ -8,7 +8,7 @@ import UserMenu from "./UserMenu";
 import useNguoiDung from "@/app/lib/useNguoiDung";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ChevronDown, Compass, ArrowRight } from "lucide-react";
+import { Menu, X, User, ChevronDown, Compass, ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
 
 const links = [
   { to: "/", label: "Trang chủ" },
@@ -487,6 +487,22 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                   <Link href="/tai-khoan?tab=ho-so" className="rounded-xl px-4 py-3 text-sm font-medium text-deep-800">
                     Hồ sơ &amp; mật khẩu
                   </Link>
+                  {/* Lối tắt sang trang quản trị. Trước đây chỉ bản máy tính có,
+                      nhân viên dùng điện thoại phải tự nhớ và gõ địa chỉ ở cổng
+                      khác — trong khi họ chính là người hay xử lý đơn ngoài giờ.
+                      Mở tab mới để không mất trang đang xem bên website. */}
+                  {nguoiDung.la_nhan_vien && nguoiDung.admin_url && (
+                    <a
+                      href={nguoiDung.admin_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-semibold text-ocean-700"
+                    >
+                      <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-600" />
+                      <span className="flex-1">Vào trang quản trị</span>
+                      <ExternalLink className="h-3.5 w-3.5 shrink-0 text-ink-subtle" />
+                    </a>
+                  )}
                   <button
                     type="button"
                     onClick={async () => {
