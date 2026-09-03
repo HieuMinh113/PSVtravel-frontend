@@ -6,7 +6,7 @@ import { getPage, getSettings } from "@/app/lib/api";
 // trong code. Ba trang pháp lý còn lại đều do admin nhập, riêng trang này thì
 // không — bộ phận pháp chế soạn xong không đăng được nếu không sửa mã nguồn.
 // Nội dung cũ vẫn nằm trong lịch sử git nếu cần tham khảo lại.
-const SLUG = "privacy-policy";
+const SLUG = "privacy";
 const TIEU_DE = "Chính sách bảo mật";
 const MO_TA = "Cách PSV Travel thu thập, sử dụng và bảo vệ thông tin cá nhân của khách hàng.";
 
