@@ -25,8 +25,11 @@ export default function Footer({ settings = {} }) {
     { label: "Tên pháp nhân", value: settings.legal_name },
     { label: "Giấy CN ĐKKD số", value: settings.business_registration, extra: settings.business_registration_place },
     { label: "Mã số thuế", value: settings.tax_code },
-    { label: "Giấy phép kinh doanh dịch vụ lữ hành số", value: settings.license_number, extra: settings.license_issuer },
-    { label: "Người đại diện", value: settings.legal_representative },
+    // Giấy phép lữ hành quốc tế là thứ khách và cơ quan quản lý cần thấy: nó
+    // chứng minh công ty được phép bán tour ra nước ngoài. Tên người đại diện
+    // thì không nói lên điều đó, nên đã bỏ khỏi chân trang — giá trị vẫn còn
+    // trong Cài đặt để dùng cho hợp đồng, hoá đơn.
+    { label: "Giấy phép kinh doanh dịch vụ lữ hành quốc tế số", value: settings.license_number, extra: settings.license_issuer },
   ].filter((d) => d.value);
 
   const chiNhanh = (settings.branch_addresses || "")
