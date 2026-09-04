@@ -104,6 +104,7 @@ function mapTour(t) {
     departures: (t.departures ?? []).map((d) => ({
       id: d.id,
       startDate: d.start_date_display ?? d.start_date,
+      startISO: d.start_date ?? null, // Y-m-d cho schema
       price: d.price,
       seatsLeft: d.seats_left,
     })),
@@ -121,6 +122,7 @@ function mapTour(t) {
       date: r.created_at,
     })),
     description: t.description,
+    updatedAt: t.updated_at ?? null,
   };
 }
 

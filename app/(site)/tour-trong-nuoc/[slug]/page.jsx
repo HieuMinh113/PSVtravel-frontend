@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import TourDetail from "@/components/pages/TourDetail";
-import { tourMeta, tourJsonLd, JsonLd } from "@/app/lib/seo";
+import { tourMeta, tourJsonLd, breadcrumbJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
 import { getTours, getTourBySlug, getSettings, getVisaCountries, getCategories } from "@/app/lib/api";
 
 const BASE = "/tour-trong-nuoc";
@@ -39,6 +39,13 @@ export default async function Page({ params }) {
   return (
     <>
       <JsonLd data={tourJsonLd(tour, BASE)} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Trang chủ", url: SITE_URL },
+          { name: "Tour trong nước", url: `${SITE_URL}${BASE}` },
+          { name: tour.name, url: `${SITE_URL}${BASE}/${tour.slug}` },
+        ])}
+      />
       <TourDetail basePath={BASE} tour={tour} related={related} danhMuc={danhMuc} visaList={visaList} settings={settings} />
     </>
   );

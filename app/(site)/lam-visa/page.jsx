@@ -1,5 +1,5 @@
 import Visa from "@/components/pages/Visa";
-import { pageMeta } from "@/app/lib/seo";
+import { pageMeta, serviceJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
 import { getVisaCountries, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -11,5 +11,16 @@ export default async function Page() {
     getVisaCountries(),
     getSettings(),
   ]);
-  return <Visa countries={countries} settings={settings} />;
+  const schema = serviceJsonLd({
+    name: "Dịch vụ làm visa du lịch",
+    serviceType: "Visa processing",
+    url: `${SITE_URL}/lam-visa`,
+    description: "Làm visa du lịch trọn gói, tỷ lệ đậu cao — Hàn Quốc, Nhật Bản, châu Âu và nhiều quốc gia khác.",
+  });
+  return (
+    <>
+      <JsonLd data={schema} />
+      <Visa countries={countries} settings={settings} />
+    </>
+  );
 }

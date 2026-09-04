@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Be_Vietnam_Pro, Roboto } from "next/font/google";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, organizationJsonLd, JsonLd } from "./lib/seo";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, organizationJsonLd, websiteJsonLd, JsonLd } from "./lib/seo";
 
 // Font tiêu đề: Be Vietnam Pro — thiết kế riêng cho tiếng Việt.
 //
@@ -61,6 +61,7 @@ export default function RootLayout({ children }) {
       <body>
         {children}
         <JsonLd data={organizationJsonLd()} />
+        <JsonLd data={websiteJsonLd()} />
       </body>
     </html>
   );

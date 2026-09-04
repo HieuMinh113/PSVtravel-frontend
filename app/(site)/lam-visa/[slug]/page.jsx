@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import VisaDetail from "@/components/pages/VisaDetail";
-import { pageMeta } from "@/app/lib/seo";
+import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
 import { getVisaCountry, getVisaSlugs, getVisaCountries, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -34,5 +34,15 @@ export default async function Page({ params }) {
   // Vài quốc gia khác cho khối cuối trang (bỏ chính nó ra)
   const related = all.filter((c) => c.slug !== visa.slug).slice(0, 6);
 
-  return <VisaDetail visa={visa} related={related} settings={settings} />;
+  const bc = breadcrumbJsonLd([
+    { name: "Trang chủ", url: SITE_URL },
+    { name: "Làm visa", url: `${SITE_URL}/lam-visa` },
+    { name: `Visa ${visa.name}`, url: `${SITE_URL}/lam-visa/${visa.slug}` },
+  ]);
+  return (
+    <>
+      <JsonLd data={bc} />
+      <VisaDetail visa={visa} related={related} settings={settings} />
+    </>
+  );
 }

@@ -9,13 +9,16 @@ export default function FloatingContact({ settings = {} }) {
   const telHref = `tel:${hotline.replace(/[^0-9]/g, "")}`;
 
   const zaloRaw = settings.zalo;
+  // Chưa cấu hình Zalo thì KHÔNG dựng link tới zalo.me/ trống (link hỏng,
+  // báo cáo Local SEO bắt được). Trả null để ẩn nút Zalo cho tới khi admin nhập.
   const zaloHref = zaloRaw
     ? (zaloRaw.startsWith("http") ? zaloRaw : `https://zalo.me/${zaloRaw.replace(/[^0-9]/g, "")}`)
-    : "https://zalo.me/";
+    : null;
 
   return (
     <div className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-5 z-40 flex flex-col items-end gap-3 sm:right-6">
-      {/* Zalo */}
+      {/* Zalo — chỉ hiện khi admin đã cấu hình, tránh nút dẫn tới link hỏng */}
+      {zaloHref && (
       <motion.a
         href={zaloHref}
         target="_blank"
@@ -32,6 +35,7 @@ export default function FloatingContact({ settings = {} }) {
         </span>
         <MessageCircle className="h-6 w-6" />
       </motion.a>
+      )}
 
       {/* Hotline — có vòng lan toả (ripple) để thu hút chú ý */}
       <motion.a
