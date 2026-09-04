@@ -12,6 +12,9 @@ try {
 }
 
 const nextConfig = {
+  // Gỡ header "X-Powered-By: Next.js" — che bớt thông tin nền tảng,
+  // theo khuyến nghị của bản kiểm tra SEO/bảo mật.
+  poweredByHeader: false,
   // Gói sẵn mọi thứ cần khi chạy vào .next/standalone để đóng ảnh Docker nhẹ.
   // Không ảnh hưởng gì lúc chạy `npm run dev` trên máy lập trình.
   output: "standalone",

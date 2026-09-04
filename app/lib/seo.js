@@ -50,15 +50,49 @@ export function tourMeta(tour, basePath) {
 }
 
 // JSON-LD tổ chức (đặt ở layout gốc)
+// Thông tin pháp nhân — cố định theo giấy phép doanh nghiệp, ít khi đổi.
+// Để ở đây (không đọc từ API) vì layout dựng tĩnh; đọc API sẽ khiến mọi trang
+// chuyển sang render động, mất phần dựng sẵn.
+const CONG_TY = {
+  dienThoai: "+84 907 870 707",
+  email: "hi@psvtravel.com",
+  diaChi: "529 Huỳnh Tấn Phát",
+  phuong: "Phường Tân Thuận",
+  thanhPho: "Thành phố Hồ Chí Minh",
+  gioMoCua: "Mo-Su 08:00-17:00",
+  khoangGia: "$$",
+  // Các trang mạng xã hội CHÍNH THỨC. Thêm Zalo/TikTok/YouTube khi có.
+  mangXaHoi: [
+    "https://www.facebook.com/people/PSV-Travel/61590715693751/",
+  ],
+};
+
+// Schema tổ chức cho trang chủ. Google và các cỗ máy tìm kiếm AI đọc khối này
+// để hiểu doanh nghiệp: tên, số điện thoại, địa chỉ, giờ làm việc, mạng xã hội.
+// Trước đây chỉ có tên + logo nên gần như không giúp gì cho tìm kiếm địa phương.
 export function organizationJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
     name: SITE_NAME,
+    legalName: "CÔNG TY CỔ PHẦN DU LỊCH P.S.V TRAVEL",
     url: SITE_URL,
     description: SITE_DESCRIPTION,
     logo: `${SITE_URL}/logo.png`,
+    image: `${SITE_URL}/logo.png`,
+    telephone: CONG_TY.dienThoai,
+    email: CONG_TY.email,
+    priceRange: CONG_TY.khoangGia,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: CONG_TY.diaChi,
+      addressLocality: CONG_TY.phuong,
+      addressRegion: CONG_TY.thanhPho,
+      addressCountry: "VN",
+    },
+    openingHours: CONG_TY.gioMoCua,
     areaServed: "VN",
+    sameAs: CONG_TY.mangXaHoi,
   };
 }
 

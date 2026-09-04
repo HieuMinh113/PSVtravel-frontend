@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import PageHero from "@/components/PageHero";
+import SectionReveal from "@/components/SectionReveal";
 import AbroadTours from "@/components/pages/AbroadTours";
 import { pageMeta } from "@/app/lib/seo";
 import { getTours, getOrbitImages, getCategories } from "@/app/lib/api";
@@ -15,12 +17,51 @@ export default async function Page() {
   const [tours, orbitImages, danhMuc] = await Promise.all([
     getTours({ type: "abroad" }),
     getOrbitImages("orbit_abroad"),
-    // Nút lọc = Danh Mục Tour trong admin, cùng nguồn với mega menu
     getCategories("abroad"),
   ]);
+
+  const anhVongXoay = orbitImages.length
+    ? orbitImages
+    : tours.length
+    ? Array.from({ length: 10 }, (_, i) => tours[i % tours.length].image)
+    : [];
+
   return (
-    <Suspense fallback={null}>
-      <AbroadTours tours={tours} orbitImages={orbitImages} danhMuc={danhMuc} />
-    </Suspense>
+    <div>
+      {/* Hero + giới thiệu render phía máy chủ, ngoài Suspense — xem ghi chú ở
+          trang tour-trong-nuoc. */}
+      <PageHero
+        eyebrow="Tour nước ngoài"
+        title="Những chân trời mới đang chờ đón"
+        description="Thái Lan sôi động, Hàn Quốc lãng mạn, Nhật Bản tinh tế — chọn điểm đến, chúng tôi lo phần còn lại."
+        crumbs={[{ label: "Tour nước ngoài" }]}
+        orbitImages={anhVongXoay}
+      />
+
+      <section className="bg-foam pt-12 sm:pt-14">
+        <div className="mx-auto max-w-3xl px-5 sm:px-8">
+          <SectionReveal className="prose-psv text-ink-muted">
+            <h2>Tour du lịch nước ngoài, bay thẳng, hỗ trợ trọn gói thủ tục visa</h2>
+            <p>
+              PSV Travel là công ty lữ hành quốc tế, chuyên <strong>tour nước ngoài</strong> tới
+              <strong> Thái Lan</strong>, <strong>Hàn Quốc</strong>, <strong>Nhật Bản</strong>,
+              <strong> Singapore</strong> – Malaysia, Trung Quốc, Dubai và các tuyến
+              <strong> châu Âu</strong>. Mỗi hành trình được thiết kế với lịch bay thuận tiện, khách
+              sạn tốt, hướng dẫn viên tiếng Việt và lịch trình tham quan rõ ràng theo từng ngày.
+            </p>
+            <p>
+              Đội ngũ của chúng tôi <strong>hỗ trợ trọn gói thủ tục xin visa</strong> cho tour nước
+              ngoài, tư vấn giấy tờ và chuẩn bị hồ sơ để bạn yên tâm trước chuyến đi. Giá tour đã bao
+              gồm những dịch vụ chính, công khai minh bạch. Chọn điểm đến bên dưới, hoặc gọi
+              <strong> 0907 870 707</strong> để được tư vấn tuyến phù hợp và mùa đẹp nhất để đi.
+            </p>
+          </SectionReveal>
+        </div>
+      </section>
+
+      <Suspense fallback={null}>
+        <AbroadTours tours={tours} danhMuc={danhMuc} />
+      </Suspense>
+    </div>
   );
 }

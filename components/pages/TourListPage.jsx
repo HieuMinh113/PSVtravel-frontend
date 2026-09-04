@@ -3,18 +3,13 @@ import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { SlidersHorizontal, Search, X, MapPinned, RotateCcw } from "lucide-react";
-import PageHero from "@/components/PageHero";
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
 
 export default function TourListPage({
   tours,
   basePath,
-  title,
-  eyebrow,
-  description,
   danhMuc = [], // Danh Mục Tour trong admin — cùng nguồn với mega menu
-  orbitImages,
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -104,14 +99,6 @@ export default function TourListPage({
 
   return (
     <div>
-      <PageHero
-        eyebrow={eyebrow}
-        title={title}
-        description={description}
-        crumbs={[{ label: title }]}
-        orbitImages={orbitImages}
-      />
-
       <section id="ket-qua-tour" className="scroll-mt-20 bg-foam py-14 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           {/* Bộ lọc */}
