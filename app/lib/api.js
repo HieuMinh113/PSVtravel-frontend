@@ -193,17 +193,40 @@ export async function getMoments() {
     date: null,
   }));
 }
-export async function getVisaCountries() {
-  const json = await layJSON(`/visa-countries`);
-  return (json?.data ?? []).map((c) => ({
+// Chuyển một bản ghi visa từ backend sang hình dạng giao diện dùng.
+function mapVisa(c) {
+  if (!c) return null;
+  const loai = { tourist: "Du lịch", business: "Công tác", study: "Du học" };
+  return {
     slug: c.slug,
     name: c.name,
     flagImage: c.flag_image, // URL ảnh cờ (nếu có)
+    type: c.visa_type,
+    typeLabel: loai[c.visa_type] || "Du lịch",
     rate: c.success_rate ? `${c.success_rate}%` : null,
     time: c.processing_time,
     price: c.price ? `${Number(c.price).toLocaleString("vi-VN")}đ` : "Liên hệ",
+    documents: c.required_documents ?? [],
+    description: c.description ?? "",
     required: true,
-  }));
+  };
+}
+
+export async function getVisaCountries() {
+  const json = await layJSON(`/visa-countries`);
+  return (json?.data ?? []).map(mapVisa).filter(Boolean);
+}
+
+// Chi tiết một quốc gia. Chưa có thì trả null để trang hiện 404 đúng cách.
+export async function getVisaCountry(slug) {
+  const json = await layJSON(`/visa-countries/${slug}`);
+  return mapVisa(json?.data ?? json);
+}
+
+// Danh sách slug cho generateStaticParams — dựng sẵn từng trang chi tiết.
+export async function getVisaSlugs() {
+  const json = await layJSON(`/visa-countries`);
+  return (json?.data ?? []).map((c) => c.slug).filter(Boolean);
 }
 export async function getAirlines() {
   const json = await layJSON(`/airlines`);
