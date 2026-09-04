@@ -25,11 +25,25 @@ export default async function sitemap() {
   // Lấy dữ liệu THẬT từ backend. Trước đây phần này đọc mảng tour mẫu viết cứng
   // trong data/tours.js — sitemap khai báo với Google những trang không tồn tại,
   // còn tour đang bán thật thì không bao giờ được gửi lên.
+  //
+  // BỌC try/catch cho từng lời gọi: getTours ném lỗi khi API trục trặc (batBuoc).
+  // Không bọc thì chỉ một nhịp API chập chờn là CẢ sitemap văng lỗi 500, và
+  // Google báo "Không thể tìm nạp" — mất luôn cả các trang tĩnh vốn không cần API.
+  // Sitemap phải LUÔN trả về được: thà thiếu vài tour còn hơn không có sitemap.
+  const anToan = async (goi) => {
+    try {
+      return await goi();
+    } catch (e) {
+      console.error("sitemap: bỏ qua một nguồn do lỗi API —", e?.message || e);
+      return [];
+    }
+  };
+
   const [domestic, abroad, guides, visaSlugs] = await Promise.all([
-    getTours({ type: "domestic" }),
-    getTours({ type: "abroad" }),
-    getGuides(),
-    getVisaSlugs(),
+    anToan(() => getTours({ type: "domestic" })),
+    anToan(() => getTours({ type: "abroad" })),
+    anToan(() => getGuides()),
+    anToan(() => getVisaSlugs()),
   ]);
 
   const tourEntries = [
