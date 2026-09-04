@@ -28,8 +28,8 @@ export default async function Page() {
 
   return (
     <div>
-      {/* Hero + giới thiệu render phía máy chủ, ngoài Suspense — xem ghi chú ở
-          trang tour-trong-nuoc. */}
+      {/* Hero render phía máy chủ, ngoài Suspense. Đoạn giới thiệu từ khoá đặt
+          ở cuối trang — xem ghi chú ở trang tour-trong-nuoc. */}
       <PageHero
         eyebrow="Tour nước ngoài"
         title="Những chân trời mới đang chờ đón"
@@ -38,7 +38,11 @@ export default async function Page() {
         orbitImages={anhVongXoay}
       />
 
-      <section className="bg-foam pt-12 sm:pt-14">
+      <Suspense fallback={null}>
+        <AbroadTours tours={tours} danhMuc={danhMuc} />
+      </Suspense>
+
+      <section className="border-t border-ocean-50 bg-foam py-14 sm:py-16">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <SectionReveal className="prose-psv text-ink-muted">
             <h2>Tour du lịch nước ngoài, bay thẳng, hỗ trợ trọn gói thủ tục visa</h2>
@@ -58,10 +62,6 @@ export default async function Page() {
           </SectionReveal>
         </div>
       </section>
-
-      <Suspense fallback={null}>
-        <AbroadTours tours={tours} danhMuc={danhMuc} />
-      </Suspense>
     </div>
   );
 }

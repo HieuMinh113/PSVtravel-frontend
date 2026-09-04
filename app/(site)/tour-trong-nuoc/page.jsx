@@ -29,9 +29,9 @@ export default async function Page() {
 
   return (
     <div>
-      {/* Hero + giới thiệu render PHÍA MÁY CHỦ, ngoài Suspense — H1 và đoạn văn
-          từ khoá luôn nằm trong HTML dựng sẵn, Google và cỗ máy AI đọc được ngay
-          mà không cần chạy JavaScript. */}
+      {/* Hero render PHÍA MÁY CHỦ, ngoài Suspense — H1 luôn nằm trong HTML dựng
+          sẵn. Đoạn giới thiệu chứa từ khoá đặt ở CUỐI trang (sau lưới tour) để
+          khách thấy tour trước; Google vẫn đọc cả trang nên SEO không đổi. */}
       <PageHero
         eyebrow="Tour trong nước"
         title="Khám phá Việt Nam từ Bắc chí Nam"
@@ -40,7 +40,11 @@ export default async function Page() {
         orbitImages={anhVongXoay}
       />
 
-      <section className="bg-foam pt-12 sm:pt-14">
+      <Suspense fallback={null}>
+        <DomesticTours tours={tours} danhMuc={danhMuc} />
+      </Suspense>
+
+      <section className="border-t border-ocean-50 bg-foam py-14 sm:py-16">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <SectionReveal className="prose-psv text-ink-muted">
             <h2>Tour du lịch trong nước trọn gói, khởi hành từ TP. Hồ Chí Minh</h2>
@@ -61,10 +65,6 @@ export default async function Page() {
           </SectionReveal>
         </div>
       </section>
-
-      <Suspense fallback={null}>
-        <DomesticTours tours={tours} danhMuc={danhMuc} />
-      </Suspense>
     </div>
   );
 }
