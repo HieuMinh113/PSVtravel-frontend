@@ -1,4 +1,4 @@
-import { getTours, getGuides } from "@/app/lib/api";
+import { getTours, getGuides, getVisaSlugs } from "@/app/lib/api";
 import { SITE_URL } from "./lib/seo";
 
 // Sitemap dựng lại mỗi giờ để tour và bài viết mới sớm được Google ghi nhận
@@ -25,10 +25,11 @@ export default async function sitemap() {
   // Lấy dữ liệu THẬT từ backend. Trước đây phần này đọc mảng tour mẫu viết cứng
   // trong data/tours.js — sitemap khai báo với Google những trang không tồn tại,
   // còn tour đang bán thật thì không bao giờ được gửi lên.
-  const [domestic, abroad, guides] = await Promise.all([
+  const [domestic, abroad, guides, visaSlugs] = await Promise.all([
     getTours({ type: "domestic" }),
     getTours({ type: "abroad" }),
     getGuides(),
+    getVisaSlugs(),
   ]);
 
   const tourEntries = [
@@ -53,5 +54,15 @@ export default async function sitemap() {
       priority: 0.6,
     }));
 
-  return [...staticEntries, ...tourEntries, ...guideEntries];
+  // Trang chi tiết dịch vụ visa từng quốc gia
+  const visaEntries = (visaSlugs || [])
+    .filter(Boolean)
+    .map((slug) => ({
+      url: `${SITE_URL}/lam-visa/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }));
+
+  return [...staticEntries, ...tourEntries, ...guideEntries, ...visaEntries];
 }
