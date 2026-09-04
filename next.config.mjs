@@ -15,6 +15,33 @@ const nextConfig = {
   // Gỡ header "X-Powered-By: Next.js" — che bớt thông tin nền tảng,
   // theo khuyến nghị của bản kiểm tra SEO/bảo mật.
   poweredByHeader: false,
+
+  // Content-Security-Policy ở chế độ CHỈ-BÁO-CÁO (report-only): trình duyệt
+  // KHÔNG chặn gì, chỉ ghi cảnh báo vào console nếu có tài nguyên ngoài chính
+  // sách. An toàn tuyệt đối cho trang đang chạy, đúng khuyến nghị "bắt đầu ở
+  // report-only" của bản kiểm tra kỹ thuật. Nâng lên chế độ chặn thật cần thêm
+  // nonce cho script Next — để làm sau khi đã theo dõi báo cáo một thời gian.
+  async headers() {
+    const csp = [
+      "default-src 'self'",
+      "img-src 'self' data: https:",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "script-src 'self' 'unsafe-inline'",
+      "connect-src 'self' https:",
+      "frame-src 'self' https://www.google.com https://maps.google.com",
+      "base-uri 'self'",
+      "form-action 'self'",
+    ].join("; ");
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Content-Security-Policy-Report-Only", value: csp },
+        ],
+      },
+    ];
+  },
   // Gói sẵn mọi thứ cần khi chạy vào .next/standalone để đóng ảnh Docker nhẹ.
   // Không ảnh hưởng gì lúc chạy `npm run dev` trên máy lập trình.
   output: "standalone",
