@@ -225,10 +225,22 @@ export async function getVisaCountry(slug) {
   return mapVisa(json?.data ?? json);
 }
 
+// Một slug hợp lệ chỉ gồm chữ THƯỜNG, số và dấu gạch ngang ở giữa —
+// ví dụ "visa-nhat-ban". Dữ liệu admin nhập tay đôi khi lẫn chữ hoa hoặc
+// dấu cách thừa ("Chau-a ", "Chau-a") — những slug đó KHÔNG mở được trang
+// chi tiết (trang chỉ nhận đúng slug gốc), nên phải loại khỏi sitemap thay
+// vì để Google tìm nạp ra 404. KHÔNG tự chuyển về chữ thường: làm vậy sẽ
+// tạo URL không khớp bản ghi trong DB. Cách sửa triệt để là xoá bản ghi
+// rác trong admin.
+const MAU_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export function slugHopLe(slug) {
+  return typeof slug === "string" && MAU_SLUG.test(slug);
+}
+
 // Danh sách slug cho generateStaticParams — dựng sẵn từng trang chi tiết.
 export async function getVisaSlugs() {
   const json = await layJSON(`/visa-countries`);
-  return (json?.data ?? []).map((c) => c.slug).filter(Boolean);
+  return (json?.data ?? []).map((c) => c.slug).filter(slugHopLe);
 }
 export async function getAirlines() {
   const json = await layJSON(`/airlines`);
