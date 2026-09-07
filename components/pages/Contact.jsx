@@ -204,15 +204,18 @@ export default function Contact({ settings = {} }) {
                       <Icon className="h-4 w-4" />
                     </a>
                   ))}
-                  <a
-                    href={settings.zalo ? (settings.zalo.startsWith("http") ? settings.zalo : `https://zalo.me/${settings.zalo.replace(/[^0-9]/g, "")}`) : "https://zalo.me/"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Zalo"
-                    className="grid h-11 w-11 place-items-center rounded-full bg-white text-ocean-700 shadow-card transition-all duration-300 ease-enter hover:-translate-y-1 hover:bg-ocean-600 hover:text-white"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                  </a>
+                  {/* Chỉ hiện Zalo khi đã cấu hình — không dẫn tới zalo.me/ trống */}
+                  {settings.zalo && (
+                    <a
+                      href={settings.zalo.startsWith("http") ? settings.zalo : `https://zalo.me/${settings.zalo.replace(/[^0-9]/g, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Zalo"
+                      className="grid h-11 w-11 place-items-center rounded-full bg-white text-ocean-700 shadow-card transition-all duration-300 ease-enter hover:-translate-y-1 hover:bg-ocean-600 hover:text-white"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                    </a>
+                  )}
                 </div>
               </div>
             </SectionReveal>

@@ -46,10 +46,66 @@ const tourFaqs = (tour, isAbroad) => [
       }]
     : []),
   {
-    q: "Giá tour đã bao gồm vé máy bay chưa?",
-    a: "Đã bao gồm vé máy bay khứ hồi và các khoản thuế phí sân bay theo đúng như mục Chính sách giá tour ở trên.",
+    // KHÔNG khẳng định tour nào cũng có vé máy bay — tour đi xe thì không.
+    // Câu trả lời cũ vừa bịa vừa trỏ tới khối "Chính sách giá tour" đã gỡ bỏ.
+    q: "Giá tour đã bao gồm những gì?",
+    a: 'Xem đầy đủ ở mục "Giá tour bao gồm" và "Giá tour không bao gồm" trong khối Những thông tin cần lưu ý ở cuối trang. Còn thắc mắc, gọi hotline để được tư vấn viên giải đáp.',
   },
 ];
+
+// Tô đậm tên điểm tham quan.
+//
+// Nhân viên bọc tên điểm đến trong dấu sao khi nhập trong admin:
+//   "Đoàn tham quan *Tòa nhà Quốc Hội*, sau đó tới *Công viên sư tử biển*."
+// Ra trang khách thì hai cái tên đó in đậm, khách quét mắt là thấy ngay hôm
+// đó đi đâu mà không phải đọc hết đoạn văn.
+//
+// Cố ý để nhân viên tự đánh dấu chứ không cho máy tự đoán: trong một đoạn
+// tiếng Việt, "Quý khách", "Đoàn", "Sau đó" cũng viết hoa chữ đầu y như tên
+// địa danh — máy đoán sẽ tô nhầm gần hết, nhìn còn rối hơn không tô.
+//
+// Dấu sao lẻ không thành cặp thì giữ nguyên như chữ thường, không vỡ trang.
+function toDamDiemDen(chu) {
+  return String(chu || "")
+    .split(/\*([^*\n]+)\*/g)
+    .map((phan, i) =>
+      i % 2 === 1 ? (
+        <strong key={i} className="font-semibold text-deep-900">
+          {phan}
+        </strong>
+      ) : (
+        phan
+      )
+    );
+}
+
+// Tách nội dung một ngày thành từng buổi cho dễ đọc.
+//
+// Nhân viên nhập cả ngày vào một ô văn bản: "Sáng: ... Trưa: ... Tối: ...".
+// Đổ nguyên khối ra trang khách thì thành một đoạn chữ dày đặc, đọc rất mệt.
+// Ở đây cắt tại các mốc buổi rồi tô đậm nhãn buổi, không đụng gì tới dữ liệu
+// đã nhập trong admin.
+const MOC_BUOI = /(?=(?:^|\s)(?:Sáng|Trưa|Chiều|Tối|Đêm)\s*:)/g;
+
+// Số ảnh tối đa gom từ lịch trình khi Thư viện ảnh còn trống. 9 = một ô lớn
+// (2 cột × 2 hàng) + 8 ô nhỏ, vừa khít lưới 4 cột × 3 hàng, không dư ô trống.
+const TOI_DA_ANH_GALLERY = 9;
+
+function tachBuoi(noiDung) {
+  const chu = (noiDung || "").trim();
+  if (!chu) return [];
+
+  return chu
+    .split(MOC_BUOI)
+    .map((phan) => phan.trim())
+    .filter(Boolean)
+    .map((phan) => {
+      const khop = phan.match(/^(Sáng|Trưa|Chiều|Tối|Đêm)\s*:\s*/);
+      return khop
+        ? { buoi: `${khop[1]}:`, noiDung: phan.slice(khop[0].length) }
+        : { buoi: null, noiDung: phan };
+    });
+}
 
 function ItineraryItem({ day, index, isOpen, onToggle }) {
   return (
@@ -76,10 +132,25 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
             className="overflow-hidden"
           >
             <div className="flex flex-col gap-4 px-5 pb-5 sm:pl-[4.25rem]">
-              <p className="text-sm leading-relaxed text-ink-muted">{day.desc}</p>
+              {/* Nhãn buổi và nội dung nằm hai cột riêng: dòng thứ hai trở đi
+                  thẳng hàng với dòng đầu thay vì tụt về sát lề trái, mắt đọc
+                  không bị vấp. Nhãn có bề rộng cố định để các buổi thẳng cột
+                  với nhau — "Sáng" và "Chiều" dài ngắn khác nhau. */}
+              <div className="flex flex-col gap-3">
+                {tachBuoi(day.desc).map((doan, k) => (
+                  <div key={k} className="flex gap-2 text-sm leading-relaxed">
+                    {doan.buoi && (
+                      <span className="w-[3.25rem] shrink-0 font-semibold text-ocean-700">
+                        {doan.buoi}
+                      </span>
+                    )}
+                    <p className="flex-1 text-ink-muted">{toDamDiemDen(doan.noiDung)}</p>
+                  </div>
+                ))}
+              </div>
               {day.images && day.images.length > 0 && (
-                <div className="grid grid-cols-3 gap-2.5">
-                  {day.images.slice(0, 3).map((img, k) => (
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                  {day.images.map((img, k) => (
                     <img
                       key={k}
                       src={img}
@@ -133,6 +204,47 @@ function ReviewCard({ r, index }) {
         )}
       </div>
     </motion.div>
+  );
+}
+
+// Một dòng trong khối "Những thông tin cần lưu ý".
+//
+// Nội dung do nhân viên gõ trong admin nên phải giữ nguyên cách xuống dòng —
+// bảng phí huỷ tour mà dồn hết thành một đoạn thì không ai đọc nổi. Danh sách
+// (bao gồm / không bao gồm) truyền vào qua `muc` thay vì `noiDung`.
+function LuuYItem({ tieuDe, noiDung, muc, isOpen, onToggle }) {
+  return (
+    <div className="border-b border-ocean-100 last:border-b-0">
+      <button
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        className="flex w-full items-center justify-between gap-4 py-3.5 text-left"
+      >
+        <span className="text-sm font-medium text-deep-900">{tieuDe}</span>
+        <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
+          <ChevronDown className="h-4 w-4 shrink-0 text-ink-subtle" />
+        </motion.span>
+      </button>
+      <motion.div
+        initial={false}
+        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        className="overflow-hidden"
+      >
+        {muc ? (
+          <ul className="space-y-1.5 pb-4 text-sm leading-relaxed text-ink-muted">
+            {muc.map((dong, i) => (
+              <li key={i} className="flex gap-2">
+                <span className="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-ocean-400" />
+                <span>{dong}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="whitespace-pre-line pb-4 text-sm leading-relaxed text-ink-muted">{noiDung}</p>
+        )}
+      </motion.div>
+    </div>
   );
 }
 
@@ -203,6 +315,8 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
 
   const [lightboxImg, setLightboxImg] = useState(null);
   const [openFaq, setOpenFaq] = useState(0);
+  // Mặc định đóng hết: 9-11 mục mà mở sẵn thì trang dài lê thê
+  const [openLuuY, setOpenLuuY] = useState(-1);
   const [showMobileBar, setShowMobileBar] = useState(false);
   const [detailSearchOpen, setDetailSearchOpen] = useState(false);
   const [detailQuery, setDetailQuery] = useState("");
@@ -232,19 +346,61 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Thư viện ảnh hiện ĐỦ số ảnh admin đã tải lên, đúng thứ tự đã sắp.
+  // Trước đây cắt còn 6 tấm nên tải 10 ảnh mà chỉ thấy 5.
+  //
+  // Chưa kịp dựng Thư viện riêng thì lấy tạm ảnh của các ngày trong lịch trình.
+  // Nếu không, mục "hình ảnh thực tế" chỉ còn mỗi tấm poster quảng cáo phình ra
+  // chiếm nửa lưới, trong khi ảnh thật đã có sẵn ở phần lịch trình ngay phía trên.
   const galleryImages = useMemo(() => {
     if (!tour) return [];
-    const fromApi = (tour.images || []).filter(Boolean);
-    return [...new Set([tour.image, ...fromApi].filter(Boolean))].slice(0, 6);
+
+    const thuVien = (tour.images || []).filter(Boolean);
+    // Admin đã tự chọn ảnh cho Thư viện thì tôn trọng đúng lựa chọn đó,
+    // không chèn thêm ảnh ngày vào giữa.
+    if (thuVien.length > 0) {
+      return [...new Set([tour.image, ...thuVien].filter(Boolean))];
+    }
+
+    // Lấy xoay vòng: ảnh đầu của mỗi ngày trước, hết một lượt mới quay lại lấy
+    // ảnh thứ hai. Lấy tuần tự thì tour nào có một ngày nhiều ảnh sẽ chiếm sạch
+    // chỗ, khách nhìn 9 tấm đều là một thành phố.
+    const theoNgay = (tour.itinerary || []).map((ngay) => (ngay.images || []).filter(Boolean));
+    const nhieuNhat = Math.max(0, ...theoNgay.map((anh) => anh.length));
+    const gom = [];
+    for (let vong = 0; vong < nhieuNhat; vong++) {
+      for (const anhCuaNgay of theoNgay) {
+        if (anhCuaNgay[vong]) gom.push(anhCuaNgay[vong]);
+      }
+    }
+
+    // Bỏ ảnh bìa ra: đây là mục ảnh THỰC TẾ, mà ảnh bìa thường là poster quảng
+    // cáo và đã hiện to ở đầu trang rồi.
+    return [...new Set(gom)].slice(0, TOI_DA_ANH_GALLERY);
   }, [tour]);
 
-  const dayImages = useMemo(() => {
-    if (!tour || galleryImages.length === 0) return [];
-    const count = Math.min(3, galleryImages.length);
-    return tour.itinerary.map((_, i) =>
-      Array.from({ length: count }, (_, k) => galleryImages[(i + 1 + k) % galleryImages.length])
-    );
-  }, [tour, galleryImages]);
+  // Các mục của khối "Những thông tin cần lưu ý" ở cuối trang.
+  //
+  // Ghép từ đúng dữ liệu nhân viên đã nhập trong admin. Trước đây khối "Chính
+  // sách giá tour" ở giữa trang là văn bản VIẾT CỨNG — mọi tour đều hiện chung
+  // bốn dòng "vé máy bay khứ hồi, khách sạn tiêu chuẩn tour…" kể cả tour đi xe
+  // không có vé máy bay, còn thứ nhân viên gõ vào admin thì không hiện ra đâu cả.
+  const cacMucLuuY = useMemo(() => {
+    if (!tour) return [];
+    const ds = [];
+
+    if (tour.included?.length) ds.push({ tieuDe: "Giá tour bao gồm", muc: tour.included });
+    if (tour.excluded?.length) ds.push({ tieuDe: "Giá tour không bao gồm", muc: tour.excluded });
+    if (tour.cancellationPolicy?.trim()) {
+      ds.push({ tieuDe: "Chính sách huỷ tour", noiDung: tour.cancellationPolicy });
+    }
+
+    for (const muc of tour.notes ?? []) {
+      if (muc?.title && muc?.content) ds.push({ tieuDe: muc.title, noiDung: muc.content });
+    }
+
+    return ds;
+  }, [tour]);
 
   const reviews = tour?.reviewsList ?? [];
   // Thông tin visa lấy từ DỮ LIỆU THẬT trong admin, không còn đọc file mẫu.
@@ -371,7 +527,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     <div>
       {/* Hero ảnh lớn */}
       <section className="relative h-[62dvh] min-h-[460px] overflow-hidden">
-        <Image src={tour.image} alt={tour.name} fill priority sizes="100vw" className="object-cover" />
+        <Image src={tour.image} alt={tour.name} fill priority sizes="100vw" quality={90} className="object-cover" />
         <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-deep-950/80 via-deep-950/30 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-deep-950/85 via-deep-950/20 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-5 pb-10 pt-24 sm:px-8">
@@ -484,7 +640,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                 {tour.highlights.map((h) => (
                   <div key={h} className="flex items-start gap-2.5 rounded-xl bg-ocean-50/60 p-3">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-600" />
-                    <span className="text-sm text-ink">{h}</span>
+                    <span className="text-sm font-semibold text-deep-900">{h}</span>
                   </div>
                 ))}
               </div>
@@ -495,31 +651,8 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
               <p className="mt-1 text-sm text-ink-subtle">Kèm hình ảnh thực tế các điểm đến, món ăn theo từng ngày.</p>
               <div className="mt-5 space-y-3">
                 {tour.itinerary.map((day, i) => (
-                  <ItineraryItem key={day.day} day={{ ...day, images: dayImages[i] }} index={i} isOpen={openDay === i} onToggle={() => setOpenDay(openDay === i ? -1 : i)} />
+                  <ItineraryItem key={day.day} day={day} index={i} isOpen={openDay === i} onToggle={() => setOpenDay(openDay === i ? -1 : i)} />
                 ))}
-              </div>
-            </SectionReveal>
-
-            <SectionReveal delay={0.15} className="mt-8 card-surface p-6 sm:p-8">
-              <h2 className="font-display text-xl font-bold text-deep-900">Chính sách giá tour</h2>
-              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <p className="text-sm font-semibold text-teal-700">Giá tour bao gồm</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-ink-muted">
-                    <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-teal-600" /> Vé máy bay khứ hồi, thuế phí</li>
-                    <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-teal-600" /> Khách sạn theo tiêu chuẩn tour</li>
-                    <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-teal-600" /> Xe đưa đón, hướng dẫn viên</li>
-                    <li className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-teal-600" /> Bảo hiểm du lịch trọn tour</li>
-                  </ul>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-sunset-700">Giá tour không bao gồm</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-ink-muted">
-                    <li className="flex gap-2"><span className="mt-0.5 h-4 w-4 shrink-0 text-center text-sunset-500">–</span> Chi phí cá nhân ngoài chương trình</li>
-                    <li className="flex gap-2"><span className="mt-0.5 h-4 w-4 shrink-0 text-center text-sunset-500">–</span> Phụ thu phòng đơn (nếu có)</li>
-                    <li className="flex gap-2"><span className="mt-0.5 h-4 w-4 shrink-0 text-center text-sunset-500">–</span> Tiền tip cho HDV, tài xế</li>
-                  </ul>
-                </div>
               </div>
             </SectionReveal>
 
@@ -791,12 +924,18 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
       </section>
 
       {/* ===== GALLERY ẢNH THỰC TẾ (đã chuyển xuống dưới nội dung tour) ===== */}
+      {/* Tour chưa có ảnh nào thì ẩn hẳn: một tấm bìa lẻ loi phình ra chiếm nửa
+          lưới trông như trang bị lỗi, thà không hiện còn hơn. */}
+      {galleryImages.length > 0 && (
       <section className="bg-foam pb-12 sm:pb-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="mb-4 flex items-center gap-2 text-sm font-semibold text-ink-muted">
             <Images className="h-4 w-4 text-ocean-500" /> Hình ảnh thực tế của hành trình
           </SectionReveal>
-          <SectionReveal delay={0.05} className="grid grid-cols-4 grid-rows-2 gap-2.5 sm:gap-3">
+          {/* auto-rows cố định thay cho grid-rows-2: quá 5 tấm thì các hàng dư
+              không còn tự co lại lùn hơn hàng trên. Ô lớn chiếm 2 hàng nên cao
+              gấp đôi ô nhỏ cộng khoảng cách giữa hai hàng. */}
+          <SectionReveal delay={0.05} className="grid grid-cols-4 auto-rows-[6.5rem] gap-2.5 sm:auto-rows-[9rem] sm:gap-3">
             {galleryImages.map((img, i) => (
               <button
                 key={i}
@@ -808,7 +947,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                   src={img}
                   alt={`${tour.name} - ảnh ${i + 1}`}
                   loading="lazy"
-                  className="h-full min-h-[100px] w-full object-cover transition-transform duration-500 ease-enter group-hover:scale-110"
+                  className="h-full w-full object-cover transition-transform duration-500 ease-enter group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-deep-950/0 transition-colors duration-300 group-hover:bg-deep-950/20" />
                 {/* Dấu phóng to hiện khi rê chuột — cho biết ảnh bấm được */}
@@ -820,6 +959,33 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
           </SectionReveal>
         </div>
       </section>
+      )}
+
+      {/* ===== NHỮNG THÔNG TIN CẦN LƯU Ý =====
+          Toàn bộ nội dung lấy từ admin: Dịch vụ bao gồm, Không bao gồm, Chính
+          sách huỷ tour và các mục tự đặt trong khối "Những thông tin cần lưu ý"
+          của từng tour. Tour chưa nhập gì thì ẩn hẳn. */}
+      {cacMucLuuY.length > 0 && (
+        <section className="bg-foam pb-14 sm:pb-16">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+            <SectionReveal className="card-surface px-5 py-2 sm:px-8 sm:py-3">
+              <h2 className="border-b border-ocean-100 py-3.5 font-display text-lg font-bold text-deep-900">
+                Những thông tin cần lưu ý
+              </h2>
+              {cacMucLuuY.map((muc, i) => (
+                <LuuYItem
+                  key={`${muc.tieuDe}-${i}`}
+                  tieuDe={muc.tieuDe}
+                  noiDung={muc.noiDung}
+                  muc={muc.muc}
+                  isOpen={openLuuY === i}
+                  onToggle={() => setOpenLuuY(openLuuY === i ? -1 : i)}
+                />
+              ))}
+            </SectionReveal>
+          </div>
+        </section>
+      )}
 
       {related.length > 0 && (
         <section className="bg-ocean-50/50 py-16">

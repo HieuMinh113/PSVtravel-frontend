@@ -1,24 +1,10 @@
 "use client";
 import TourListPage from "./TourListPage";
 
-export default function DomesticTours({ tours = [], orbitImages = [], danhMuc = [] }) {
-  // Ưu tiên ảnh công ty tự upload trong admin (Banner → vị trí "Ảnh vòng xoay").
-  // Chưa upload thì lấy tạm ảnh bìa của chính các tour đang bán — vẫn là ảnh thật.
-  const anhVongXoay = orbitImages.length
-    ? orbitImages
-    : tours.length
-    ? Array.from({ length: 10 }, (_, i) => tours[i % tours.length].image)
-    : [];
-
-  return (
-    <TourListPage
-      tours={tours}
-      basePath="/tour-trong-nuoc"
-      eyebrow="Tour trong nước"
-      title="Khám phá Việt Nam từ Bắc chí Nam"
-      description="Từ vịnh Hạ Long kỳ vĩ đến đảo Ngọc Phú Quốc rực nắng — mỗi vùng đất đều mang một câu chuyện riêng."
-      danhMuc={danhMuc}
-      orbitImages={anhVongXoay}
-    />
-  );
+// Chỉ còn lưới tour + bộ lọc. Tiêu đề (H1) và đoạn giới thiệu đã chuyển lên
+// page.jsx để được render phía máy chủ — nếu để trong đây, chúng nằm sau ranh
+// giới Suspense (do bộ lọc đọc ?category= trên URL) và biến mất khỏi HTML dựng
+// sẵn, khiến Google và cỗ máy AI không thấy tiêu đề trang.
+export default function DomesticTours({ tours = [], danhMuc = [] }) {
+  return <TourListPage tours={tours} basePath="/tour-trong-nuoc" danhMuc={danhMuc} />;
 }

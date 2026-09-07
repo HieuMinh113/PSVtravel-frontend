@@ -2,25 +2,66 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 const REVALIDATE = 60; // giây — chậm nhất 1 phút thấy thay đổi từ admin
 
-async function layJSON(duongDan) {
-  // Backend chết KHÔNG được kéo sập cả website: trả null để trang vẫn dựng
-  // với phần dữ liệu còn lại, thay vì ném lỗi làm Next trả 500 toàn trang.
-  try {
-    const res = await fetch(`${API_URL}${duongDan}`, {
-      next: { revalidate: REVALIDATE },
-      headers: { Accept: "application/json" },
-    });
+const CHO_GIUA_CAC_LAN = [0, 250, 750]; // mili giây trước lần gọi thứ 1, 2, 3
 
-    if (!res.ok) {
-      if (res.status !== 404) console.error(`API lỗi ${res.status}: ${duongDan}`);
-      return null;
+const nghi = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Gọi backend Laravel.
+ *
+ * `batBuoc: true` dùng cho dữ liệu mà thiếu nó thì trang trở nên VÔ NGHĨA —
+ * danh sách tour, danh mục. Gọi không được thì NÉM LỖI thay vì trả rỗng.
+ *
+ * Vì sao phải ném lỗi: Next lưu lại kết quả dựng trang rồi phục vụ cho mọi
+ * khách trong 60 giây. Nếu nuốt lỗi rồi trả mảng rỗng, trang vẫn "dựng thành
+ * công" với 0 tour — và **cái trang rỗng đó bị lưu lại**. Một cú chớp mạng
+ * 50 mili giây biến thành 60 giây cả website hiện "Không tìm thấy tour phù
+ * hợp" cho tất cả khách. Tệ hơn: việc dựng lại chạy ngầm mỗi khi có người
+ * truy cập, nên trúng cú chớp nào là bản rỗng thay thế bản tốt, bất kể lúc nào.
+ *
+ * Ném lỗi thì Next bỏ lần dựng đó và **giữ nguyên bản tốt trước đó**. Cú chớp
+ * mạng trở nên vô hình thay vì đóng băng thành trang rỗng.
+ *
+ * Dữ liệu phụ (banner, khoảnh khắc, visa...) vẫn trả null như cũ: thiếu chúng
+ * thì ẩn một khối, không việc gì phải bỏ cả trang.
+ */
+async function layJSON(duongDan, { batBuoc = false } = {}) {
+  let loiCuoi = null;
+
+  for (let lan = 0; lan < CHO_GIUA_CAC_LAN.length; lan++) {
+    if (CHO_GIUA_CAC_LAN[lan]) await nghi(CHO_GIUA_CAC_LAN[lan]);
+
+    try {
+      const res = await fetch(`${API_URL}${duongDan}`, {
+        next: { revalidate: REVALIDATE },
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.ok) return res.json();
+
+      // 404 là câu trả lời hợp lệ (trang tĩnh chưa tạo), không thử lại
+      if (res.status === 404) return null;
+
+      // 4xx khác là lỗi phía mình, thử lại cũng vậy
+      if (res.status < 500) {
+        console.error(`API lỗi ${res.status}: ${duongDan}`);
+        loiCuoi = new Error(`API trả về ${res.status}`);
+        break;
+      }
+
+      loiCuoi = new Error(`API trả về ${res.status}`);
+    } catch (e) {
+      loiCuoi = e;
     }
-
-    return res.json();
-  } catch (e) {
-    console.error(`Không gọi được API: ${duongDan}`, e?.cause?.code || e?.message);
-    return null;
   }
+
+  const lyDo = loiCuoi?.cause?.code || loiCuoi?.message || "không rõ";
+  console.error(`Không gọi được API sau ${CHO_GIUA_CAC_LAN.length} lần: ${duongDan}`, lyDo);
+
+  if (batBuoc) {
+    throw new Error(`Không lấy được dữ liệu bắt buộc từ API: ${duongDan} (${lyDo})`);
+  }
+  return null;
 }
 
 // Chuyển dữ liệu tour từ backend sang đúng hình dạng giao diện quen dùng
@@ -44,6 +85,12 @@ function mapTour(t) {
     reviews: t.review_count ?? 0,
     seatsLeft: dep?.seats_left ?? t.next_seats_left ?? null,
     startDate: dep?.start_date_display ?? t.next_start_date ?? null,
+    // Dãy ngày khởi hành cho thẻ tour ngoài trang danh sách (dạng Y-m-d)
+    departureDates: t.departure_dates ?? [],
+    departureCount: t.departure_count ?? 0,
+    // Đợt xa nhất và số chỗ nhiều nhất — dùng để lọc theo ngày và số khách
+    lastDepartureDate: t.last_departure_date ?? null,
+    maxSeatsLeft: t.max_seats_left ?? null,
     image: t.cover_image,
     tag: t.tag,
     categorySlugs: t.category_slugs ?? [],
@@ -52,14 +99,21 @@ function mapTour(t) {
       day: `Ngày ${it.day_number}`,
       title: it.title,
       desc: it.description,
+      images: it.images ?? [],
     })),
     departures: (t.departures ?? []).map((d) => ({
       id: d.id,
       startDate: d.start_date_display ?? d.start_date,
+      startISO: d.start_date ?? null, // Y-m-d cho schema
       price: d.price,
       seatsLeft: d.seats_left,
     })),
     images: (t.images ?? []).map((img) => img.url),
+    // Khối "Những thông tin cần lưu ý" ở cuối trang tour
+    included: t.included ?? [],
+    excluded: t.excluded ?? [],
+    cancellationPolicy: t.cancellation_policy ?? "",
+    notes: (t.notes ?? []).map((n) => ({ title: n.title, content: n.content })),
     reviewsList: (t.reviews ?? []).map((r) => ({
       name: r.customer_name,
       rating: r.rating,
@@ -68,6 +122,7 @@ function mapTour(t) {
       date: r.created_at,
     })),
     description: t.description,
+    updatedAt: t.updated_at ?? null,
   };
 }
 
@@ -80,7 +135,8 @@ export async function getTours({ type, featured, category, perPage = 50 } = {}) 
   // khởi hành rồi vứt đi gần hết là phần chậm dễ bỏ sót nhất.
   q.set("per_page", String(perPage));
 
-  const json = await layJSON(`/tours?${q.toString()}`);
+  // Bắt buộc: trang danh sách tour mà không có tour thì không còn là trang nữa
+  const json = await layJSON(`/tours?${q.toString()}`, { batBuoc: true });
   return (json?.data ?? []).map(mapTour);
 }
 
@@ -139,17 +195,52 @@ export async function getMoments() {
     date: null,
   }));
 }
-export async function getVisaCountries() {
-  const json = await layJSON(`/visa-countries`);
-  return (json?.data ?? []).map((c) => ({
+// Chuyển một bản ghi visa từ backend sang hình dạng giao diện dùng.
+function mapVisa(c) {
+  if (!c) return null;
+  const loai = { tourist: "Du lịch", business: "Công tác", study: "Du học" };
+  return {
     slug: c.slug,
     name: c.name,
     flagImage: c.flag_image, // URL ảnh cờ (nếu có)
+    type: c.visa_type,
+    typeLabel: loai[c.visa_type] || "Du lịch",
     rate: c.success_rate ? `${c.success_rate}%` : null,
     time: c.processing_time,
     price: c.price ? `${Number(c.price).toLocaleString("vi-VN")}đ` : "Liên hệ",
+    documents: c.required_documents ?? [],
+    description: c.description ?? "",
     required: true,
-  }));
+  };
+}
+
+export async function getVisaCountries() {
+  const json = await layJSON(`/visa-countries`);
+  return (json?.data ?? []).map(mapVisa).filter(Boolean);
+}
+
+// Chi tiết một quốc gia. Chưa có thì trả null để trang hiện 404 đúng cách.
+export async function getVisaCountry(slug) {
+  const json = await layJSON(`/visa-countries/${slug}`);
+  return mapVisa(json?.data ?? json);
+}
+
+// Một slug hợp lệ chỉ gồm chữ THƯỜNG, số và dấu gạch ngang ở giữa —
+// ví dụ "visa-nhat-ban". Dữ liệu admin nhập tay đôi khi lẫn chữ hoa hoặc
+// dấu cách thừa ("Chau-a ", "Chau-a") — những slug đó KHÔNG mở được trang
+// chi tiết (trang chỉ nhận đúng slug gốc), nên phải loại khỏi sitemap thay
+// vì để Google tìm nạp ra 404. KHÔNG tự chuyển về chữ thường: làm vậy sẽ
+// tạo URL không khớp bản ghi trong DB. Cách sửa triệt để là xoá bản ghi
+// rác trong admin.
+const MAU_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export function slugHopLe(slug) {
+  return typeof slug === "string" && MAU_SLUG.test(slug);
+}
+
+// Danh sách slug cho generateStaticParams — dựng sẵn từng trang chi tiết.
+export async function getVisaSlugs() {
+  const json = await layJSON(`/visa-countries`);
+  return (json?.data ?? []).map((c) => c.slug).filter(slugHopLe);
 }
 export async function getAirlines() {
   const json = await layJSON(`/airlines`);
@@ -212,6 +303,57 @@ export async function getGuideSlugs() {
   return json ?? [];
 }
 
+// ---- Sự kiện / Team Building ----
+function mapEvent(e) {
+  if (!e) return null;
+  return {
+    slug: e.slug,
+    title: e.title,
+    summary: e.summary ?? "",
+    image: e.cover_image ?? null,
+    groupSize: e.group_size ?? null,
+    duration: e.duration ?? null,
+    location: e.location ?? null,
+    priceNote: e.price_note ?? null,
+    featured: !!e.is_featured,
+  };
+}
+
+function mapEventDetail(e) {
+  if (!e) return null;
+  return {
+    slug: e.slug,
+    title: e.title,
+    summary: e.summary ?? "",
+    image: e.cover_image ?? null,
+    gallery: Array.isArray(e.gallery) ? e.gallery : [],
+    description: e.description ?? "",
+    includes: Array.isArray(e.includes) ? e.includes : [],
+    groupSize: e.group_size ?? null,
+    duration: e.duration ?? null,
+    location: e.location ?? null,
+    priceNote: e.price_note ?? null,
+    metaTitle: e.meta_title ?? e.title,
+    metaDescription: e.meta_description ?? e.summary,
+  };
+}
+
+export async function getEvents() {
+  const json = await layJSON(`/events?per_page=60`);
+  return (json?.data ?? []).map(mapEvent).filter(Boolean);
+}
+
+export async function getEventBySlug(slug) {
+  const json = await layJSON(`/events/${slug}`);
+  return mapEventDetail(json?.data ?? json);
+}
+
+export async function getEventSlugs() {
+  // Lọc slug hợp lệ (giống visa) để slug nhập sai không lọt vào sitemap/dựng trang
+  const json = await layJSON(`/events-slugs`);
+  return (json ?? []).filter(slugHopLe);
+}
+
 // Trang tĩnh do admin soạn (điều khoản, chính sách...). Nội dung nằm trong
 // mục Trang tĩnh của trang quản trị, bộ phận pháp chế tự sửa không cần lập
 // trình viên. Chưa soạn thì trả về bản ghi có body rỗng, không phải null.
@@ -235,7 +377,8 @@ export async function getPage(slug) {
 // Mỗi danh mục là một điểm đến: có tên, ảnh riêng và SỐ TOUR THẬT do máy chủ đếm.
 export async function getCategories(loai) {
   const q = loai ? `?type=${loai}` : "";
-  const json = await layJSON(`/categories${q}`);
+  // Bắt buộc: danh mục dựng nên mega menu và các nút lọc
+  const json = await layJSON(`/categories${q}`, { batBuoc: true });
 
   return (json?.data ?? []).map((c) => ({
     slug: c.slug,

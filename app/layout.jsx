@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Be_Vietnam_Pro, Roboto } from "next/font/google";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, organizationJsonLd, JsonLd } from "./lib/seo";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, organizationJsonLd, websiteJsonLd, JsonLd } from "./lib/seo";
 
 // Font tiêu đề: Be Vietnam Pro — thiết kế riêng cho tiếng Việt.
 //
@@ -40,7 +40,9 @@ export const metadata = {
     description: SITE_DESCRIPTION,
   },
   twitter: { card: "summary_large_image" },
-  icons: { icon: "/favicon.svg" },
+  // Biểu tượng tab lấy từ app/icon.png và app/apple-icon.png — Next tự sinh
+  // thẻ <link> nên không khai báo icons ở đây nữa, tránh phải giữ hai chỗ khớp
+  // nhau. Tài liệu Next 16 cũng khuyên dùng cách theo tệp thay vì khai báo tay.
   robots: { index: true, follow: true },
 };
 
@@ -59,6 +61,7 @@ export default function RootLayout({ children }) {
       <body>
         {children}
         <JsonLd data={organizationJsonLd()} />
+        <JsonLd data={websiteJsonLd()} />
       </body>
     </html>
   );

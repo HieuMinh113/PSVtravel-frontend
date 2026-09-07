@@ -10,6 +10,17 @@ import { useCallback, useEffect, useState } from "react";
  *
  * `dangTai` để giao diện giữ chỗ thay vì nháy từ "Đăng nhập" sang tên người dùng.
  */
+// Tên tín hiệu báo "thông tin người dùng vừa đổi". Dùng chung để mọi nơi
+// hiển thị tên, ảnh đại diện… cùng lấy lại dữ liệu mới.
+export const SU_KIEN_DOI = "psv:nguoi-dung-doi";
+
+/** Gọi sau khi lưu hồ sơ thành công để cập nhật ngay mọi chỗ đang hiện tên. */
+export function baoNguoiDungDoi() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(SU_KIEN_DOI));
+  }
+}
+
 export default function useNguoiDung() {
   const [nguoiDung, setNguoiDung] = useState(null);
   const [dangTai, setDangTai] = useState(true);
@@ -28,6 +39,17 @@ export default function useNguoiDung() {
 
   useEffect(() => {
     nap();
+  }, [nap]);
+
+  // Mỗi chỗ gọi hook này giữ một bản sao riêng của thông tin người dùng.
+  //
+  // Sửa hồ sơ ở trang tài khoản thì thanh điều hướng không hề biết — góc phải
+  // vẫn hiện tên cũ cho tới khi bấm F5, khách tưởng lưu hỏng nên bấm lưu lại
+  // mấy lần. Ai đổi thông tin thì phát tín hiệu SU_KIEN_DOI, mọi bản sao cùng
+  // lấy lại một lượt.
+  useEffect(() => {
+    window.addEventListener(SU_KIEN_DOI, nap);
+    return () => window.removeEventListener(SU_KIEN_DOI, nap);
   }, [nap]);
 
   return { nguoiDung, dangTai, datLai: setNguoiDung, napLai: nap };

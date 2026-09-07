@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   FileCheck2, Clock, ShieldCheck, ArrowRight, ChevronDown, Phone, BadgeCheck, Globe2,
@@ -98,6 +99,8 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
                   whileHover={{ y: -6 }}
                   className="card-surface group relative overflow-hidden p-5"
                 >
+                  {/* Cả thẻ là liên kết tới trang chi tiết visa của quốc gia đó */}
+                  <Link href={`/lam-visa/${c.slug}`} className="absolute inset-0 z-10" aria-label={`Xem chi tiết visa ${c.name}`} />
                   {/* Vạch nhấn trượt lên khi rê chuột — tín hiệu thẻ tương tác được */}
                   <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-ocean-500 to-teal-500 transition-transform duration-400 ease-enter group-hover:scale-x-100" />
 
@@ -115,6 +118,8 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
                         </p>
                       )}
                     </div>
+                    {/* Mũi tên trượt vào khi rê chuột — cho biết thẻ mở ra trang chi tiết */}
+                    <ArrowRight className="ml-auto h-4 w-4 shrink-0 -translate-x-1 text-ocean-400 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:text-ocean-600 group-hover:opacity-100" />
                   </div>
 
                   <div className="mt-4 flex items-end justify-between border-t border-ocean-50 pt-3">

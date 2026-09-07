@@ -66,7 +66,7 @@ export default function Testimonials({ reviews = [] }) {
       <SectionReveal className="mx-auto max-w-3xl px-5 text-center">
         <span className="text-xs font-bold uppercase tracking-[0.25em] text-teal-500">Khách hàng nói gì</span>
         <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
-          Hơn <span className="text-gradient-ocean">18.000 hành trình</span> đã được viết nên
+          Hơn <span className="text-gradient-ocean">10.000 lượt khách</span> mỗi năm
         </h2>
         <p className="mt-3 text-ink-muted">
           Những trải nghiệm thật từ khách hàng đã đồng hành cùng PSVTravel trên khắp mọi miền.

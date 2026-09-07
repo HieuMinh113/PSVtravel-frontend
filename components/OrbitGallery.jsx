@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion, useTime, useTransform } from "framer-motion";
+import { motion, useTime, useTransform } from "framer-motion";
 
 /**
  * Vòng ảnh chạy quanh khối nội dung ở đầu trang — điểm nhấn thương hiệu.
@@ -15,12 +15,10 @@ import { motion, useReducedMotion, useTime, useTransform } from "framer-motion";
  * ngang (cách tâm 560px) sau một phần tư vòng sẽ nhảy lên cao 560px, vượt khỏi
  * khung nhìn và bị cắt mất. Chỉ đúng khi quỹ đạo là hình tròn.
  */
-function AnhTrenQuyDao({ src, gocBanDau, radiusX, radiusY, cardSize, duration, dungYen }) {
+function AnhTrenQuyDao({ src, gocBanDau, radiusX, radiusY, cardSize, duration }) {
   const time = useTime();
 
-  const goc = useTransform(time, (t) =>
-    dungYen ? gocBanDau : gocBanDau + (t / (duration * 1000)) * 360
-  );
+  const goc = useTransform(time, (t) => gocBanDau + (t / (duration * 1000)) * 360);
 
   const x = useTransform(goc, (g) => Math.cos((g * Math.PI) / 180) * radiusX);
   const y = useTransform(goc, (g) => Math.sin((g * Math.PI) / 180) * radiusY);
@@ -54,7 +52,15 @@ export default function OrbitGallery({
   showCenter = true,
   showRing = true,
 }) {
-  const giamChuyenDong = useReducedMotion();
+  // Vòng ảnh LUÔN chạy, kể cả khi máy khách bật "giảm chuyển động".
+  //
+  // Trước đây nó dừng hẳn theo thiết lập đó, nên máy tính nào tắt hiệu ứng động
+  // trong Windows là vòng ảnh chết cứng — đúng thứ khách nhớ về thương hiệu lại
+  // biến mất, mà chủ website không hề biết vì máy mình vẫn chạy bình thường.
+  //
+  // Vẫn giữ nguyên việc dừng các hiệu ứng MẠNH theo thiết lập đó: nền aurora
+  // trôi, băng đánh giá chạy ngang, nhấp nháy (xem globals.css). Vòng này quay
+  // 50 giây một vòng và nằm ở nền phía sau nên êm hơn hẳn.
 
   const [{ radiusX, radiusY, cardSize }, setDims] = useState({
     radiusX: radiusLg,
@@ -118,7 +124,6 @@ export default function OrbitGallery({
           radiusY={radiusY}
           cardSize={cardSize}
           duration={duration}
-          dungYen={Boolean(giamChuyenDong)}
         />
       ))}
 

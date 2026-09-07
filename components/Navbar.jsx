@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import NavLink from "./NavLink";
 import TopBar from "./TopBar";
@@ -8,7 +8,7 @@ import UserMenu from "./UserMenu";
 import useNguoiDung from "@/app/lib/useNguoiDung";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ChevronDown, Compass, ArrowRight } from "lucide-react";
+import { Menu, X, User, ChevronDown, Compass, ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
 
 const links = [
   { to: "/", label: "Trang chủ" },
@@ -17,6 +17,7 @@ const links = [
   { to: "/tour-nuoc-ngoai", label: "Tour nước ngoài", mega: "abroad" },
   { to: "/ve-may-bay", label: "Vé máy bay" },
   { to: "/lam-visa", label: "Làm visa" },
+  { to: "/team-building", label: "Team Building" },
   { to: "/cam-nang", label: "Cẩm nang" },
   { to: "/lien-he", label: "Liên hệ" },
 ];
@@ -141,15 +142,90 @@ function MegaPanel({ config }) {
 
 export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = [] }) {
   // Dựng lại chỉ khi danh sách đổi, không dựng lại mỗi lần rê chuột
+  // Danh mục do layout dựng sẵn ở phía máy chủ truyền xuống.
+  //
+  // Layout KHÔNG được dựng lại khi chuyển trang bằng cách bấm link — nó giữ
+  // nguyên dữ liệu của lần dựng đầu tiên. Nếu trang đầu tiên khách mở lại là
+  // bản lưu tạm sinh ra lúc chưa có danh mục nào (ngay sau khi triển khai, hoặc
+  // sau khi dọn cơ sở dữ liệu), navbar sẽ trống suốt cả phiên cho tới khi bấm
+  // F5 — trong khi các nút lọc bên dưới lại hiện đủ, vì chúng thuộc về trang.
+  //
+  // Nên: nhận danh sách rỗng thì tự lấy lại ở phía trình duyệt đúng một lần.
+  // Có dữ liệu sẵn thì không tốn thêm lượt gọi nào.
+  const [dmTuLay, setDmTuLay] = useState(null);
+
+  useEffect(() => {
+    if (dmTrongNuoc.length || dmNuocNgoai.length || dmTuLay) return;
+
+    let conHieuLuc = true;
+    Promise.all([
+      fetch("/api/categories?type=domestic").then((r) => (r.ok ? r.json() : [])),
+      fetch("/api/categories?type=abroad").then((r) => (r.ok ? r.json() : [])),
+    ])
+      .then(([trongNuoc, nuocNgoai]) => {
+        if (conHieuLuc && (trongNuoc.length || nuocNgoai.length)) {
+          setDmTuLay({ trongNuoc, nuocNgoai });
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      conHieuLuc = false;
+    };
+  }, [dmTrongNuoc.length, dmNuocNgoai.length, dmTuLay]);
+
   const megaConfig = useMemo(
-    () => taoMegaConfig(dmTrongNuoc, dmNuocNgoai),
-    [dmTrongNuoc, dmNuocNgoai]
+    () =>
+      taoMegaConfig(
+        dmTuLay?.trongNuoc ?? dmTrongNuoc,
+        dmTuLay?.nuocNgoai ?? dmNuocNgoai
+      ),
+    [dmTrongNuoc, dmNuocNgoai, dmTuLay]
   );
 
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [megaOpenKey, setMegaOpenKey] = useState(null);
   const [mobileMegaOpenKey, setMobileMegaOpenKey] = useState(null);
+
+  // Chiều cao tối đa của ngăn kéo trên điện thoại — ĐO chứ không đoán.
+  //
+  // Thanh điều hướng là position:fixed, nên phần ngăn kéo tràn quá đáy màn hình
+  // nằm ngoài luồng cuộn của trang — cuộn kiểu gì cũng không tới. Trên máy cao
+  // dưới ~700px (iPhone SE, Android đời cũ, hay trình duyệt máy tính thu nhỏ),
+  // khách đã đăng nhập không tài nào bấm được nút Đăng xuất.
+  //
+  // Không viết cứng một con số: chiều cao thanh điều hướng thay đổi theo cỡ
+  // logo, theo breakpoint, và theo việc thanh hotline phía trên đang mở hay đã
+  // thu lại. Đo đúng vị trí ngăn kéo rồi lấy phần còn lại của màn hình.
+  const ngamKeoRef = useRef(null);
+  const [caoToiDa, setCaoToiDa] = useState(undefined);
+
+  useEffect(() => {
+    if (!open) {
+      setCaoToiDa(undefined);
+      return;
+    }
+    const doLai = () => {
+      const el = ngamKeoRef.current;
+      if (!el) return;
+      const dinh = el.getBoundingClientRect().top;
+      // visualViewport phản ánh đúng phần màn hình đang thấy khi bàn phím ảo
+      // hoặc thanh địa chỉ đang chiếm chỗ
+      const caoManHinh = window.visualViewport?.height ?? window.innerHeight;
+      setCaoToiDa(Math.max(200, Math.floor(caoManHinh - dinh - 8)));
+    };
+    doLai();
+    // Thanh hotline thu lại trong 500ms khi mở menu — đo lại sau khi xong
+    const hen = setTimeout(doLai, 560);
+    window.addEventListener("resize", doLai);
+    window.visualViewport?.addEventListener("resize", doLai);
+    return () => {
+      clearTimeout(hen);
+      window.removeEventListener("resize", doLai);
+      window.visualViewport?.removeEventListener("resize", doLai);
+    };
+  }, [open]);
   const pathname = usePathname();
   const router = useRouter();
   const { nguoiDung, datLai } = useNguoiDung();
@@ -312,7 +388,12 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
             transition={{ duration: 0.35, ease: "easeInOut" }}
             className="overflow-hidden bg-white lg:hidden"
           >
-            <div className="flex flex-col gap-1 px-5 pb-6 pt-2">
+            {/* Ngăn kéo tự cuộn được — xem ghi chú ở chỗ tính caoToiDa */}
+            <div
+              ref={ngamKeoRef}
+              style={{ maxHeight: caoToiDa }}
+              className="flex flex-col gap-1 overflow-y-auto overscroll-contain px-5 pb-6 pt-2"
+            >
               {links.map((l) =>
                 l.mega ? (
                   <div key={l.to}>
@@ -407,6 +488,22 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                   <Link href="/tai-khoan?tab=ho-so" className="rounded-xl px-4 py-3 text-sm font-medium text-deep-800">
                     Hồ sơ &amp; mật khẩu
                   </Link>
+                  {/* Lối tắt sang trang quản trị. Trước đây chỉ bản máy tính có,
+                      nhân viên dùng điện thoại phải tự nhớ và gõ địa chỉ ở cổng
+                      khác — trong khi họ chính là người hay xử lý đơn ngoài giờ.
+                      Mở tab mới để không mất trang đang xem bên website. */}
+                  {nguoiDung.la_nhan_vien && nguoiDung.admin_url && (
+                    <a
+                      href={nguoiDung.admin_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-semibold text-ocean-700"
+                    >
+                      <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-600" />
+                      <span className="flex-1">Vào trang quản trị</span>
+                      <ExternalLink className="h-3.5 w-3.5 shrink-0 text-ink-subtle" />
+                    </a>
+                  )}
                   <button
                     type="button"
                     onClick={async () => {

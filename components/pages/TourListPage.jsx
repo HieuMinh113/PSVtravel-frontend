@@ -1,31 +1,51 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { SlidersHorizontal, Search, X, MapPinned, RotateCcw } from "lucide-react";
-import PageHero from "@/components/PageHero";
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
 
 export default function TourListPage({
   tours,
   basePath,
-  title,
-  eyebrow,
-  description,
   danhMuc = [], // Danh Mục Tour trong admin — cùng nguồn với mega menu
-  orbitImages,
 }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const initialQuery = searchParams.get("q") || "";
-  // Tới đây từ mega menu, trang chủ hay trang chi tiết đều kèm ?category=slug.
-  // Lọc theo slug danh mục (quan hệ thật trong CSDL) thay vì so tên dạng chữ —
-  // trước đây gõ "Hàn quốc" khác "Hàn Quốc" là lọc trượt mà không ai biết.
   const [query, setQuery] = useState(initialQuery);
   const [searchOpen, setSearchOpen] = useState(Boolean(initialQuery));
-  const [slug, setSlug] = useState(searchParams.get("category") || "");
 
+  // Danh mục đang chọn ĐỌC THẲNG TỪ ĐỊA CHỈ, không sao chép vào trạng thái.
+  //
+  // Trước đây dùng useState(searchParams.get("category")): giá trị chỉ được đọc
+  // một lần lúc thành phần được tạo ra. Đang đứng ở /tour-trong-nuoc mà bấm một
+  // mục trên mega menu thì địa chỉ đổi nhưng thành phần không được tạo lại, nên
+  // bộ lọc đứng im — bấm mãi không thấy gì thay đổi.
+  //
+  // Đọc thẳng từ địa chỉ thì bấm ở mega menu, ở trang chủ hay ở nút lọc bên
+  // dưới đều cho cùng kết quả, và nút Lùi của trình duyệt cũng chạy đúng.
+  const slug = searchParams.get("category") || "";
+  // Ngày khởi hành và số khách từ thanh tìm kiếm ở trang chủ
+  const ngayTu = searchParams.get("ngay") || "";
+  const soKhach = Number(searchParams.get("khach")) || 0;
   const tenDangChon = danhMuc.find((d) => d.slug === slug)?.name ?? "";
+
+  // Bấm nút lọc thì ghi vào địa chỉ, để địa chỉ luôn là nguồn duy nhất.
+  // Nhờ vậy sao chép link gửi cho người khác vẫn ra đúng kết quả đang xem.
+  const chonDanhMuc = (slugMoi) => {
+    const thamSo = new URLSearchParams(searchParams.toString());
+    if (slugMoi) {
+      thamSo.set("category", slugMoi);
+    } else {
+      thamSo.delete("category");
+    }
+    thamSo.delete("scroll");
+    const chuoi = thamSo.toString();
+    router.replace(chuoi ? `${pathname}?${chuoi}` : pathname, { scroll: false });
+  };
 
   // Khi đến từ thanh lọc ở trang chi tiết tour (?scroll=1), cuộn thẳng xuống khu vực kết quả.
   useEffect(() => {
@@ -42,29 +62,43 @@ export default function TourListPage({
         t.name.toLowerCase().includes(query.toLowerCase()) ||
         (t.country || "").toLowerCase().includes(query.toLowerCase());
       const matchDanhMuc = slug === "" || (t.categorySlugs || []).includes(slug);
-      return matchQuery && matchDanhMuc;
+
+      // Còn ít nhất một đợt khởi hành từ ngày khách chọn trở đi.
+      // So sánh chuỗi Y-m-d là đủ và đúng: định dạng này xếp theo thứ tự chữ
+      // cũng chính là thứ tự thời gian, khỏi phải dựng đối tượng ngày tháng.
+      const matchNgay = !ngayTu || (t.lastDepartureDate && t.lastDepartureDate >= ngayTu);
+
+      // Còn một đợt đủ chỗ cho cả nhóm. Tour chưa mở đợt nào thì chưa biết số
+      // chỗ — vẫn cho hiện để khách gọi hỏi, thay vì giấu mất tour đang bán.
+      const matchKhach = soKhach <= 1 || t.maxSeatsLeft == null || t.maxSeatsLeft >= soKhach;
+
+      return matchQuery && matchDanhMuc && matchNgay && matchKhach;
     });
-  }, [tours, query, slug]);
+  }, [tours, query, slug, ngayTu, soKhach]);
 
   // Có đang lọc gì không — dùng để hiện nút xoá lọc
-  const dangLoc = query.trim() !== "" || slug !== "";
+  const dangLoc = query.trim() !== "" || slug !== "" || ngayTu !== "" || soKhach > 1;
+
+  // Gỡ một điều kiện đến từ thanh tìm kiếm, giữ nguyên các điều kiện còn lại
+  const boThamSo = (ten) => {
+    const thamSo = new URLSearchParams(searchParams.toString());
+    thamSo.delete(ten);
+    thamSo.delete("scroll");
+    const chuoi = thamSo.toString();
+    router.replace(chuoi ? `${pathname}?${chuoi}` : pathname, { scroll: false });
+  };
 
   const xoaLoc = () => {
     setQuery("");
-    setSlug("");
     setSearchOpen(false);
+    const thamSo = new URLSearchParams(searchParams.toString());
+    ["category", "ngay", "khach", "scroll"].forEach((t) => thamSo.delete(t));
+    const chuoi = thamSo.toString();
+    router.replace(chuoi ? `${pathname}?${chuoi}` : pathname, { scroll: false });
   };
 
   return (
     <div>
-      <PageHero
-        eyebrow={eyebrow}
-        title={title}
-        description={description}
-        crumbs={[{ label: title }]}
-        orbitImages={orbitImages}
-      />
-
       <section id="ket-qua-tour" className="scroll-mt-20 bg-foam py-14 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           {/* Bộ lọc */}
@@ -119,7 +153,7 @@ export default function TourListPage({
                   return (
                     <button
                       key={d.slug || "tat-ca"}
-                      onClick={() => setSlug(d.slug)}
+                      onClick={() => chonDanhMuc(d.slug)}
                       aria-pressed={dangChon}
                       className={`relative shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-300 ease-enter ${
                         dangChon
@@ -148,6 +182,34 @@ export default function TourListPage({
                 )}
               </AnimatePresence>
             </div>
+
+            {/* Điều kiện đến từ thanh tìm kiếm ở trang chủ.
+                Phải hiện ra thành chữ: khách tìm "khởi hành từ 05/09, 4 khách"
+                rồi thấy ít tour hơn hẳn mà không có gì giải thích thì tưởng
+                website hỏng. Mỗi thẻ có dấu × để gỡ riêng điều kiện đó. */}
+            {(ngayTu || soKhach > 1) && (
+              <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-ocean-50 pt-3">
+                <span className="text-xs text-ink-subtle">Từ ô tìm kiếm:</span>
+                {ngayTu && (
+                  <button
+                    onClick={() => boThamSo("ngay")}
+                    className="flex items-center gap-1.5 rounded-full bg-ocean-50 px-3 py-1.5 text-xs font-semibold text-ocean-700 transition-colors hover:bg-ocean-100"
+                  >
+                    Khởi hành từ {ngayTu.split("-").reverse().join("/")}
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+                {soKhach > 1 && (
+                  <button
+                    onClick={() => boThamSo("khach")}
+                    className="flex items-center gap-1.5 rounded-full bg-ocean-50 px-3 py-1.5 text-xs font-semibold text-ocean-700 transition-colors hover:bg-ocean-100"
+                  >
+                    {soKhach >= 5 ? "Nhóm 5+ khách" : `${soKhach} khách trở lên`}
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
+            )}
           </SectionReveal>
 
           {/* Dòng kết quả */}

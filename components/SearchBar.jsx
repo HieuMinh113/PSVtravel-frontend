@@ -1,13 +1,37 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { MapPin, CalendarDays, Users2, Search } from "lucide-react";
 
+/** Hôm nay theo giờ MÁY KHÁCH, dạng Y-m-d.
+ *  Không dùng toISOString(): hàm đó trả giờ UTC, nên từ 17h chiều giờ Việt Nam
+ *  trở đi nó đã nhảy sang ngày hôm sau — khách sẽ không chọn được ngày mai. */
+function homNay() {
+  const d = new Date();
+  const hai = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${hai(d.getMonth() + 1)}-${hai(d.getDate())}`;
+}
+
+// Nhãn hiển thị -> số khách tối thiểu, dùng để lọc tour còn đủ chỗ
+const SO_KHACH = [
+  { nhan: "2 khách", min: 2 },
+  { nhan: "1 khách", min: 1 },
+  { nhan: "3-4 khách", min: 3 },
+  { nhan: "Nhóm 5+", min: 5 },
+];
+
 export default function SearchBar({ diemDenTrongNuoc = [], diemDenNuocNgoai = [] }) {
   const [dest, setDest] = useState("");
   const [type, setType] = useState("trong-nuoc");
+  const [ngay, setNgay] = useState("");
+  const [khach, setKhach] = useState(2);
   const router = useRouter();
+
+  // Chặn chọn ngày trong quá khứ. Tính sau khi trang đã hiện ra, vì máy chủ
+  // dựng sẵn trang này ở múi giờ khác — tính lúc dựng thì ngày chặn sẽ sai.
+  const [ngayToiThieu, setNgayToiThieu] = useState("");
+  useEffect(() => setNgayToiThieu(homNay()), []);
 
   // Gợi ý phải khớp tab đang chọn: đang ở "Tour trong nước" mà gợi ý Thái Lan
   // thì khách bấm vào chỉ nhận kết quả rỗng. Danh sách lấy từ tour thật đang
@@ -22,8 +46,20 @@ export default function SearchBar({ diemDenTrongNuoc = [], diemDenNuocNgoai = []
   const handleSubmit = (e) => {
     e.preventDefault();
     const base = type === "trong-nuoc" ? "/tour-trong-nuoc" : "/tour-nuoc-ngoai";
-    const qs = dest.trim() ? `?q=${encodeURIComponent(dest.trim())}` : "";
-    router.push(base + qs);
+
+    // Ba ô đều đi vào địa chỉ, để trang kết quả lọc đúng theo cả ba.
+    //
+    // Trước đây chỉ ô điểm đến được dùng: khách chọn ngày khởi hành và số
+    // khách rồi bấm "Tìm tour", hai lựa chọn đó bị vứt đi trong im lặng và
+    // trang kết quả hiện y hệt như khi không chọn gì.
+    const thamSo = new URLSearchParams();
+    if (dest.trim()) thamSo.set("q", dest.trim());
+    // Ngày quá khứ có lọt vào (khách gõ tay thay vì bấm lịch) thì bỏ qua
+    if (ngay && (!ngayToiThieu || ngay >= ngayToiThieu)) thamSo.set("ngay", ngay);
+    if (khach > 1) thamSo.set("khach", String(khach));
+
+    const chuoi = thamSo.toString();
+    router.push(chuoi ? `${base}?${chuoi}` : base);
   };
 
   return (
@@ -73,17 +109,25 @@ export default function SearchBar({ diemDenTrongNuoc = [], diemDenNuocNgoai = []
           <CalendarDays className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-500" />
           <input
             type="date"
+            value={ngay}
+            min={ngayToiThieu || undefined}
+            onChange={(e) => setNgay(e.target.value)}
+            aria-label="Khởi hành từ ngày"
             className="w-full rounded-2xl border border-ocean-100 bg-ocean-50/50 py-3.5 pl-11 pr-4 text-sm text-deep-900 outline-none transition-colors focus:border-ocean-400 focus:bg-white"
           />
         </div>
 
         <div className="relative">
           <Users2 className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-500" />
-          <select className="w-full appearance-none rounded-2xl border border-ocean-100 bg-ocean-50/50 py-3.5 pl-11 pr-4 text-sm text-deep-900 outline-none transition-colors focus:border-ocean-400 focus:bg-white">
-            <option>2 khách</option>
-            <option>1 khách</option>
-            <option>3-4 khách</option>
-            <option>Nhóm 5+</option>
+          <select
+            value={khach}
+            onChange={(e) => setKhach(Number(e.target.value))}
+            aria-label="Số khách"
+            className="w-full appearance-none rounded-2xl border border-ocean-100 bg-ocean-50/50 py-3.5 pl-11 pr-4 text-sm text-deep-900 outline-none transition-colors focus:border-ocean-400 focus:bg-white"
+          >
+            {SO_KHACH.map((o) => (
+              <option key={o.nhan} value={o.min}>{o.nhan}</option>
+            ))}
           </select>
         </div>
 
