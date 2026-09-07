@@ -7,8 +7,11 @@ import TeamBuildingForm from "@/components/TeamBuildingForm";
 // Trang chi tiết một gói sự kiện / team building. Server component: nội dung
 // (mô tả, "sẽ có gì", thông số) nằm sẵn trong HTML để Google & AI đọc được;
 // chỉ form là client.
+const DOI_TUONG = { "gia-dinh": "Gia đình", "doanh-nghiep": "Doanh nghiệp", "ca-nhan": "Cá nhân" };
+
 export default function EventDetail({ event, related = [], settings = {} }) {
   const hotline = settings.hotline || "0907 870 707";
+  const doiTuong = Array.isArray(event.audience) ? event.audience : [];
 
   const chiSo = [
     event.groupSize && { icon: Users, nhan: "Số người phù hợp", giaTri: event.groupSize },
@@ -29,6 +32,15 @@ export default function EventDetail({ event, related = [], settings = {} }) {
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 sm:px-8 lg:grid-cols-[1.6fr_1fr]">
           {/* Cột nội dung chính */}
           <div>
+            {doiTuong.length > 0 && (
+              <div className="mb-4 flex flex-wrap gap-2">
+                {doiTuong.map((a) => (
+                  <span key={a} className="rounded-full bg-ocean-50 px-3 py-1 text-xs font-semibold text-ocean-700 ring-1 ring-ocean-100">
+                    Phù hợp: {DOI_TUONG[a] || a}
+                  </span>
+                ))}
+              </div>
+            )}
             {event.image && (
               <SectionReveal className="overflow-hidden rounded-2xl">
                 <img src={event.image} alt={event.title} className="w-full object-cover" />
