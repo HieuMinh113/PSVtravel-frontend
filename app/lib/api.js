@@ -303,6 +303,57 @@ export async function getGuideSlugs() {
   return json ?? [];
 }
 
+// ---- Sự kiện / Team Building ----
+function mapEvent(e) {
+  if (!e) return null;
+  return {
+    slug: e.slug,
+    title: e.title,
+    summary: e.summary ?? "",
+    image: e.cover_image ?? null,
+    groupSize: e.group_size ?? null,
+    duration: e.duration ?? null,
+    location: e.location ?? null,
+    priceNote: e.price_note ?? null,
+    featured: !!e.is_featured,
+  };
+}
+
+function mapEventDetail(e) {
+  if (!e) return null;
+  return {
+    slug: e.slug,
+    title: e.title,
+    summary: e.summary ?? "",
+    image: e.cover_image ?? null,
+    gallery: Array.isArray(e.gallery) ? e.gallery : [],
+    description: e.description ?? "",
+    includes: Array.isArray(e.includes) ? e.includes : [],
+    groupSize: e.group_size ?? null,
+    duration: e.duration ?? null,
+    location: e.location ?? null,
+    priceNote: e.price_note ?? null,
+    metaTitle: e.meta_title ?? e.title,
+    metaDescription: e.meta_description ?? e.summary,
+  };
+}
+
+export async function getEvents() {
+  const json = await layJSON(`/events?per_page=60`);
+  return (json?.data ?? []).map(mapEvent).filter(Boolean);
+}
+
+export async function getEventBySlug(slug) {
+  const json = await layJSON(`/events/${slug}`);
+  return mapEventDetail(json?.data ?? json);
+}
+
+export async function getEventSlugs() {
+  // Lọc slug hợp lệ (giống visa) để slug nhập sai không lọt vào sitemap/dựng trang
+  const json = await layJSON(`/events-slugs`);
+  return (json ?? []).filter(slugHopLe);
+}
+
 // Trang tĩnh do admin soạn (điều khoản, chính sách...). Nội dung nằm trong
 // mục Trang tĩnh của trang quản trị, bộ phận pháp chế tự sửa không cần lập
 // trình viên. Chưa soạn thì trả về bản ghi có body rỗng, không phải null.

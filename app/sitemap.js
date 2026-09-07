@@ -1,4 +1,4 @@
-import { getTours, getGuides, getVisaSlugs } from "@/app/lib/api";
+import { getTours, getGuides, getVisaSlugs, getEventSlugs } from "@/app/lib/api";
 import { SITE_URL } from "./lib/seo";
 
 // Sitemap dựng lại mỗi giờ để tour và bài viết mới sớm được Google ghi nhận
@@ -9,7 +9,7 @@ export default async function sitemap() {
 
   const staticPaths = [
     "", "/tour-trong-nuoc", "/tour-nuoc-ngoai", "/ve-may-bay",
-    "/lam-visa", "/cam-nang", "/khoanh-khac-du-khach", "/ve-chung-toi", "/lien-he",
+    "/lam-visa", "/team-building", "/cam-nang", "/khoanh-khac-du-khach", "/ve-chung-toi", "/lien-he",
     // Các trang pháp lý bắt buộc — cần Google lập chỉ mục để chứng minh website
     // đã công khai đầy đủ theo quy định
     "/chinh-sach-bao-mat", "/dieu-khoan-su-dung", "/chinh-sach-thanh-toan", "/chinh-sach-huy-hoan",
@@ -39,11 +39,12 @@ export default async function sitemap() {
     }
   };
 
-  const [domestic, abroad, guides, visaSlugs] = await Promise.all([
+  const [domestic, abroad, guides, visaSlugs, eventSlugs] = await Promise.all([
     anToan(() => getTours({ type: "domestic" })),
     anToan(() => getTours({ type: "abroad" })),
     anToan(() => getGuides()),
     anToan(() => getVisaSlugs()),
+    anToan(() => getEventSlugs()),
   ]);
 
   const tourEntries = [
@@ -78,5 +79,15 @@ export default async function sitemap() {
       priority: 0.6,
     }));
 
-  return [...staticEntries, ...tourEntries, ...guideEntries, ...visaEntries];
+  // Trang chi tiết gói sự kiện / team building
+  const eventEntries = (eventSlugs || [])
+    .filter(Boolean)
+    .map((slug) => ({
+      url: `${SITE_URL}/team-building/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }));
+
+  return [...staticEntries, ...tourEntries, ...guideEntries, ...visaEntries, ...eventEntries];
 }

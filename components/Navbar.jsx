@@ -17,6 +17,7 @@ const links = [
   { to: "/tour-nuoc-ngoai", label: "Tour nước ngoài", mega: "abroad" },
   { to: "/ve-may-bay", label: "Vé máy bay" },
   { to: "/lam-visa", label: "Làm visa" },
+  { to: "/team-building", label: "Team Building" },
   { to: "/cam-nang", label: "Cẩm nang" },
   { to: "/lien-he", label: "Liên hệ" },
 ];
