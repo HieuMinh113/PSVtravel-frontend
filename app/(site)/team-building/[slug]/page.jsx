@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import EventDetail from "@/components/pages/EventDetail";
 import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
-import { getEventBySlug, getEventSlugs, getEvents, getSettings } from "@/app/lib/api";
+import { getEventBySlug, getEventSlugs, getEvents, getEventReviews, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
 
@@ -26,10 +26,11 @@ export async function generateMetadata({ params }) {
 
 export default async function Page({ params }) {
   const { slug } = await params;
-  const [event, all, settings] = await Promise.all([
+  const [event, all, settings, reviews] = await Promise.all([
     getEventBySlug(slug),
     getEvents(),
     getSettings(),
+    getEventReviews(slug),
   ]);
   if (!event) notFound();
 
@@ -44,7 +45,7 @@ export default async function Page({ params }) {
   return (
     <>
       <JsonLd data={bc} />
-      <EventDetail event={event} related={related} settings={settings} />
+      <EventDetail event={event} related={related} settings={settings} reviews={reviews} />
     </>
   );
 }

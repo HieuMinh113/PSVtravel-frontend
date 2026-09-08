@@ -331,6 +331,15 @@ function mapEventDetail(e) {
     gallery: Array.isArray(e.gallery) ? e.gallery : [],
     description: e.description ?? "",
     includes: Array.isArray(e.includes) ? e.includes : [],
+    itinerary: Array.isArray(e.itinerary)
+      ? e.itinerary.map((d) => ({
+          title: d.title ?? "",
+          description: d.description ?? "",
+          images: Array.isArray(d.images) ? d.images : [],
+        }))
+      : [],
+    rating: e.rating ?? null,
+    reviewCount: e.review_count ?? 0,
     groupSize: e.group_size ?? null,
     duration: e.duration ?? null,
     location: e.location ?? null,
@@ -354,6 +363,16 @@ export async function getEventSlugs() {
   // Lọc slug hợp lệ (giống visa) để slug nhập sai không lọt vào sitemap/dựng trang
   const json = await layJSON(`/events-slugs`);
   return (json ?? []).filter(slugHopLe);
+}
+
+// Đánh giá đã duyệt của một gói (dựng sẵn ở trang chi tiết cho SEO)
+export async function getEventReviews(slug) {
+  const json = await layJSON(`/events/${slug}/reviews`);
+  return {
+    items: json?.data ?? [],
+    rating: json?.rating ?? null,
+    reviewCount: json?.review_count ?? 0,
+  };
 }
 
 // Trang tĩnh do admin soạn (điều khoản, chính sách...). Nội dung nằm trong
