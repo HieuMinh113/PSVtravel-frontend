@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Users, Clock, MapPin, ArrowRight, PartyPopper } from "lucide-react";
+import { Users, Clock, MapPin, ArrowRight, PartyPopper, Star } from "lucide-react";
 
 // Nhãn đối tượng — khớp với App\Models\Event::DOI_TUONG bên backend
 const DOI_TUONG = {
@@ -76,7 +76,16 @@ export default function TeamBuildingGrid({ events = [] }) {
                   ))}
                 </div>
               )}
-              <h3 className="font-display text-lg font-bold text-deep-900 group-hover:text-ocean-700">{e.title}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-display text-lg font-bold text-deep-900 group-hover:text-ocean-700">{e.title}</h3>
+              </div>
+              {e.reviewCount > 0 && (
+                <div className="mt-1 flex items-center gap-1 text-xs text-ink-subtle">
+                  <Star className="h-3.5 w-3.5 fill-sunset-400 text-sunset-400" />
+                  <span className="font-semibold text-deep-900">{e.rating}</span>
+                  <span>({e.reviewCount})</span>
+                </div>
+              )}
               {e.summary && <p className="mt-2 line-clamp-2 text-sm text-ink-muted">{e.summary}</p>}
 
               <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-ink-subtle">
