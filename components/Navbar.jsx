@@ -273,7 +273,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
             width={900}
             height={349}
             priority
-            className="h-auto w-44 object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105 sm:w-52"
+            className="h-auto w-52 object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105 sm:w-64"
           />
         </Link>
 
