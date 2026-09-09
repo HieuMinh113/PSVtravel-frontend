@@ -266,14 +266,14 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
       </div>
 
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link href="/" className="group flex items-center">
+        <Link href="/" className="group flex shrink-0 items-center">
           <Image
             src="/logo.png"
             alt="PSVTravel"
             width={900}
             height={349}
             priority
-            className="h-auto w-52 object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105 sm:w-64"
+            className="h-12 w-auto max-w-none object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105 sm:h-14"
           />
         </Link>
 
