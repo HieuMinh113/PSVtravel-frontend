@@ -6,8 +6,9 @@ import { X } from "lucide-react";
 //
 // - Hiện 1 lần mỗi phiên: tắt rồi thì trong phiên đó không hiện lại (dùng
 //   sessionStorage, tự xoá khi khách đóng trình duyệt).
-// - Khoá theo id poster: admin đăng poster MỚI thì khách vẫn thấy lại, dù đã
-//   tắt poster cũ.
+// - Khoá theo id poster: admin đăng poster MỚI thì khách vẫn thấy lại.
+// - Khung tỉ lệ cố định 4:5 (dọc), ảnh phủ đầy (object-cover) cho gọn đẹp;
+//   ảnh nên up đúng ~800×1000, ảnh khác tỉ lệ sẽ bị cắt cho vừa khung.
 // - Bấm vào ảnh đi tới link admin đặt (nếu có); link ngoài mở tab mới.
 const KHOA = "psv_popup_da_tat";
 
@@ -24,7 +25,6 @@ export default function PromoPopup({ poster }) {
     }
     if (daTat === String(poster.id)) return;
 
-    // Chờ một nhịp cho trang ổn định rồi mới bật, đỡ giật
     const t = setTimeout(() => setHien(true), 500);
     return () => clearTimeout(t);
   }, [poster]);
@@ -52,57 +52,59 @@ export default function PromoPopup({ poster }) {
   const coLink = poster.link && poster.link.trim() !== "";
   const linkNgoai = coLink && /^https?:\/\//i.test(poster.link);
 
+  // Khung tỉ lệ 4:5 cố định, ảnh phủ đầy
   const Anh = (
-    <>
-      {/* Ảnh máy tính / điện thoại — API tự trả image_mobile (mặc định = image) */}
+    <div className="aspect-[4/5] w-full overflow-hidden bg-ocean-100">
       <img
         src={poster.image}
         alt={poster.title || "Khuyến mãi PSV Travel"}
-        className="hidden max-h-[80vh] w-full object-contain sm:block"
+        className="hidden h-full w-full object-cover sm:block"
       />
       <img
         src={poster.image_mobile || poster.image}
         alt={poster.title || "Khuyến mãi PSV Travel"}
-        className="max-h-[80vh] w-full object-contain sm:hidden"
+        className="h-full w-full object-cover sm:hidden"
       />
-    </>
+    </div>
   );
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-5 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Thông báo khuyến mãi"
       onClick={dong}
     >
       <div
-        className="relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl motion-safe:animate-[popup_.28s_ease-out]"
+        className="relative w-full max-w-sm motion-safe:animate-[popup_.28s_ease-out]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Nút tắt */}
+        {/* Nút tắt — nổi ở góc ngoài, nền trắng, luôn rõ dù poster màu gì */}
         <button
           type="button"
           onClick={dong}
           aria-label="Đóng"
-          className="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-black/45 text-white backdrop-blur transition-colors hover:bg-black/70"
+          className="absolute -right-2 -top-2 z-20 grid h-9 w-9 place-items-center rounded-full bg-white text-deep-900 shadow-lg ring-1 ring-black/5 transition-colors hover:bg-ocean-50 hover:text-ocean-700 sm:-right-3 sm:-top-3 sm:h-10 sm:w-10"
         >
           <X className="h-5 w-5" />
         </button>
 
-        {coLink ? (
-          <a
-            href={poster.link}
-            target={linkNgoai ? "_blank" : undefined}
-            rel={linkNgoai ? "noopener noreferrer" : undefined}
-            onClick={dong}
-            className="block"
-          >
-            {Anh}
-          </a>
-        ) : (
-          Anh
-        )}
+        <div className="overflow-hidden rounded-2xl shadow-2xl">
+          {coLink ? (
+            <a
+              href={poster.link}
+              target={linkNgoai ? "_blank" : undefined}
+              rel={linkNgoai ? "noopener noreferrer" : undefined}
+              onClick={dong}
+              className="block"
+            >
+              {Anh}
+            </a>
+          ) : (
+            Anh
+          )}
+        </div>
       </div>
 
       <style>{`@keyframes popup{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}`}</style>
