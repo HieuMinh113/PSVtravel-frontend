@@ -54,7 +54,7 @@ export default function PromoPopup({ poster }) {
 
   // Khung tỉ lệ 4:5 cố định, ảnh phủ đầy
   const Anh = (
-    <div className="aspect-[4/5] w-full overflow-hidden bg-ocean-100">
+    <div className="aspect-[4/5] max-h-[86vh] w-full overflow-hidden bg-ocean-100">
       <img
         src={poster.image}
         alt={poster.title || "Khuyến mãi PSV Travel"}
@@ -77,7 +77,7 @@ export default function PromoPopup({ poster }) {
       onClick={dong}
     >
       <div
-        className="relative mx-auto w-full max-w-[22rem] motion-safe:animate-[popup_.28s_ease-out]"
+        className="relative mx-auto w-full max-w-lg motion-safe:animate-[popup_.28s_ease-out]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Nút tắt — chip tròn trắng ở góc trong, luôn rõ dù poster màu gì và
