@@ -7,9 +7,10 @@ import { X } from "lucide-react";
 // - Hiện 1 lần mỗi phiên: tắt rồi thì trong phiên đó không hiện lại (dùng
 //   sessionStorage, tự xoá khi khách đóng trình duyệt).
 // - Khoá theo id poster: admin đăng poster MỚI thì khách vẫn thấy lại.
-// - Khung tỉ lệ cố định 4:5 (dọc), ảnh phủ đầy (object-cover) cho gọn đẹp;
-//   ảnh nên up đúng ~800×1000, ảnh khác tỉ lệ sẽ bị cắt cho vừa khung.
-// - Bấm vào ảnh đi tới link admin đặt (nếu có); link ngoài mở tab mới.
+// - Hiện NGUYÊN tấm poster theo đúng tỉ lệ gốc (không cắt), tự thu vừa màn
+//   hình — cao tối đa 85% màn hình — nên poster dọc nhiều chữ vẫn đọc đủ.
+// - Bấm vào ảnh: đóng popup rồi đi tới link admin đặt (nếu có); link ngoài
+//   mở tab mới.
 const KHOA = "psv_popup_da_tat";
 
 export default function PromoPopup({ poster }) {
@@ -52,20 +53,22 @@ export default function PromoPopup({ poster }) {
   const coLink = poster.link && poster.link.trim() !== "";
   const linkNgoai = coLink && /^https?:\/\//i.test(poster.link);
 
-  // Khung tỉ lệ 4:5 cố định, ảnh phủ đầy
+  // Ảnh hiện nguyên tấm (không cắt), tự thu vừa màn hình
+  const anhClass =
+    "block h-auto max-h-[85vh] w-auto max-w-[92vw] rounded-2xl shadow-2xl sm:max-w-[26rem]";
   const Anh = (
-    <div className="aspect-[4/5] max-h-[86vh] w-full overflow-hidden bg-ocean-100">
+    <>
       <img
         src={poster.image}
         alt={poster.title || "Khuyến mãi PSV Travel"}
-        className="hidden h-full w-full object-cover sm:block"
+        className={`hidden sm:block ${anhClass}`}
       />
       <img
         src={poster.image_mobile || poster.image}
         alt={poster.title || "Khuyến mãi PSV Travel"}
-        className="h-full w-full object-cover sm:hidden"
+        className={`sm:hidden ${anhClass}`}
       />
-    </div>
+    </>
   );
 
   return (
@@ -77,11 +80,10 @@ export default function PromoPopup({ poster }) {
       onClick={dong}
     >
       <div
-        className="relative mx-auto w-full max-w-lg motion-safe:animate-[popup_.28s_ease-out]"
+        className="relative motion-safe:animate-[popup_.28s_ease-out]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Nút tắt — chip tròn trắng ở góc trong, luôn rõ dù poster màu gì và
-            không tràn ra ngoài khung (an toàn trên màn hình nhỏ) */}
+        {/* Nút tắt — chip tròn trắng ở góc trong ảnh, luôn rõ và không tràn */}
         <button
           type="button"
           onClick={dong}
@@ -91,21 +93,19 @@ export default function PromoPopup({ poster }) {
           <X className="h-5 w-5" />
         </button>
 
-        <div className="overflow-hidden rounded-2xl shadow-2xl">
-          {coLink ? (
-            <a
-              href={poster.link}
-              target={linkNgoai ? "_blank" : undefined}
-              rel={linkNgoai ? "noopener noreferrer" : undefined}
-              onClick={dong}
-              className="block"
-            >
-              {Anh}
-            </a>
-          ) : (
-            Anh
-          )}
-        </div>
+        {coLink ? (
+          <a
+            href={poster.link}
+            target={linkNgoai ? "_blank" : undefined}
+            rel={linkNgoai ? "noopener noreferrer" : undefined}
+            onClick={dong}
+            className="block"
+          >
+            {Anh}
+          </a>
+        ) : (
+          Anh
+        )}
       </div>
 
       <style>{`@keyframes popup{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}`}</style>
