@@ -2,7 +2,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
 import ScrollToTop from "@/components/ScrollToTop";
-import { getSettings, getCategories } from "@/app/lib/api";
+import PromoPopup from "@/components/PromoPopup";
+import { getSettings, getCategories, getBanners } from "@/app/lib/api";
 
 export default async function SiteLayout({ children }) {
   // Mega menu lấy thẳng từ Danh Mục Tour trong admin: mỗi danh mục có tên,
@@ -15,11 +16,15 @@ export default async function SiteLayout({ children }) {
   //
   // Đổi luôn được hai lượt tải toàn bộ tour ở mọi trang thành hai lượt tải
   // danh mục — nhẹ hơn hẳn.
-  const [settings, dmTrongNuoc, dmNuocNgoai] = await Promise.all([
+  const [settings, dmTrongNuoc, dmNuocNgoai, popups] = await Promise.all([
     getSettings(),
     getCategories("domestic"),
     getCategories("abroad"),
+    getBanners("popup"),
   ]);
+
+  // Poster popup: lấy cái đầu tiên đang bật (sắp theo thứ tự trong admin)
+  const poster = Array.isArray(popups) && popups.length ? popups[0] : null;
 
   return (
     <>
@@ -28,6 +33,7 @@ export default async function SiteLayout({ children }) {
       <main>{children}</main>
       <Footer settings={settings} />
       <FloatingContact settings={settings} />
+      {poster && <PromoPopup poster={poster} />}
     </>
   );
 }
