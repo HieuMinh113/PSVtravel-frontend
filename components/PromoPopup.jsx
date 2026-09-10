@@ -70,22 +70,23 @@ export default function PromoPopup({ poster }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-5 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Thông báo khuyến mãi"
       onClick={dong}
     >
       <div
-        className="relative w-full max-w-sm motion-safe:animate-[popup_.28s_ease-out]"
+        className="relative mx-auto w-full max-w-[22rem] motion-safe:animate-[popup_.28s_ease-out]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Nút tắt — nổi ở góc ngoài, nền trắng, luôn rõ dù poster màu gì */}
+        {/* Nút tắt — chip tròn trắng ở góc trong, luôn rõ dù poster màu gì và
+            không tràn ra ngoài khung (an toàn trên màn hình nhỏ) */}
         <button
           type="button"
           onClick={dong}
           aria-label="Đóng"
-          className="absolute -right-2 -top-2 z-20 grid h-9 w-9 place-items-center rounded-full bg-white text-deep-900 shadow-lg ring-1 ring-black/5 transition-colors hover:bg-ocean-50 hover:text-ocean-700 sm:-right-3 sm:-top-3 sm:h-10 sm:w-10"
+          className="absolute right-2.5 top-2.5 z-20 grid h-9 w-9 place-items-center rounded-full bg-white/95 text-deep-900 shadow-lg ring-1 ring-black/5 transition-colors hover:bg-white hover:text-ocean-700 sm:h-10 sm:w-10"
         >
           <X className="h-5 w-5" />
         </button>
