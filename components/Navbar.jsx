@@ -273,7 +273,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
             width={900}
             height={349}
             priority
-            className="h-12 w-auto max-w-none object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105 sm:h-14"
+            className="h-12 w-auto max-w-none object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105 2xl:h-14"
           />
         </Link>
 
@@ -358,7 +358,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
           )}
         </div>
 
-        <div className="hidden items-center gap-2 lg:flex xl:gap-3">
+        <div className="hidden shrink-0 items-center gap-2 lg:flex xl:gap-3">
           <UserMenu solid={solid} />
         </div>
 

@@ -107,7 +107,7 @@ export default function UserMenu({ solid = false }) {
             {chuDau}
           </span>
         )}
-        <span className="hidden max-w-[10ch] truncate xl:inline">{user.name}</span>
+        <span className="hidden max-w-[12ch] truncate 2xl:inline">{user.name}</span>
         <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
       </button>
 
