@@ -73,9 +73,12 @@ export default function Guides({ guides: apiGuides = [] }) {
             </div>
           ) : (
             <>
-              {/* ===== BÀI NỔI BẬT — ảnh lớn nằm ngang ===== */}
+              {/* ===== BÀI NỔI BẬT — ảnh lớn nằm ngang =====
+                  Dùng div thường (không "hiện dần khi cuộn"): bài nằm ngay dưới
+                  hero, nếu chờ bộ theo dõi cuộn thì khi chuyển trang phía client
+                  đôi khi không kích hoạt -> bài bị ẩn, phải F5 mới thấy. */}
               {baiNoiBat && (
-                <SectionReveal className="mt-10">
+                <div className="mt-10">
                   <motion.article whileHover={{ y: -6 }} className="card-surface group overflow-hidden">
                     <Link href={`/cam-nang/${baiNoiBat.slug}`} className="grid grid-cols-1 lg:grid-cols-2">
                       <div className="relative h-60 overflow-hidden lg:h-full lg:min-h-[320px]">
@@ -119,7 +122,7 @@ export default function Guides({ guides: apiGuides = [] }) {
                       </div>
                     </Link>
                   </motion.article>
-                </SectionReveal>
+                </div>
               )}
 
               {/* ===== CÁC BÀI CÒN LẠI ===== */}
@@ -129,8 +132,7 @@ export default function Guides({ guides: apiGuides = [] }) {
                     <motion.article
                       key={g.slug}
                       initial={{ opacity: 0, y: 24 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.2 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: (i % 6) * 0.06, ease: [0.22, 1, 0.36, 1] }}
                       whileHover={{ y: -6 }}
                       className="card-surface group flex flex-col overflow-hidden"
