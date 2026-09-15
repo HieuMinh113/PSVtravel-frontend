@@ -50,8 +50,9 @@ export default function PromoPopup({ poster }) {
 
   if (!poster?.image || !hien) return null;
 
+  // Bấm vào poster: chuyển thẳng trong TAB HIỆN TẠI (không mở tab mới) rồi
+  // đóng poster. onClick={dong} lưu "đã tắt" trước khi trang điều hướng đi.
   const coLink = poster.link && poster.link.trim() !== "";
-  const linkNgoai = coLink && /^https?:\/\//i.test(poster.link);
 
   // Ảnh hiện nguyên tấm (không cắt), tự thu vừa màn hình
   const anhClass =
@@ -96,8 +97,6 @@ export default function PromoPopup({ poster }) {
         {coLink ? (
           <a
             href={poster.link}
-            target={linkNgoai ? "_blank" : undefined}
-            rel={linkNgoai ? "noopener noreferrer" : undefined}
             onClick={dong}
             className="block"
           >
