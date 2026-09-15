@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Star, X, ChevronLeft, ChevronRight, Quote, Camera, ArrowRight } from "lucide-react";
+import { Star, X, ChevronLeft, ChevronRight, Quote, Camera, ArrowRight, Images } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 
@@ -14,13 +14,17 @@ export default function Gallery({ photos = [], settings = {} }) {
   const list = photos;
 
   const [activeIndex, setActiveIndex] = useState(null);
+  const [photoIndex, setPhotoIndex] = useState(0); // ảnh đang xem trong khoảnh khắc
 
-  const openAt = (i) => setActiveIndex(i);
+  const openAt = (i) => { setActiveIndex(i); setPhotoIndex(0); };
   const close = () => setActiveIndex(null);
-  const prev = () => setActiveIndex((i) => (i - 1 + list.length) % list.length);
-  const next = () => setActiveIndex((i) => (i + 1) % list.length);
+  const prev = () => { setActiveIndex((i) => (i - 1 + list.length) % list.length); setPhotoIndex(0); };
+  const next = () => { setActiveIndex((i) => (i + 1) % list.length); setPhotoIndex(0); };
 
   const active = activeIndex !== null ? list[activeIndex] : null;
+  // Bộ ảnh của khoảnh khắc đang mở (ảnh chính + ảnh phụ); phòng khi thiếu.
+  const activePhotos = active ? (active.photos?.length ? active.photos : [active.photo]) : [];
+  const activePhoto = activePhotos[photoIndex] ?? active?.photo;
 
   return (
     <div>
@@ -93,6 +97,14 @@ export default function Gallery({ photos = [], settings = {} }) {
                     ))}
                   </span>
                 ) : null}
+
+                {/* Huy hiệu số ảnh — cho biết khoảnh khắc này có bộ ảnh */}
+                {p.photos && p.photos.length > 1 ? (
+                  <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white shadow-sm backdrop-blur">
+                    <Images className="h-3.5 w-3.5" />
+                    {p.photos.length}
+                  </span>
+                ) : null}
               </motion.button>
             ))}
           </div>
@@ -162,8 +174,24 @@ export default function Gallery({ photos = [], settings = {} }) {
               onClick={(e) => e.stopPropagation()}
               className="grid w-full max-w-4xl grid-cols-1 overflow-hidden rounded-3xl bg-white shadow-deep sm:grid-cols-[1.3fr_1fr]"
             >
-              <div className="max-h-[70dvh] overflow-hidden sm:max-h-[80dvh]">
-                <img src={active.photo} alt={active.caption} className="h-full w-full object-cover" />
+              <div className="relative max-h-[70dvh] overflow-hidden bg-deep-950 sm:max-h-[80dvh]">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={photoIndex}
+                    src={activePhoto}
+                    alt={active.caption}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="h-full w-full object-cover"
+                  />
+                </AnimatePresence>
+                {activePhotos.length > 1 ? (
+                  <span className="absolute right-3 top-3 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+                    {photoIndex + 1}/{activePhotos.length}
+                  </span>
+                ) : null}
               </div>
               <div className="flex flex-col p-6 sm:p-7">
                 <div className="flex items-center gap-3">
@@ -187,7 +215,27 @@ export default function Gallery({ photos = [], settings = {} }) {
                   </div>
                 ) : null}
                 <Quote className="mt-4 h-6 w-6 text-sunset-300" />
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-ink">{active.caption}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink">{active.caption}</p>
+
+                {/* Dải ảnh nhỏ — bấm để đổi ảnh lớn */}
+                {activePhotos.length > 1 ? (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {activePhotos.map((src, gi) => (
+                      <button
+                        key={gi}
+                        type="button"
+                        onClick={() => setPhotoIndex(gi)}
+                        aria-label={`Xem ảnh ${gi + 1}`}
+                        className={`h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 transition ${
+                          gi === photoIndex ? "border-ocean-500" : "border-transparent opacity-70 hover:opacity-100"
+                        }`}
+                      >
+                        <img src={src} alt="" className="h-full w-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+                <div className="flex-1" />
               </div>
             </motion.div>
           </motion.div>

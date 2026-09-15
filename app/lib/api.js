@@ -184,16 +184,22 @@ export async function getFeaturedReviews() {
 }
 export async function getMoments() {
   const json = await layJSON(`/moments`);
-  return (json?.data ?? []).map((m, i) => ({
-    id: i,
-    name: m.customer_name,
-    trip: m.tour_name,
-    photo: m.image,
-    caption: m.caption,
-    avatar: null, // model Moment chưa có
-    rating: null,
-    date: null,
-  }));
+  return (json?.data ?? []).map((m, i) => {
+    // Ảnh chính đứng đầu, rồi tới các ảnh phụ (bỏ trùng) → bộ ảnh để xem lớn.
+    const gallery = Array.isArray(m.gallery) ? m.gallery.filter(Boolean) : [];
+    const photos = [m.image, ...gallery].filter((u, idx, arr) => u && arr.indexOf(u) === idx);
+    return {
+      id: i,
+      name: m.customer_name,
+      trip: m.tour_name,
+      photo: m.image,
+      photos, // ảnh chính + ảnh phụ
+      caption: m.caption,
+      avatar: null, // model Moment chưa có
+      rating: null,
+      date: null,
+    };
+  });
 }
 // Chuyển một bản ghi visa từ backend sang hình dạng giao diện dùng.
 function mapVisa(c) {
