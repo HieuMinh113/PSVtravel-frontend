@@ -1,6 +1,6 @@
 import AboutUs from "@/components/pages/AboutUs";
 import { pageMeta } from "@/app/lib/seo";
-import { getMoments } from "@/app/lib/api";
+import { getMoments, getTeamMembers } from "@/app/lib/api";
 
 export const revalidate = 60;
 
@@ -12,7 +12,8 @@ export const metadata = pageMeta({
 });
 
 export default async function Page() {
-  // Ảnh hậu trường lấy từ Admin → Khoảnh Khắc Du Khách, không viết cứng nữa
-  const moments = await getMoments();
-  return <AboutUs moments={moments} />;
+  // Ảnh hậu trường lấy từ Admin → Khoảnh Khắc Du Khách, không viết cứng nữa.
+  // Đội ngũ lấy từ Admin → Đội ngũ (họ tên/chức vụ/email/ảnh do admin thêm).
+  const [moments, team] = await Promise.all([getMoments(), getTeamMembers()]);
+  return <AboutUs moments={moments} team={team} />;
 }

@@ -365,6 +365,19 @@ export async function getEventSlugs() {
   return (json ?? []).filter(slugHopLe);
 }
 
+// Đội ngũ / ban lãnh đạo cho trang Về chúng tôi
+export async function getTeamMembers() {
+  const json = await layJSON(`/team-members`);
+  return (json?.data ?? []).map((m) => ({
+    id: m.id,
+    name: m.name,
+    position: m.position,
+    email: m.email ?? null,
+    photo: m.photo ?? null,
+    bio: m.bio ?? "",
+  }));
+}
+
 // Đánh giá đã duyệt của một gói (dựng sẵn ở trang chi tiết cho SEO)
 export async function getEventReviews(slug) {
   const json = await layJSON(`/events/${slug}/reviews`);

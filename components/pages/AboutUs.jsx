@@ -10,6 +10,7 @@ import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import CountUp from "@/components/CountUp";
+import TeamCarousel from "@/components/TeamCarousel";
 
 const values = [
   {
@@ -85,7 +86,7 @@ function MomentCard({ m, i, onOpen }) {
   );
 }
 
-export default function AboutUs({ moments = [] }) {
+export default function AboutUs({ moments = [], team = [] }) {
   const [active, setActive] = useState(null);
 
   return (
@@ -219,6 +220,14 @@ export default function AboutUs({ moments = [] }) {
               thuận tiện, an tâm và trọn vẹn.
             </p>
           </SectionReveal>
+
+          {/* Đội ngũ do admin thêm (Admin → Đội ngũ). Chưa có ai thì ẩn,
+              chỉ giữ đoạn giới thiệu bằng chữ ở trên. */}
+          {team.length > 0 && (
+            <div className="mt-14">
+              <TeamCarousel members={team} />
+            </div>
+          )}
         </div>
       </section>
 
