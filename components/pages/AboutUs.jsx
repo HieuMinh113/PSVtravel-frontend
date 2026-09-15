@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   HeartHandshake, ShieldCheck, BadgeCheck, Users2, MapPinned,
-  X, ArrowRight,
+  X, ArrowRight, Images,
 } from "lucide-react";
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
@@ -80,6 +80,12 @@ function MomentCard({ m, i, onOpen }) {
         className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-deep-950/85 via-deep-950/10 to-transparent" />
+      {m.photos && m.photos.length > 1 ? (
+        <span className="absolute right-2.5 top-2.5 flex items-center gap-1 rounded-full bg-deep-950/70 px-2 py-1 text-xs font-semibold text-white backdrop-blur">
+          <Images className="h-3.5 w-3.5" />
+          {m.photos.length}
+        </span>
+      ) : null}
       <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-sunset-500 transition-transform duration-400 ease-enter group-hover:scale-x-100" />
       <p className="absolute inset-x-0 bottom-0 p-4 text-sm font-medium text-white">{nhan}</p>
     </motion.button>
@@ -88,6 +94,15 @@ function MomentCard({ m, i, onOpen }) {
 
 export default function AboutUs({ moments = [], team = [] }) {
   const [active, setActive] = useState(null);
+  const [photoIndex, setPhotoIndex] = useState(0); // ảnh đang xem trong khoảnh khắc
+
+  // Mở khoảnh khắc và luôn bắt đầu từ ảnh chính.
+  const openMoment = (m) => { setActive(m); setPhotoIndex(0); };
+  const closeMoment = () => setActive(null);
+
+  // Bộ ảnh (ảnh chính + ảnh phụ) của khoảnh khắc đang mở.
+  const activePhotos = active ? (active.photos?.length ? active.photos : [active.photo]) : [];
+  const activePhoto = activePhotos[photoIndex] ?? active?.photo;
 
   return (
     <div>
@@ -252,7 +267,7 @@ export default function AboutUs({ moments = [], team = [] }) {
 
             <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {moments.map((m, i) => (
-                <MomentCard key={m.id ?? i} m={m} i={i} onOpen={setActive} />
+                <MomentCard key={m.id ?? i} m={m} i={i} onOpen={openMoment} />
               ))}
             </div>
           </div>
@@ -312,7 +327,7 @@ export default function AboutUs({ moments = [], team = [] }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setActive(null)}
+            onClick={closeMoment}
             className="fixed inset-0 z-[100] grid place-items-center bg-deep-950/90 p-5 backdrop-blur-sm"
           >
             <motion.div
@@ -320,20 +335,55 @@ export default function AboutUs({ moments = [], team = [] }) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.94, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative max-h-[85vh] w-full max-w-3xl overflow-hidden rounded-3xl bg-white"
+              className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-3xl bg-white"
             >
               <button
-                onClick={() => setActive(null)}
+                onClick={closeMoment}
                 aria-label="Đóng"
                 className="tap-44 absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-deep-900 shadow"
               >
                 <X className="h-5 w-5" />
               </button>
-              <img
-                src={active.photo}
-                alt={active.caption || "Khoảnh khắc cùng PSV Travel"}
-                className="max-h-[70vh] w-full object-contain bg-deep-950"
-              />
+
+              <div className="relative bg-deep-950">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={photoIndex}
+                    src={activePhoto}
+                    alt={active.caption || "Khoảnh khắc cùng PSV Travel"}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="max-h-[68vh] w-full object-contain"
+                  />
+                </AnimatePresence>
+                {activePhotos.length > 1 ? (
+                  <span className="absolute left-3 top-3 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+                    {photoIndex + 1}/{activePhotos.length}
+                  </span>
+                ) : null}
+              </div>
+
+              {/* Dải ảnh nhỏ — bấm để đổi ảnh lớn */}
+              {activePhotos.length > 1 ? (
+                <div className="flex gap-2 overflow-x-auto px-5 pt-4">
+                  {activePhotos.map((src, gi) => (
+                    <button
+                      key={gi}
+                      type="button"
+                      onClick={() => setPhotoIndex(gi)}
+                      aria-label={`Xem ảnh ${gi + 1}`}
+                      className={`h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition ${
+                        gi === photoIndex ? "border-ocean-500" : "border-transparent opacity-70 hover:opacity-100"
+                      }`}
+                    >
+                      <img src={src} alt="" className="h-full w-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+
               {(active.caption || active.trip) && (
                 <p className="p-5 text-center text-sm text-ink">{active.caption || active.trip}</p>
               )}
