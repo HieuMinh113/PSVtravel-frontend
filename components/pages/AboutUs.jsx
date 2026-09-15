@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  HeartHandshake, ShieldCheck, BadgeCheck, Users2, MapPinned,
+  HeartHandshake, ShieldCheck, BadgeCheck, Users2, MapPinned, MapPin,
   X, ArrowRight, Images,
 } from "lucide-react";
 import Link from "next/link";
@@ -58,36 +58,68 @@ const milestones = [
   },
 ];
 
+const chuCaiDau = (ten) => (ten || "?").trim().charAt(0).toUpperCase();
+
+// Bố cục bento kiểu tạp chí — giống trang "Khoảnh khắc du khách": ô nổi bật lớn
+// xen ô cao, ô rộng cho nhịp thị giác. Chỉ áp span từ sm trở lên; điện thoại giữ
+// lưới 2 cột đều để không rối.
+function bentoSpan(i) {
+  const m = i % 8;
+  if (m === 0) return "sm:col-span-2 sm:row-span-2"; // ô nổi bật
+  if (m === 3) return "sm:row-span-2"; // ô cao
+  if (m === 5) return "lg:col-span-2"; // ô rộng
+  return "";
+}
+
 function MomentCard({ m, i, onOpen }) {
   const nhan = m.caption || m.trip || m.name || "Khoảnh khắc cùng PSV Travel";
   return (
     <motion.button
       onClick={() => onOpen(m)}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.5, delay: (i % 6) * 0.06, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -6 }}
-      aria-label={nhan}
-      className="group relative aspect-[4/3] overflow-hidden rounded-2xl text-left shadow-card"
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.45, delay: Math.min(i, 8) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+      aria-label={`Xem ảnh: ${nhan}`}
+      className={`group relative overflow-hidden rounded-2xl bg-deep-900 text-left shadow-card outline-none focus-visible:ring-4 focus-visible:ring-ocean-400/50 ${bentoSpan(i)}`}
     >
       <Image
         src={m.photo}
         alt={nhan}
         fill
         quality={90}
-        sizes="(max-width: 640px) 50vw, 25vw"
-        className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110"
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-deep-950/85 via-deep-950/10 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-deep-950/80 via-deep-950/10 to-transparent transition-opacity duration-500 group-hover:from-deep-950/90" />
+
       {m.photos && m.photos.length > 1 ? (
-        <span className="absolute right-2.5 top-2.5 flex items-center gap-1 rounded-full bg-deep-950/70 px-2 py-1 text-xs font-semibold text-white backdrop-blur">
-          <Images className="h-3.5 w-3.5" />
+        <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full border border-white/20 bg-deep-950/55 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+          <Images className="h-3.5 w-3.5" aria-hidden="true" />
           {m.photos.length}
         </span>
       ) : null}
-      <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-sunset-500 transition-transform duration-400 ease-enter group-hover:scale-x-100" />
-      <p className="absolute inset-x-0 bottom-0 p-4 text-sm font-medium text-white">{nhan}</p>
+
+      <div className="absolute inset-x-0 bottom-0 p-3.5">
+        {m.caption && (
+          <p className="mb-2 line-clamp-2 max-h-0 text-sm leading-snug text-white opacity-0 transition-all duration-500 ease-out group-hover:max-h-20 group-hover:opacity-100">
+            {m.caption}
+          </p>
+        )}
+        <div className="flex items-center gap-2">
+          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-white/80 bg-gradient-to-br from-ocean-500 to-teal-500 text-[10px] font-bold text-white">
+            {chuCaiDau(m.name || m.trip)}
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-xs font-semibold text-white">{m.name || m.trip || "Khoảnh khắc PSV"}</p>
+            {m.trip && m.name && (
+              <p className="flex items-center gap-1 truncate text-[11px] text-white/75">
+                <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
+                <span className="truncate">{m.trip}</span>
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
     </motion.button>
   );
 }
@@ -265,7 +297,7 @@ export default function AboutUs({ moments = [], team = [] }) {
               </p>
             </SectionReveal>
 
-            <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="mt-12 grid auto-rows-[10.5rem] grid-cols-2 gap-3 sm:auto-rows-[12rem] sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
               {moments.map((m, i) => (
                 <MomentCard key={m.id ?? i} m={m} i={i} onOpen={openMoment} />
               ))}
