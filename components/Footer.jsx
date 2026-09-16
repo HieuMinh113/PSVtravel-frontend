@@ -136,6 +136,8 @@ export default function Footer({ settings = {} }) {
               <li><Link href="/lam-visa" className="transition-colors hover:text-teal-400">Làm visa</Link></li>
               <li><Link href="/cam-nang" className="transition-colors hover:text-teal-400">Cẩm nang du lịch</Link></li>
               <li><Link href="/khoanh-khac-du-khach" className="transition-colors hover:text-teal-400">Khoảnh khắc du khách</Link></li>
+              <li><Link href="/khuyen-mai" className="transition-colors hover:text-teal-400">Khuyến mãi &amp; ưu đãi</Link></li>
+              <li><Link href="/diem-den" className="transition-colors hover:text-teal-400">Điểm đến nổi bật</Link></li>
             </ul>
           </div>
 
@@ -149,6 +151,8 @@ export default function Footer({ settings = {} }) {
               </li>
               <li><Link href="/ve-chung-toi" className="transition-colors hover:text-teal-400">Về chúng tôi</Link></li>
               <li><Link href="/lien-he" className="transition-colors hover:text-teal-400">Liên hệ</Link></li>
+              <li><Link href="/cau-hoi-thuong-gap" className="transition-colors hover:text-teal-400">Câu hỏi thường gặp</Link></li>
+              <li><Link href="/tuyen-dung" className="transition-colors hover:text-teal-400">Tuyển dụng</Link></li>
               <li><Link href="/chinh-sach-bao-mat" className="transition-colors hover:text-teal-400">Chính sách bảo mật</Link></li>
               <li><Link href="/dieu-khoan-su-dung" className="transition-colors hover:text-teal-400">Điều khoản sử dụng</Link></li>
               <li><Link href="/chinh-sach-thanh-toan" className="transition-colors hover:text-teal-400">Chính sách thanh toán</Link></li>

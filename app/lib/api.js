@@ -396,6 +396,68 @@ export async function getAboutImages() {
   }));
 }
 
+// ===== Nội dung marketing do admin quản lý =====
+
+export async function getPromotions() {
+  const json = await layJSON(`/promotions`);
+  return json?.data ?? [];
+}
+
+export async function getDestinations({ featured } = {}) {
+  const json = await layJSON(`/destinations${featured ? "?featured=1" : ""}`);
+  return json?.data ?? [];
+}
+
+export async function getDestinationBySlug(slug) {
+  const json = await layJSON(`/destinations/${slug}`);
+  return json?.data ?? null;
+}
+
+export async function getDestinationSlugs() {
+  const json = await layJSON(`/destinations-slugs`);
+  return Array.isArray(json) ? json : json?.data ?? [];
+}
+
+export async function getFaqs() {
+  const json = await layJSON(`/faqs`);
+  return json?.data ?? [];
+}
+
+export async function getJobs() {
+  const json = await layJSON(`/jobs`);
+  return json?.data ?? [];
+}
+
+export async function getJobBySlug(slug) {
+  const json = await layJSON(`/jobs/${slug}`);
+  return json?.data ?? null;
+}
+
+export async function getJobSlugs() {
+  const json = await layJSON(`/jobs-slugs`);
+  return Array.isArray(json) ? json : json?.data ?? [];
+}
+
+export async function getPartners() {
+  const json = await layJSON(`/partners`);
+  return json?.data ?? [];
+}
+
+// Khách đăng ký nhận ưu đãi — gọi thẳng API (không cần đăng nhập).
+export async function subscribeEmail(email, source = "trang-chu") {
+  const res = await fetch(`${API_URL}/subscribe`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ email, source }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(json?.message || "Đăng ký thất bại, vui lòng thử lại.");
+  }
+  return json;
+}
+
+
 // Đánh giá đã duyệt của một gói (dựng sẵn ở trang chi tiết cho SEO)
 export async function getEventReviews(slug) {
   const json = await layJSON(`/events/${slug}/reviews`);

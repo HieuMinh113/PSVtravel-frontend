@@ -6,6 +6,9 @@ import {
   getOrbitImages,
   getFeaturedReviews,
   getCategories,
+  getPromotions,
+  getGuides,
+  getPartners,
 } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -16,7 +19,7 @@ export const metadata = pageMeta({
 });
 
 export default async function Page() {
-  const [domestic, abroad, banners, orbitImages, reviews, danhMuc] = await Promise.all([
+  const [domestic, abroad, banners, orbitImages, reviews, danhMuc, promotions, guides, partners] = await Promise.all([
     getTours({ type: "domestic" }),
     getTours({ type: "abroad" }),
     getBanners(),
@@ -24,6 +27,9 @@ export default async function Page() {
     getFeaturedReviews(),
     // Điểm đến nổi bật = Danh mục tour trong admin, số tour do máy chủ đếm thật
     getCategories(),
+    getPromotions(),
+    getGuides(),
+    getPartners(),
   ]);
 
   // Gợi ý cho ô tìm kiếm: tên tour + vùng miền/quốc gia của tour thật đang bán
@@ -50,6 +56,9 @@ export default async function Page() {
       goiYTrongNuoc={goiY(domestic, "region")}
       goiYNuocNgoai={goiY(abroad, "country")}
       reviews={reviews}
+      promotions={promotions}
+      latestGuides={guides.slice(0, 4)}
+      partners={partners}
     />
   );
 }

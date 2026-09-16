@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import {
   ShieldCheck, Clock3, HeartHandshake, BadgePercent, ArrowRight,
   Plane, Sparkles, MapPinned, Building2, Headset,
+  Tag, Newspaper, Handshake, Clock, CalendarDays,
 } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import TourCard from "@/components/TourCard";
@@ -14,6 +15,7 @@ import SectionReveal from "@/components/SectionReveal";
 import CountUp from "@/components/CountUp";
 import OrbitGallery from "@/components/OrbitGallery";
 import TrustBar from "@/components/TrustBar";
+import Newsletter from "@/components/Newsletter";
 import { formatVND } from "@/data/tours";
 
 // Ảnh nền Hero dự phòng — CHỈ dùng khi chưa có tour nào sắp khởi hành.
@@ -70,6 +72,9 @@ export default function Home({
   goiYTrongNuoc = [],
   goiYNuocNgoai = [],
   reviews = [],
+  promotions = [],
+  latestGuides = [],
+  partners = [],
 }) {
   // Ưu tiên ảnh do công ty tự upload trong admin; chưa có thì dùng ảnh dự phòng
   const anhVongXoay = orbitImages.length ? orbitImages : ORBIT_DU_PHONG;
@@ -348,6 +353,72 @@ export default function Home({
         </div>
       </section>
 
+      {/* ===== ƯU ĐÃI HÔM NAY — do admin thêm trong Khuyến mãi ===== */}
+      {promotions.length > 0 && (
+        <section className="bg-foam pb-4 pt-6 sm:pb-8">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+            <SectionReveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">
+                  <Tag className="h-3.5 w-3.5" /> Ưu đãi hôm nay
+                </span>
+                <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+                  Đừng bỏ lỡ những <span className="text-gradient-ocean">deal hời</span>
+                </h2>
+              </div>
+              <Link href="/khuyen-mai" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800 sm:inline-flex">
+                Xem tất cả <ArrowRight className="h-4 w-4" />
+              </Link>
+            </SectionReveal>
+
+            {/* Băng chuyền ngang — kéo/lướt để xem thêm */}
+            <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {promotions.slice(0, 10).map((p, i) => {
+                const inner = (
+                  <>
+                    <div className="relative aspect-[16/10] overflow-hidden bg-deep-900">
+                      {p.image ? (
+                        <img src={p.image} alt={p.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                      ) : (
+                        <div className="h-full w-full bg-deep-gradient" />
+                      )}
+                      {p.discount_label && (
+                        <span className="absolute left-3 top-3 rounded-full bg-sunset-600 px-3 py-1 text-sm font-bold text-white shadow">{p.discount_label}</span>
+                      )}
+                    </div>
+                    <div className="flex flex-1 flex-col p-4">
+                      <h3 className="font-display text-base font-bold text-deep-900 line-clamp-2">{p.title}</h3>
+                      <div className="mt-auto pt-3">
+                        {(p.price || p.old_price) && (
+                          <div className="flex flex-wrap items-baseline gap-2">
+                            {p.old_price && <span className="text-xs text-ink-subtle line-through">{formatVND(p.old_price)}</span>}
+                            {p.price ? <span className="font-display text-lg font-bold text-sunset-700">{formatVND(p.price)}</span> : null}
+                          </div>
+                        )}
+                        {p.ends_at && (
+                          <p className="mt-1.5 flex items-center gap-1 text-xs font-medium text-ocean-700">
+                            <Clock className="h-3.5 w-3.5" /> Đến hết {p.ends_at.split("-").reverse().join("/")}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                );
+                const cls = "group flex w-[260px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-ocean-100 transition-shadow hover:shadow-deep sm:w-[300px]";
+                return p.link_url ? (
+                  <Link key={p.id ?? i} href={p.link_url} className={cls}>{inner}</Link>
+                ) : (
+                  <div key={p.id ?? i} className={cls}>{inner}</div>
+                );
+              })}
+            </div>
+            <Link href="/khuyen-mai" className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800 sm:hidden">
+              Xem tất cả ưu đãi <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </section>
+      )}
+
       {/* ===== ĐIỂM ĐẾN NỔI BẬT — lấy từ Danh mục tour trong admin ===== */}
       {diemDen.length > 0 && (
       <section className="bg-ocean-50/50 py-16 sm:py-20">
@@ -452,6 +523,94 @@ export default function Home({
       </section>
 
       <Testimonials reviews={reviews} />
+
+      {/* ===== CẨM NANG MỚI NHẤT ===== */}
+      {latestGuides.length > 0 && (
+        <section className="bg-foam py-16 sm:py-20">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+            <SectionReveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-teal-700">
+                  <Newspaper className="h-3.5 w-3.5" /> Cẩm nang du lịch
+                </span>
+                <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+                  Kinh nghiệm cho chuyến đi trọn vẹn
+                </h2>
+              </div>
+              <Link href="/cam-nang" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800 sm:inline-flex">
+                Xem tất cả <ArrowRight className="h-4 w-4" />
+              </Link>
+            </SectionReveal>
+
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {latestGuides.slice(0, 4).map((g, i) => (
+                <motion.div
+                  key={g.slug ?? i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: Math.min(i, 4) * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <Link href={`/cam-nang/${g.slug}`} className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-ocean-100 transition-shadow hover:shadow-deep">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-deep-900">
+                      {g.image ? (
+                        <img src={g.image} alt={g.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                      ) : (
+                        <div className="h-full w-full bg-deep-gradient" />
+                      )}
+                    </div>
+                    <div className="flex flex-1 flex-col p-4">
+                      {g.date && (
+                        <span className="flex items-center gap-1 text-xs text-ink-subtle">
+                          <CalendarDays className="h-3.5 w-3.5" /> {g.date}
+                        </span>
+                      )}
+                      <h3 className="mt-1.5 font-display text-base font-bold text-deep-900 line-clamp-2 transition-colors group-hover:text-ocean-700">{g.title}</h3>
+                      {g.excerpt && <p className="mt-2 line-clamp-2 text-sm text-ink-muted">{g.excerpt}</p>}
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ===== ĐỐI TÁC + ĐĂNG KÝ NHẬN ƯU ĐÃI ===== */}
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          {partners.length > 0 && (
+            <SectionReveal className="mb-16">
+              <p className="flex items-center justify-center gap-1.5 text-center text-xs font-bold uppercase tracking-[0.25em] text-ink-subtle">
+                <Handshake className="h-3.5 w-3.5" /> Đối tác đồng hành
+              </p>
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
+                {partners.map((pa, i) => {
+                  const img = <img src={pa.logo} alt={pa.name} title={pa.name} loading="lazy" className="h-10 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0 sm:h-12" />;
+                  return pa.link_url ? (
+                    <a key={pa.id ?? i} href={pa.link_url} target="_blank" rel="noopener noreferrer">{img}</a>
+                  ) : (
+                    <span key={pa.id ?? i}>{img}</span>
+                  );
+                })}
+              </div>
+            </SectionReveal>
+          )}
+
+          <SectionReveal className="relative overflow-hidden rounded-3xl bg-deep-gradient p-8 text-center sm:p-12">
+            <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora opacity-75" />
+            <div className="relative mx-auto max-w-xl">
+              <BadgePercent className="mx-auto h-9 w-9 text-gold-400" />
+              <h2 className="mt-3 font-display text-2xl font-bold text-white sm:text-3xl">Nhận ưu đãi sớm nhất</h2>
+              <p className="mx-auto mt-2 max-w-md text-sm text-white/85">
+                Đăng ký email để không bỏ lỡ các chương trình khuyến mãi tour, vé máy bay và visa mới nhất.
+              </p>
+              <div className="mx-auto mt-6 max-w-md">
+                <Newsletter source="trang-chu" />
+              </div>
+            </div>
+          </SectionReveal>
+        </div>
+      </section>
 
       {/* ===== CTA CUỐI TRANG ===== */}
       <section className="relative overflow-hidden bg-deep-gradient py-20">
