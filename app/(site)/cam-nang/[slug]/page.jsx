@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import GuideDetail from "@/components/pages/GuideDetail";
 import { pageMeta, JsonLd, SITE_URL } from "@/app/lib/seo";
-import { getGuideBySlug, getGuideSlugs } from "@/app/lib/api";
+import { getGuideBySlug, getGuideSlugs, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
 
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
 
 export default async function Page({ params }) {
   const { slug } = await params;
-  const guide = await getGuideBySlug(slug);
+  const [guide, settings] = await Promise.all([getGuideBySlug(slug), getSettings()]);
   if (!guide) notFound();
 
   const jsonLd = {
@@ -41,7 +41,7 @@ export default async function Page({ params }) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <GuideDetail guide={guide} />
+      <GuideDetail guide={guide} settings={settings} />
     </>
   );
 }

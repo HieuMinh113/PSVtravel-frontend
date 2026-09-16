@@ -288,6 +288,8 @@ function mapGuide(g) {
     content: g.content ?? null,
     metaTitle: g.meta_title ?? g.title,
     metaDescription: g.meta_description ?? g.excerpt,
+    // Tour gắn kèm (nếu admin có chọn) — để hiện ô đặt tour bên bài viết.
+    tour: g.tour ? mapTour(g.tour) : null,
   };
 }
 

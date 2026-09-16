@@ -2,11 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays, Eye, User, ArrowLeft, ArrowRight, Quote } from "lucide-react";
 import GhiNhanLuotXem from "@/components/GhiNhanLuotXem";
+import TourBookingBox from "@/components/TourBookingBox";
 
 // Trang chi tiết bài viết cẩm nang — component phía server (không cần "use client")
 // để nội dung bài viết được render sẵn trong HTML, tốt cho SEO.
-export default function GuideDetail({ guide }) {
+export default function GuideDetail({ guide, settings = {} }) {
   if (!guide) return null;
+
+  // Đường dẫn tới trang tour gắn kèm (trong nước / nước ngoài) để đặt ngay bên bài.
+  const tourLink = guide.tour
+    ? `${guide.tour.type === "abroad" ? "/tour-nuoc-ngoai" : "/tour-trong-nuoc"}/${guide.tour.slug}`
+    : null;
 
   return (
     <>
@@ -60,7 +66,8 @@ export default function GuideDetail({ guide }) {
 
       {/* Nội dung bài viết */}
       <section className="bg-foam py-12 sm:py-16">
-        <div className="mx-auto max-w-3xl px-5 sm:px-8">
+        <div className={guide.tour ? "mx-auto grid max-w-6xl items-start gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_360px]" : "mx-auto max-w-3xl px-5 sm:px-8"}>
+          <div className="min-w-0">
           {guide.excerpt && (
             <div className="relative rounded-2xl border-l-4 border-sunset-500 bg-white p-6 shadow-card">
               <Quote className="absolute right-5 top-5 h-8 w-8 text-sunset-100" />
@@ -109,6 +116,13 @@ export default function GuideDetail({ guide }) {
               <ArrowLeft className="h-4 w-4" /> Xem thêm cẩm nang
             </Link>
           </div>
+          </div>
+
+          {guide.tour && (
+            <aside className="lg:sticky lg:top-24 lg:self-start">
+              <TourBookingBox tour={guide.tour} settings={settings} tourLink={tourLink} />
+            </aside>
+          )}
         </div>
       </section>
     </article>
