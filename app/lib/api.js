@@ -386,6 +386,16 @@ export async function getTeamMembers() {
   }));
 }
 
+// Ảnh trang "Về chúng tôi" do admin thêm (Nội dung → Hình ảnh Về chúng tôi).
+export async function getAboutImages() {
+  const json = await layJSON(`/about-images`);
+  return (json?.data ?? []).map((m) => ({
+    id: m.id,
+    image: m.image,
+    caption: m.caption ?? "",
+  }));
+}
+
 // Đánh giá đã duyệt của một gói (dựng sẵn ở trang chi tiết cho SEO)
 export async function getEventReviews(slug) {
   const json = await layJSON(`/events/${slug}/reviews`);

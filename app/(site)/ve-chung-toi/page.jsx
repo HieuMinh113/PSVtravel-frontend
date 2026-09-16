@@ -1,6 +1,6 @@
 import AboutUs from "@/components/pages/AboutUs";
 import { pageMeta } from "@/app/lib/seo";
-import { getMoments, getTeamMembers } from "@/app/lib/api";
+import { getMoments, getTeamMembers, getAboutImages } from "@/app/lib/api";
 
 export const revalidate = 60;
 
@@ -12,8 +12,12 @@ export const metadata = pageMeta({
 });
 
 export default async function Page() {
-  // Ảnh hậu trường lấy từ Admin → Khoảnh Khắc Du Khách, không viết cứng nữa.
-  // Đội ngũ lấy từ Admin → Đội ngũ (họ tên/chức vụ/email/ảnh do admin thêm).
-  const [moments, team] = await Promise.all([getMoments(), getTeamMembers()]);
-  return <AboutUs moments={moments} team={team} />;
+  // Ảnh khối "Khoảnh khắc" ưu tiên lấy từ Admin → Nội dung → Hình ảnh Về chúng tôi;
+  // thiếu thì dùng Khoảnh Khắc Du Khách. Đội ngũ lấy từ Admin → Đội ngũ.
+  const [moments, team, aboutImages] = await Promise.all([
+    getMoments(),
+    getTeamMembers(),
+    getAboutImages(),
+  ]);
+  return <AboutUs moments={moments} team={team} aboutImages={aboutImages} />;
 }

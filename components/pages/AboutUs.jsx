@@ -101,32 +101,47 @@ function MomentCard({ m, i, onOpen }) {
 
       <div className="absolute inset-x-0 bottom-0 p-3.5">
         {m.caption && (
-          <p className="mb-2 line-clamp-2 max-h-0 text-sm leading-snug text-white opacity-0 transition-all duration-500 ease-out group-hover:max-h-20 group-hover:opacity-100">
+          <p className={`line-clamp-2 text-sm leading-snug text-white ${m.name ? "mb-2 max-h-0 opacity-0 transition-all duration-500 ease-out group-hover:max-h-20 group-hover:opacity-100" : "font-medium"}`}>
             {m.caption}
           </p>
         )}
-        <div className="flex items-center gap-2">
-          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-white/80 bg-gradient-to-br from-ocean-500 to-teal-500 text-[10px] font-bold text-white">
-            {chuCaiDau(m.name || m.trip)}
-          </span>
-          <div className="min-w-0">
-            <p className="truncate text-xs font-semibold text-white">{m.name || m.trip || "Khoảnh khắc PSV"}</p>
-            {m.trip && m.name && (
-              <p className="flex items-center gap-1 truncate text-[11px] text-white/75">
-                <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
-                <span className="truncate">{m.trip}</span>
-              </p>
-            )}
+        {m.name && (
+          <div className="flex items-center gap-2">
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-white/80 bg-gradient-to-br from-ocean-500 to-teal-500 text-[10px] font-bold text-white">
+              {chuCaiDau(m.name || m.trip)}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-xs font-semibold text-white">{m.name || m.trip || "Khoảnh khắc PSV"}</p>
+              {m.trip && m.name && (
+                <p className="flex items-center gap-1 truncate text-[11px] text-white/75">
+                  <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
+                  <span className="truncate">{m.trip}</span>
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </motion.button>
   );
 }
 
-export default function AboutUs({ moments = [], team = [] }) {
+export default function AboutUs({ moments = [], team = [], aboutImages = [] }) {
   const [active, setActive] = useState(null);
   const [photoIndex, setPhotoIndex] = useState(0); // ảnh đang xem trong khoảnh khắc
+
+  // Ảnh khối "Khoảnh khắc đáng nhớ": ưu tiên ảnh admin thêm ở "Hình ảnh Về chúng
+  // tôi"; nếu chưa có thì dùng ảnh khách gửi (Khoảnh Khắc Du Khách) để không trống.
+  const galleryItems = aboutImages.length > 0
+    ? aboutImages.map((im) => ({
+        id: `about-${im.id}`,
+        photo: im.image,
+        photos: [im.image],
+        caption: im.caption || "",
+        name: null,
+        trip: null,
+      }))
+    : moments;
 
   // Mở khoảnh khắc và luôn bắt đầu từ ảnh chính.
   const openMoment = (m) => { setActive(m); setPhotoIndex(0); };
@@ -281,7 +296,7 @@ export default function AboutUs({ moments = [], team = [] }) {
       {/* ===== KHOẢNH KHẮC ĐÁNG NHỚ =====
           Ảnh lấy từ Admin → Khoảnh Khắc Du Khách. Chưa có ảnh thật thì ẩn cả
           khối — không dựng ảnh minh hoạ để khỏi hứa hẹn thứ không có. */}
-      {moments.length > 0 && (
+      {galleryItems.length > 0 && (
         <section className="bg-foam py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <SectionReveal className="text-center">
@@ -298,7 +313,7 @@ export default function AboutUs({ moments = [], team = [] }) {
             </SectionReveal>
 
             <div className="mt-12 grid auto-rows-[10.5rem] grid-cols-2 gap-3 sm:auto-rows-[12rem] sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-              {moments.map((m, i) => (
+              {galleryItems.map((m, i) => (
                 <MomentCard key={m.id ?? i} m={m} i={i} onOpen={openMoment} />
               ))}
             </div>
