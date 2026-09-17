@@ -8,7 +8,7 @@ import UserMenu from "./UserMenu";
 import useNguoiDung from "@/app/lib/useNguoiDung";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ChevronDown, Compass, ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
+import { Menu, X, User, ChevronDown, Compass, ArrowRight, ShieldCheck, ExternalLink, Tag, MapPin, HelpCircle, Briefcase } from "lucide-react";
 
 const links = [
   { to: "/", label: "Trang chủ" },
@@ -19,6 +19,17 @@ const links = [
   { to: "/lam-visa", label: "Làm visa" },
   { to: "/team-building", label: "Team Building" },
   { to: "/cam-nang", label: "Cẩm nang" },
+  // Gom các trang phụ vào 1 menu thả xuống để không làm tràn thanh menu chính.
+  {
+    label: "Khám phá",
+    drop: "kham-pha",
+    submenu: [
+      { to: "/khuyen-mai", label: "Khuyến mãi", icon: Tag },
+      { to: "/diem-den", label: "Điểm đến", icon: MapPin },
+      { to: "/cau-hoi-thuong-gap", label: "Câu hỏi thường gặp", icon: HelpCircle },
+      { to: "/tuyen-dung", label: "Tuyển dụng", icon: Briefcase },
+    ],
+  },
   { to: "/lien-he", label: "Liên hệ" },
 ];
 
@@ -279,7 +290,49 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
 
         <div className="hidden items-center gap-0.5 lg:flex xl:gap-1">
           {links.map((l) =>
-            l.mega ? (
+            l.submenu ? (
+              <div
+                key={l.label}
+                className="relative"
+                onMouseEnter={() => setMegaOpenKey(l.drop)}
+                onMouseLeave={() => setMegaOpenKey((k) => (k === l.drop ? null : k))}
+              >
+                <span
+                  className={`flex cursor-default items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-[12.5px] lg:px-3 font-medium transition-colors duration-300 ${
+                    solid ? "text-deep-800 hover:text-ocean-600" : "text-white/85 hover:text-white"
+                  }`}
+                >
+                  {l.label}
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 transition-transform duration-300 ${
+                      megaOpenKey === l.drop ? "rotate-180" : ""
+                    }`}
+                  />
+                </span>
+                <AnimatePresence>
+                  {megaOpenKey === l.drop && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute right-0 top-full z-50 w-60 overflow-hidden rounded-2xl border border-black/5 bg-white p-1.5 shadow-xl"
+                    >
+                      {l.submenu.map((s) => (
+                        <Link
+                          key={s.to}
+                          href={s.to}
+                          className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-deep-800 transition-colors hover:bg-ocean-50 hover:text-ocean-700"
+                        >
+                          <s.icon className="h-4 w-4 text-ocean-500" />
+                          {s.label}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : l.mega ? (
               <div
                 key={l.to}
                 className="relative"
@@ -289,7 +342,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                 <NavLink
                   href={l.to}
                   className={({ isActive }) =>
-                    `relative flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-[12.5px] lg:px-3 xl:px-4 xl:text-sm font-medium transition-colors duration-300 ${
+                    `relative flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-[12.5px] lg:px-3 xl:px-3 font-medium transition-colors duration-300 ${
                       solid
                         ? isActive
                           ? "text-ocean-600"
@@ -329,7 +382,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                 key={l.to}
                 href={l.to}
                 className={({ isActive }) =>
-                  `relative whitespace-nowrap rounded-full px-2.5 py-2 text-[12.5px] lg:px-3 xl:px-4 xl:text-sm font-medium transition-colors duration-300 ${
+                  `relative whitespace-nowrap rounded-full px-2.5 py-2 text-[12.5px] lg:px-3 xl:px-3 font-medium transition-colors duration-300 ${
                     solid
                       ? isActive
                         ? "text-ocean-600"
@@ -395,7 +448,46 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
               className="flex flex-col gap-1 overflow-y-auto overscroll-contain px-5 pb-6 pt-2"
             >
               {links.map((l) =>
-                l.mega ? (
+                l.submenu ? (
+                  <div key={l.label}>
+                    <button
+                      onClick={() => setMobileMegaOpenKey((k) => (k === l.drop ? null : l.drop))}
+                      className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-deep-800"
+                      aria-label={`Xem ${l.label}`}
+                    >
+                      {l.label}
+                      <ChevronDown
+                        className={`h-4 w-4 text-ink-subtle transition-transform duration-300 ${
+                          mobileMegaOpenKey === l.drop ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {mobileMegaOpenKey === l.drop && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.25 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="flex flex-col py-1 pl-3">
+                            {l.submenu.map((s) => (
+                              <Link
+                                key={s.to}
+                                href={s.to}
+                                className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-ink hover:bg-ocean-50"
+                              >
+                                <s.icon className="h-4 w-4 text-ocean-500" />
+                                {s.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : l.mega ? (
                   <div key={l.to}>
                     <div className="flex items-center rounded-xl pr-2 text-sm font-medium text-deep-800">
                       <NavLink
