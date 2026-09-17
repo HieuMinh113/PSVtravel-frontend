@@ -78,7 +78,10 @@ img:not([src="/logo.png"]) {
 
 /* ===== Tối ưu đa nền tảng ===== */
 html, body {
-  overflow-x: hidden;
+  /* Dùng clip thay cho hidden: vẫn chặn tràn ngang nhưng KHÔNG biến trang
+     thành vùng cuộn riêng — nhờ vậy position: sticky (thanh lọc danh mục,
+     ô đặt tour) mới bám theo khi cuộn. hidden làm hỏng toàn bộ sticky. */
+  overflow-x: clip;
   max-width: 100%;
 }
 
