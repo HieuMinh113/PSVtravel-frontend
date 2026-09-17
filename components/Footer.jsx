@@ -90,9 +90,6 @@ export default function Footer({ settings = {} }) {
           <div>
             <div className="flex items-center gap-2.5">
               <Image src="/logo.png" alt="PSVTravel" width={900} height={349} className="h-11 w-auto object-contain" />
-              <span className="font-display text-xl font-bold">
-                PSV<span className="text-teal-400">Travel</span>
-              </span>
             </div>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/65">
               Đồng hành cùng bạn trên mọi hành trình — từ những bãi biển Việt Nam trong xanh
