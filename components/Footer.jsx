@@ -41,7 +41,7 @@ export default function Footer({ settings = {} }) {
     { Icon: FacebookIcon, href: settings.facebook },
     { Icon: InstagramIcon, href: settings.instagram },
     { Icon: YoutubeIcon, href: settings.youtube },
-  ];
+  ].filter((s) => s.href); // chỉ hiện icon mạng xã hội đã điền link trong admin
 
   const thanhToan = ["Chuyển khoản ngân hàng", "Thẻ VISA / MasterCard", "Tiền mặt tại văn phòng"];
 
@@ -92,8 +92,8 @@ export default function Footer({ settings = {} }) {
               <Image src="/logo.png" alt="PSVTravel" width={900} height={349} className="h-11 w-auto object-contain" />
             </div>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/65">
-              Đồng hành cùng bạn trên mọi hành trình — từ những bãi biển Việt Nam trong xanh
-              đến những vùng đất mới lạ khắp thế giới.
+              {settings.footer_intro ||
+                "Đồng hành cùng bạn trên mọi hành trình — từ những bãi biển Việt Nam trong xanh đến những vùng đất mới lạ khắp thế giới."}
             </p>
             <div className="mt-5 flex gap-3">
               {socials.map(({ Icon, href }, i) => (
