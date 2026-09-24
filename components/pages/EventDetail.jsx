@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { locHtml } from "@/app/lib/sanitize";
 import { Users, Clock, MapPin, Wallet, CheckCircle2, ArrowLeft, PartyPopper, Star, CalendarDays } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
@@ -135,7 +136,7 @@ export default function EventDetail({ event, related = [], settings = {}, review
             {event.description?.trim() && (
               <SectionReveal delay={0.1} className="mt-8 card-surface p-6 sm:p-8">
                 <h2 className="font-display text-xl font-bold text-deep-900">Giới thiệu chi tiết</h2>
-                <div className="prose-psv mt-4 text-ink-muted" dangerouslySetInnerHTML={{ __html: event.description }} />
+                <div className="prose-psv mt-4 text-ink-muted" dangerouslySetInnerHTML={{ __html: locHtml(event.description) }} />
               </SectionReveal>
             )}
 

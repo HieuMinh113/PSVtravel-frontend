@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { locHtml } from "@/app/lib/sanitize";
 import { MapPin, ArrowRight, ArrowLeft } from "lucide-react";
 import TourCard from "@/components/TourCard";
 
@@ -42,7 +43,7 @@ export default function DestinationDetail({ destination, tours = [] }) {
             <p className="font-display text-lg leading-relaxed text-deep-900">{d.summary}</p>
           )}
           {d.description ? (
-            <div className="prose-psv mt-8" dangerouslySetInnerHTML={{ __html: d.description }} />
+            <div className="prose-psv mt-8" dangerouslySetInnerHTML={{ __html: locHtml(d.description) }} />
           ) : null}
         </div>
       </section>

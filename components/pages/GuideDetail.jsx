@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CalendarDays, Eye, User, ArrowLeft, ArrowRight, Quote } from "lucide-react";
 import GhiNhanLuotXem from "@/components/GhiNhanLuotXem";
 import TourBookingBox from "@/components/TourBookingBox";
+import { locHtml } from "@/app/lib/sanitize";
 
 // Trang chi tiết bài viết cẩm nang — component phía server (không cần "use client")
 // để nội dung bài viết được render sẵn trong HTML, tốt cho SEO.
@@ -80,7 +81,7 @@ export default function GuideDetail({ guide, settings = {} }) {
           {guide.content ? (
             <div
               className="prose-psv mt-10"
-              dangerouslySetInnerHTML={{ __html: guide.content }}
+              dangerouslySetInnerHTML={{ __html: locHtml(guide.content) }}
             />
           ) : (
             <p className="mt-10 text-ink-muted">Nội dung bài viết đang được cập nhật.</p>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { locHtml } from "@/app/lib/sanitize";
 import { Briefcase, MapPin, Clock, Wallet, Users, CalendarDays, ArrowLeft, ArrowRight } from "lucide-react";
 
 function ngayVietNam(iso) {
@@ -50,19 +51,19 @@ export default function CareerDetail({ job }) {
             {j.description && (
               <div>
                 <h2 className="font-display text-xl font-bold text-deep-900">Mô tả công việc</h2>
-                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: j.description }} />
+                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: locHtml(j.description) }} />
               </div>
             )}
             {j.requirements && (
               <div>
                 <h2 className="font-display text-xl font-bold text-deep-900">Yêu cầu ứng viên</h2>
-                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: j.requirements }} />
+                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: locHtml(j.requirements) }} />
               </div>
             )}
             {j.benefits && (
               <div>
                 <h2 className="font-display text-xl font-bold text-deep-900">Quyền lợi</h2>
-                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: j.benefits }} />
+                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: locHtml(j.benefits) }} />
               </div>
             )}
 

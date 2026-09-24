@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { locHtml } from "@/app/lib/sanitize";
 import { Clock, BadgeCheck, FileCheck2, Phone, ArrowRight, Wallet } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
@@ -76,7 +77,7 @@ export default function VisaDetail({ visa, related = [], settings = {} }) {
                 </h2>
                 <div
                   className="prose-psv mt-4 text-ink-muted"
-                  dangerouslySetInnerHTML={{ __html: visa.description }}
+                  dangerouslySetInnerHTML={{ __html: locHtml(visa.description) }}
                 />
               </SectionReveal>
             ) : (
