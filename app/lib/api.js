@@ -443,9 +443,10 @@ export async function getPartners() {
   return json?.data ?? [];
 }
 
-// Khách đăng ký nhận ưu đãi — gọi thẳng API (không cần đăng nhập).
+// Khách đăng ký nhận ưu đãi — đi qua route cùng origin /api/subscribe
+// (không gọi chéo tên miền sang API, tránh CORS chặn ở production).
 export async function subscribeEmail(email, source = "trang-chu") {
-  const res = await fetch(`${API_URL}/subscribe`, {
+  const res = await fetch(`/api/subscribe`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({ email, source }),
