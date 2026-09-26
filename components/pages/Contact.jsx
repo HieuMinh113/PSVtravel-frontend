@@ -8,6 +8,7 @@ import {
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/SocialIcons";
+import { fbTrack } from "@/app/lib/fbpixel";
 
 
 export default function Contact({ settings = {} }) {
@@ -92,6 +93,8 @@ export default function Contact({ settings = {} }) {
       }
 
       setSubmitted(true);
+      // Khách đã gửi form liên hệ (tên + SĐT + nhu cầu) → một "Lead" thực sự.
+      fbTrack("Lead", { content_name: form.subject, content_category: "lien-he" });
       setForm({ name: "", phone: "", email: "", subject: "Tư vấn tour trong nước", message: "", website: "" });
     } catch {
       setLoi("Không kết nối được máy chủ. Vui lòng gọi hotline giúp chúng tôi.");
@@ -145,6 +148,7 @@ export default function Contact({ settings = {} }) {
                 <SectionReveal key={k.label} delay={i * 0.08}>
                   <Boc
                     {...(k.href ? { href: k.href } : {})}
+                    {...(k.href?.startsWith("tel:") ? { onClick: () => fbTrack("Contact", { method: "hotline" }) } : {})}
                     className={`card-surface group flex h-full items-start gap-4 p-5 ${k.href ? "cursor-pointer" : ""}`}
                   >
                     <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br ${k.mau} text-white shadow transition-transform duration-400 ease-enter group-hover:scale-110`}>
@@ -295,7 +299,7 @@ export default function Contact({ settings = {} }) {
                     )}
                   </button>
                   <p className="text-center text-xs text-ink-subtle">
-                    Hoặc gọi trực tiếp <a href={`tel:${hotline.replace(/[^0-9]/g, "")}`} className="font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
+                    Hoặc gọi trực tiếp <a href={`tel:${hotline.replace(/[^0-9]/g, "")}`} onClick={() => fbTrack("Contact", { method: "hotline" })} className="font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
                   </p>
                 </form>
               )}

@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { createBooking } from "@/app/lib/api";
+import { fbTrack } from "@/app/lib/fbpixel";
 import { formatVND } from "@/data/tours";
 
 // Ô đặt tour dùng lại được: trang chi tiết tour và bài cẩm nang (gắn tour) đều
@@ -92,6 +93,13 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
       });
       setBookingCode(res?.data?.booking_code || "");
       setSubmitted(true);
+      // Khách đã để lại tên + SĐT để giữ chỗ → đây là một "Lead" thực sự.
+      fbTrack("Lead", {
+        content_name: tour.name,
+        content_category: "tour",
+        value: total,
+        currency: "VND",
+      });
     } catch (e) {
       setFormError(e.message);
     } finally {
@@ -284,7 +292,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
               {submitting ? "Đang gửi..." : <>Đặt tour ngay <ArrowRight className="h-4 w-4" /></>}
             </button>
 
-            <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
+            <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} onClick={() => fbTrack("Contact", { method: "hotline", content_name: tour.name })} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
               <Phone className="h-4 w-4" /> Gọi tư vấn: {hotline}
             </a>
 

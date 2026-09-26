@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Phone, MessageCircle } from "lucide-react";
+import { fbTrack } from "@/app/lib/fbpixel";
 
 // Nút liên hệ nổi — giúp khách chốt tour nhanh qua gọi điện / Zalo,
 // kênh chuyển đổi rất quan trọng với thị trường du lịch Việt Nam.
@@ -23,6 +24,7 @@ export default function FloatingContact({ settings = {} }) {
         href={zaloHref}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => fbTrack("Contact", { method: "zalo" })}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
@@ -40,6 +42,7 @@ export default function FloatingContact({ settings = {} }) {
       {/* Hotline — có vòng lan toả (ripple) để thu hút chú ý */}
       <motion.a
         href={telHref}
+        onClick={() => fbTrack("Contact", { method: "hotline" })}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.15 }}
