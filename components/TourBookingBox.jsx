@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { createBooking } from "@/app/lib/api";
 import { fbTrack } from "@/app/lib/fbpixel";
+import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 import { formatVND } from "@/data/tours";
 
 // Ô đặt tour dùng lại được: trang chi tiết tour và bài cẩm nang (gắn tour) đều
@@ -100,6 +101,8 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
         value: total,
         currency: "VND",
       });
+      // Chuyển đổi Google Ads — kèm giá trị tạm tính để Google tối ưu theo doanh thu.
+      gtagConversion(CONVERSION_LIEN_HE, { value: total, currency: "VND" });
     } catch (e) {
       setFormError(e.message);
     } finally {

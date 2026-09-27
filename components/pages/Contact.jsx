@@ -9,6 +9,7 @@ import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/SocialIcons";
 import { fbTrack } from "@/app/lib/fbpixel";
+import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 
 
 export default function Contact({ settings = {} }) {
@@ -95,6 +96,7 @@ export default function Contact({ settings = {} }) {
       setSubmitted(true);
       // Khách đã gửi form liên hệ (tên + SĐT + nhu cầu) → một "Lead" thực sự.
       fbTrack("Lead", { content_name: form.subject, content_category: "lien-he" });
+      gtagConversion(CONVERSION_LIEN_HE, { value: 1.0, currency: "VND" });
       setForm({ name: "", phone: "", email: "", subject: "Tư vấn tour trong nước", message: "", website: "" });
     } catch {
       setLoi("Không kết nối được máy chủ. Vui lòng gọi hotline giúp chúng tôi.");
