@@ -13,10 +13,27 @@ export const SITE_DESCRIPTION =
 export const formatVND = (n) =>
   new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(n);
 
+// Ảnh chia sẻ mặc định (Open Graph/Twitter) khi trang không có ảnh riêng — để
+// mọi trang đều có og:image (nếu thiếu, công cụ audit báo "OG tags incomplete",
+// và khi dán link lên Facebook/Zalo cũng không hiện ảnh). Thay bằng ảnh banner
+// 1200×630 khi có; tạm dùng logo cho đủ thẻ.
+const OG_IMAGE_MAC_DINH = `${SITE_URL}/logo.png`;
+
+// Cắt mô tả về tối đa ~155 ký tự (ngắt ở khoảng trắng, thêm dấu …) để thẻ meta
+// description không bị công cụ tìm kiếm cắt cụt. Mô tả ngắn giữ nguyên.
+function rutGonMoTa(text, gioiHan = 155) {
+  const s = String(text || "").replace(/\s+/g, " ").trim();
+  if (s.length <= gioiHan) return s;
+  const cat = s.slice(0, gioiHan);
+  const khoangTrangCuoi = cat.lastIndexOf(" ");
+  return (khoangTrangCuoi > 0 ? cat.slice(0, khoangTrangCuoi) : cat).trimEnd() + "…";
+}
+
 // Metadata cho một trang thường
 export function pageMeta({ title, description, path = "/", image }) {
   const url = SITE_URL + path;
-  const desc = description || SITE_DESCRIPTION;
+  const desc = rutGonMoTa(description || SITE_DESCRIPTION);
+  const anh = image || OG_IMAGE_MAC_DINH;
   return {
     title,
     description: desc,
@@ -28,13 +45,13 @@ export function pageMeta({ title, description, path = "/", image }) {
       siteName: SITE_NAME,
       locale: "vi_VN",
       type: "website",
-      images: image ? [{ url: image }] : undefined,
+      images: [{ url: anh }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | ${SITE_NAME}`,
       description: desc,
-      images: image ? [image] : undefined,
+      images: [anh],
     },
   };
 }
@@ -189,14 +206,19 @@ export function tourJsonLd(tour, basePath) {
     image: tour.image,
     url,
     touristType: "Leisure",
-    itinerary: (tour.itinerary || []).map((d, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: d.title,
-      // Bỏ dấu sao đánh dấu điểm tham quan: đó là quy ước nội bộ để tô đậm
-      // ngoài giao diện, không được lọt vào dữ liệu gửi cho công cụ tìm kiếm.
-      description: boDauSao(d.desc),
-    })),
+    // itinerary theo schema.org phải là ItemList (không phải mảng ListItem trần)
+    // — để mảng trần khiến trình kiểm tra dữ liệu có cấu trúc báo lỗi kiểu.
+    itinerary: {
+      "@type": "ItemList",
+      itemListElement: (tour.itinerary || []).map((d, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: d.title,
+        // Bỏ dấu sao đánh dấu điểm tham quan: đó là quy ước nội bộ để tô đậm
+        // ngoài giao diện, không được lọt vào dữ liệu gửi cho công cụ tìm kiếm.
+        description: boDauSao(d.desc),
+      })),
+    },
     provider: { "@id": ORG_ID },
     // Ngày cập nhật gần nhất — độ mới là yếu tố mạnh để AI trích dẫn.
     ...(tour.updatedAt ? { dateModified: String(tour.updatedAt).slice(0, 10) } : {}),
