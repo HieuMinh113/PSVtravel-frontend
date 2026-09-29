@@ -249,6 +249,51 @@ export function tourJsonLd(tour, basePath) {
   };
 }
 
+// Schema PRODUCT cho tour — để Google hiện GIÁ + SAO đánh giá (rich snippet)
+// ngay trên kết quả tìm kiếm, giống các đối thủ lớn. TouristTrip ở trên giữ
+// ngữ nghĩa "chuyến đi"; Product ở đây mở khoá ô giá/sao. Giá, đánh giá đều là
+// dữ liệu THẬT đang hiển thị trên trang nên hợp lệ với chính sách của Google.
+export function tourProductJsonLd(tour, basePath) {
+  const url = `${SITE_URL}${basePath}/${tour.slug}`;
+  // priceValidUntil (Google khuyến nghị có, tránh cảnh báo): ưu tiên đợt khởi
+  // hành xa nhất; không có thì lấy cuối năm sau.
+  const hanGia =
+    tour.lastDepartureDate ||
+    tour.departures?.[tour.departures.length - 1]?.startISO ||
+    `${new Date().getFullYear() + 1}-12-31`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: tour.name,
+    ...(tour.image ? { image: [tour.image] } : {}),
+    description: boDauSao((tour.highlights || []).join(", ")) || tour.name,
+    brand: { "@type": "Brand", name: SITE_NAME },
+    ...(tour.slug ? { sku: tour.slug } : {}),
+    offers: {
+      "@type": "Offer",
+      price: tour.price,
+      priceCurrency: "VND",
+      availability: "https://schema.org/InStock",
+      url,
+      priceValidUntil: String(hanGia).slice(0, 10),
+    },
+    // aggregateRating chỉ thêm khi có đánh giá thật (reviewCount > 0) — bắt buộc
+    // để Google hiện sao, và để không vi phạm chính sách "đánh giá phải có thật".
+    ...(tour.rating && tour.reviews > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: tour.rating,
+            reviewCount: tour.reviews,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+  };
+}
+
 // Component nhúng JSON-LD
 export function JsonLd({ data }) {
   return (
