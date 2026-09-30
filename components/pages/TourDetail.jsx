@@ -515,7 +515,12 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
       setSubmitted(true);
       // Khách đã để lại tên + SĐT giữ chỗ → Lead (Facebook) + chuyển đổi (Google Ads)
       fbTrack("Lead", { content_name: tour.name, content_category: "tour", value: total, currency: "VND" });
-      gtagConversion(CONVERSION_LIEN_HE, { value: total, currency: "VND" });
+      // transaction_id = mã đơn: Google bỏ qua lượt trùng (bấm 2 lần, tải lại trang)
+      gtagConversion(CONVERSION_LIEN_HE, {
+        value: total,
+        currency: "VND",
+        ...(res?.data?.booking_code ? { transaction_id: res.data.booking_code } : {}),
+      });
     } catch (e) {
       setFormError(e.message);
     } finally {

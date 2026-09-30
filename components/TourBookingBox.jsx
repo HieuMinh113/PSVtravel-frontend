@@ -102,7 +102,12 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
         currency: "VND",
       });
       // Chuyển đổi Google Ads — kèm giá trị tạm tính để Google tối ưu theo doanh thu.
-      gtagConversion(CONVERSION_LIEN_HE, { value: total, currency: "VND" });
+      // transaction_id = mã đơn: Google bỏ qua lượt trùng (bấm 2 lần, tải lại trang)
+      gtagConversion(CONVERSION_LIEN_HE, {
+        value: total,
+        currency: "VND",
+        ...(res?.data?.booking_code ? { transaction_id: res.data.booking_code } : {}),
+      });
     } catch (e) {
       setFormError(e.message);
     } finally {
