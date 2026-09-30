@@ -11,6 +11,8 @@ import {
   BadgeCheck, HelpCircle, Search, SlidersHorizontal,
 } from "lucide-react";
 import { createBooking } from "@/app/lib/api";
+import { fbTrack } from "@/app/lib/fbpixel";
+import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 import { formatVND } from "@/data/tours";
 import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwan } from "@/components/FlagIcons";
 import TourCard from "@/components/TourCard";
@@ -511,6 +513,9 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
       setBookingCode(res?.data?.booking_code || "");
       setSubmitted(true);
     } catch (e) {
+      // Khách đã để lại tên + SĐT giữ chỗ → Lead (Facebook) + chuyển đổi (Google Ads)
+      fbTrack("Lead", { content_name: tour.name, content_category: "tour", value: total, currency: "VND" });
+      gtagConversion(CONVERSION_LIEN_HE, { value: total, currency: "VND" });
       setFormError(e.message);
     } finally {
       setSubmitting(false);
@@ -893,7 +898,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       {submitting ? "Đang gửi..." : <>Đặt tour ngay <ArrowRight className="h-4 w-4" /></>}
                     </button>
 
-                    <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
+                    <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} onClick={() => fbTrack("Contact", { method: "hotline", content_name: tour.name })} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
                       <Phone className="h-4 w-4" /> Gọi tư vấn: {hotline}
                     </a>
 

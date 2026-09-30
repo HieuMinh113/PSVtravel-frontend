@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Send, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import { fbTrack } from "@/app/lib/fbpixel";
+import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 
 // Form yêu cầu tổ chức sự kiện / team building.
 //
@@ -52,6 +54,9 @@ export default function TeamBuildingForm({ goi = "", hotline = "0907 870 707" })
       }
 
       setXong(true);
+      // Doanh nghiệp gửi yêu cầu báo giá team building → Lead + chuyển đổi Google Ads
+      fbTrack("Lead", { content_name: goi || form.package || "team-building", content_category: "team-building" });
+      gtagConversion(CONVERSION_LIEN_HE, { value: 1.0, currency: "VND" });
       setForm((f) => ({
         ...f, name: "", phone: "", email: "", company: "",
         group_size: "", event_date: "", location: "", budget: "", message: "",
