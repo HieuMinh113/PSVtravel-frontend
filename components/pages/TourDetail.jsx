@@ -465,12 +465,16 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     setter(Number.isNaN(so) ? toiThieu : Math.max(toiThieu, Math.min(so, tranKhach)));
   };
 
-  const childPrice = tour.childPrice ?? Math.round((donGiaNguoiLon * 0.6) / 1000) * 1000;
+  // Tour chưa nhập giá trẻ em → "Liên hệ báo giá": KHÔNG cộng vào tạm tính
+  // (máy chủ cũng không tính), nhân viên báo giá sau. Trước đây web tự ước 60%
+  // giá người lớn trong khi máy chủ tính 0đ — khách thấy một số, email ghi số khác.
+  const childPrice = tour.childPrice ?? null;
+  const treEmChoBaoGia = childPrice === null;
   // adults/children có thể là chuỗi rỗng trong lúc người dùng đang xoá để gõ số
   // mới — quy về số trước khi tính, tránh hiện NaN trên bảng giá.
   const soNguoiLon = parseInt(adults, 10) || 0;
   const soTreEm = parseInt(children, 10) || 0;
-  const total = soNguoiLon * donGiaNguoiLon + soTreEm * childPrice;
+  const total = soNguoiLon * donGiaNguoiLon + (treEmChoBaoGia ? 0 : soTreEm * childPrice);
 
   const scrollToBooking = () => {
     document.getElementById("booking-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -868,7 +872,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                     <div>
                       <label className="text-xs font-semibold text-ink-muted">Trẻ em (dưới 12 tuổi)</label>
                       <div className="mt-1.5 flex items-center justify-between rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2">
-                        <span className="flex items-center gap-2 text-sm text-ink"><Baby className="h-4 w-4 text-teal-600" /> {formatVND(childPrice)}</span>
+                        <span className="flex items-center gap-2 text-sm text-ink"><Baby className="h-4 w-4 text-teal-600" /> {treEmChoBaoGia ? "Liên hệ báo giá" : formatVND(childPrice)}</span>
                         <div className="flex items-center gap-3">
                           <button type="button" onClick={() => setChildren((g) => Math.max(0, (parseInt(g, 10) || 0) - 1))} aria-label="Bớt một trẻ em" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">−</button>
                           <input
@@ -895,12 +899,12 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       </div>
                       {soTreEm > 0 && (
                         <div className="flex items-center justify-between text-ink-muted">
-                          <span>{soTreEm} trẻ em × {formatVND(childPrice)}</span>
-                          <span className="font-medium text-ink">{formatVND(soTreEm * childPrice)}</span>
+                          <span>{soTreEm} trẻ em{treEmChoBaoGia ? "" : <> × {formatVND(childPrice)}</>}</span>
+                          <span className={treEmChoBaoGia ? "font-semibold text-sunset-700" : "font-medium text-ink"}>{treEmChoBaoGia ? "Liên hệ báo giá" : formatVND(soTreEm * childPrice)}</span>
                         </div>
                       )}
                       <div className="flex items-center justify-between border-t border-ocean-200/70 pt-2">
-                        <span className="font-semibold text-deep-900">Tạm tính</span>
+                        <span className="font-semibold text-deep-900">Tạm tính{treEmChoBaoGia && soTreEm > 0 && <span className="block text-xs font-normal text-ink-muted">chưa gồm trẻ em — nhân viên sẽ báo giá</span>}</span>
                         <span className="font-display text-xl font-bold text-sunset-700">{formatVND(total)}</span>
                       </div>
                     </div>

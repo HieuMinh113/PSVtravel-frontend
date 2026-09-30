@@ -222,6 +222,10 @@ export default function BookingLookup() {
                     <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-ocean-50 pt-4">
                       <p className="font-display text-xl font-bold text-ocean-700">
                         {dinhDangTien(donHang.total_price)}
+                        {/* Tour chưa có giá trẻ em: tổng chưa gồm trẻ em */}
+                        {donHang.cho_bao_gia_tre_em && (
+                          <span className="block font-body text-xs font-normal text-ink-muted">chưa gồm trẻ em — nhân viên sẽ báo giá</span>
+                        )}
                       </p>
                       {donHang.tour_slug && (
                         <Link

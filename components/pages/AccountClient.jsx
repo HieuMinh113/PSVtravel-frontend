@@ -71,6 +71,7 @@ function TheDon({ don, index }) {
             </span>
             <span className="flex items-center gap-1.5">
               <Wallet className="h-4 w-4 text-ocean-500" /> {tienVN(don.total_price)}
+              {don.cho_bao_gia_tre_em && <span className="text-xs text-ink-muted">(chưa gồm trẻ em — chờ báo giá)</span>}
             </span>
           </div>
 
