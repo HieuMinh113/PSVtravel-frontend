@@ -149,6 +149,17 @@ img, video {
   }
 }
 
+/* ===== Khối dưới màn hình đầu (HydrateKhiThay) =====
+   content-visibility: auto — khối chưa lọt vào tầm nhìn thì trình duyệt bỏ qua
+   việc tính bố cục và vẽ, tới gần mới làm. Trang chủ dài hơn 1.000 thẻ nên
+   đây là phần tốn nhất lúc mở trang trên điện thoại.
+   contain-intrinsic-size giữ chỗ ước lượng để thanh cuộn không co giật;
+   "auto" = sau lần vẽ đầu trình duyệt nhớ chiều cao thật. */
+.khoi-duoi-man-hinh {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
 /* ===== An toàn khi phóng to trình duyệt ===== */
 @media (max-height: 500px) {
   .sticky {
