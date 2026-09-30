@@ -18,6 +18,7 @@ import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwa
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
 import ReviewForm from "@/components/ReviewForm";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
 
 const flagBySlug = {
   "Thái Lan": FlagThailand,
@@ -512,10 +513,10 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
       });
       setBookingCode(res?.data?.booking_code || "");
       setSubmitted(true);
-    } catch (e) {
       // Khách đã để lại tên + SĐT giữ chỗ → Lead (Facebook) + chuyển đổi (Google Ads)
       fbTrack("Lead", { content_name: tour.name, content_category: "tour", value: total, currency: "VND" });
       gtagConversion(CONVERSION_LIEN_HE, { value: total, currency: "VND" });
+    } catch (e) {
       setFormError(e.message);
     } finally {
       setSubmitting(false);
@@ -650,6 +651,15 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                 ))}
               </div>
             </SectionReveal>
+
+            {/* ===== VIDEO TOUR — chỉ hiện khi admin đã dán link YouTube ===== */}
+            {tour.videoId && (
+              <SectionReveal delay={0.05} className="mt-8">
+                <h2 className="font-display text-xl font-bold text-deep-900">Video hành trình</h2>
+                <p className="mt-1 text-sm text-ink-subtle">Cảnh thực tế trên tour — bấm để xem.</p>
+                <YouTubeEmbed videoId={tour.videoId} title={`Video tour ${tour.name}`} className="mt-5" />
+              </SectionReveal>
+            )}
 
             <SectionReveal delay={0.1} className="mt-8">
               <h2 className="font-display text-xl font-bold text-deep-900">Lịch trình chi tiết</h2>

@@ -27,9 +27,11 @@ const nextConfig = {
       "img-src 'self' data: https:",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "script-src 'self' 'unsafe-inline'",
+      // Meta Pixel + thẻ Google Ads (gtag) nạp script từ tên miền của họ
+      "script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.googletagmanager.com",
       "connect-src 'self' https:",
-      "frame-src 'self' https://www.google.com https://maps.google.com",
+      // Bản đồ Google + video YouTube (nhúng qua youtube-nocookie)
+      "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube-nocookie.com https://www.youtube.com https://td.doubleclick.net",
       "base-uri 'self'",
       "form-action 'self'",
     ].join("; ");
@@ -69,6 +71,8 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "plus.unsplash.com" },
       { protocol: "https", hostname: "picsum.photos" },
+      // Ảnh thu nhỏ của video YouTube (khoảnh khắc dạng video không có ảnh riêng)
+      { protocol: "https", hostname: "i.ytimg.com" },
     ],
   },
 };

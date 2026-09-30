@@ -4,13 +4,15 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   HeartHandshake, ShieldCheck, BadgeCheck, Users2, MapPinned, MapPin,
-  X, ArrowRight, Images,
+  X, ArrowRight, Images, Play,
 } from "lucide-react";
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import CountUp from "@/components/CountUp";
 import TeamCarousel from "@/components/TeamCarousel";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
+import { anhThuNho, mediaKhoanhKhac } from "@/app/lib/youtube";
 
 const values = [
   {
@@ -79,7 +81,7 @@ function MomentCard({ m, i, onOpen }) {
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.45, delay: Math.min(i, 8) * 0.05, ease: [0.22, 1, 0.36, 1] }}
-      aria-label={`Xem ảnh: ${nhan}`}
+      aria-label={`${m.videoId ? "Xem video" : "Xem ảnh"}: ${nhan}`}
       className={`group relative overflow-hidden rounded-2xl bg-deep-900 text-left shadow-card outline-none focus-visible:ring-4 focus-visible:ring-ocean-400/50 ${bentoSpan(i)}`}
     >
       <Image
@@ -92,7 +94,19 @@ function MomentCard({ m, i, onOpen }) {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-deep-950/80 via-deep-950/10 to-transparent transition-opacity duration-500 group-hover:from-deep-950/90" />
 
-      {m.photos && m.photos.length > 1 ? (
+      {/* Khoảnh khắc có video cảm nhận: nút phát giữa ảnh + nhãn "Video" */}
+      {m.videoId ? (
+        <>
+          <span className="absolute left-1/2 top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-sunset-600/95 text-white shadow-lg ring-4 ring-white/25 transition-transform duration-300 group-hover:scale-110 sm:h-14 sm:w-14">
+            <Play className="ml-0.5 h-5 w-5 fill-current sm:h-6 sm:w-6" aria-hidden="true" />
+          </span>
+          <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-sunset-600 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+            <Play className="h-3 w-3 fill-current" aria-hidden="true" /> Video
+          </span>
+        </>
+      ) : null}
+
+      {!m.videoId && m.photos && m.photos.length > 1 ? (
         <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full border border-white/20 bg-deep-950/55 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
           <Images className="h-3.5 w-3.5" aria-hidden="true" />
           {m.photos.length}
@@ -147,9 +161,9 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [] }) {
   const openMoment = (m) => { setActive(m); setPhotoIndex(0); };
   const closeMoment = () => setActive(null);
 
-  // Bộ ảnh (ảnh chính + ảnh phụ) của khoảnh khắc đang mở.
-  const activePhotos = active ? (active.photos?.length ? active.photos : [active.photo]) : [];
-  const activePhoto = activePhotos[photoIndex] ?? active?.photo;
+  // Bộ media (video nếu có, rồi ảnh chính + ảnh phụ) của khoảnh khắc đang mở.
+  const activeMedia = mediaKhoanhKhac(active);
+  const activeItem = activeMedia[photoIndex] ?? activeMedia[0] ?? null;
 
   return (
     <div>
@@ -393,39 +407,54 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [] }) {
               </button>
 
               <div className="relative bg-deep-950">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={photoIndex}
-                    src={activePhoto}
-                    alt={active.caption || "Khoảnh khắc cùng PSV Travel"}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="max-h-[68vh] w-full object-contain"
+                {activeItem?.loai === "video" ? (
+                  <YouTubeEmbed
+                    key={`${active.id}-video`}
+                    videoId={activeItem.id}
+                    title={active.caption || `Cảm nhận của ${active.name || "khách hàng"}`}
+                    tronGoc="rounded-none"
+                    className="shadow-none"
                   />
-                </AnimatePresence>
-                {activePhotos.length > 1 ? (
-                  <span className="absolute left-3 top-3 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
-                    {photoIndex + 1}/{activePhotos.length}
+                ) : (
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={photoIndex}
+                      src={activeItem?.src}
+                      alt={active.caption || "Khoảnh khắc cùng PSV Travel"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="max-h-[68vh] w-full object-contain"
+                    />
+                  </AnimatePresence>
+                )}
+                {activeMedia.length > 1 ? (
+                  <span className="absolute left-3 top-3 z-10 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+                    {photoIndex + 1}/{activeMedia.length}
                   </span>
                 ) : null}
               </div>
 
               {/* Dải ảnh nhỏ — bấm để đổi ảnh lớn */}
-              {activePhotos.length > 1 ? (
+              {activeMedia.length > 1 ? (
                 <div className="flex gap-2 overflow-x-auto px-5 pt-4">
-                  {activePhotos.map((src, gi) => (
+                  {activeMedia.map((item, gi) => (
                     <button
                       key={gi}
                       type="button"
                       onClick={() => setPhotoIndex(gi)}
-                      aria-label={`Xem ảnh ${gi + 1}`}
-                      className={`h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition ${
+                      aria-label={item.loai === "video" ? "Xem video" : `Xem ảnh ${gi + 1}`}
+                      className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition ${
                         gi === photoIndex ? "border-ocean-500" : "border-transparent opacity-70 hover:opacity-100"
                       }`}
                     >
-                      <img src={src} alt="" className="h-full w-full object-cover" />
+                      <img src={item.loai === "video" ? anhThuNho(item.id) : item.src} alt="" onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} className="h-full w-full bg-deep-900 object-cover" />
+                      {item.loai === "video" && (
+                        <span className="absolute inset-0 grid place-items-center bg-deep-950/35">
+                          <Play className="ml-0.5 h-5 w-5 fill-white text-white" aria-hidden="true" />
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>

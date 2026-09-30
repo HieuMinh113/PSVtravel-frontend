@@ -9,6 +9,7 @@ import {
   getPromotions,
   getGuides,
   getPartners,
+  getSettings,
 } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -19,7 +20,7 @@ export const metadata = pageMeta({
 });
 
 export default async function Page() {
-  const [domestic, abroad, banners, orbitImages, reviews, danhMuc, promotions, guides, partners] = await Promise.all([
+  const [domestic, abroad, banners, orbitImages, reviews, danhMuc, promotions, guides, partners, settings] = await Promise.all([
     getTours({ type: "domestic" }),
     getTours({ type: "abroad" }),
     getBanners(),
@@ -30,6 +31,8 @@ export default async function Page() {
     getPromotions(),
     getGuides(),
     getPartners(),
+    // Video giới thiệu trang chủ (admin dán link YouTube trong Cài đặt)
+    getSettings(),
   ]);
 
   // Gợi ý cho ô tìm kiếm: tên tour + vùng miền/quốc gia của tour thật đang bán
@@ -65,6 +68,8 @@ export default async function Page() {
       promotions={promotions}
       latestGuides={guides.slice(0, 4)}
       partners={partners}
+      videoTrangChu={settings?.home_video_url ?? null}
+      tieuDeVideo={settings?.home_video_title ?? null}
     />
   );
 }

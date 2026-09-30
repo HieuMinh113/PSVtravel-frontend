@@ -123,6 +123,7 @@ function mapTour(t) {
     })),
     description: t.description,
     updatedAt: t.updated_at ?? null,
+    videoId: t.video_id ?? null, // mã video YouTube (chỉ có ở trang chi tiết)
   };
 }
 
@@ -194,6 +195,7 @@ export async function getMoments() {
       trip: m.tour_name,
       photo: m.image,
       photos, // ảnh chính + ảnh phụ
+      videoId: m.video_id ?? null, // video cảm nhận của khách (YouTube)
       caption: m.caption,
       avatar: null, // model Moment chưa có
       rating: null,

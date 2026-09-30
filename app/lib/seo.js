@@ -294,8 +294,30 @@ export function tourProductJsonLd(tour, basePath) {
   };
 }
 
+// Schema VIDEO cho tour — để video có cơ hội hiện ở tab "Video" của Google kèm
+// ảnh thu nhỏ. Google BẮT BUỘC có uploadDate: dùng ngày cập nhật tour (lúc video
+// được gắn lên trang). Không có ngày thì không xuất schema, tránh báo lỗi.
+export function tourVideoJsonLd(tour, basePath) {
+  if (!tour?.videoId || !/^[A-Za-z0-9_-]{11}$/.test(tour.videoId) || !tour.updatedAt) return null;
+  const id = tour.videoId;
+  return {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: `Video tour ${tour.name}`,
+    description: rutGonMoTa(
+      boDauSao((tour.highlights || []).join(", ")) || `Video giới thiệu tour ${tour.name} của ${SITE_NAME}.`,
+    ),
+    thumbnailUrl: [`https://i.ytimg.com/vi/${id}/hqdefault.jpg`],
+    uploadDate: String(tour.updatedAt).slice(0, 10),
+    embedUrl: `https://www.youtube-nocookie.com/embed/${id}`,
+    url: `${SITE_URL}${basePath}/${tour.slug}`,
+    publisher: { "@id": ORG_ID },
+  };
+}
+
 // Component nhúng JSON-LD
 export function JsonLd({ data }) {
+  if (!data) return null;
   return (
     <script
       type="application/ld+json"

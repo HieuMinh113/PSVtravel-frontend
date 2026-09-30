@@ -2,10 +2,12 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Star, X, ChevronLeft, ChevronRight, Quote, Camera, ArrowRight, Images, ShieldCheck, MapPin,
+  Star, X, ChevronLeft, ChevronRight, Quote, Camera, ArrowRight, Images, ShieldCheck, MapPin, Play,
 } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
+import { anhThuNho, mediaKhoanhKhac } from "@/app/lib/youtube";
 
 const chuCaiDau = (ten) => (ten || "?").trim().charAt(0).toUpperCase();
 
@@ -25,7 +27,10 @@ export default function Gallery({ photos = [], settings = {} }) {
   // Chỉ hiện ảnh thật khách gửi. Ảnh mẫu kèm lời khen do máy tự dựng là chứng
   // thực giả — trang này nói "chân thực, không dàn dựng" nên càng không được có.
   const list = photos;
-  const soAnh = list.reduce((t, p) => t + (p.photos?.length || 1), 0);
+  // Đếm ảnh THẬT và video riêng: ảnh thu nhỏ YouTube của khoảnh khắc chỉ có
+  // video không được tính là "ảnh thật từ khách".
+  const soAnh = list.reduce((t, p) => t + mediaKhoanhKhac(p).filter((x) => x.loai === "anh").length, 0);
+  const soVideo = list.filter((p) => p.videoId).length;
 
   const [activeIndex, setActiveIndex] = useState(null);
   const [photoIndex, setPhotoIndex] = useState(0); // ảnh đang xem trong khoảnh khắc
@@ -36,8 +41,8 @@ export default function Gallery({ photos = [], settings = {} }) {
   const next = () => { setActiveIndex((i) => (i + 1) % list.length); setPhotoIndex(0); };
 
   const active = activeIndex !== null ? list[activeIndex] : null;
-  const activePhotos = active ? (active.photos?.length ? active.photos : [active.photo]) : [];
-  const activePhoto = activePhotos[photoIndex] ?? active?.photo;
+  const activeMedia = mediaKhoanhKhac(active);
+  const activeItem = activeMedia[photoIndex] ?? activeMedia[0] ?? null;
 
   return (
     <div>
@@ -65,6 +70,13 @@ export default function Gallery({ photos = [], settings = {} }) {
               <strong className="font-display text-base font-bold text-teal-700">{soAnh}</strong>
               tấm ảnh
             </span>
+            {soVideo > 0 && (
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm text-ink-muted shadow-card backdrop-blur">
+                <Play className="h-4 w-4 fill-sunset-600 text-sunset-600" />
+                <strong className="font-display text-base font-bold text-sunset-700">{soVideo}</strong>
+                video cảm nhận
+              </span>
+            )}
             <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm text-ink-muted shadow-card backdrop-blur">
               <ShieldCheck className="h-4 w-4 text-sunset-600" />
               100% ảnh thật từ khách
@@ -89,7 +101,7 @@ export default function Gallery({ photos = [], settings = {} }) {
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.45, delay: Math.min(i, 8) * 0.05, ease: [0.22, 1, 0.36, 1] }}
-                  aria-label={`Xem ảnh của ${p.name || "khách hàng"}`}
+                  aria-label={`${p.videoId ? "Xem video" : "Xem ảnh"} của ${p.name || "khách hàng"}`}
                   className={`group relative overflow-hidden rounded-2xl bg-deep-900 text-left shadow-card outline-none focus-visible:ring-4 focus-visible:ring-ocean-400/50 ${bentoSpan(i)}`}
                 >
                   <img
@@ -101,8 +113,20 @@ export default function Gallery({ photos = [], settings = {} }) {
                   {/* Lớp phủ đáy để chữ trắng luôn đọc được, đậm dần khi rê chuột */}
                   <div className="absolute inset-0 bg-gradient-to-t from-deep-950/75 via-deep-950/10 to-transparent transition-opacity duration-500 group-hover:from-deep-950/90" />
 
+                  {/* Khoảnh khắc có video cảm nhận: nút phát giữa ảnh + nhãn "Video" */}
+                  {p.videoId ? (
+                    <>
+                      <span className="absolute left-1/2 top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-sunset-600/95 text-white shadow-lg ring-4 ring-white/25 transition-transform duration-300 group-hover:scale-110 sm:h-14 sm:w-14">
+                        <Play className="ml-0.5 h-5 w-5 fill-current sm:h-6 sm:w-6" aria-hidden="true" />
+                      </span>
+                      <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-sunset-600 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+                        <Play className="h-3 w-3 fill-current" aria-hidden="true" /> Video
+                      </span>
+                    </>
+                  ) : null}
+
                   {/* Huy hiệu số ảnh — mẫu "+n" */}
-                  {p.photos && p.photos.length > 1 ? (
+                  {!p.videoId && p.photos && p.photos.length > 1 ? (
                     <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full border border-white/20 bg-deep-950/55 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
                       <Images className="h-3.5 w-3.5" aria-hidden="true" />
                       {p.photos.length}
@@ -218,22 +242,33 @@ export default function Gallery({ photos = [], settings = {} }) {
               onClick={(e) => e.stopPropagation()}
               className="grid w-full max-w-4xl grid-cols-1 overflow-hidden rounded-3xl bg-white shadow-deep sm:grid-cols-[1.35fr_1fr]"
             >
-              <div className="relative max-h-[50dvh] overflow-hidden bg-deep-950 sm:max-h-[82dvh]">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={photoIndex}
-                    src={activePhoto}
-                    alt={active.caption || "Khoảnh khắc cùng PSV Travel"}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="h-full w-full object-cover"
+              <div className="relative flex max-h-[50dvh] items-center overflow-hidden bg-deep-950 sm:max-h-[82dvh]">
+                {activeItem?.loai === "video" ? (
+                  // Đổi khoảnh khắc / đổi media là khung video được dựng lại → video cũ tự dừng
+                  <YouTubeEmbed
+                    key={`${activeIndex}-video`}
+                    videoId={activeItem.id}
+                    title={active.caption || `Cảm nhận của ${active.name || "khách hàng"}`}
+                    tronGoc="rounded-none"
+                    className="shadow-none"
                   />
-                </AnimatePresence>
-                {activePhotos.length > 1 ? (
-                  <span className="absolute left-3 top-3 rounded-full bg-deep-950/65 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
-                    {photoIndex + 1}/{activePhotos.length}
+                ) : (
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={photoIndex}
+                      src={activeItem?.src}
+                      alt={active.caption || "Khoảnh khắc cùng PSV Travel"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="h-full w-full object-cover"
+                    />
+                  </AnimatePresence>
+                )}
+                {activeMedia.length > 1 ? (
+                  <span className="absolute left-3 top-3 z-10 rounded-full bg-deep-950/65 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+                    {photoIndex + 1}/{activeMedia.length}
                   </span>
                 ) : null}
               </div>
@@ -274,20 +309,25 @@ export default function Gallery({ photos = [], settings = {} }) {
                 )}
 
                 {/* Dải ảnh nhỏ — bấm để đổi ảnh lớn */}
-                {activePhotos.length > 1 ? (
+                {activeMedia.length > 1 ? (
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {activePhotos.map((src, gi) => (
+                    {activeMedia.map((item, gi) => (
                       <button
                         key={gi}
                         type="button"
                         onClick={() => setPhotoIndex(gi)}
-                        aria-label={`Xem ảnh ${gi + 1}`}
+                        aria-label={item.loai === "video" ? "Xem video" : `Xem ảnh ${gi + 1}`}
                         aria-current={gi === photoIndex}
-                        className={`h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 outline-none transition focus-visible:ring-4 focus-visible:ring-ocean-400/50 ${
+                        className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 outline-none transition focus-visible:ring-4 focus-visible:ring-ocean-400/50 ${
                           gi === photoIndex ? "border-ocean-500" : "border-transparent opacity-70 hover:opacity-100"
                         }`}
                       >
-                        <img src={src} alt="" className="h-full w-full object-cover" />
+                        <img src={item.loai === "video" ? anhThuNho(item.id) : item.src} alt="" onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} className="h-full w-full bg-deep-900 object-cover" />
+                        {item.loai === "video" && (
+                          <span className="absolute inset-0 grid place-items-center bg-deep-950/35">
+                            <Play className="ml-0.5 h-5 w-5 fill-white text-white" aria-hidden="true" />
+                          </span>
+                        )}
                       </button>
                     ))}
                   </div>

@@ -16,6 +16,7 @@ import CountUp from "@/components/CountUp";
 import OrbitGallery from "@/components/OrbitGallery";
 import TrustBar from "@/components/TrustBar";
 import Newsletter from "@/components/Newsletter";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { formatVND } from "@/data/tours";
 
 // Ảnh nền Hero dự phòng — CHỈ dùng khi chưa có tour nào sắp khởi hành.
@@ -76,6 +77,8 @@ export default function Home({
   promotions = [],
   latestGuides = [],
   partners = [],
+  videoTrangChu = null,
+  tieuDeVideo = null,
 }) {
   // Vòng xoay dùng HÌNH BÌA CÁC TOUR thật đang bán — ảnh của công ty, đổi theo
   // tour mới mà không phải sửa code. Ưu tiên ảnh admin đặt riêng (Banner →
@@ -511,6 +514,23 @@ export default function Home({
           </div>
         </div>
       </section>
+
+      {/* ===== VIDEO GIỚI THIỆU — admin dán link YouTube trong Cài đặt; trống thì ẩn ===== */}
+      {videoTrangChu && (
+        <section className="bg-foam pt-16 sm:pt-20">
+          <div className="mx-auto max-w-5xl px-5 sm:px-8">
+            <SectionReveal className="mx-auto mb-8 max-w-2xl text-center">
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Video giới thiệu</span>
+              <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+                {tieuDeVideo || "Hành trình cùng PSV Travel"}
+              </h2>
+            </SectionReveal>
+            <SectionReveal delay={0.1}>
+              <YouTubeEmbed videoId={videoTrangChu} title={tieuDeVideo || "Video giới thiệu PSV Travel"} />
+            </SectionReveal>
+          </div>
+        </section>
+      )}
 
       {/* ===== SỐ LIỆU ===== */}
       <section className="bg-foam py-14">
