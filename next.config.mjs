@@ -65,7 +65,9 @@ const nextConfig = {
 
     // Next 16 bắt buộc khai báo trước các mức chất lượng được phép dùng.
     // Mặc định chỉ có [75]; thêm 90 cho ảnh bìa tour và ảnh lớn cho nét.
-    qualities: [75, 90],
+    // 50 dành cho ảnh nền Hero trang chủ: ảnh chỉ hiện mờ 35% dưới lớp phủ tối
+    // nên nén mạnh hơn không nhìn ra khác biệt, mà nhẹ đi ~1/3.
+    qualities: [50, 75, 90],
     remotePatterns: [
       ...mayChuAnh,
       // Máy lập trình: tuỳ người mà .env ghi localhost hay 127.0.0.1

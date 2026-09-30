@@ -43,6 +43,7 @@ h1, h2, h3, h4 {
     scroll-behavior: auto !important;
   }
   .animate-aurora,
+  .animate-aurora::before,
   .animate-marquee,
   .animate-ripple,
   .animate-drift,
@@ -158,6 +159,37 @@ img, video {
 .khoi-duoi-man-hinh {
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
+}
+
+/* ===== Nền Aurora chạy bằng GPU =====
+   Trước đây nền trôi bằng cách đổi background-position: trình duyệt phải VẼ LẠI
+   cả mảng gradient lớn (có khi cả màn hình) ở mọi khung hình, suốt thời gian
+   trang mở — PageSpeed báo "non-composited animation", điện thoại yếu nóng máy
+   và hao pin. Nay lớp gradient được vẽ MỘT LẦN lên một lớp phụ (::before) rộng
+   hơn khung 30% mỗi phía, rồi chỉ dịch chuyển lớp đó bằng transform — việc này
+   card đồ hoạ làm, không phải vẽ lại. Giữ nguyên các lớp đang dùng ở 16 chỗ
+   (bg-aurora-deep ... animate-aurora), không phải sửa từng trang.
+   - background-size: 0 0 ở chính phần tử: ẩn bản gradient đứng yên của nó,
+     lớp ::before lấy lại ảnh nền bằng "inherit".
+   - Dịch tối đa 12% bề rộng lớp phụ (~19% khung) < 30% phần dư → không lộ mép. */
+.animate-aurora {
+  animation: none;
+  overflow: hidden;
+  background-size: 0 0;
+}
+.animate-aurora::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background-image: inherit;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  animation: aurora-troi 14s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes aurora-troi {
+  0%, 100% { transform: translate3d(-12%, -8%, 0); }
+  50% { transform: translate3d(12%, 8%, 0); }
 }
 
 /* ===== An toàn khi phóng to trình duyệt ===== */

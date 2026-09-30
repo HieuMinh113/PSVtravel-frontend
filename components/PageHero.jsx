@@ -20,8 +20,8 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
       }`}
     >
       {/* Nền Aurora: mesh gradient nhiều điểm dừng trôi rất chậm, có cả sắc ấm —
-          cho chiều sâu thay vì một mảng xanh phẳng. Chỉ đổi background-position
-          nên không gây reflow. */}
+          cho chiều sâu thay vì một mảng xanh phẳng. Chuyển động bằng transform
+          (GPU) — xem .animate-aurora trong globals.css. */}
       <div className="absolute inset-0 bg-aurora-deep bg-[length:190%_190%] animate-aurora opacity-80" />
       <div className="absolute inset-0 bg-duotone-glow opacity-70" />
       <div

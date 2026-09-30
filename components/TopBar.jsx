@@ -47,7 +47,7 @@ export default function TopBar({ settings = {} }) {
 
           <a
             href={`tel:${soGoi}`}
-            className="flex items-center gap-1.5 rounded-full bg-sunset-600 px-3.5 py-1 font-bold tracking-wide text-white transition-colors hover:bg-sunset-500"
+            className="flex items-center gap-1.5 rounded-full bg-sunset-700 px-3.5 py-1 font-bold tracking-wide text-white transition-colors hover:bg-sunset-800"
           >
             <Phone className="h-3.5 w-3.5" />
             Hotline: {hotline}

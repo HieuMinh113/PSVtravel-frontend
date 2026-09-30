@@ -141,6 +141,8 @@ export default function Home({
             fill
             priority={i === 0}
             sizes="100vw"
+            // Nền chỉ hiện mờ 35% dưới lớp phủ tối → nén mạnh hơn không thấy khác
+            quality={50}
             className={`object-cover transition-opacity duration-[1600ms] ease-in-out ${
               i === heroIndex ? "opacity-35" : "opacity-0"
             }`}
@@ -253,7 +255,7 @@ export default function Home({
                 <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-white/85">
                   <Clock3 className="h-3.5 w-3.5 text-gold-400" /> Sắp khởi hành
                 </p>
-                <Link href="/tour-trong-nuoc" className="vung-bam group flex items-center gap-1.5 text-xs font-semibold text-white/85 transition-colors hover:text-gold-300">
+                <Link href="/tour-trong-nuoc" aria-label="Xem tất cả tour" className="vung-bam group flex items-center gap-1.5 text-xs font-semibold text-white/85 transition-colors hover:text-gold-300">
                   Xem tất cả
                   <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 ease-enter group-hover:translate-x-1" />
                 </Link>

@@ -1,12 +1,61 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Phone, Mail, MapPin, Send, CheckCircle2, ArrowRight,
   BadgeCheck, Building2, FileSearch, CreditCard,
 } from "lucide-react";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "./SocialIcons";
+
+// Bản đồ văn phòng — CHỈ nạp khi khách cuộn gần tới chân trang.
+//
+// Một khung Google Maps kéo theo ~400KB script của Google và vài tác vụ nặng
+// (PageSpeed đo được: tốn ~140ms luồng chính ngay lúc mở trang). loading="lazy"
+// của trình duyệt không đủ: Chrome nạp trước cả khung cách màn hình vài nghìn
+// px, nên trên trang ngắn hoặc máy tính nó vẫn tải ngay. Ở đây tự canh bằng
+// IntersectionObserver: chưa tới gần thì chỉ là ô nền giữ đúng chỗ.
+function BanDoVanPhong({ src }) {
+  const ref = useRef(null);
+  const [hien, setHien] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (!("IntersectionObserver" in window)) {
+      setHien(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setHien(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "300px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="h-[160px] bg-white/5">
+      {hien && (
+        <iframe
+          src={src}
+          width="100%"
+          height="160"
+          style={{ border: 0, display: "block", filter: "grayscale(15%) contrast(1.05)" }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+          title="Bản đồ văn phòng PSVTravel"
+        />
+      )}
+    </div>
+  );
+}
 
 export default function Footer({ settings = {} }) {
   const [email, setEmail] = useState("");
@@ -180,16 +229,7 @@ export default function Footer({ settings = {} }) {
               {address}
             </p>
             <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 shadow-inner">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.5717490899699!2d106.72970614717165!3d10.743722563232383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xbcd98d0b27b3a57%3A0xfb2c9ac902c59146!2zQ8OUTkcgVFkgQ-G7lCBQSOG6pk4gRFUgTOG7ikNIIFAuUy5WIFRSQVZFTA!5e0!3m2!1svi!2s!4v1784579444253!5m2!1svi!2s"
-                width="100%"
-                height="160"
-                style={{ border: 0, display: "block", filter: "grayscale(15%) contrast(1.05)" }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="strict-origin-when-cross-origin"
-                title="Bản đồ văn phòng PSVTravel"
-              />
+              <BanDoVanPhong src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.5717490899699!2d106.72970614717165!3d10.743722563232383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xbcd98d0b27b3a57%3A0xfb2c9ac902c59146!2zQ8OUTkcgVFkgQ-G7lCBQSOG6pk4gRFUgTOG7ikNIIFAuUy5WIFRSQVZFTA!5e0!3m2!1svi!2s!4v1784579444253!5m2!1svi!2s" />
             </div>
             <a
               href={`https://www.google.com/maps?q=${encodeURIComponent(address)}`}
