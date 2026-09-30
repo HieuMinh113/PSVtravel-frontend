@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
 import ScrollToTop from "@/components/ScrollToTop";
+import ThanhTienTrinh from "@/components/ThanhTienTrinh";
 import PromoPopup from "@/components/PromoPopup";
 import { getSettings, getCategories, getBanners } from "@/app/lib/api";
 
@@ -29,6 +30,7 @@ export default async function SiteLayout({ children }) {
   return (
     <>
       <ScrollToTop />
+      <ThanhTienTrinh />
       <Navbar settings={settings} dmTrongNuoc={dmTrongNuoc} dmNuocNgoai={dmNuocNgoai} />
       <main>{children}</main>
       <Footer settings={settings} />

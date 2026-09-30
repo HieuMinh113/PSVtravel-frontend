@@ -192,6 +192,23 @@ img, video {
   50% { transform: translate3d(12%, 8%, 0); }
 }
 
+/* ===== Thanh tiến trình chuyển trang (components/ThanhTienTrinh.jsx) =====
+   Chạy nhanh tới ~70% rồi chậm dần (trông như đang chờ máy chủ), trang mới
+   hiện thì vụt tới 100% và mờ đi. Chỉ dùng transform/opacity → chạy trên GPU. */
+.thanh-tien-trinh-chay {
+  transform: scaleX(0.08);
+  animation: thanh-chay 8s cubic-bezier(0.1, 0.6, 0.2, 1) forwards;
+}
+.thanh-tien-trinh-xong {
+  transform: scaleX(1);
+  opacity: 0;
+  transition: transform 0.2s ease-out, opacity 0.3s ease 0.1s;
+}
+@keyframes thanh-chay {
+  from { transform: scaleX(0.08); }
+  to { transform: scaleX(0.92); }
+}
+
 /* ===== An toàn khi phóng to trình duyệt ===== */
 @media (max-height: 500px) {
   .sticky {
