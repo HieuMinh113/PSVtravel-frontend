@@ -108,10 +108,28 @@ export default function Home({
 
   const [heroIndex, setHeroIndex] = useState(0);
 
+  // Lúc mở trang CHỈ tải ảnh nền đầu tiên. Các ảnh sau nằm chồng lên nhau ở
+  // độ mờ 0 nhưng vẫn "trong màn hình" nên trình duyệt tải hết cả 4 ngay từ
+  // đầu (~200KB), tranh băng thông với tiêu đề/phông chữ trên 4G. Đợi trang
+  // tải xong thêm một nhịp mới gắn các ảnh còn lại và bắt đầu chuyển cảnh.
+  const [taiAnhSau, setTaiAnhSau] = useState(false);
+  useEffect(() => {
+    let hen;
+    const batDau = () => {
+      hen = setTimeout(() => setTaiAnhSau(true), 2500);
+    };
+    if (document.readyState === "complete") batDau();
+    else window.addEventListener("load", batDau, { once: true });
+    return () => {
+      window.removeEventListener("load", batDau);
+      clearTimeout(hen);
+    };
+  }, []);
+
   // Chuyển cảnh chậm giữa các ảnh. Người dùng bật giảm chuyển động thì giữ
   // nguyên một ảnh — không có gì nhấp nháy.
   useEffect(() => {
-    if (heroImages.length < 2) return;
+    if (!taiAnhSau || heroImages.length < 2) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const id = setInterval(
@@ -119,7 +137,7 @@ export default function Home({
       HERO_DOI_ANH_MS
     );
     return () => clearInterval(id);
-  }, [heroImages.length]);
+  }, [taiAnhSau, heroImages.length]);
 
   return (
     <div>
@@ -132,7 +150,7 @@ export default function Home({
         {/* Ảnh nền lấy từ tour đang bán, chuyển cảnh chậm.
             Tất cả ảnh render sẵn và chỉ đổi độ mờ — không gắn/tháo phần tử liên tục
             nên không giật. Ảnh đầu đặt priority để giữ điểm LCP tốt. */}
-        {heroImages.map((img, i) => (
+        {heroImages.slice(0, taiAnhSau ? heroImages.length : 1).map((img, i) => (
           <Image
             key={img}
             src={img}

@@ -11,12 +11,13 @@ import GoogleTag from "@/components/GoogleTag";
 // dấu tiếng Việt bết vào thân chữ, rất khó đọc — tester ghi nhận ở nhiều chỗ.
 // Be Vietnam Pro có dấu vẽ riêng, cân ở mọi cỡ chữ mà vẫn giữ nét hiện đại.
 //
-// Chỉ nạp các độ đậm THẬT SỰ dùng (500/600/700 — không có chỗ nào dùng 800) và
-// chỉ preload bộ chữ latin + vietnamese (đủ mọi dấu tiếng Việt). Trước đây
-// preload 15 file phông cùng lúc với mức ưu tiên cao, tranh băng thông với CSS
-// trên mạng 4G chậm — PageSpeed tính cả vào thời gian hiện tiêu đề (LCP).
+// Chỉ nạp các độ đậm THẬT SỰ dùng (500/600/700 — không có chỗ nào dùng 800).
+// PHẢI preload cả latin-ext: chữ ơ/ư/Đ nằm trong vùng ký tự của latin-ext nên
+// trình duyệt tải luôn file đó cho tiêu đề. Có lần bỏ latin-ext khỏi preload
+// thì file bị phát hiện muộn (sau khi đọc xong CSS, ~2,1s trên 4G) và tiêu đề
+// — phần tử LCP — phải chờ theo.
 const display = Be_Vietnam_Pro({
-  subsets: ["latin", "vietnamese"],
+  subsets: ["latin", "latin-ext", "vietnamese"],
   weight: ["500", "600", "700"],
   variable: "--font-display",
   display: "swap",
