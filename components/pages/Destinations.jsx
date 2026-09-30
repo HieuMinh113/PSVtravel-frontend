@@ -1,6 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
+import { duocToiUu } from "@/app/lib/anh";
 import { MapPin, ArrowRight, Compass } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
@@ -36,7 +38,7 @@ export default function Destinations({ items = [] }) {
                     className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-3xl shadow-card"
                   >
                     {d.image ? (
-                      <img src={d.image} alt={d.name} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                      <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized={!duocToiUu(d.image)} className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                     ) : (
                       <div className="absolute inset-0 bg-deep-gradient" />
                     )}

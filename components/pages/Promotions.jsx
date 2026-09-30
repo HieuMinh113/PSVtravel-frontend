@@ -1,6 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
+import { duocToiUu } from "@/app/lib/anh";
 import { Tag, ArrowRight, Clock, Sparkles } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
@@ -41,7 +43,7 @@ export default function Promotions({ items = [] }) {
                   <>
                     <div className="relative aspect-[16/10] overflow-hidden bg-deep-900">
                       {p.image ? (
-                        <img src={p.image} alt={p.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                        <Image src={p.image} alt={p.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized={!duocToiUu(p.image)} className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                       ) : (
                         <div className="h-full w-full bg-deep-gradient" />
                       )}

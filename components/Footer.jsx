@@ -38,9 +38,9 @@ export default function Footer({ settings = {} }) {
     .filter(Boolean);
 
   const socials = [
-    { Icon: FacebookIcon, href: settings.facebook },
-    { Icon: InstagramIcon, href: settings.instagram },
-    { Icon: YoutubeIcon, href: settings.youtube },
+    { Icon: FacebookIcon, href: settings.facebook, ten: "Facebook" },
+    { Icon: InstagramIcon, href: settings.instagram, ten: "Instagram" },
+    { Icon: YoutubeIcon, href: settings.youtube, ten: "YouTube" },
   ].filter((s) => s.href); // chỉ hiện icon mạng xã hội đã điền link trong admin
 
   const thanhToan = ["Chuyển khoản ngân hàng", "Thẻ VISA / MasterCard", "Tiền mặt tại văn phòng"];
@@ -89,16 +89,19 @@ export default function Footer({ settings = {} }) {
         <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr_1fr_1.3fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <Image src="/logo.png" alt="PSVTravel" width={900} height={349} className="h-11 w-auto object-contain" />
+              <Image src="/logo.png" alt="PSVTravel" width={900} height={349} sizes="140px" className="h-11 w-auto object-contain" />
             </div>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/65">
               {settings.footer_intro ||
                 "Đồng hành cùng bạn trên mọi hành trình — từ những bãi biển Việt Nam trong xanh đến những vùng đất mới lạ khắp thế giới."}
             </p>
             <div className="mt-5 flex gap-3">
-              {socials.map(({ Icon, href }, i) => (
+              {socials.map(({ Icon, href, ten }, i) => (
                 <a
                   key={i}
+                  // Nút chỉ có icon: phải có tên để trình đọc màn hình (và
+                  // Google Lighthouse) biết đây là link gì.
+                  aria-label={`PSV Travel trên ${ten}`}
                   href={href || "#"}
                   target={href ? "_blank" : undefined}
                   rel={href ? "noopener noreferrer" : undefined}
@@ -125,7 +128,7 @@ export default function Footer({ settings = {} }) {
           </div>
 
           <div>
-            <h4 className="font-display text-base font-semibold text-white/90">Khám phá</h4>
+            <h2 className="font-display text-base font-semibold text-white/90">Khám phá</h2>
             <ul className="mt-4 space-y-2.5 text-sm text-white/65">
               <li><Link href="/tour-trong-nuoc" className="vung-bam transition-colors hover:text-teal-400">Tour trong nước</Link></li>
               <li><Link href="/tour-nuoc-ngoai" className="vung-bam transition-colors hover:text-teal-400">Tour nước ngoài</Link></li>
@@ -139,7 +142,7 @@ export default function Footer({ settings = {} }) {
           </div>
 
           <div>
-            <h4 className="font-display text-base font-semibold text-white/90">Hỗ trợ khách hàng</h4>
+            <h2 className="font-display text-base font-semibold text-white/90">Hỗ trợ khách hàng</h2>
             <ul className="mt-4 space-y-2.5 text-sm text-white/65">
               <li>
                 <Link href="/tra-cuu-booking" className="vung-bam flex items-center gap-1.5 font-semibold text-teal-400 transition-colors hover:text-teal-300">
@@ -156,7 +159,7 @@ export default function Footer({ settings = {} }) {
               <li><Link href="/chinh-sach-huy-hoan" className="vung-bam transition-colors hover:text-teal-400">Chính sách huỷ &amp; hoàn tiền</Link></li>
             </ul>
 
-            <h4 className="mt-6 font-display text-base font-semibold text-white/90">Liên hệ</h4>
+            <h2 className="mt-6 font-display text-base font-semibold text-white/90">Liên hệ</h2>
             <ul className="mt-4 space-y-3 text-sm text-white/65">
               <li className="flex items-center gap-2.5">
                 <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10"><Phone className="h-3.5 w-3.5 text-teal-400" /></span>
@@ -171,7 +174,7 @@ export default function Footer({ settings = {} }) {
 
           {/* Bản đồ văn phòng thật */}
           <div>
-            <h4 className="font-display text-base font-semibold text-white/90">Văn phòng chính</h4>
+            <h2 className="font-display text-base font-semibold text-white/90">Văn phòng chính</h2>
             <p className="mt-3 flex items-start gap-2.5 text-sm text-white/65">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-teal-400" />
               {address}

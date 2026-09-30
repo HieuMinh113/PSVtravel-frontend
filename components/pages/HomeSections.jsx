@@ -13,6 +13,7 @@ import TrustBar from "@/components/TrustBar";
 import Newsletter from "@/components/Newsletter";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { formatVND } from "@/data/tours";
+import { duocToiUu } from "@/app/lib/anh";
 
 // Các khối BÊN DƯỚI màn hình đầu của trang chủ, tách khỏi Home.jsx để được
 // "đánh thức" dần khi khách cuộn tới (xem components/HydrateKhiThay.jsx),
@@ -38,15 +39,27 @@ export function KhoiTourSapKhoiHanh({ promo = null, upcoming = [] }) {
       <section className="bg-foam px-5 pt-10 sm:px-8">
         <SectionReveal className="mx-auto max-w-7xl">
           <div className="group relative overflow-hidden rounded-3xl shadow-deep">
-            <motion.img
-              src={promo.image}
-              alt={promo.title || "Ưu đãi PSVTravel"}
-              initial={{ scale: 1.08 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-              className="h-[260px] w-full object-cover sm:h-[300px]"
-            />
+            {/* Qua bộ tối ưu ảnh của Next: banner gốc admin upload có thể là PNG
+                vài MB, giờ được đổi sang WebP đúng cỡ màn hình và chỉ tải khi
+                khách cuộn gần tới. */}
+            <div className="relative h-[260px] w-full sm:h-[300px]">
+              <motion.div
+                initial={{ scale: 1.08 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={promo.image}
+                  alt={promo.title || "Ưu đãi PSVTravel"}
+                  fill
+                  sizes="(max-width: 1280px) 100vw, 1280px"
+                  unoptimized={!duocToiUu(promo.image)}
+                  className="object-cover"
+                />
+              </motion.div>
+            </div>
             <div className="absolute inset-0 bg-gradient-to-r from-deep-950/90 via-deep-950/60 to-transparent" />
 
             <div className="absolute inset-0 flex flex-col items-start justify-center gap-3 px-6 sm:px-12">
@@ -134,7 +147,7 @@ export function KhoiUuDaiDiemDen({ promotions = [], diemDen = [] }) {
                   <>
                     <div className="relative aspect-[16/10] overflow-hidden bg-deep-900">
                       {p.image ? (
-                        <img src={p.image} alt={p.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                        <Image src={p.image} alt={p.title} fill sizes="300px" unoptimized={!duocToiUu(p.image)} className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                       ) : (
                         <div className="h-full w-full bg-deep-gradient" />
                       )}
@@ -206,7 +219,7 @@ export function KhoiUuDaiDiemDen({ promotions = [], diemDen = [] }) {
                   aria-label={`Xem tour ${d.name}`}
                 />
                 {d.image ? (
-                  <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 50vw, 25vw" quality={90} className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
+                  <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
                 ) : (
                   // Danh mục chưa có ảnh thì để nền thương hiệu, không để ô trắng
                   <div className="h-full w-full bg-deep-gradient" />
@@ -338,7 +351,7 @@ export function KhoiCuoiTrang({ latestGuides = [], partners = [] }) {
                   <Link href={`/cam-nang/${g.slug}`} className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-ocean-100 transition-shadow hover:shadow-deep">
                     <div className="relative aspect-[16/10] overflow-hidden bg-deep-900">
                       {g.image ? (
-                        <img src={g.image} alt={g.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                        <Image src={g.image} alt={g.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" unoptimized={!duocToiUu(g.image)} className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                       ) : (
                         <div className="h-full w-full bg-deep-gradient" />
                       )}

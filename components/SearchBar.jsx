@@ -80,7 +80,7 @@ export default function SearchBar({ diemDenTrongNuoc = [], diemDenNuocNgoai = []
             key={t.id}
             onClick={() => doiTab(t.id)}
             className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
-              type === t.id ? "bg-ocean-500 text-white" : "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
+              type === t.id ? "bg-ocean-700 text-white" : "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
             }`}
           >
             {t.label}

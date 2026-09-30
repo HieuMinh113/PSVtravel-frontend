@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+import { getImageProps } from "next/image";
 import { X } from "lucide-react";
+import { duocToiUu } from "@/app/lib/anh";
 
 // Poster quảng cáo bật lên khi mở web.
 //
@@ -11,6 +13,16 @@ import { X } from "lucide-react";
 //   hình — cao tối đa 85% màn hình — nên poster dọc nhiều chữ vẫn đọc đủ.
 // - Bấm vào ảnh: đóng popup rồi đi tới link admin đặt (nếu có); link ngoài
 //   mở tab mới.
+// - CHỈ HIỆN SAU KHI KHÁCH BẮT ĐẦU TƯƠNG TÁC (cuộn, chạm, bấm phím), không bật
+//   ngay khi vừa mở trang. Hai lý do, đều đo được:
+//     1. Google chấm tốc độ theo "phần tử lớn nhất hiện lên". Poster bật ngay
+//        thì chính nó thành phần tử lớn nhất → PageSpeed báo LCP 19,6 giây.
+//        Sau lượt tương tác đầu, Google ngừng đo nên poster không bị tính.
+//     2. Google hạ hạng trang di động có popup che nội dung ngay khi khách từ
+//        kết quả tìm kiếm bấm vào ("intrusive interstitials").
+// - Ảnh qua bộ tối ưu của Next (WebP, đúng cỡ màn hình) và chỉ tải MỘT ảnh
+//   đúng thiết bị — trước đây tải cả bản máy tính lẫn bản điện thoại (2 × 1,1MB).
+const SU_KIEN_TUONG_TAC = ["scroll", "wheel", "touchstart", "pointerdown", "keydown"];
 const KHOA = "psv_popup_da_tat";
 
 export default function PromoPopup({ poster }) {
@@ -26,8 +38,21 @@ export default function PromoPopup({ poster }) {
     }
     if (daTat === String(poster.id)) return;
 
-    const t = setTimeout(() => setHien(true), 500);
-    return () => clearTimeout(t);
+    let hen = null;
+    const khiTuongTac = () => {
+      boNghe();
+      // Chờ một nhịp để không che ngay lúc khách vừa chạm vào thứ họ muốn xem
+      hen = setTimeout(() => setHien(true), 1200);
+    };
+    const boNghe = () =>
+      SU_KIEN_TUONG_TAC.forEach((ev) => window.removeEventListener(ev, khiTuongTac));
+    SU_KIEN_TUONG_TAC.forEach((ev) =>
+      window.addEventListener(ev, khiTuongTac, { once: true, passive: true })
+    );
+    return () => {
+      boNghe();
+      clearTimeout(hen);
+    };
   }, [poster]);
 
   useEffect(() => {
@@ -57,19 +82,25 @@ export default function PromoPopup({ poster }) {
   // Ảnh hiện nguyên tấm (không cắt), tự thu vừa màn hình
   const anhClass =
     "block h-auto max-h-[85vh] w-auto max-w-[92vw] rounded-2xl shadow-2xl sm:max-w-[26rem]";
+  // <picture>: trình duyệt chỉ tải đúng một ảnh theo cỡ màn hình.
+  //
+  // Dùng srcset theo mật độ điểm ảnh (1x/2x), KHÔNG dùng "sizes": ảnh poster
+  // hiện theo kích thước tự nhiên (w-auto h-auto, giới hạn bởi max-w/max-h) để
+  // giữ đúng tỉ lệ poster. Với "sizes", trình duyệt tính kích thước tự nhiên
+  // theo bề rộng bản được yêu cầu (1080px) chứ không theo ảnh thật (800px) nên
+  // poster bị thu nhỏ còn ~2/3. width/height chỉ là tỉ lệ tạm 4:5 trước khi
+  // ảnh về; 450px ≈ bề ngang tối đa popup nên bản 2x vẫn nét trên điện thoại.
+  const alt = poster.title || "Khuyến mãi PSV Travel";
+  const anhMay = poster.image;
+  const anhDt = poster.image_mobile || poster.image;
+  const chung = { alt, width: 450, height: 563, loading: "eager" };
+  const { props: pMay } = getImageProps({ ...chung, src: anhMay, unoptimized: !duocToiUu(anhMay) });
+  const { props: pDt } = getImageProps({ ...chung, src: anhDt, unoptimized: !duocToiUu(anhDt) });
   const Anh = (
-    <>
-      <img
-        src={poster.image}
-        alt={poster.title || "Khuyến mãi PSV Travel"}
-        className={`hidden sm:block ${anhClass}`}
-      />
-      <img
-        src={poster.image_mobile || poster.image}
-        alt={poster.title || "Khuyến mãi PSV Travel"}
-        className={`sm:hidden ${anhClass}`}
-      />
-    </>
+    <picture>
+      <source media="(min-width: 640px)" srcSet={pMay.srcSet || pMay.src} />
+      <img {...pDt} alt={alt} className={anhClass} />
+    </picture>
   );
 
   return (

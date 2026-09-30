@@ -28,7 +28,10 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       // Meta Pixel + thẻ Google Ads (gtag) nạp script từ tên miền của họ
-      "script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.googletagmanager.com",
+      // googleads.g.doubleclick.net / googleadservices.com: gtag của Google Ads
+      // nạp thêm script đo chuyển đổi "view-through" từ đây — thiếu thì
+      // PageSpeed báo lỗi CSP trong mục Best Practices.
+      "script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.google.com",
       "connect-src 'self' https:",
       // Bản đồ Google + video YouTube (nhúng qua youtube-nocookie)
       "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube-nocookie.com https://www.youtube.com https://td.doubleclick.net",

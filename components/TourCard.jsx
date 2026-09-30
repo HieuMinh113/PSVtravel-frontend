@@ -53,7 +53,7 @@ export default function TourCard({ tour, basePath, index = 0 }) {
             src={tour.image}
             alt={tour.name}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={90}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110"
           />
 

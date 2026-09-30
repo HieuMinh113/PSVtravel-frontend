@@ -283,6 +283,9 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
             alt="PSVTravel"
             width={900}
             height={349}
+            // Logo chỉ hiện cao 48–56px (rộng ~145px). Không khai báo sizes thì
+            // Next tải bản rộng 1080–1920px (36KB) cho một cái logo nhỏ.
+            sizes="160px"
             priority
             className="h-12 w-auto max-w-none object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105 2xl:h-14"
           />

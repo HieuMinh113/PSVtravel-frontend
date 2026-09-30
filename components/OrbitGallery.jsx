@@ -36,7 +36,7 @@ function AnhTrenQuyDao({ src, gocBanDau, radiusX, radiusY, duration }) {
       className="orbit-anh absolute left-1/2 top-1/2 overflow-hidden rounded-2xl shadow-lg ring-2 ring-white/80"
       style={daDo ? { x, y } : { transform: viTriTinh }}
     >
-      <Image src={src} alt="" draggable={false} fill sizes="200px" className="object-cover" />
+      <Image src={src} alt="" draggable={false} fill sizes="(max-width: 1023px) 64px, 96px" className="object-cover" />
     </motion.div>
   );
 }
