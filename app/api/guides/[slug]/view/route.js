@@ -1,3 +1,4 @@
+import { headerIpKhach } from "@/app/lib/ipKhach";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // POST /api/guides/[slug]/view — ghi nhận một lượt đọc bài cẩm nang.
@@ -11,7 +12,7 @@ export async function POST(request, { params }) {
   try {
     const res = await fetch(`${API_URL}/guides/${slug}/view`, {
       method: "POST",
-      headers: { Accept: "application/json" },
+      headers: { ...(await headerIpKhach()), Accept: "application/json" },
       cache: "no-store",
     });
 

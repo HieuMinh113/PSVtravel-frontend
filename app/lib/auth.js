@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { headerIpKhach } from "@/app/lib/ipKhach";
 
 // Tên cookie chứa token. Cookie đặt httpOnly nên JavaScript phía trình duyệt
 // KHÔNG đọc được — kể cả khi trang bị chèn mã độc (XSS) cũng không lấy được token.
@@ -31,6 +32,8 @@ export async function goiApiCoToken(duongDan, options = {}) {
     headers: {
       Accept: "application/json",
       Authorization: `Bearer ${token}`,
+      // IP thật của khách — để giới hạn tần suất của Laravel đếm đúng từng người
+      ...(await headerIpKhach()),
       ...(options.headers || {}),
     },
     cache: "no-store", // dữ liệu cá nhân — tuyệt đối không cache

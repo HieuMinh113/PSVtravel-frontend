@@ -1,3 +1,4 @@
+import { headerIpKhach } from "@/app/lib/ipKhach";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // POST /api/bookings/lookup — proxy sang Laravel để tra cứu đơn đặt tour.
@@ -9,7 +10,7 @@ export async function POST(request) {
   try {
     const res = await fetch(`${API_URL}/bookings/lookup`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: { ...(await headerIpKhach()), "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
         booking_code: body.booking_code ?? "",
         phone: body.phone ?? "",

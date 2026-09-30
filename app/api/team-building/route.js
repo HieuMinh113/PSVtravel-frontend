@@ -1,3 +1,4 @@
+import { headerIpKhach } from "@/app/lib/ipKhach";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // POST /api/team-building — chuyển yêu cầu tổ chức sự kiện / team building sang
@@ -8,7 +9,7 @@ export async function POST(request) {
   try {
     const res = await fetch(`${API_URL}/team-building`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: { ...(await headerIpKhach()), "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(body),
       cache: "no-store",
     });

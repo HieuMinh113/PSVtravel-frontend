@@ -1,4 +1,5 @@
 import { layToken } from "@/app/lib/auth";
+import { headerIpKhach } from "@/app/lib/ipKhach";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
@@ -19,7 +20,7 @@ export async function PUT(request) {
   try {
     const res = await fetch(`${API_URL}/auth/profile`, {
       method: "POST",
-      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      headers: { ...(await headerIpKhach()), Accept: "application/json", Authorization: `Bearer ${token}` },
       body: form,
       cache: "no-store",
     });

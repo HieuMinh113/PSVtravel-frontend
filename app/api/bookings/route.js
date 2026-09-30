@@ -1,4 +1,5 @@
 import { layToken } from "@/app/lib/auth";
+import { headerIpKhach } from "@/app/lib/ipKhach";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
@@ -18,11 +19,9 @@ export async function POST(request) {
   try {
     const res = await fetch(`${API_URL}/bookings`, {
       method: "POST",
-      headers: {
+      headers: { ...(await headerIpKhach()),
         "Content-Type": "application/json",
         Accept: "application/json",
-        // Chuyển tiếp IP thật để giới hạn tần suất của Laravel đếm đúng người,
-        // không đếm nhầm thành máy chủ Next.js
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify(body),
