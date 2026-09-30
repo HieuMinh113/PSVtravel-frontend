@@ -37,7 +37,7 @@ export default function VisaDetail({ visa, related = [], settings = {} }) {
             <SectionReveal className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               {chiSo.map((c) => (
                 <div key={c.nhan} className="card-surface flex items-center gap-3 p-4">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-ocean-50 text-ocean-600">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-ocean-50 text-ocean-700">
                     <c.icon className="h-5 w-5" />
                   </span>
                   <div className="min-w-0">

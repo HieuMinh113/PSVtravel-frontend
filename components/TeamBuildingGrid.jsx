@@ -37,7 +37,7 @@ export default function TeamBuildingGrid({ events = [] }) {
               onClick={() => setLoc(t)}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                 loc === t
-                  ? "bg-ocean-600 text-white"
+                  ? "bg-ocean-700 text-white"
                   : "bg-white text-ocean-700 ring-1 ring-ocean-100 hover:bg-ocean-50"
               }`}
             >

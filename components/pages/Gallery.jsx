@@ -61,7 +61,7 @@ export default function Gallery({ photos = [], settings = {} }) {
           {/* Dải thống kê — chip kính mờ, chứng minh xã hội */}
           <div className="mb-10 flex flex-wrap items-center justify-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm text-ink-muted shadow-card backdrop-blur">
-              <Camera className="h-4 w-4 text-ocean-600" />
+              <Camera className="h-4 w-4 text-ocean-700" />
               <strong className="font-display text-base font-bold text-ocean-700">{list.length}</strong>
               khoảnh khắc
             </span>
@@ -72,13 +72,13 @@ export default function Gallery({ photos = [], settings = {} }) {
             </span>
             {soVideo > 0 && (
               <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm text-ink-muted shadow-card backdrop-blur">
-                <Play className="h-4 w-4 fill-sunset-600 text-sunset-600" />
+                <Play className="h-4 w-4 fill-sunset-600 text-sunset-700" />
                 <strong className="font-display text-base font-bold text-sunset-700">{soVideo}</strong>
                 video cảm nhận
               </span>
             )}
             <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm text-ink-muted shadow-card backdrop-blur">
-              <ShieldCheck className="h-4 w-4 text-sunset-600" />
+              <ShieldCheck className="h-4 w-4 text-sunset-700" />
               100% ảnh thật từ khách
             </span>
           </div>
@@ -119,7 +119,7 @@ export default function Gallery({ photos = [], settings = {} }) {
                       <span className="absolute left-1/2 top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-sunset-600/95 text-white shadow-lg ring-4 ring-white/25 transition-transform duration-300 group-hover:scale-110 sm:h-14 sm:w-14">
                         <Play className="ml-0.5 h-5 w-5 fill-current sm:h-6 sm:w-6" aria-hidden="true" />
                       </span>
-                      <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-sunset-600 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+                      <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-sunset-700 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
                         <Play className="h-3 w-3 fill-current" aria-hidden="true" /> Video
                       </span>
                     </>

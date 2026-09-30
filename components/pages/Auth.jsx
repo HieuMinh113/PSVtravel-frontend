@@ -192,7 +192,7 @@ export default function Auth() {
                   {mode === t.id && (
                     <motion.span
                       layoutId="auth-pill"
-                      className="absolute inset-0 rounded-full bg-ocean-500 shadow"
+                      className="absolute inset-0 rounded-full bg-ocean-700 shadow"
                       transition={{ type: "spring", stiffness: 300, damping: 28 }}
                     />
                   )}
@@ -267,7 +267,7 @@ export default function Auth() {
 
                 <p className="text-center text-xs text-ink-subtle">
                   Chưa có tài khoản?{" "}
-                  <button type="button" onClick={() => doiMode("register")} className="font-semibold text-ocean-600 hover:text-ocean-700">
+                  <button type="button" onClick={() => doiMode("register")} className="font-semibold text-ocean-700 hover:text-ocean-800">
                     Đăng ký ngay
                   </button>
                 </p>
@@ -386,7 +386,7 @@ export default function Auth() {
                   <input required type="checkbox" className="mt-0.5 rounded border-ocean-300 text-ocean-500 focus:ring-ocean-400" />
                   <span>
                     Tôi đồng ý với{" "}
-                    <Link href="/chinh-sach-bao-mat" className="font-semibold text-ocean-600 hover:text-ocean-700">
+                    <Link href="/chinh-sach-bao-mat" className="font-semibold text-ocean-700 hover:text-ocean-800">
                       Chính sách bảo mật
                     </Link>{" "}
                     của PSVTravel
@@ -399,7 +399,7 @@ export default function Auth() {
 
                 <p className="text-center text-xs text-ink-subtle">
                   Đã có tài khoản?{" "}
-                  <button type="button" onClick={() => doiMode("login")} className="font-semibold text-ocean-600 hover:text-ocean-700">
+                  <button type="button" onClick={() => doiMode("login")} className="font-semibold text-ocean-700 hover:text-ocean-800">
                     Đăng nhập
                   </button>
                 </p>
@@ -419,7 +419,7 @@ export default function Auth() {
               >
                 <div className="text-center">
                   <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-ocean-50">
-                    <ShieldCheck className="h-7 w-7 text-ocean-600" />
+                    <ShieldCheck className="h-7 w-7 text-ocean-700" />
                   </div>
                   <h1 className="mt-4 font-display text-2xl font-bold text-deep-900">Xác thực email</h1>
                   <p className="mt-1 text-sm text-ink-muted">
@@ -451,14 +451,14 @@ export default function Auth() {
                     type="button"
                     onClick={guiLaiMa}
                     disabled={demNguoc > 0 || dangGui}
-                    className="font-semibold text-ocean-600 hover:text-ocean-700 disabled:text-deep-800/35"
+                    className="font-semibold text-ocean-700 hover:text-ocean-800 disabled:text-deep-800/35"
                   >
                     {demNguoc > 0 ? `Gửi lại sau ${demNguoc}s` : "Gửi lại mã"}
                   </button>
                 </div>
 
                 <p className="text-center text-xs text-ink-subtle">
-                  <button type="button" onClick={() => doiMode("login")} className="font-semibold text-ocean-600 hover:text-ocean-700">
+                  <button type="button" onClick={() => doiMode("login")} className="font-semibold text-ocean-700 hover:text-ocean-800">
                     Quay lại đăng nhập
                   </button>
                 </p>

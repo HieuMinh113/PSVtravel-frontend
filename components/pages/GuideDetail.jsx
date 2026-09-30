@@ -42,7 +42,7 @@ export default function GuideDetail({ guide, settings = {} }) {
           </div>
 
           {guide.category && (
-            <span className="inline-block rounded-full bg-sunset-600 px-3.5 py-1 text-xs font-bold text-white shadow">
+            <span className="inline-block rounded-full bg-sunset-700 px-3.5 py-1 text-xs font-bold text-white shadow">
               {guide.category}
             </span>
           )}

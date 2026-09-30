@@ -29,7 +29,7 @@ export default function FloatingContact({ settings = {} }) {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
         whileHover={{ scale: 1.08 }}
-        className="group relative grid h-12 w-12 place-items-center rounded-full bg-white text-ocean-600 shadow-deep ring-1 ring-ocean-100 sm:h-14 sm:w-14"
+        className="group relative grid h-12 w-12 place-items-center rounded-full bg-white text-ocean-700 shadow-deep ring-1 ring-ocean-100 sm:h-14 sm:w-14"
         aria-label="Nhắn tin qua Zalo"
       >
         <span className="pointer-events-none absolute right-full mr-3 whitespace-nowrap rounded-lg bg-deep-900 px-3 py-1.5 text-xs font-semibold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">

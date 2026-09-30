@@ -220,6 +220,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
                 <div className="relative mt-1.5">
                   <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-500" />
                   <select
+                    aria-label="Ngày khởi hành"
                     value={depId ?? ""}
                     onChange={(e) => setDepId(Number(e.target.value))}
                     className="w-full appearance-none rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-9 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white"

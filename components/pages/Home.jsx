@@ -67,6 +67,7 @@ export default function Home({
   banner = null,
   orbitImages = [],
   anhBiaTour = [],
+  tenAnhTour = {},
   diemDen = [],
   goiYTrongNuoc = [],
   goiYNuocNgoai = [],
@@ -87,7 +88,9 @@ export default function Home({
       : anhBiaTour.length
         ? anhBiaTour
         : ORBIT_DU_PHONG
-  ).slice(0, 10);
+  )
+    .slice(0, 10)
+    .map((src) => ({ src, alt: tenAnhTour[src] }));
 
   // Chưa tạo banner trong admin thì KHÔNG hiện khối này.
   // Trước đây có một banner mặc định viết cứng trong code ("giảm 25%…") —
@@ -154,7 +157,9 @@ export default function Home({
           <Image
             key={img}
             src={img}
-            alt=""
+            // Ảnh nền trang trí (aria-hidden) nhưng vẫn ghi tên tour vào alt:
+            // công cụ SEO tính alt rỗng là "thiếu alt", Google Hình ảnh cũng đọc.
+            alt={tenAnhTour[img] || "Tour du lịch cùng PSV Travel"}
             aria-hidden
             fill
             priority={i === 0}
@@ -182,7 +187,7 @@ export default function Home({
 
         {/* Vòng ảnh xoay — lớp .orbit-layer tự ẩn khi màn hình thấp hoặc hẹp
             (xem globals.css), tránh ảnh đè lên tiêu đề và thanh điều hướng */}
-        <div className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div aria-hidden="true" className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
           <OrbitGallery
             images={anhVongXoay}
             radiusLg={560}
@@ -212,7 +217,7 @@ export default function Home({
               initial={{ opacity: 0, y: -14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
-              className="inline-flex items-center gap-2 rounded-full bg-sunset-600/95 px-4 py-1.5 text-[clamp(0.65rem,1.6vw,0.75rem)] font-bold uppercase tracking-[0.18em] text-white shadow-glow-warm backdrop-blur"
+              className="inline-flex items-center gap-2 rounded-full bg-sunset-700/95 px-4 py-1.5 text-[clamp(0.65rem,1.6vw,0.75rem)] font-bold uppercase tracking-[0.18em] text-white shadow-glow-warm backdrop-blur"
             >
               <Sparkles className="h-3.5 w-3.5 shrink-0" />
               Ưu đãi hè 2026 — giảm đến 20%

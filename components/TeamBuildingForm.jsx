@@ -100,11 +100,11 @@ export default function TeamBuildingForm({ goi = "", hotline = "0907 870 707" })
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label className={nhan}>Họ và tên <span className="text-sunset-600">*</span></label>
+          <label className={nhan}>Họ và tên <span className="text-sunset-700">*</span></label>
           <input required value={form.name} onChange={doiO("name")} placeholder="Nguyễn Văn A" className={oInput} />
         </div>
         <div>
-          <label className={nhan}>Số điện thoại <span className="text-sunset-600">*</span></label>
+          <label className={nhan}>Số điện thoại <span className="text-sunset-700">*</span></label>
           <input required type="tel" inputMode="tel" value={form.phone} onChange={doiO("phone")} placeholder="09xx xxx xxx" className={oInput} />
         </div>
         <div>

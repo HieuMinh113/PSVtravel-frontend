@@ -89,7 +89,7 @@ export function KhoiTourSapKhoiHanh({ promo = null, upcoming = [] }) {
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">
+              <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">
                 <Clock3 className="h-3.5 w-3.5" /> Sắp khởi hành
               </span>
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
@@ -128,7 +128,7 @@ export function KhoiUuDaiDiemDen({ promotions = [], diemDen = [] }) {
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <SectionReveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">
+                <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">
                   <Tag className="h-3.5 w-3.5" /> Ưu đãi hôm nay
                 </span>
                 <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
@@ -152,7 +152,7 @@ export function KhoiUuDaiDiemDen({ promotions = [], diemDen = [] }) {
                         <div className="h-full w-full bg-deep-gradient" />
                       )}
                       {p.discount_label && (
-                        <span className="absolute left-3 top-3 rounded-full bg-sunset-600 px-3 py-1 text-sm font-bold text-white shadow">{p.discount_label}</span>
+                        <span className="absolute left-3 top-3 rounded-full bg-sunset-700 px-3 py-1 text-sm font-bold text-white shadow">{p.discount_label}</span>
                       )}
                     </div>
                     <div className="flex flex-1 flex-col p-4">
@@ -280,7 +280,7 @@ export function KhoiViSaoChonVideo({ videoTrangChu = null, tieuDeVideo = null })
         <section className="bg-foam pt-16 sm:pt-20">
           <div className="mx-auto max-w-5xl px-5 sm:px-8">
             <SectionReveal className="mx-auto mb-8 max-w-2xl text-center">
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Video giới thiệu</span>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Video giới thiệu</span>
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                 {tieuDeVideo || "Hành trình cùng PSV Travel"}
               </h2>

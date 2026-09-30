@@ -169,7 +169,7 @@ export default function Contact({ settings = {} }) {
           <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.1fr]">
             {/* Văn phòng + mạng xã hội */}
             <SectionReveal>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Hệ thống văn phòng</span>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Hệ thống văn phòng</span>
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900">Ghé thăm chúng tôi</h2>
 
               <div className="mt-7 space-y-3">
@@ -267,7 +267,7 @@ export default function Contact({ settings = {} }) {
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-ink-muted">Chủ đề quan tâm</label>
-                    <select value={form.subject} onChange={doiO("subject")} className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white">
+                    <select aria-label="Chủ đề quan tâm" value={form.subject} onChange={doiO("subject")} className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white">
                       <option>Tư vấn tour trong nước</option>
                       <option>Tư vấn tour nước ngoài</option>
                       <option>Dịch vụ visa</option>

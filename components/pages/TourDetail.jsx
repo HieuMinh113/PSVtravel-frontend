@@ -114,11 +114,11 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-ocean-100 bg-white">
       <button onClick={onToggle} className="flex w-full items-center gap-4 p-5 text-left">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-500 font-display text-sm font-bold text-white">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-700 font-display text-sm font-bold text-white">
           {index + 1}
         </span>
         <div className="flex-1">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ocean-600">{day.day}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ocean-700">{day.day}</p>
           <p className="font-display text-base font-semibold text-deep-900">{day.title}</p>
         </div>
         <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
@@ -626,7 +626,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       onClick={() => setDetailSearchOpen(true)}
-                      className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-50 text-ocean-600 transition-colors hover:bg-ocean-100"
+                      className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-50 text-ocean-700 transition-colors hover:bg-ocean-100"
                       aria-label="Tìm tour khác"
                     >
                       <Search className="h-4 w-4" />
@@ -654,7 +654,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
               <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {tour.highlights.map((h) => (
                   <div key={h} className="flex items-start gap-2.5 rounded-xl bg-ocean-50/60 p-3">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-600" />
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-700" />
                     <span className="text-sm font-semibold text-deep-900">{h}</span>
                   </div>
                 ))}
@@ -830,6 +830,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                         <div className="relative mt-1.5">
                           <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-500" />
                           <select
+                            aria-label="Ngày khởi hành"
                             value={depId ?? ""}
                             onChange={(e) => setDepId(Number(e.target.value))}
                             className="w-full appearance-none rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-9 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white"

@@ -35,7 +35,7 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
       {hasOrbit ? (
         <>
           {/* Vòng ảnh xoay bao quanh khối chữ — cùng kích thước với Hero trang chủ */}
-          <div className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div aria-hidden="true" className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
             <OrbitGallery
               images={orbitImages}
               radiusLg={470}

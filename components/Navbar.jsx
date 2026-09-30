@@ -121,7 +121,7 @@ function MegaPanel({ config }) {
                 />
               ) : (
                 // Danh mục chưa upload ảnh — vẫn hiện được, không để ô trống
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-ocean-50 text-ocean-600">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-ocean-50 text-ocean-700">
                   <Compass className="h-4 w-4" />
                 </span>
               )}
@@ -348,7 +348,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                     `relative flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-[12.5px] lg:px-3 xl:px-3 font-medium transition-colors duration-300 ${
                       solid
                         ? isActive
-                          ? "text-ocean-600"
+                          ? "text-ocean-700"
                           : "text-deep-800 hover:text-ocean-600"
                         : isActive
                         ? "text-white"
@@ -388,7 +388,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                   `relative whitespace-nowrap rounded-full px-2.5 py-2 text-[12.5px] lg:px-3 xl:px-3 font-medium transition-colors duration-300 ${
                     solid
                       ? isActive
-                        ? "text-ocean-600"
+                        ? "text-ocean-700"
                         : "text-deep-800 hover:text-ocean-600"
                       : isActive
                       ? "text-white"
@@ -540,7 +540,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                                     className="h-6 w-6 shrink-0 rounded-md object-cover ring-1 ring-black/5"
                                   />
                                 ) : (
-                                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-ocean-50 text-ocean-600">
+                                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-ocean-50 text-ocean-700">
                                     <Compass className="h-3.5 w-3.5" />
                                   </span>
                                 )}
@@ -569,7 +569,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
               {nguoiDung ? (
                 <>
                   <div className="mt-2 flex items-center gap-2.5 rounded-xl bg-ocean-50 px-4 py-3">
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-ocean-600 text-xs font-bold text-white">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-ocean-700 text-xs font-bold text-white">
                       {(nguoiDung.name || "?").trim().charAt(0).toUpperCase()}
                     </span>
                     <div className="min-w-0">
@@ -594,7 +594,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                       rel="noopener noreferrer"
                       className="flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-semibold text-ocean-700"
                     >
-                      <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-600" />
+                      <ShieldCheck className="h-4 w-4 shrink-0 text-ocean-700" />
                       <span className="flex-1">Vào trang quản trị</span>
                       <ExternalLink className="h-3.5 w-3.5 shrink-0 text-ink-subtle" />
                     </a>
@@ -615,7 +615,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
               ) : (
                 <Link
                   href="/dang-nhap"
-                  className="mt-2 rounded-xl bg-ocean-500 px-4 py-3 text-center text-sm font-semibold text-white"
+                  className="mt-2 rounded-xl bg-ocean-700 px-4 py-3 text-center text-sm font-semibold text-white"
                 >
                   Đăng nhập / Đăng ký
                 </Link>

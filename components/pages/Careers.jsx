@@ -23,6 +23,8 @@ export default function Careers({ items = [] }) {
 
       <section className="bg-foam py-14 sm:py-20">
         <div className="mx-auto max-w-4xl px-5 sm:px-8">
+          {/* Tiêu đề ẩn: tên vị trí là h3, thiếu h2 thì thứ tự tiêu đề nhảy cóc (Lighthouse) */}
+          <h2 className="sr-only">Các vị trí đang tuyển</h2>
           {items.length === 0 ? (
             <SectionReveal className="mx-auto max-w-md rounded-3xl border border-white/60 bg-white/70 p-10 text-center shadow-card backdrop-blur">
               <Briefcase className="mx-auto h-10 w-10 text-ocean-300" />

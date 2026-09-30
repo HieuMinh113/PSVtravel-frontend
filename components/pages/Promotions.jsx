@@ -26,6 +26,8 @@ export default function Promotions({ items = [] }) {
 
       <section className="bg-foam py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          {/* Tiêu đề ẩn: tên thẻ là h3, thiếu h2 thì thứ tự tiêu đề nhảy cóc (Lighthouse) */}
+          <h2 className="sr-only">Các chương trình khuyến mãi</h2>
           {items.length === 0 ? (
             <SectionReveal className="mx-auto max-w-md rounded-3xl border border-white/60 bg-white/70 p-10 text-center shadow-card backdrop-blur">
               <Tag className="mx-auto h-10 w-10 text-ocean-300" />
@@ -48,7 +50,7 @@ export default function Promotions({ items = [] }) {
                         <div className="h-full w-full bg-deep-gradient" />
                       )}
                       {p.discount_label && (
-                        <span className="absolute left-3 top-3 rounded-full bg-sunset-600 px-3 py-1 text-sm font-bold text-white shadow">
+                        <span className="absolute left-3 top-3 rounded-full bg-sunset-700 px-3 py-1 text-sm font-bold text-white shadow">
                           {p.discount_label}
                         </span>
                       )}

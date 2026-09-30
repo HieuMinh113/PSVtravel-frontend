@@ -31,7 +31,7 @@ export default function TrangTinh({ page, tieuDe, moTa, hotline }) {
               <div className="prose-psv" dangerouslySetInnerHTML={{ __html: locHtml(page.body) }} />
             ) : (
               <div className="py-8 text-center">
-                <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-ocean-50 text-ocean-600">
+                <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-ocean-50 text-ocean-700">
                   <FileText className="h-6 w-6" />
                 </span>
                 <h2 className="mt-4 font-display text-lg font-bold text-deep-900">

@@ -46,6 +46,11 @@ export default async function Page() {
     ...new Set([...domestic, ...abroad].map((t) => t.image).filter(Boolean)),
   ];
 
+  // Ảnh bìa → tên tour, làm chữ thay thế (alt) cho ảnh vòng xoay & nền Hero
+  const tenAnhTour = Object.fromEntries(
+    [...domestic, ...abroad].filter((t) => t.image).map((t) => [t.image, t.name])
+  );
+
   const upcoming = [...domestic, ...abroad]
     .filter((t) => t.startDate)
     .sort(
@@ -61,6 +66,7 @@ export default async function Page() {
       banner={banners[0] ?? null}
       orbitImages={orbitImages}
       anhBiaTour={anhBiaTour}
+      tenAnhTour={tenAnhTour}
       diemDen={danhMuc.slice(0, 6)}
       goiYTrongNuoc={goiY(domestic, "region")}
       goiYNuocNgoai={goiY(abroad, "country")}

@@ -15,7 +15,7 @@ import { motion, useTime, useTransform } from "framer-motion";
  * ngang (cách tâm 560px) sau một phần tư vòng sẽ nhảy lên cao 560px, vượt khỏi
  * khung nhìn và bị cắt mất. Chỉ đúng khi quỹ đạo là hình tròn.
  */
-function AnhTrenQuyDao({ src, gocBanDau, radiusX, radiusY, duration }) {
+function AnhTrenQuyDao({ src, alt, gocBanDau, radiusX, radiusY, duration }) {
   const time = useTime();
 
   const goc = useTransform(time, (t) => gocBanDau + (t / (duration * 1000)) * 360);
@@ -36,10 +36,12 @@ function AnhTrenQuyDao({ src, gocBanDau, radiusX, radiusY, duration }) {
       className="orbit-anh absolute left-1/2 top-1/2 overflow-hidden rounded-2xl shadow-lg ring-2 ring-white/80"
       style={daDo ? { x, y } : { transform: viTriTinh }}
     >
-      <Image src={src} alt="" draggable={false} fill sizes="(max-width: 1023px) 64px, 96px" className="object-cover" />
+      <Image src={src} alt={alt} draggable={false} fill sizes="(max-width: 1023px) 64px, 96px" className="object-cover" />
     </motion.div>
   );
 }
+
+const ALT_MAC_DINH = "Tour du lịch cùng PSV Travel";
 
 export default function OrbitGallery({
   images,
@@ -93,7 +95,14 @@ export default function OrbitGallery({
     return () => ro.disconnect();
   }, []);
 
-  const angleStep = 360 / images.length;
+  // Mỗi ảnh là chuỗi URL hoặc { src, alt }. Có tên tour thì dùng làm alt: công
+  // cụ SEO đếm ảnh thiếu alt (alt="" bị tính là thiếu) và Google Hình ảnh cũng
+  // dựa vào alt. Vòng ảnh vẫn là trang trí nên lớp chứa nó đặt aria-hidden —
+  // trình đọc màn hình không đọc lại một loạt tên tour.
+  const dsAnh = images.map((a) =>
+    typeof a === "string" ? { src: a, alt: ALT_MAC_DINH } : { src: a.src, alt: a.alt || ALT_MAC_DINH }
+  );
+  const angleStep = 360 / dsAnh.length;
 
   return (
     <div
@@ -116,10 +125,11 @@ export default function OrbitGallery({
         />
       )}
 
-      {images.map((src, i) => (
+      {dsAnh.map(({ src, alt }, i) => (
         <AnhTrenQuyDao
           key={src + i}
           src={src}
+          alt={alt}
           gocBanDau={angleStep * i}
           radiusX={radiusX}
           radiusY={radiusY}

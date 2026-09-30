@@ -43,7 +43,7 @@ export default function Guides({ guides: apiGuides = [] }) {
                   aria-pressed={dangChon}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 ease-enter ${
                     dangChon
-                      ? "bg-ocean-600 text-white shadow-[0_4px_14px_-4px_rgba(1,105,169,0.6)]"
+                      ? "bg-ocean-700 text-white shadow-[0_4px_14px_-4px_rgba(1,105,169,0.6)]"
                       : "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
                   }`}
                 >
@@ -93,7 +93,7 @@ export default function Guides({ guides: apiGuides = [] }) {
                         ) : (
                           <div className="h-full w-full bg-gradient-to-br from-ocean-200 to-teal-200" />
                         )}
-                        <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-sunset-600 px-3 py-1 text-xs font-bold text-white shadow">
+                        <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-sunset-700 px-3 py-1 text-xs font-bold text-white shadow">
                           <Sparkles className="h-3.5 w-3.5" /> Mới nhất
                         </span>
                       </div>

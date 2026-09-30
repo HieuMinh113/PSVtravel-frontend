@@ -100,7 +100,7 @@ function MomentCard({ m, i, onOpen }) {
           <span className="absolute left-1/2 top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-sunset-600/95 text-white shadow-lg ring-4 ring-white/25 transition-transform duration-300 group-hover:scale-110 sm:h-14 sm:w-14">
             <Play className="ml-0.5 h-5 w-5 fill-current sm:h-6 sm:w-6" aria-hidden="true" />
           </span>
-          <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-sunset-600 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+          <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-sunset-700 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
             <Play className="h-3 w-3 fill-current" aria-hidden="true" /> Video
           </span>
         </>
@@ -178,7 +178,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
       <section className="bg-foam py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
           <SectionReveal>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Câu chuyện của PSV</span>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Câu chuyện của PSV</span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
               Bắt đầu từ tình yêu <span className="text-gradient-ocean">xê dịch</span>
             </h2>
@@ -221,7 +221,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
         <section className="bg-foam pb-16 sm:pb-20">
           <div className="mx-auto max-w-5xl px-5 sm:px-8">
             <SectionReveal className="mx-auto mb-8 max-w-2xl text-center">
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Video giới thiệu</span>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Video giới thiệu</span>
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                 {tieuDeVideo || "Gặp gỡ đội ngũ PSV Travel"}
               </h2>
@@ -331,7 +331,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
         <section className="bg-foam py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <SectionReveal className="text-center">
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Khoảnh khắc đáng nhớ</span>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Khoảnh khắc đáng nhớ</span>
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                 Những hành trình được tạo nên từ sự đồng hành
               </h2>
@@ -356,7 +356,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
       <section className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
           <SectionReveal>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Cam kết của PSV Travel</span>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Cam kết của PSV Travel</span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">Khách hàng là trên hết</h2>
             <p className="mt-5 leading-relaxed text-ink-muted">
               Với phương châm “Khách hàng là trên hết”, PSV Travel cam kết mang đến những sản phẩm và dịch

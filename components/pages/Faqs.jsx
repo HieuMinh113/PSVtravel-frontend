@@ -70,7 +70,7 @@ export default function Faqs({ items = [] }) {
               {groups.map((g) => (
                 <div key={g.key}>
                   <h2 className="mb-4 flex items-center gap-2 font-display text-xl font-bold text-deep-900">
-                    <MessageCircleQuestion className="h-5 w-5 text-sunset-600" /> {g.label}
+                    <MessageCircleQuestion className="h-5 w-5 text-sunset-700" /> {g.label}
                   </h2>
                   <div className="space-y-3">
                     {g.list.map((it) => (

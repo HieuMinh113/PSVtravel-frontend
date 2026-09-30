@@ -49,7 +49,7 @@ export default function TrustBar() {
             transition={{ duration: 0.45, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
             className="flex items-start gap-3.5"
           >
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-ocean-50 text-ocean-600">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-ocean-50 text-ocean-700">
               <c.icon className="h-5 w-5" />
             </span>
             <div>

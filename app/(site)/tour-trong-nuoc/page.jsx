@@ -24,7 +24,10 @@ export default async function Page() {
   const anhVongXoay = orbitImages.length
     ? orbitImages
     : tours.length
-    ? Array.from({ length: 10 }, (_, i) => tours[i % tours.length].image)
+    ? Array.from({ length: 10 }, (_, i) => {
+        const t = tours[i % tours.length];
+        return { src: t.image, alt: t.name };
+      })
     : [];
 
   return (

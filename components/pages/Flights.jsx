@@ -32,7 +32,7 @@ export default function Flights({ airlines = [], deals = [], settings = {} }) {
       <section className="bg-foam pb-16 pt-14 sm:pb-20 sm:pt-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Ưu đãi hôm nay</span>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Ưu đãi hôm nay</span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">Vé máy bay giá hời</h2>
             <p className="mx-auto mt-3 max-w-xl text-ink-muted">
               Giá tham khảo cho một chiều, đã gồm thuế phí. Liên hệ để nhận giá tốt nhất theo ngày bay của bạn.
@@ -109,7 +109,7 @@ export default function Flights({ airlines = [], deals = [], settings = {} }) {
                     <img src={a.logoImage} alt={a.name} className="max-h-full max-w-full object-contain" />
                   </div>
                 ) : (
-                  <div className={`grid h-14 w-14 place-items-center rounded-2xl ${a.color || "bg-ocean-600"} font-display text-sm font-bold text-white shadow transition-transform duration-400 ease-enter group-hover:scale-110`}>
+                  <div className={`grid h-14 w-14 place-items-center rounded-2xl ${a.color || "bg-ocean-700"} font-display text-sm font-bold text-white shadow transition-transform duration-400 ease-enter group-hover:scale-110`}>
                     {a.logo || a.code}
                   </div>
                 )}
@@ -124,11 +124,13 @@ export default function Flights({ airlines = [], deals = [], settings = {} }) {
       {/* Lợi ích */}
       <section className="bg-foam py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          {/* Tiêu đề ẩn: tên thẻ là h3, thiếu h2 thì thứ tự tiêu đề nhảy cóc (Lighthouse) */}
+          <h2 className="sr-only">Lợi ích khi đặt vé máy bay tại PSV Travel</h2>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
             {perks.map((p, i) => (
               <SectionReveal key={p.title} delay={i * 0.1} className="group rounded-3xl bg-white p-6 text-center shadow-card transition-shadow duration-400 hover:shadow-card-hover">
                 <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-ocean-50 transition-transform duration-400 ease-enter group-hover:scale-110">
-                  <p.icon className="h-6 w-6 text-ocean-600" />
+                  <p.icon className="h-6 w-6 text-ocean-700" />
                 </div>
                 <h3 className="mt-4 font-display text-base font-semibold text-deep-900">{p.title}</h3>
                 <p className="mt-2 text-sm text-ink-muted">{p.desc}</p>

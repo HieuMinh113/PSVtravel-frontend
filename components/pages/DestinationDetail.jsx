@@ -53,7 +53,7 @@ export default function DestinationDetail({ destination, tours = [] }) {
         <section className="bg-ocean-50/50 py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <div className="mb-10 text-center">
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Hành trình gợi ý</span>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Hành trình gợi ý</span>
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                 Tour {d.name} đang mở
               </h2>
