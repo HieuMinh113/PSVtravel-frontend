@@ -309,7 +309,9 @@ export async function getGuideBySlug(slug) {
 
 export async function getGuideSlugs() {
   const json = await layJSON(`/guides-slugs`);
-  return json ?? [];
+  // Nhận cả mảng trần lẫn { data: [...] } như các hàm *Slugs khác — lệch dạng
+  // là generateStaticParams gọi .map() trên object, cả lượt build hỏng.
+  return Array.isArray(json) ? json : json?.data ?? [];
 }
 
 // ---- Sự kiện / Team Building ----

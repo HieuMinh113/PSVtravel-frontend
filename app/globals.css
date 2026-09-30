@@ -116,17 +116,24 @@ img, video {
   }
 }
 
-.tap-44 {
-  position: relative;
-}
-.tap-44::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 44px;
-  height: 44px;
-  transform: translate(-50%, -50%);
+/* Đặt trong @layer components: Tailwind xếp lớp này TRƯỚC các tiện ích, nên
+   nút nào ghi thêm "absolute" (nút đóng lightbox, nút xoá ô tìm kiếm...) thì
+   absolute thắng. Trước đây khối này nằm ngoài layer, đứng sau tiện ích nên
+   "position: relative" đè mất "absolute" — nút đóng ảnh ở trang Về chúng tôi
+   bị kéo lệch về góc trái, lòi ra một dải trắng phía trên ảnh. */
+@layer components {
+  .tap-44 {
+    position: relative;
+  }
+  .tap-44::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
 }
 
 /* ===== An toàn khi phóng to trình duyệt ===== */
