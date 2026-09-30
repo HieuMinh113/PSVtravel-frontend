@@ -326,12 +326,23 @@ export function tourVideoJsonLd(tour, basePath) {
 }
 
 // Component nhúng JSON-LD
+// Chuỗi JSON đưa vào thẻ <script> PHẢI thay "<" bằng <.
+//
+// JSON.stringify không chặn "</script>": một tên tour / câu FAQ / tiêu đề bài
+// (nhân viên nhập trong admin) chứa "</script><script>…" sẽ đóng khối JSON-LD
+// sớm và chạy mã trên trang công khai, với MỌI khách truy cập (stored XSS).
+// < vẫn là "<" với trình phân tích JSON — Google đọc schema y hệt — nhưng
+// trình duyệt không còn thấy thẻ đóng. Đúng cách tài liệu Next khuyến nghị.
+export function chuoiJsonLdAnToan(data) {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
 export function JsonLd({ data }) {
   if (!data) return null;
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: chuoiJsonLdAnToan(data) }}
     />
   );
 }
