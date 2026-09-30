@@ -547,9 +547,9 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
         <div className="absolute inset-0 bg-gradient-to-t from-deep-950/85 via-deep-950/20 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-5 pb-10 pt-24 sm:px-8">
           <div className="mb-3 flex items-center gap-1.5 text-xs text-white/75">
-            <Link href="/" className="transition-colors hover:text-gold-300">Trang chủ</Link>
+            <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>
             <span>/</span>
-            <Link href={basePath} className="transition-colors hover:text-gold-300">
+            <Link href={basePath} className="vung-bam transition-colors hover:text-gold-300">
               {basePath === "/tour-trong-nuoc" ? "Tour trong nước" : "Tour nước ngoài"}
             </Link>
             <span>/</span>
@@ -862,7 +862,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                             inputMode="numeric"
                             maxLength={2}
                             aria-label="Số người lớn"
-                            className="w-9 rounded-lg border border-transparent bg-transparent text-center text-sm font-bold text-deep-900 outline-none focus:border-ocean-300 focus:bg-white"
+                            className="h-7 w-9 rounded-lg border border-transparent bg-transparent text-center text-sm font-bold text-deep-900 outline-none focus:border-ocean-300 focus:bg-white"
                           />
                           <button type="button" onClick={() => setAdults((g) => Math.min(tranKhach, (parseInt(g, 10) || 0) + 1))} aria-label="Thêm một người lớn" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">+</button>
                         </div>
@@ -883,7 +883,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                             inputMode="numeric"
                             maxLength={2}
                             aria-label="Số trẻ em"
-                            className="w-9 rounded-lg border border-transparent bg-transparent text-center text-sm font-bold text-deep-900 outline-none focus:border-ocean-300 focus:bg-white"
+                            className="h-7 w-9 rounded-lg border border-transparent bg-transparent text-center text-sm font-bold text-deep-900 outline-none focus:border-ocean-300 focus:bg-white"
                           />
                           <button type="button" onClick={() => setChildren((g) => Math.min(tranKhach, (parseInt(g, 10) || 0) + 1))} aria-label="Thêm một trẻ em" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">+</button>
                         </div>

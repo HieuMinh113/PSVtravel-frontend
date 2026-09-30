@@ -34,9 +34,9 @@ export default function GuideDetail({ guide, settings = {} }) {
 
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-4xl px-5 pb-10 pt-24 sm:px-8">
           <div className="mb-3 flex items-center gap-1.5 text-xs text-white/75">
-            <Link href="/" className="transition-colors hover:text-gold-300">Trang chủ</Link>
+            <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>
             <span>/</span>
-            <Link href="/cam-nang" className="transition-colors hover:text-gold-300">Cẩm nang</Link>
+            <Link href="/cam-nang" className="vung-bam transition-colors hover:text-gold-300">Cẩm nang</Link>
             <span>/</span>
             <span className="line-clamp-1 text-white/90">{guide.title}</span>
           </div>

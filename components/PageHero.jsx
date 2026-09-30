@@ -80,12 +80,12 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
       <div className={`relative z-10 mx-auto text-center ${hasOrbit ? "max-w-3xl" : "max-w-5xl"}`}>
         {crumbs.length > 0 && (
           <div className="mb-4 flex flex-wrap items-center justify-center gap-1.5 text-xs text-white/80">
-            <Link href="/" className="transition-colors hover:text-gold-300">Trang chủ</Link>
+            <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>
             {crumbs.map((c, i) => (
               <span key={i} className="flex items-center gap-1.5">
                 <ChevronRight className="h-3 w-3 text-white/50" />
                 {c.to ? (
-                  <Link href={c.to} className="transition-colors hover:text-gold-300">{c.label}</Link>
+                  <Link href={c.to} className="vung-bam transition-colors hover:text-gold-300">{c.label}</Link>
                 ) : (
                   <span className="font-medium text-white">{c.label}</span>
                 )}

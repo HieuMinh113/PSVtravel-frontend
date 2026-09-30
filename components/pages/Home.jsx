@@ -256,7 +256,7 @@ export default function Home({
                 <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-white/85">
                   <Clock3 className="h-3.5 w-3.5 text-gold-400" /> Sắp khởi hành
                 </p>
-                <Link href="/tour-trong-nuoc" className="group flex items-center gap-1.5 text-xs font-semibold text-white/85 transition-colors hover:text-gold-300">
+                <Link href="/tour-trong-nuoc" className="vung-bam group flex items-center gap-1.5 text-xs font-semibold text-white/85 transition-colors hover:text-gold-300">
                   Xem tất cả
                   <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 ease-enter group-hover:translate-x-1" />
                 </Link>
@@ -350,7 +350,7 @@ export default function Home({
                 Tour sát ngày — <span className="text-gradient-warm">đặt ngay kẻo lỡ</span>
               </h2>
             </div>
-            <Link href="/tour-trong-nuoc" className="group flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800">
+            <Link href="/tour-trong-nuoc" className="vung-bam group flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800">
               Xem tất cả tour
               <ArrowRight className="h-4 w-4 transition-transform duration-300 ease-enter group-hover:translate-x-1" />
             </Link>
@@ -382,7 +382,7 @@ export default function Home({
                   Đừng bỏ lỡ những <span className="text-gradient-ocean">deal hời</span>
                 </h2>
               </div>
-              <Link href="/khuyen-mai" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800 sm:inline-flex">
+              <Link href="/khuyen-mai" className="vung-bam hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800 sm:inline-flex">
                 Xem tất cả <ArrowRight className="h-4 w-4" />
               </Link>
             </SectionReveal>
@@ -428,7 +428,7 @@ export default function Home({
                 );
               })}
             </div>
-            <Link href="/khuyen-mai" className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800 sm:hidden">
+            <Link href="/khuyen-mai" className="vung-bam mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800 sm:hidden">
               Xem tất cả ưu đãi <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -570,7 +570,7 @@ export default function Home({
                   Kinh nghiệm cho chuyến đi trọn vẹn
                 </h2>
               </div>
-              <Link href="/cam-nang" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800 sm:inline-flex">
+              <Link href="/cam-nang" className="vung-bam hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800 sm:inline-flex">
                 Xem tất cả <ArrowRight className="h-4 w-4" />
               </Link>
             </SectionReveal>

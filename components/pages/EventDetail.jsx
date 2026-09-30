@@ -263,7 +263,7 @@ export default function EventDetail({ event, related = [], settings = {}, review
       )}
 
       <div className="mx-auto max-w-7xl px-5 pb-14 sm:px-8">
-        <Link href="/team-building" className="inline-flex items-center gap-2 text-sm font-semibold text-ocean-700 hover:text-ocean-800">
+        <Link href="/team-building" className="vung-bam inline-flex items-center gap-2 text-sm font-semibold text-ocean-700 hover:text-ocean-800">
           <ArrowLeft className="h-4 w-4" /> Xem tất cả gói team building
         </Link>
       </div>

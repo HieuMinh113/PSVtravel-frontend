@@ -255,7 +255,7 @@ export default function Auth() {
                       placeholder="••••••••"
                       className="w-full rounded-xl border border-ocean-100 bg-ocean-50/40 py-3 pl-11 pr-11 text-sm outline-none focus:border-ocean-400 focus:bg-white"
                     />
-                    <button type="button" onClick={() => setShowPass((s) => !s)} className="absolute right-4 top-1/2 -translate-y-1/2 text-ocean-400">
+                    <button type="button" onClick={() => setShowPass((s) => !s)} aria-label={showPass ? "Ẩn mật khẩu" : "Hiện mật khẩu"} aria-pressed={showPass} className="absolute right-1.5 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-lg text-ocean-400 transition-colors hover:text-ocean-600">
                       {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
@@ -361,7 +361,7 @@ export default function Auth() {
                       placeholder="Tối thiểu 8 ký tự, có chữ và số"
                       className="w-full rounded-xl border border-ocean-100 bg-ocean-50/40 py-3 pl-11 pr-11 text-sm outline-none focus:border-ocean-400 focus:bg-white"
                     />
-                    <button type="button" onClick={() => setShowPass((s) => !s)} className="absolute right-4 top-1/2 -translate-y-1/2 text-ocean-400">
+                    <button type="button" onClick={() => setShowPass((s) => !s)} aria-label={showPass ? "Ẩn mật khẩu" : "Hiện mật khẩu"} aria-pressed={showPass} className="absolute right-1.5 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-lg text-ocean-400 transition-colors hover:text-ocean-600">
                       {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>

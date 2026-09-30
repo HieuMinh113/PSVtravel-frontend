@@ -159,7 +159,7 @@ export default function TeamBuildingForm({ goi = "", hotline = "0907 870 707" })
         )}
       </button>
       <p className="text-center text-xs text-ink-subtle">
-        Hoặc gọi trực tiếp <a href={`tel:${soGoi}`} className="font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
+        Hoặc gọi trực tiếp <a href={`tel:${soGoi}`} className="vung-bam font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
       </p>
     </form>
   );

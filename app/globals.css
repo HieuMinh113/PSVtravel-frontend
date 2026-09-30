@@ -134,6 +134,19 @@ img, video {
     height: 44px;
     transform: translate(-50%, -50%);
   }
+
+  /* Link chữ nhỏ (chân trang, đường dẫn "Trang chủ / …", "Xem tất cả", số
+     hotline) chỉ cao 14–20px — dưới mức tối thiểu 24px cho ngón tay trên điện
+     thoại. Lớp phủ trong suốt kéo vùng bấm lên/xuống thêm 5px mà KHÔNG đổi bố
+     cục (không đụng padding/margin, nên không đè các mt-* sẵn có). */
+  .vung-bam {
+    position: relative;
+  }
+  .vung-bam::after {
+    content: "";
+    position: absolute;
+    inset: -5px -2px;
+  }
 }
 
 /* ===== An toàn khi phóng to trình duyệt ===== */

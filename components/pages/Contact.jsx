@@ -186,7 +186,7 @@ export default function Contact({ settings = {} }) {
                       </p>
                       <a
                         href={`tel:${o.phone.replace(/[^0-9]/g, "")}`}
-                        className="mt-1.5 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 transition-colors hover:text-sunset-700"
+                        className="vung-bam mt-1.5 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 transition-colors hover:text-sunset-700"
                       >
                         <Phone className="h-3.5 w-3.5" /> {o.phone}
                       </a>
@@ -301,7 +301,7 @@ export default function Contact({ settings = {} }) {
                     )}
                   </button>
                   <p className="text-center text-xs text-ink-subtle">
-                    Hoặc gọi trực tiếp <a href={`tel:${hotline.replace(/[^0-9]/g, "")}`} onClick={() => fbTrack("Contact", { method: "hotline" })} className="font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
+                    Hoặc gọi trực tiếp <a href={`tel:${hotline.replace(/[^0-9]/g, "")}`} onClick={() => fbTrack("Contact", { method: "hotline" })} className="vung-bam font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
                   </p>
                 </form>
               )}

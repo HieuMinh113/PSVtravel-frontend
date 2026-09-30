@@ -20,9 +20,9 @@ export default function DestinationDetail({ destination, tours = [] }) {
         <div className="absolute inset-0 bg-gradient-to-t from-deep-950/92 via-deep-950/35 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-5xl px-5 pb-10 pt-24 sm:px-8">
           <div className="mb-3 flex items-center gap-1.5 text-xs text-white/75">
-            <Link href="/" className="transition-colors hover:text-gold-300">Trang chủ</Link>
+            <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>
             <span>/</span>
-            <Link href="/diem-den" className="transition-colors hover:text-gold-300">Điểm đến</Link>
+            <Link href="/diem-den" className="vung-bam transition-colors hover:text-gold-300">Điểm đến</Link>
             <span>/</span>
             <span className="text-white/90">{d.name}</span>
           </div>

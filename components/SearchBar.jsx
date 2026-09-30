@@ -131,7 +131,7 @@ export default function SearchBar({ diemDenTrongNuoc = [], diemDenNuocNgoai = []
           </select>
         </div>
 
-        <button type="submit" className="btn-cta !py-3.5 !px-6">
+        <button type="submit" aria-label="Tìm tour" className="btn-cta !py-3.5 !px-6">
           <Search className="h-4 w-4" />
           <span className="hidden sm:inline">Tìm tour</span>
         </button>

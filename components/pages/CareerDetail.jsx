@@ -28,9 +28,9 @@ export default function CareerDetail({ job }) {
         <div className="absolute inset-0 bg-aurora-deep bg-[length:190%_190%] animate-aurora opacity-80" />
         <div className="relative mx-auto max-w-4xl">
           <div className="mb-3 flex items-center gap-1.5 text-xs text-white/75">
-            <Link href="/" className="transition-colors hover:text-gold-300">Trang chủ</Link>
+            <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>
             <span>/</span>
-            <Link href="/tuyen-dung" className="transition-colors hover:text-gold-300">Tuyển dụng</Link>
+            <Link href="/tuyen-dung" className="vung-bam transition-colors hover:text-gold-300">Tuyển dụng</Link>
             <span>/</span>
             <span className="line-clamp-1 text-white/90">{j.title}</span>
           </div>
