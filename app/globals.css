@@ -268,6 +268,40 @@ img, video {
   transition: opacity 0.3s ease;
 }
 
+/* Kích thước vòng ảnh — tính hoàn toàn bằng CSS nên đúng ngay từ lần vẽ đầu,
+   không phải chờ JavaScript đo rồi co lại (nguyên nhân làm đầu trang giật).
+   Bán kính/cỡ ảnh từng mức do OrbitGallery truyền vào qua biến --r-*, --card-*.
+   Quy tắc giống hệt bản JavaScript cũ:
+   - dưới 480px cỡ nhỏ, dưới 1024px cỡ vừa (iPad dọc), còn lại cỡ lớn;
+   - trục ngang không vượt nửa bề rộng màn hình, trục dọc = 0,72 × bán kính
+     nhưng không vượt nửa chiều cao (trừ 96px thanh điều hướng);
+   - tối thiểu 84px ngang / 70px dọc. */
+.orbit-khung {
+  --r: var(--r-sm);
+  --card: var(--card-sm);
+  --rx: max(84px, min(var(--r), 50vw - var(--card) / 2 - 12px));
+  --ry: max(70px, min(var(--r) * 0.72, (100vh - 96px) / 2 - var(--card) / 2 - 12px));
+  width: calc(var(--rx) * 2 + var(--card));
+  height: calc(var(--ry) * 2 + var(--card));
+}
+@supports (height: 100svh) {
+  .orbit-khung {
+    --ry: max(70px, min(var(--r) * 0.72, (100svh - 96px) / 2 - var(--card) / 2 - 12px));
+  }
+}
+@media (min-width: 480px) {
+  .orbit-khung { --r: var(--r-md); --card: var(--card-md); }
+}
+@media (min-width: 1024px) {
+  .orbit-khung { --r: var(--r-lg); --card: var(--card-lg); }
+}
+.orbit-anh {
+  width: var(--card);
+  height: var(--card);
+  margin-left: calc(var(--card) / -2);
+  margin-top: calc(var(--card) / -2);
+}
+
 /* Màn hình thấp: làm mờ bớt để chữ nổi lên, không thu nhỏ nữa */
 @media (max-height: 740px) {
   .orbit-layer { opacity: 0.7; }

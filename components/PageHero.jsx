@@ -107,7 +107,7 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
         )}
 
         <motion.h1
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className={`mt-4 font-display font-bold leading-[1.12] text-white ${
@@ -128,7 +128,7 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
 
         {description && (
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mx-auto mt-5 max-w-2xl text-white/85"

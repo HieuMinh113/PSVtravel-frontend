@@ -202,7 +202,7 @@ export default function Home({
             </motion.span>
 
             <motion.h1
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.12 }}
               className="mt-[clamp(1rem,3vh,1.5rem)] font-display text-[clamp(1.9rem,5.2vw,3.6rem)] font-bold leading-[1.1] text-white"
@@ -211,7 +211,7 @@ export default function Home({
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.26 }}
               className="mt-[clamp(0.75rem,2vh,1.25rem)] max-w-xl text-[clamp(0.9rem,1.9vw,1.125rem)] text-white/85"

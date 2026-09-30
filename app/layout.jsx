@@ -18,11 +18,19 @@ const display = Be_Vietnam_Pro({
 });
 
 // Font nội dung: giữ Roboto
+//
+// display "optional" thay cho "swap": trình duyệt chỉ dùng Roboto nếu tải kịp
+// lúc vẽ trang (thường là kịp vì Next.js đã preload sẵn); không kịp thì giữ
+// phông hệ thống cho lượt xem đó, KHÔNG đổi phông giữa chừng. Với "swap", chữ
+// đổi phông khi trang đã hiện làm dòng chữ dài/ngắn đi, dòng thông tin dưới
+// tên tour (sao · số ngày · nơi khởi hành) nhảy từ 2 dòng về 1 dòng → cả khối
+// chữ trên ảnh bìa giật (CLS 0,12). Phông tiêu đề Be Vietnam Pro vẫn "swap"
+// vì đó là nhận diện thương hiệu và không làm lệch dòng (đã đo).
 const body = Roboto({
   subsets: ["latin", "latin-ext", "vietnamese"],
   weight: ["300", "400", "500", "700"],
   variable: "--font-body",
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata = {
