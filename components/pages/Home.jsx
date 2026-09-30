@@ -68,6 +68,7 @@ export default function Home({
   upcoming = [],
   banner = null,
   orbitImages = [],
+  anhBiaTour = [],
   diemDen = [],
   goiYTrongNuoc = [],
   goiYNuocNgoai = [],
@@ -76,17 +77,13 @@ export default function Home({
   latestGuides = [],
   partners = [],
 }) {
-  // Ảnh điểm đến do admin tự upload — dùng làm nguồn ảnh THẬT của công ty cho
-  // Hero và vòng xoay, thay vì phải mượn ảnh Unsplash (audit trừ điểm ảnh mượn
-  // + tải từ host ngoài làm chậm trang).
-  const anhDiemDen = diemDen.map((d) => d.image).filter(Boolean);
-
-  // Ưu tiên ảnh vòng xoay admin đặt riêng → ảnh điểm đến thật → cuối cùng mới
-  // tới ảnh dự phòng Unsplash.
+  // Vòng xoay dùng HÌNH BÌA CÁC TOUR thật đang bán — ảnh của công ty, đổi theo
+  // tour mới mà không phải sửa code. Ưu tiên ảnh admin đặt riêng (Banner →
+  // vòng xoay) nếu có; chưa có tour nào thì mới rơi về ảnh dự phòng Unsplash.
   const anhVongXoay = orbitImages.length
     ? orbitImages
-    : anhDiemDen.length
-      ? anhDiemDen
+    : anhBiaTour.length
+      ? anhBiaTour
       : ORBIT_DU_PHONG;
 
   // Chưa tạo banner trong admin thì KHÔNG hiện khối này.
@@ -99,13 +96,12 @@ export default function Home({
   // thứ đang bán. Lấy tối đa 4 ảnh để không tải quá nặng ở màn hình đầu.
   const heroImages = useMemo(() => {
     const tuTour = upcoming.map((t) => t.image).filter(Boolean);
-    // Chưa có tour sắp khởi hành thì lấy ảnh điểm đến thật của công ty trước,
-    // Unsplash chỉ là chốt chặn cuối khi cả hai đều trống.
-    const tuDiemDen = diemDen.map((d) => d.image).filter(Boolean);
-    const nguon = tuTour.length ? tuTour : tuDiemDen;
+    // Chưa có tour sắp khởi hành thì lấy hình bìa các tour khác (ảnh thật của
+    // công ty), Unsplash chỉ là chốt chặn cuối khi cả hai đều trống.
+    const nguon = tuTour.length ? tuTour : anhBiaTour;
     const khongTrung = [...new Set(nguon)].slice(0, 4);
     return khongTrung.length ? khongTrung : [HERO_FALLBACK];
-  }, [upcoming, diemDen]);
+  }, [upcoming, anhBiaTour]);
 
   const [heroIndex, setHeroIndex] = useState(0);
 

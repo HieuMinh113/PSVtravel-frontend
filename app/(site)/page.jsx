@@ -38,6 +38,11 @@ export default async function Page() {
       .sort((a, b) => a.localeCompare(b, "vi"))
       .slice(0, 30);
 
+  // Hình bìa tất cả tour đang bán (bỏ trùng) — dùng cho vòng xoay & nền Hero.
+  const anhBiaTour = [
+    ...new Set([...domestic, ...abroad].map((t) => t.image).filter(Boolean)),
+  ];
+
   const upcoming = [...domestic, ...abroad]
     .filter((t) => t.startDate)
     .sort(
@@ -52,6 +57,7 @@ export default async function Page() {
       upcoming={upcoming}
       banner={banners[0] ?? null}
       orbitImages={orbitImages}
+      anhBiaTour={anhBiaTour}
       diemDen={danhMuc.slice(0, 6)}
       goiYTrongNuoc={goiY(domestic, "region")}
       goiYNuocNgoai={goiY(abroad, "country")}
