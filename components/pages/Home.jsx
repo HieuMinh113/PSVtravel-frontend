@@ -80,11 +80,14 @@ export default function Home({
   // Vòng xoay dùng HÌNH BÌA CÁC TOUR thật đang bán — ảnh của công ty, đổi theo
   // tour mới mà không phải sửa code. Ưu tiên ảnh admin đặt riêng (Banner →
   // vòng xoay) nếu có; chưa có tour nào thì mới rơi về ảnh dự phòng Unsplash.
-  const anhVongXoay = orbitImages.length
-    ? orbitImages
-    : anhBiaTour.length
-      ? anhBiaTour
-      : ORBIT_DU_PHONG;
+  // Giới hạn 10 hình: vòng chia đều 360°/số ảnh, nhiều quá thì chật và rối.
+  const anhVongXoay = (
+    orbitImages.length
+      ? orbitImages
+      : anhBiaTour.length
+        ? anhBiaTour
+        : ORBIT_DU_PHONG
+  ).slice(0, 10);
 
   // Chưa tạo banner trong admin thì KHÔNG hiện khối này.
   // Trước đây có một banner mặc định viết cứng trong code ("giảm 25%…") —
