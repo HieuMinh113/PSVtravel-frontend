@@ -5,6 +5,7 @@ import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import TeamBuildingForm from "@/components/TeamBuildingForm";
 import EventReviewForm from "@/components/EventReviewForm";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
 
 const DOI_TUONG = { "gia-dinh": "Gia đình", "doanh-nghiep": "Doanh nghiệp", "ca-nhan": "Cá nhân" };
 
@@ -65,6 +66,15 @@ export default function EventDetail({ event, related = [], settings = {}, review
             {event.image && (
               <SectionReveal className="overflow-hidden rounded-2xl">
                 <img src={event.image} alt={event.title} className="w-full object-cover" />
+              </SectionReveal>
+            )}
+
+            {/* Clip recap chương trình đã tổ chức — bằng chứng năng lực */}
+            {event.videoId && (
+              <SectionReveal className="mt-6">
+                <h2 className="font-display text-xl font-bold text-deep-900">Video recap chương trình</h2>
+                <p className="mt-1 text-sm text-ink-subtle">Không khí thực tế tại một chương trình PSV Travel đã tổ chức.</p>
+                <YouTubeEmbed videoId={event.videoId} title={`Video recap ${event.title}`} className="mt-4" tronGoc="rounded-2xl" />
               </SectionReveal>
             )}
 

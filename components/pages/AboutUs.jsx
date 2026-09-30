@@ -140,7 +140,7 @@ function MomentCard({ m, i, onOpen }) {
   );
 }
 
-export default function AboutUs({ moments = [], team = [], aboutImages = [] }) {
+export default function AboutUs({ moments = [], team = [], aboutImages = [], videoGioiThieu = null, tieuDeVideo = null }) {
   const [active, setActive] = useState(null);
   const [photoIndex, setPhotoIndex] = useState(0); // ảnh đang xem trong khoảnh khắc
 
@@ -215,6 +215,23 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [] }) {
           </SectionReveal>
         </div>
       </section>
+
+      {/* ===== VIDEO GIỚI THIỆU — Admin → Cài đặt; trống thì ẩn ===== */}
+      {videoGioiThieu && (
+        <section className="bg-foam pb-16 sm:pb-20">
+          <div className="mx-auto max-w-5xl px-5 sm:px-8">
+            <SectionReveal className="mx-auto mb-8 max-w-2xl text-center">
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Video giới thiệu</span>
+              <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+                {tieuDeVideo || "Gặp gỡ đội ngũ PSV Travel"}
+              </h2>
+            </SectionReveal>
+            <SectionReveal delay={0.1}>
+              <YouTubeEmbed videoId={videoGioiThieu} title={tieuDeVideo || "Video giới thiệu PSV Travel"} />
+            </SectionReveal>
+          </div>
+        </section>
+      )}
 
       {/* ===== GIÁ TRỊ CỐT LÕI ===== */}
       <section className="relative overflow-hidden bg-deep-gradient py-16 text-white sm:py-20">

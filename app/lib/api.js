@@ -288,6 +288,7 @@ function mapGuide(g) {
     views: g.view_count ?? 0,
     date: g.published_at ? g.published_at.split("-").reverse().join("/") : null, // yyyy-mm-dd → dd/mm/yyyy
     updatedAt: g.updated_at ?? g.published_at ?? null, // cho sitemap lastmod thật
+    videoId: g.video_id ?? null, // video minh hoạ (YouTube)
     content: g.content ?? null,
     metaTitle: g.meta_title ?? g.title,
     metaDescription: g.meta_description ?? g.excerpt,
@@ -359,6 +360,8 @@ function mapEventDetail(e) {
     priceNote: e.price_note ?? null,
     metaTitle: e.meta_title ?? e.title,
     metaDescription: e.meta_description ?? e.summary,
+    videoId: e.video_id ?? null, // clip recap sự kiện (YouTube)
+    updatedAt: e.updated_at ?? null,
   };
 }
 

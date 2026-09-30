@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import EventDetail from "@/components/pages/EventDetail";
-import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
+import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL, videoJsonLd } from "@/app/lib/seo";
 import { getEventBySlug, getEventSlugs, getEvents, getEventReviews, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -45,6 +45,15 @@ export default async function Page({ params }) {
   return (
     <>
       <JsonLd data={bc} />
+      <JsonLd
+        data={videoJsonLd({
+          videoId: event.videoId,
+          name: `Video recap ${event.title}`,
+          description: event.summary,
+          uploadDate: event.updatedAt,
+          url: `${SITE_URL}/team-building/${event.slug}`,
+        })}
+      />
       <EventDetail event={event} related={related} settings={settings} reviews={reviews} />
     </>
   );

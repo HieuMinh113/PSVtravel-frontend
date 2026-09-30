@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import GuideDetail from "@/components/pages/GuideDetail";
-import { pageMeta, JsonLd, SITE_URL } from "@/app/lib/seo";
+import { pageMeta, JsonLd, SITE_URL, videoJsonLd } from "@/app/lib/seo";
 import { getGuideBySlug, getGuideSlugs, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -41,6 +41,15 @@ export default async function Page({ params }) {
   return (
     <>
       <JsonLd data={jsonLd} />
+      <JsonLd
+        data={videoJsonLd({
+          videoId: guide.videoId,
+          name: `Video: ${guide.title}`,
+          description: guide.excerpt,
+          uploadDate: guide.updatedAt,
+          url: `${SITE_URL}/cam-nang/${guide.slug}`,
+        })}
+      />
       <GuideDetail guide={guide} settings={settings} />
     </>
   );

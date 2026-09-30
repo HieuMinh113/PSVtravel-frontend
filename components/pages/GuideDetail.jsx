@@ -4,6 +4,7 @@ import { CalendarDays, Eye, User, ArrowLeft, ArrowRight, Quote } from "lucide-re
 import GhiNhanLuotXem from "@/components/GhiNhanLuotXem";
 import TourBookingBox from "@/components/TourBookingBox";
 import { locHtml } from "@/app/lib/sanitize";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
 
 // Trang chi tiết bài viết cẩm nang — component phía server (không cần "use client")
 // để nội dung bài viết được render sẵn trong HTML, tốt cho SEO.
@@ -76,6 +77,12 @@ export default function GuideDetail({ guide, settings = {} }) {
                 {guide.excerpt}
               </p>
             </div>
+          )}
+
+          {/* Video minh hoạ — ô riêng trong admin (không nhúng iframe vào nội dung
+              bài, bộ lọc an toàn sẽ loại) */}
+          {guide.videoId && (
+            <YouTubeEmbed videoId={guide.videoId} title={`Video: ${guide.title}`} className="mt-10" />
           )}
 
           {guide.content ? (
