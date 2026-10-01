@@ -1,45 +1,48 @@
 import "./globals.css";
-import { Be_Vietnam_Pro, Roboto } from "next/font/google";
+import localFont from "next/font/local";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, organizationJsonLd, websiteJsonLd, JsonLd } from "./lib/seo";
 import MetaPixel from "@/components/MetaPixel";
 import GoogleTag from "@/components/GoogleTag";
 
-// Font tiêu đề: Be Vietnam Pro — thiết kế riêng cho tiếng Việt.
+// PHÔNG CHỮ LƯU SẴN TRONG MÃ NGUỒN (app/fonts/), không tải từ Google lúc build.
 //
-// Trước đây dùng Playfair Display. Đó là serif báo chí nét mảnh, đẹp ở tiêu đề
-// cỡ lớn nhưng xuống cỡ nhỏ (tên ngày trong lịch trình, tên thẻ tour, nhãn) thì
-// dấu tiếng Việt bết vào thân chữ, rất khó đọc — tester ghi nhận ở nhiều chỗ.
-// Be Vietnam Pro có dấu vẽ riêng, cân ở mọi cỡ chữ mà vẫn giữ nét hiện đại.
+// Trước đây dùng next/font/google: mỗi lần build, Next tải CSS + phông từ
+// Google Fonts. Ngày 01/10/2026 Google trả về định dạng link mà Turbopack không
+// đọc được → build trên VPS hỏng ("next/font/google queries have exactly one
+// entry") dù mã không đổi gì. Lưu sẵn phông thì build không còn phụ thuộc
+// mạng/Google, lần nào cũng như lần nào.
 //
-// Chỉ nạp các độ đậm THẬT SỰ dùng (500/600/700 — không có chỗ nào dùng 800).
-// PHẢI preload cả latin-ext: chữ ơ/ư/Đ nằm trong vùng ký tự của latin-ext nên
-// trình duyệt tải luôn file đó cho tiêu đề. Có lần bỏ latin-ext khỏi preload
-// thì file bị phát hiện muộn (sau khi đọc xong CSS, ~2,1s trên 4G) và tiêu đề
-// — phần tử LCP — phải chờ theo.
-const display = Be_Vietnam_Pro({
-  subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["500", "600", "700"],
+// Các tệp .woff2 được cắt từ bản gốc trên github.com/google/fonts (giấy phép
+// OFL, kèm trong app/fonts/), chỉ giữ ký tự latin + latin-ext + tiếng Việt —
+// đúng ba bộ chữ web cần, đã kiểm đủ mọi chữ có dấu. Be Vietnam Pro ~20KB mỗi
+// độ đậm (trước là 3 tệp/độ đậm, cộng lại ~30KB).
+//
+// Font tiêu đề: Be Vietnam Pro — thiết kế riêng cho tiếng Việt, dấu không bết
+// vào thân chữ ở cỡ nhỏ (thay Playfair Display trước đây). Chỉ các độ đậm thật
+// sự dùng: 500/600/700. Preload để tiêu đề (phần tử LCP) có phông sớm.
+const display = localFont({
+  src: [
+    { path: "./fonts/be-vietnam-pro-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/be-vietnam-pro-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/be-vietnam-pro-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-display",
   display: "swap",
 });
 
-// Font nội dung: giữ Roboto
+// Font nội dung: Roboto.
 //
-// display "optional" thay cho "swap": trình duyệt chỉ dùng Roboto nếu tải kịp
-// lúc vẽ trang (thường là kịp vì Next.js đã preload sẵn); không kịp thì giữ
-// phông hệ thống cho lượt xem đó, KHÔNG đổi phông giữa chừng. Với "swap", chữ
-// đổi phông khi trang đã hiện làm dòng chữ dài/ngắn đi, dòng thông tin dưới
-// tên tour (sao · số ngày · nơi khởi hành) nhảy từ 2 dòng về 1 dòng → cả khối
-// chữ trên ảnh bìa giật (CLS 0,12). Phông tiêu đề Be Vietnam Pro vẫn "swap"
-// vì đó là nhận diện thương hiệu và không làm lệch dòng (đã đo).
-//
-// preload: false — với "optional", phông chỉ được dùng nếu có sẵn lúc vẽ trang;
-// preload để giành lấy nó lại chiếm băng thông của những thứ quan trọng hơn.
-// Lượt xem đầu dùng phông hệ thống (Android chính là Roboto), từ trang thứ hai
-// Roboto đã nằm trong bộ nhớ đệm. Bỏ độ đậm 300 vì không chỗ nào dùng.
-const body = Roboto({
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "700"],
+// display "optional": chỉ dùng Roboto nếu có sẵn lúc vẽ trang, không thì giữ
+// phông hệ thống cho lượt xem đó — KHÔNG đổi phông giữa chừng (đổi giữa chừng
+// làm dòng thông tin dưới tên tour nhảy 2 dòng ↔ 1 dòng, CLS 0,12).
+// preload: false — không giành băng thông của tiêu đề; từ trang thứ hai Roboto
+// đã nằm trong bộ nhớ đệm. (Android: phông hệ thống chính là Roboto.)
+const body = localFont({
+  src: [
+    { path: "./fonts/roboto-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/roboto-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/roboto-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-body",
   display: "optional",
   preload: false,
