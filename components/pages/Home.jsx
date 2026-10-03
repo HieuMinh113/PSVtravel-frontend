@@ -197,8 +197,10 @@ export default function Home({
           }}
         />
 
-        {/* Vòng ảnh xoay — lớp .orbit-layer tự ẩn khi màn hình thấp hoặc hẹp
-            (xem globals.css), tránh ảnh đè lên tiêu đề và thanh điều hướng */}
+        </>}
+        {autumn && <div aria-hidden="true" className="autumn-photo-overlay absolute inset-0" />}
+
+        {/* Vòng ảnh tour là dấu ấn của PSV Travel, hiện ở cả giao diện tháng 10. */}
         <div aria-hidden="true" className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
           <OrbitGallery
             images={anhVongXoay}
@@ -213,16 +215,13 @@ export default function Home({
         </div>
 
         {/* Lớp phủ tối giữa vòng ảnh và chữ — đảm bảo chữ luôn đọc rõ */}
-        <div
+        {!autumn && <div
           className="pointer-events-none absolute inset-0"
           style={{
             background:
               "radial-gradient(ellipse 640px 500px at center, rgba(4,15,31,0.86) 0%, rgba(4,15,31,0.6) 45%, rgba(4,15,31,0.18) 68%, transparent 80%)",
           }}
-        />
-
-        </>}
-        {autumn && <div aria-hidden="true" className="autumn-photo-overlay absolute inset-0" />}
+        />}
 
         {/* KHỐI CHỮ — chiếm phần giữa, tự căn giữa theo chiều cao còn lại */}
         <div className="relative z-10 flex flex-1 items-center justify-center px-5 pb-6 pt-[clamp(6rem,13vh,7.5rem)] sm:px-8">
