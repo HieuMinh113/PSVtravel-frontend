@@ -392,7 +392,11 @@ img, video {
   position: absolute;
   top: -30px;
   left: var(--leaf-x);
-  opacity: .72;
+  background-image: url('/autumn-leaves.webp');
+  background-size: 300% 100%;
+  background-position: var(--leaf-image-position) center;
+  background-repeat: no-repeat;
+  opacity: .82;
   filter: drop-shadow(0 1px 1px rgba(4, 18, 31, .16));
   will-change: transform;
   animation: autumn-fall var(--leaf-duration) linear var(--leaf-delay) infinite;
