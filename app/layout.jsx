@@ -1,4 +1,6 @@
 import "./globals.css";
+import AutumnLeaves from "@/components/AutumnLeaves";
+import { isAutumnSeason } from "./lib/season";
 import localFont from "next/font/local";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, organizationJsonLd, websiteJsonLd, JsonLd } from "./lib/seo";
 import MetaPixel from "@/components/MetaPixel";
@@ -85,6 +87,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="vi" className={`${display.variable} ${body.variable}`}>
       <body>
+        <AutumnLeaves initialAutumn={isAutumnSeason()} />
         {children}
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />

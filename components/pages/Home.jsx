@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, MotionConfig } from "framer-motion";
+import { motion } from "framer-motion";
 import { isAutumnSeason } from "@/app/lib/season";
 import {
   ShieldCheck, Clock3, ArrowRight, Sparkles, Building2, Headset,
@@ -142,7 +142,7 @@ export default function Home({
   // Chuyển cảnh chậm giữa các ảnh. Người dùng bật giảm chuyển động thì giữ
   // nguyên một ảnh — không có gì nhấp nháy.
   useEffect(() => {
-    if (autumn || !taiAnhSau || heroImages.length < 2) return;
+    if (!taiAnhSau || heroImages.length < 2) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const id = setInterval(
@@ -150,11 +150,10 @@ export default function Home({
       HERO_DOI_ANH_MS
     );
     return () => clearInterval(id);
-  }, [autumn, taiAnhSau, heroImages.length]);
+  }, [taiAnhSau, heroImages.length]);
 
   return (
-    <MotionConfig reducedMotion="user">
-    <div className={autumn ? "autumn-home" : undefined}>
+    <div>
       {/* ===== HERO — bố cục co giãn, luôn vừa mọi màn hình =====
           Dùng flex dọc thay cho chiều cao ép cứng: phần chữ chiếm khoảng giữa,
           dải tour bám đáy TRONG luồng (không position absolute) nên không bao giờ
@@ -164,7 +163,7 @@ export default function Home({
         {/* Ảnh nền lấy từ tour đang bán, chuyển cảnh chậm.
             Tất cả ảnh render sẵn và chỉ đổi độ mờ — không gắn/tháo phần tử liên tục
             nên không giật. Ảnh đầu đặt priority để giữ điểm LCP tốt. */}
-        {heroImages.slice(0, autumn ? 1 : taiAnhSau ? heroImages.length : 1).map((img, i) => (
+        {heroImages.slice(0, taiAnhSau ? heroImages.length : 1).map((img, i) => (
           <Image
             key={img}
             src={img}
@@ -178,13 +177,12 @@ export default function Home({
             // Nền chỉ hiện mờ 35% dưới lớp phủ tối → nén mạnh hơn không thấy khác
             quality={50}
             className={`object-cover transition-opacity duration-[1600ms] ease-in-out ${
-              autumn ? "opacity-100" : i === heroIndex ? "opacity-35" : "opacity-0"
+              i === heroIndex ? "opacity-35" : "opacity-0"
             }`}
           />
         ))}
 
         {/* Nền Aurora: mesh gradient nhiều điểm dừng trôi chậm, có cặp bổ túc xanh–cam */}
-        {!autumn && <>
         <div className="absolute inset-0 bg-aurora-deep bg-[length:180%_180%] animate-aurora opacity-80" />
         <div className="absolute inset-0 bg-duotone-glow opacity-60" />
 
@@ -196,9 +194,6 @@ export default function Home({
             backgroundSize: "34px 34px",
           }}
         />
-
-        </>}
-        {autumn && <div aria-hidden="true" className="autumn-photo-overlay absolute inset-0" />}
 
         {/* Vòng ảnh tour là dấu ấn của PSV Travel, hiện ở cả giao diện tháng 10. */}
         <div aria-hidden="true" className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -215,13 +210,13 @@ export default function Home({
         </div>
 
         {/* Lớp phủ tối giữa vòng ảnh và chữ — đảm bảo chữ luôn đọc rõ */}
-        {!autumn && <div
+        <div
           className="pointer-events-none absolute inset-0"
           style={{
             background:
               "radial-gradient(ellipse 640px 500px at center, rgba(4,15,31,0.86) 0%, rgba(4,15,31,0.6) 45%, rgba(4,15,31,0.18) 68%, transparent 80%)",
           }}
-        />}
+        />
 
         {/* KHỐI CHỮ — chiếm phần giữa, tự căn giữa theo chiều cao còn lại */}
         <div className="relative z-10 flex flex-1 items-center justify-center px-5 pb-6 pt-[clamp(6rem,13vh,7.5rem)] sm:px-8">
@@ -230,7 +225,7 @@ export default function Home({
             <motion.span
               initial={{ opacity: 0, y: -14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: autumn ? 0.35 : 0.7 }}
+              transition={{ duration: 0.7 }}
               className="inline-flex items-center gap-2 rounded-full bg-sunset-700/95 px-4 py-1.5 text-[clamp(0.65rem,1.6vw,0.75rem)] font-bold uppercase tracking-[0.18em] text-white shadow-glow-warm backdrop-blur"
             >
               <Sparkles className="h-3.5 w-3.5 shrink-0" />
@@ -240,7 +235,7 @@ export default function Home({
             <motion.h1
               initial={{ y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: autumn ? 0.35 : 0.8, delay: 0.12 }}
+              transition={{ duration: 0.8, delay: 0.12 }}
               className="mt-[clamp(1rem,3vh,1.5rem)] font-display text-[clamp(1.9rem,5.2vw,3.6rem)] font-bold leading-[1.1] text-white"
             >
               Chạm thế giới<br />
@@ -250,7 +245,7 @@ export default function Home({
             <motion.p
               initial={{ y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: autumn ? 0.35 : 0.8, delay: 0.26 }}
+              transition={{ duration: 0.8, delay: 0.26 }}
               className="mt-[clamp(0.75rem,2vh,1.25rem)] max-w-xl text-[clamp(0.9rem,1.9vw,1.125rem)] text-white/85"
             >
               {autumn ? "Theo nắng vàng, tìm miền mới — khám phá những hành trình đáng nhớ cùng PSV Travel." : <><strong className="font-semibold text-white">300+ tuyến tour</strong> trong nước và quốc tế,
@@ -265,7 +260,7 @@ export default function Home({
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: autumn ? 0.35 : 0.8, delay: 0.5 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
               className="mt-[clamp(0.9rem,2.2vh,1.5rem)] flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
             >
               {trustSignals.map((t) => (
@@ -285,7 +280,7 @@ export default function Home({
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: autumn ? 0.4 : 0.9, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.9, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="hero-tours relative z-10 w-full px-5 pb-[clamp(1rem,3vh,1.75rem)] sm:px-8"
           >
             <div className="mx-auto max-w-6xl">
@@ -343,6 +338,5 @@ export default function Home({
       <KhoiDanhGia reviews={reviews} />
       <KhoiCuoiTrang latestGuides={latestGuides} partners={partners} />
     </div>
-    </MotionConfig>
   );
 }
