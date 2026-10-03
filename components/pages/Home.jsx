@@ -169,7 +169,7 @@ export default function Home({
         {/* KHỐI CHỮ — chiếm phần giữa, tự căn giữa theo chiều cao còn lại */}
         <div className="relative z-10 flex flex-1 items-center justify-center px-5 pb-6 pt-[clamp(6rem,13vh,7.5rem)] sm:px-8">
           <div className="flex w-full max-w-3xl flex-col items-center text-center">
-            {/* Nhãn ưu đãi màu ấm — bật hẳn khỏi nền xanh, mắt bắt được đầu tiên */}
+            {/* Nhãn thông điệp màu ấm — bật hẳn khỏi nền xanh, mắt bắt được đầu tiên */}
             <motion.span
               initial={{ opacity: 0, y: -14 }}
               animate={{ opacity: 1, y: 0 }}
@@ -177,7 +177,7 @@ export default function Home({
               className="inline-flex items-center gap-2 rounded-full bg-sunset-600/95 px-4 py-1.5 text-[clamp(0.65rem,1.6vw,0.75rem)] font-bold uppercase tracking-[0.18em] text-white shadow-glow-warm backdrop-blur"
             >
               <Sparkles className="h-3.5 w-3.5 shrink-0" />
-              Ưu đãi hè 2026 — giảm đến 20%
+              HÀNH TRÌNH MỚI – TRẢI NGHIỆM MỚI
             </motion.span>
 
             <motion.h1
@@ -186,7 +186,8 @@ export default function Home({
               transition={{ duration: 0.8, delay: 0.12 }}
               className="mt-[clamp(1rem,3vh,1.5rem)] font-display text-[clamp(1.9rem,5.2vw,3.6rem)] font-bold leading-[1.1] text-white"
             >
-              Đắm mình vào <span className="bg-gradient-to-r from-ocean-300 to-teal-300 bg-clip-text text-transparent">sắc xanh</span><br className="hidden sm:block" /> của những vùng đất mới
+              Chạm thế giới<br />
+              <span className="bg-gradient-to-r from-ocean-300 to-teal-300 bg-clip-text text-transparent">Trọn từng hành trình</span>
             </motion.h1>
 
             <motion.p
