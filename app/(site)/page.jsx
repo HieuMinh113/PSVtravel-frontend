@@ -1,4 +1,5 @@
 import Home from "@/components/pages/Home";
+import { isAutumnSeason } from "@/app/lib/season";
 import { pageMeta } from "@/app/lib/seo";
 import {
   getTours,
@@ -62,6 +63,7 @@ export default async function Page() {
 
   return (
     <Home
+      initialAutumn={isAutumnSeason()}
       upcoming={upcoming}
       banner={banners[0] ?? null}
       orbitImages={orbitImages}

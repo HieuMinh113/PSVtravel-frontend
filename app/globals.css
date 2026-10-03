@@ -377,3 +377,45 @@ img, video {
 @media (min-width: 641px) and (max-width: 1023px) {
   .orbit-layer { opacity: 0.5; }
 }
+
+/* Chiến dịch tháng 10: màu ấm chỉ áp dụng trong trang chủ theo mùa. */
+.autumn-home {
+  --autumn-paper: #fff8ef;
+  --autumn-rust: #b45332;
+  --autumn-honey: #e8b86d;
+  background: var(--autumn-paper);
+}
+.autumn-home > section:first-child { background: #30231e; }
+.autumn-photo-overlay {
+  background: linear-gradient(180deg, rgba(24,22,21,.66), rgba(38,25,18,.76) 55%, rgba(28,22,19,.94));
+}
+.autumn-home h1 { font-size: clamp(2rem, 5.4vw, 4.4rem); line-height: 1.18; letter-spacing: -.035em; }
+.autumn-home h1 span { background: none; color: var(--autumn-honey); }
+.autumn-home > section:first-child .bg-sunset-700\/95 { background: var(--autumn-rust); box-shadow: none; }
+.autumn-home form { background: var(--autumn-paper); backdrop-filter: none; box-shadow: 0 16px 48px rgba(25,18,12,.16); }
+.autumn-home form .bg-ocean-700,
+.autumn-home form button[type="submit"] { background: var(--autumn-rust); color: white; }
+.autumn-home form .bg-ocean-50 { background: #f4eadc; color: #79402c; }
+.autumn-home form input,
+.autumn-home form select { background: #fffcf7; border-color: #e6d8c6; }
+.autumn-home form button { min-height: 44px; }
+.autumn-home .hero-tours .glass-surface { background: var(--autumn-paper); border: 1px solid #e6d8c6; box-shadow: 0 8px 24px rgba(25,18,12,.1); backdrop-filter: none; }
+.autumn-home .hero-tours .glass-surface p { color: #0a2a45; }
+.autumn-home .hero-tours .glass-surface p:nth-child(2) { color: #4a6076; }
+.autumn-home .hero-tours .glass-surface p:last-child { color: #934026; }
+.autumn-home .hero-tours .glass-surface svg { color: var(--autumn-rust); }
+.autumn-home .hero-tours img { transition-duration: 300ms; }
+.autumn-home .hero-tours a:hover img { transform: scale(1.04); }
+.autumn-home .bg-white,
+.autumn-home .bg-foam,
+.autumn-home .bg-sand-50 { background-color: var(--autumn-paper); }
+.autumn-home .card-surface { border: 1px solid #e6d8c6; border-radius: 1rem; box-shadow: 0 6px 24px rgba(48,35,30,.06); }
+.autumn-home .card-surface img { transition-duration: 300ms; }
+.autumn-home .card-surface:hover img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) {
+  .autumn-home *, .autumn-home *::before, .autumn-home *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .autumn-home a:hover { transform: none; }
+}
