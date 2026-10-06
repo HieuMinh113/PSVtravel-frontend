@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
+import { TomTatTour } from "@/components/DoanGioiThieu";
 import AbroadTours from "@/components/pages/AbroadTours";
 import { pageMeta } from "@/app/lib/seo";
 import { getTours, getOrbitImages, getCategories } from "@/app/lib/api";
@@ -56,6 +57,7 @@ export default async function Page() {
               <strong> châu Âu</strong>. Mỗi hành trình được thiết kế với lịch bay thuận tiện, khách
               sạn tốt, hướng dẫn viên tiếng Việt và lịch trình tham quan rõ ràng theo từng ngày.
             </p>
+            <TomTatTour tours={tours} danhMuc={danhMuc} loai="tour nước ngoài" basePath="/tour-nuoc-ngoai" />
             <p>
               Đội ngũ của chúng tôi <strong>hỗ trợ trọn gói thủ tục xin visa</strong> cho tour nước
               ngoài, tư vấn giấy tờ và chuẩn bị hồ sơ để bạn yên tâm trước chuyến đi. Giá tour đã bao

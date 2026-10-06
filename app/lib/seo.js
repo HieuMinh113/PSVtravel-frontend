@@ -29,17 +29,46 @@ function rutGonMoTa(text, gioiHan = 155) {
   return (khoangTrangCuoi > 0 ? cat.slice(0, khoangTrangCuoi) : cat).trimEnd() + "…";
 }
 
+// Tiêu đề hiển thị trên Google — tối đa 70 ký tự (quá mức này Google cắt cụt
+// thành "…" và công cụ audit báo "Long title element").
+//
+// Mặc định thêm đuôi " | PSV Travel" (template ở layout gốc). Tên tour / bài
+// viết đã dài thì BỎ đuôi; vẫn còn quá dài thì cắt gọn ở ranh giới một từ —
+// không bao giờ cắt giữa chữ. Tour và bài cẩm nang có ô "Tiêu đề SEO" trong
+// trang quản trị để nhân viên tự viết tiêu đề ngắn, đẹp hơn cách cắt tự động.
+const TIEU_DE_TOI_DA = 70;
+const DUOI_TIEU_DE = ` | ${SITE_NAME}`;
+
+export function tieuDeSeo(title) {
+  const t = String(title || "").replace(/\s+/g, " ").trim();
+  if ((t + DUOI_TIEU_DE).length <= TIEU_DE_TOI_DA) {
+    return { metaTitle: t, hienThi: t + DUOI_TIEU_DE };
+  }
+  let ngan = t;
+  if (ngan.length > TIEU_DE_TOI_DA) {
+    const cat = ngan.slice(0, TIEU_DE_TOI_DA - 1);
+    const kt = cat.lastIndexOf(" ");
+    // Bỏ dấu ngăn cách còn trơ ở cuối ("… Hội An –", "… CATHAY |")
+    ngan = (kt > 20 ? cat.slice(0, kt) : cat).replace(/[\s\-–—|:,;/]+$/u, "") + "…";
+  }
+  return { metaTitle: { absolute: ngan }, hienThi: ngan };
+}
+
 // Metadata cho một trang thường
 export function pageMeta({ title, description, path = "/", image }) {
   const url = SITE_URL + path;
-  const desc = rutGonMoTa(description || SITE_DESCRIPTION);
+  // Trang nào quên khai báo mô tả thì ghép tên trang vào đầu câu mặc định —
+  // mỗi trang một mô tả riêng, không bao giờ trùng nhau ("Duplicate meta
+  // descriptions": trước đây 7 trang cùng dùng nguyên một câu mặc định).
+  const desc = rutGonMoTa(description || `${title} — ${SITE_DESCRIPTION}`);
   const anh = image || OG_IMAGE_MAC_DINH;
+  const { metaTitle, hienThi } = tieuDeSeo(title);
   return {
-    title,
+    title: metaTitle,
     description: desc,
     alternates: { canonical: url },
     openGraph: {
-      title: `${title} | ${SITE_NAME}`,
+      title: hienThi,
       description: desc,
       url,
       siteName: SITE_NAME,
@@ -49,7 +78,7 @@ export function pageMeta({ title, description, path = "/", image }) {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | ${SITE_NAME}`,
+      title: hienThi,
       description: desc,
       images: [anh],
     },
@@ -63,7 +92,8 @@ export function tourMeta(tour, basePath) {
   const description = `${tour.name} — ${tour.days}, khởi hành ${tour.departure}. Giá từ ${formatVND(
     tour.price
   )}/khách. ${(tour.highlights || []).slice(0, 3).join(", ")}.`;
-  return pageMeta({ title: tour.name, description, path, image: tour.image });
+  // Ưu tiên "Tiêu đề SEO" nhân viên tự viết trong admin; trống thì dùng tên tour
+  return pageMeta({ title: tour.seoTitle || tour.name, description, path, image: tour.image });
 }
 
 // JSON-LD tổ chức (đặt ở layout gốc)

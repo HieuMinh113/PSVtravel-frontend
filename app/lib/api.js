@@ -73,6 +73,9 @@ function mapTour(t) {
     id: t.id,
     slug: t.slug,
     name: t.name,
+    // "Tiêu đề SEO" nhân viên tự viết trong admin (tối đa 70 ký tự) — chỉ dùng
+    // cho thẻ <title> trên Google; tên tour hiển thị trên web giữ nguyên.
+    seoTitle: t.seo_title ?? null,
     type: t.type,
     region: t.region,
     country: t.country,
