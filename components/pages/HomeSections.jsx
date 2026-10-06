@@ -14,6 +14,7 @@ import Newsletter from "@/components/Newsletter";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { formatVND } from "@/data/tours";
 import { duocToiUu } from "@/app/lib/anh";
+import { soNamHoatDong } from "@/app/lib/seo";
 
 // Các khối BÊN DƯỚI màn hình đầu của trang chủ, tách khỏi Home.jsx để được
 // "đánh thức" dần khi khách cuộn tới (xem components/HydrateKhiThay.jsx),
@@ -301,7 +302,8 @@ export function KhoiViSaoChonVideo({ videoTrangChu = null, tieuDeVideo = null })
           {[
             { to: 10000, suffix: "+", label: "Lượt khách mỗi năm" },
             { to: 300, suffix: "+", label: "Tuyến tour trong & ngoài nước" },
-            { to: 9, suffix: " năm", label: "Hoạt động trong ngành" },
+            // Tự tính từ năm thành lập 2013 (NAM_THANH_LAP) — không ghi cứng
+            { to: soNamHoatDong(), suffix: " năm", label: "Hoạt động trong ngành" },
           ].map((s, i) => (
             <SectionReveal key={s.label} delay={i * 0.08} className="rounded-2xl bg-white px-4 py-6 text-center shadow-card">
               {/* Cỡ chữ co theo bề ngang: ô hai cột trên điện thoại chỉ rộng

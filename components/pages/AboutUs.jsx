@@ -1,4 +1,5 @@
 "use client";
+import { NAM_THANH_LAP, soNamHoatDong } from "@/app/lib/seo";
 import Image from "next/image";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -39,7 +40,7 @@ const values = [
 
 const milestones = [
   {
-    year: "2017",
+    year: String(NAM_THANH_LAP),
     title: "Thành lập PSV Travel",
     desc: "PSV Travel chính thức hoạt động trong lĩnh vực du lịch lữ hành, đặt nền móng cho hành trình phát triển và phục vụ khách hàng.",
   },
@@ -187,7 +188,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
               trình du lịch trong nước và quốc tế cùng nhiều dịch vụ hỗ trợ hành trình.
             </p>
             <p className="mt-4 leading-relaxed text-ink-muted">
-              Được thành lập từ năm 2017, PSV Travel không ngừng hoàn thiện sản phẩm, nâng cao chất lượng
+              Hoạt động từ năm {NAM_THANH_LAP}, PSV Travel không ngừng hoàn thiện sản phẩm, nâng cao chất lượng
               dịch vụ và xây dựng đội ngũ chuyên nghiệp với mong muốn mang đến cho khách hàng những chuyến
               đi trọn vẹn, thuận tiện và đáng nhớ.
             </p>
@@ -198,7 +199,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
 
             <div className="mx-auto mt-9 grid max-w-lg grid-cols-3 gap-4 sm:gap-6">
               {[
-                { to: 9, suffix: " năm", label: "Hoạt động" },
+                { to: soNamHoatDong(), suffix: " năm", label: "Hoạt động" },
                 { to: 10000, suffix: "+", label: "Khách/năm" },
                 { to: 300, suffix: "+", label: "Tuyến tour" },
               ].map((s) => (

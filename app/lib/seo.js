@@ -7,6 +7,14 @@
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://psvtravel.com";
 export const SITE_NAME = "PSV Travel";
+// Năm PSV Travel bắt đầu hoạt động — MỘT chỗ duy nhất cho cả website (trang
+// chủ, Về chúng tôi, dữ liệu gửi Google). Trước đây chỗ ghi "9 năm", chỗ ghi
+// "thành lập năm 2017", chỗ khác lại 2013 — tự mâu thuẫn trước mắt khách.
+export const NAM_THANH_LAP = 2013;
+
+// Số năm hoạt động, tự tăng theo năm hiện tại — không phải sửa tay mỗi năm.
+export const soNamHoatDong = () => new Date().getFullYear() - NAM_THANH_LAP;
+
 export const SITE_DESCRIPTION =
   "PSV Travel — công ty lữ hành chuyên tour trong nước và nước ngoài, vé máy bay, làm visa. Giá trọn gói minh bạch, hỗ trợ 24/7.";
 
@@ -102,7 +110,7 @@ export function tourMeta(tour, basePath) {
 // chuyển sang render động, mất phần dựng sẵn.
 const CONG_TY = {
   dienThoai: "+84 907 870 707",
-  email: "hi@psvtravel.com",
+  email: "nguyendusit399@gmail.com",
   diaChi: "529 Huỳnh Tấn Phát",
   quan: "Quận 7",
   thanhPho: "Thành phố Hồ Chí Minh",
@@ -134,6 +142,7 @@ export function organizationJsonLd() {
     "@id": ORG_ID,
     name: SITE_NAME,
     legalName: "CÔNG TY CỔ PHẦN DU LỊCH P.S.V TRAVEL",
+    foundingDate: String(NAM_THANH_LAP),
     url: SITE_URL,
     description: SITE_DESCRIPTION,
     logo: `${SITE_URL}/logo.png`,
