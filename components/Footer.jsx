@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Phone, Mail, MapPin, Send, CheckCircle2, ArrowRight,
@@ -8,12 +8,61 @@ import {
 } from "lucide-react";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "./SocialIcons";
 
+// Bản đồ văn phòng — CHỈ nạp khi khách cuộn gần tới chân trang.
+//
+// Một khung Google Maps kéo theo ~400KB script của Google và vài tác vụ nặng
+// (PageSpeed đo được: tốn ~140ms luồng chính ngay lúc mở trang). loading="lazy"
+// của trình duyệt không đủ: Chrome nạp trước cả khung cách màn hình vài nghìn
+// px, nên trên trang ngắn hoặc máy tính nó vẫn tải ngay. Ở đây tự canh bằng
+// IntersectionObserver: chưa tới gần thì chỉ là ô nền giữ đúng chỗ.
+function BanDoVanPhong({ src }) {
+  const ref = useRef(null);
+  const [hien, setHien] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (!("IntersectionObserver" in window)) {
+      setHien(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setHien(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "300px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="h-[160px] bg-white/5">
+      {hien && (
+        <iframe
+          src={src}
+          width="100%"
+          height="160"
+          style={{ border: 0, display: "block", filter: "grayscale(15%) contrast(1.05)" }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+          title="Bản đồ văn phòng PSVTravel"
+        />
+      )}
+    </div>
+  );
+}
+
 export default function Footer({ settings = {} }) {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
   const hotline = settings.hotline || "0907 870 707";
-  const contactEmail = settings.email || "hi@psvtravel.com";
+  const contactEmail = settings.email || "nguyendusit399@gmail.com";
   const address =
     settings.address || "529 Huỳnh Tấn Phát, Phường Tân Thuận, Quận 7, TP. Hồ Chí Minh";
 
@@ -38,10 +87,10 @@ export default function Footer({ settings = {} }) {
     .filter(Boolean);
 
   const socials = [
-    { Icon: FacebookIcon, href: settings.facebook },
-    { Icon: InstagramIcon, href: settings.instagram },
-    { Icon: YoutubeIcon, href: settings.youtube },
-  ];
+    { Icon: FacebookIcon, href: settings.facebook, ten: "Facebook" },
+    { Icon: InstagramIcon, href: settings.instagram, ten: "Instagram" },
+    { Icon: YoutubeIcon, href: settings.youtube, ten: "YouTube" },
+  ].filter((s) => s.href); // chỉ hiện icon mạng xã hội đã điền link trong admin
 
   const thanhToan = ["Chuyển khoản ngân hàng", "Thẻ VISA / MasterCard", "Tiền mặt tại văn phòng"];
 
@@ -89,19 +138,19 @@ export default function Footer({ settings = {} }) {
         <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr_1fr_1.3fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <Image src="/logo.png" alt="PSVTravel" width={900} height={349} className="h-11 w-auto object-contain" />
-              <span className="font-display text-xl font-bold">
-                PSV<span className="text-teal-400">Travel</span>
-              </span>
+              <Image src="/logo.png" alt="PSVTravel" width={900} height={349} sizes="140px" className="h-11 w-auto object-contain" />
             </div>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/65">
-              Đồng hành cùng bạn trên mọi hành trình — từ những bãi biển Việt Nam trong xanh
-              đến những vùng đất mới lạ khắp thế giới.
+              {settings.footer_intro ||
+                "Đồng hành cùng bạn trên mọi hành trình — từ những bãi biển Việt Nam trong xanh đến những vùng đất mới lạ khắp thế giới."}
             </p>
             <div className="mt-5 flex gap-3">
-              {socials.map(({ Icon, href }, i) => (
+              {socials.map(({ Icon, href, ten }, i) => (
                 <a
                   key={i}
+                  // Nút chỉ có icon: phải có tên để trình đọc màn hình (và
+                  // Google Lighthouse) biết đây là link gì.
+                  aria-label={`PSV Travel trên ${ten}`}
                   href={href || "#"}
                   target={href ? "_blank" : undefined}
                   rel={href ? "noopener noreferrer" : undefined}
@@ -128,70 +177,65 @@ export default function Footer({ settings = {} }) {
           </div>
 
           <div>
-            <h4 className="font-display text-base font-semibold text-white/90">Khám phá</h4>
+            <h2 className="font-display text-base font-semibold text-white/90">Khám phá</h2>
             <ul className="mt-4 space-y-2.5 text-sm text-white/65">
-              <li><Link href="/tour-trong-nuoc" className="transition-colors hover:text-teal-400">Tour trong nước</Link></li>
-              <li><Link href="/tour-nuoc-ngoai" className="transition-colors hover:text-teal-400">Tour nước ngoài</Link></li>
-              <li><Link href="/ve-may-bay" className="transition-colors hover:text-teal-400">Vé máy bay</Link></li>
-              <li><Link href="/lam-visa" className="transition-colors hover:text-teal-400">Làm visa</Link></li>
-              <li><Link href="/cam-nang" className="transition-colors hover:text-teal-400">Cẩm nang du lịch</Link></li>
-              <li><Link href="/khoanh-khac-du-khach" className="transition-colors hover:text-teal-400">Khoảnh khắc du khách</Link></li>
+              <li><Link href="/tour-trong-nuoc" className="vung-bam transition-colors hover:text-teal-400">Tour trong nước</Link></li>
+              <li><Link href="/tour-nuoc-ngoai" className="vung-bam transition-colors hover:text-teal-400">Tour nước ngoài</Link></li>
+              <li><Link href="/ve-may-bay" className="vung-bam transition-colors hover:text-teal-400">Vé máy bay</Link></li>
+              <li><Link href="/lam-visa" className="vung-bam transition-colors hover:text-teal-400">Làm visa</Link></li>
+              <li><Link href="/cam-nang" className="vung-bam transition-colors hover:text-teal-400">Cẩm nang du lịch</Link></li>
+              <li><Link href="/khoanh-khac-du-khach" className="vung-bam transition-colors hover:text-teal-400">Khoảnh khắc du khách</Link></li>
+              <li><Link href="/khuyen-mai" className="vung-bam transition-colors hover:text-teal-400">Khuyến mãi &amp; ưu đãi</Link></li>
+              <li><Link href="/diem-den" className="vung-bam transition-colors hover:text-teal-400">Điểm đến nổi bật</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-display text-base font-semibold text-white/90">Hỗ trợ khách hàng</h4>
+            <h2 className="font-display text-base font-semibold text-white/90">Hỗ trợ khách hàng</h2>
             <ul className="mt-4 space-y-2.5 text-sm text-white/65">
               <li>
-                <Link href="/tra-cuu-booking" className="flex items-center gap-1.5 font-semibold text-teal-400 transition-colors hover:text-teal-300">
+                <Link href="/tra-cuu-booking" className="vung-bam flex items-center gap-1.5 font-semibold text-teal-400 transition-colors hover:text-teal-300">
                   <FileSearch className="h-3.5 w-3.5" /> Tra cứu đơn đặt tour
                 </Link>
               </li>
-              <li><Link href="/ve-chung-toi" className="transition-colors hover:text-teal-400">Về chúng tôi</Link></li>
-              <li><Link href="/lien-he" className="transition-colors hover:text-teal-400">Liên hệ</Link></li>
-              <li><Link href="/chinh-sach-bao-mat" className="transition-colors hover:text-teal-400">Chính sách bảo mật</Link></li>
-              <li><Link href="/dieu-khoan-su-dung" className="transition-colors hover:text-teal-400">Điều khoản sử dụng</Link></li>
-              <li><Link href="/chinh-sach-thanh-toan" className="transition-colors hover:text-teal-400">Chính sách thanh toán</Link></li>
-              <li><Link href="/chinh-sach-huy-hoan" className="transition-colors hover:text-teal-400">Chính sách huỷ &amp; hoàn tiền</Link></li>
+              <li><Link href="/ve-chung-toi" className="vung-bam transition-colors hover:text-teal-400">Về chúng tôi</Link></li>
+              <li><Link href="/lien-he" className="vung-bam transition-colors hover:text-teal-400">Liên hệ</Link></li>
+              <li><Link href="/cau-hoi-thuong-gap" className="vung-bam transition-colors hover:text-teal-400">Câu hỏi thường gặp</Link></li>
+              <li><Link href="/tuyen-dung" className="vung-bam transition-colors hover:text-teal-400">Tuyển dụng</Link></li>
+              <li><Link href="/chinh-sach-bao-mat" className="vung-bam transition-colors hover:text-teal-400">Chính sách bảo mật</Link></li>
+              <li><Link href="/dieu-khoan-su-dung" className="vung-bam transition-colors hover:text-teal-400">Điều khoản sử dụng</Link></li>
+              <li><Link href="/chinh-sach-thanh-toan" className="vung-bam transition-colors hover:text-teal-400">Chính sách thanh toán</Link></li>
+              <li><Link href="/chinh-sach-huy-hoan" className="vung-bam transition-colors hover:text-teal-400">Chính sách huỷ &amp; hoàn tiền</Link></li>
             </ul>
 
-            <h4 className="mt-6 font-display text-base font-semibold text-white/90">Liên hệ</h4>
+            <h2 className="mt-6 font-display text-base font-semibold text-white/90">Liên hệ</h2>
             <ul className="mt-4 space-y-3 text-sm text-white/65">
               <li className="flex items-center gap-2.5">
                 <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10"><Phone className="h-3.5 w-3.5 text-teal-400" /></span>
-                <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="hover:text-teal-400">{hotline}</a> (24/7)
+                <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="vung-bam hover:text-teal-400">{hotline}</a> (24/7)
               </li>
               <li className="flex items-center gap-2.5">
                 <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10"><Mail className="h-3.5 w-3.5 text-teal-400" /></span>
-                <a href={`mailto:${contactEmail}`} className="hover:text-teal-400">{contactEmail}</a>
+                <a href={`mailto:${contactEmail}`} className="vung-bam hover:text-teal-400">{contactEmail}</a>
               </li>
             </ul>
           </div>
 
           {/* Bản đồ văn phòng thật */}
           <div>
-            <h4 className="font-display text-base font-semibold text-white/90">Văn phòng chính</h4>
+            <h2 className="font-display text-base font-semibold text-white/90">Văn phòng chính</h2>
             <p className="mt-3 flex items-start gap-2.5 text-sm text-white/65">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-teal-400" />
               {address}
             </p>
             <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 shadow-inner">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.5717490899699!2d106.72970614717165!3d10.743722563232383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xbcd98d0b27b3a57%3A0xfb2c9ac902c59146!2zQ8OUTkcgVFkgQ-G7lCBQSOG6pk4gRFUgTOG7ikNIIFAuUy5WIFRSQVZFTA!5e0!3m2!1svi!2s!4v1784579444253!5m2!1svi!2s"
-                width="100%"
-                height="160"
-                style={{ border: 0, display: "block", filter: "grayscale(15%) contrast(1.05)" }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="strict-origin-when-cross-origin"
-                title="Bản đồ văn phòng PSVTravel"
-              />
+              <BanDoVanPhong src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.5717490899699!2d106.72970614717165!3d10.743722563232383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xbcd98d0b27b3a57%3A0xfb2c9ac902c59146!2zQ8OUTkcgVFkgQ-G7lCBQSOG6pk4gRFUgTOG7ikNIIFAuUy5WIFRSQVZFTA!5e0!3m2!1svi!2s!4v1784579444253!5m2!1svi!2s" />
             </div>
             <a
               href={`https://www.google.com/maps?q=${encodeURIComponent(address)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-teal-400 hover:text-teal-300"
+              className="vung-bam mt-3 flex items-center gap-1.5 text-xs font-semibold text-teal-400 hover:text-teal-300"
             >
               Chỉ đường trên Google Maps <ArrowRight className="h-3 w-3" />
             </a>

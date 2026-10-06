@@ -11,11 +11,14 @@ import {
   BadgeCheck, HelpCircle, Search, SlidersHorizontal,
 } from "lucide-react";
 import { createBooking } from "@/app/lib/api";
+import { fbTrack } from "@/app/lib/fbpixel";
+import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 import { formatVND } from "@/data/tours";
 import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwan } from "@/components/FlagIcons";
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
 import ReviewForm from "@/components/ReviewForm";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
 
 const flagBySlug = {
   "Thái Lan": FlagThailand,
@@ -111,11 +114,11 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-ocean-100 bg-white">
       <button onClick={onToggle} className="flex w-full items-center gap-4 p-5 text-left">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-500 font-display text-sm font-bold text-white">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-700 font-display text-sm font-bold text-white">
           {index + 1}
         </span>
         <div className="flex-1">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ocean-600">{day.day}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ocean-700">{day.day}</p>
           <p className="font-display text-base font-semibold text-deep-900">{day.title}</p>
         </div>
         <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
@@ -462,12 +465,16 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     setter(Number.isNaN(so) ? toiThieu : Math.max(toiThieu, Math.min(so, tranKhach)));
   };
 
-  const childPrice = tour.childPrice ?? Math.round((donGiaNguoiLon * 0.6) / 1000) * 1000;
+  // Tour chưa nhập giá trẻ em → "Liên hệ báo giá": KHÔNG cộng vào tạm tính
+  // (máy chủ cũng không tính), nhân viên báo giá sau. Trước đây web tự ước 60%
+  // giá người lớn trong khi máy chủ tính 0đ — khách thấy một số, email ghi số khác.
+  const childPrice = tour.childPrice ?? null;
+  const treEmChoBaoGia = childPrice === null;
   // adults/children có thể là chuỗi rỗng trong lúc người dùng đang xoá để gõ số
   // mới — quy về số trước khi tính, tránh hiện NaN trên bảng giá.
   const soNguoiLon = parseInt(adults, 10) || 0;
   const soTreEm = parseInt(children, 10) || 0;
-  const total = soNguoiLon * donGiaNguoiLon + soTreEm * childPrice;
+  const total = soNguoiLon * donGiaNguoiLon + (treEmChoBaoGia ? 0 : soTreEm * childPrice);
 
   const scrollToBooking = () => {
     document.getElementById("booking-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -510,6 +517,14 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
       });
       setBookingCode(res?.data?.booking_code || "");
       setSubmitted(true);
+      // Khách đã để lại tên + SĐT giữ chỗ → Lead (Facebook) + chuyển đổi (Google Ads)
+      fbTrack("Lead", { content_name: tour.name, content_category: "tour", value: total, currency: "VND" });
+      // transaction_id = mã đơn: Google bỏ qua lượt trùng (bấm 2 lần, tải lại trang)
+      gtagConversion(CONVERSION_LIEN_HE, {
+        value: total,
+        currency: "VND",
+        ...(res?.data?.booking_code ? { transaction_id: res.data.booking_code } : {}),
+      });
     } catch (e) {
       setFormError(e.message);
     } finally {
@@ -532,9 +547,9 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
         <div className="absolute inset-0 bg-gradient-to-t from-deep-950/85 via-deep-950/20 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-5 pb-10 pt-24 sm:px-8">
           <div className="mb-3 flex items-center gap-1.5 text-xs text-white/75">
-            <Link href="/" className="transition-colors hover:text-gold-300">Trang chủ</Link>
+            <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>
             <span>/</span>
-            <Link href={basePath} className="transition-colors hover:text-gold-300">
+            <Link href={basePath} className="vung-bam transition-colors hover:text-gold-300">
               {basePath === "/tour-trong-nuoc" ? "Tour trong nước" : "Tour nước ngoài"}
             </Link>
             <span>/</span>
@@ -611,7 +626,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       onClick={() => setDetailSearchOpen(true)}
-                      className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-50 text-ocean-600 transition-colors hover:bg-ocean-100"
+                      className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-50 text-ocean-700 transition-colors hover:bg-ocean-100"
                       aria-label="Tìm tour khác"
                     >
                       <Search className="h-4 w-4" />
@@ -639,12 +654,21 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
               <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {tour.highlights.map((h) => (
                   <div key={h} className="flex items-start gap-2.5 rounded-xl bg-ocean-50/60 p-3">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-600" />
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-700" />
                     <span className="text-sm font-semibold text-deep-900">{h}</span>
                   </div>
                 ))}
               </div>
             </SectionReveal>
+
+            {/* ===== VIDEO TOUR — chỉ hiện khi admin đã dán link YouTube ===== */}
+            {tour.videoId && (
+              <SectionReveal delay={0.05} className="mt-8">
+                <h2 className="font-display text-xl font-bold text-deep-900">Video hành trình</h2>
+                <p className="mt-1 text-sm text-ink-subtle">Cảnh thực tế trên tour — bấm để xem.</p>
+                <YouTubeEmbed videoId={tour.videoId} title={`Video tour ${tour.name}`} className="mt-5" />
+              </SectionReveal>
+            )}
 
             <SectionReveal delay={0.1} className="mt-8">
               <h2 className="font-display text-xl font-bold text-deep-900">Lịch trình chi tiết</h2>
@@ -806,6 +830,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                         <div className="relative mt-1.5">
                           <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-500" />
                           <select
+                            aria-label="Ngày khởi hành"
                             value={depId ?? ""}
                             onChange={(e) => setDepId(Number(e.target.value))}
                             className="w-full appearance-none rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-9 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white"
@@ -838,7 +863,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                             inputMode="numeric"
                             maxLength={2}
                             aria-label="Số người lớn"
-                            className="w-9 rounded-lg border border-transparent bg-transparent text-center text-sm font-bold text-deep-900 outline-none focus:border-ocean-300 focus:bg-white"
+                            className="h-7 w-9 rounded-lg border border-transparent bg-transparent text-center text-sm font-bold text-deep-900 outline-none focus:border-ocean-300 focus:bg-white"
                           />
                           <button type="button" onClick={() => setAdults((g) => Math.min(tranKhach, (parseInt(g, 10) || 0) + 1))} aria-label="Thêm một người lớn" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">+</button>
                         </div>
@@ -848,7 +873,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                     <div>
                       <label className="text-xs font-semibold text-ink-muted">Trẻ em (dưới 12 tuổi)</label>
                       <div className="mt-1.5 flex items-center justify-between rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2">
-                        <span className="flex items-center gap-2 text-sm text-ink"><Baby className="h-4 w-4 text-teal-600" /> {formatVND(childPrice)}</span>
+                        <span className="flex items-center gap-2 text-sm text-ink"><Baby className="h-4 w-4 text-teal-600" /> {treEmChoBaoGia ? "Liên hệ báo giá" : formatVND(childPrice)}</span>
                         <div className="flex items-center gap-3">
                           <button type="button" onClick={() => setChildren((g) => Math.max(0, (parseInt(g, 10) || 0) - 1))} aria-label="Bớt một trẻ em" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">−</button>
                           <input
@@ -859,7 +884,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                             inputMode="numeric"
                             maxLength={2}
                             aria-label="Số trẻ em"
-                            className="w-9 rounded-lg border border-transparent bg-transparent text-center text-sm font-bold text-deep-900 outline-none focus:border-ocean-300 focus:bg-white"
+                            className="h-7 w-9 rounded-lg border border-transparent bg-transparent text-center text-sm font-bold text-deep-900 outline-none focus:border-ocean-300 focus:bg-white"
                           />
                           <button type="button" onClick={() => setChildren((g) => Math.min(tranKhach, (parseInt(g, 10) || 0) + 1))} aria-label="Thêm một trẻ em" className="tap-44 grid h-7 w-7 place-items-center rounded-full bg-white text-ocean-700 shadow transition-colors hover:bg-ocean-100">+</button>
                         </div>
@@ -875,12 +900,12 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       </div>
                       {soTreEm > 0 && (
                         <div className="flex items-center justify-between text-ink-muted">
-                          <span>{soTreEm} trẻ em × {formatVND(childPrice)}</span>
-                          <span className="font-medium text-ink">{formatVND(soTreEm * childPrice)}</span>
+                          <span>{soTreEm} trẻ em{treEmChoBaoGia ? "" : <> × {formatVND(childPrice)}</>}</span>
+                          <span className={treEmChoBaoGia ? "font-semibold text-sunset-700" : "font-medium text-ink"}>{treEmChoBaoGia ? "Liên hệ báo giá" : formatVND(soTreEm * childPrice)}</span>
                         </div>
                       )}
                       <div className="flex items-center justify-between border-t border-ocean-200/70 pt-2">
-                        <span className="font-semibold text-deep-900">Tạm tính</span>
+                        <span className="font-semibold text-deep-900">Tạm tính{treEmChoBaoGia && soTreEm > 0 && <span className="block text-xs font-normal text-ink-muted">chưa gồm trẻ em — nhân viên sẽ báo giá</span>}</span>
                         <span className="font-display text-xl font-bold text-sunset-700">{formatVND(total)}</span>
                       </div>
                     </div>
@@ -893,7 +918,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       {submitting ? "Đang gửi..." : <>Đặt tour ngay <ArrowRight className="h-4 w-4" /></>}
                     </button>
 
-                    <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
+                    <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} onClick={() => fbTrack("Contact", { method: "hotline", content_name: tour.name })} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
                       <Phone className="h-4 w-4" /> Gọi tư vấn: {hotline}
                     </a>
 

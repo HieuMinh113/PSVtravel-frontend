@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Phone, MessageCircle } from "lucide-react";
+import { fbTrack } from "@/app/lib/fbpixel";
 
 // Nút liên hệ nổi — giúp khách chốt tour nhanh qua gọi điện / Zalo,
 // kênh chuyển đổi rất quan trọng với thị trường du lịch Việt Nam.
@@ -23,11 +24,12 @@ export default function FloatingContact({ settings = {} }) {
         href={zaloHref}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => fbTrack("Contact", { method: "zalo" })}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
         whileHover={{ scale: 1.08 }}
-        className="group relative grid h-12 w-12 place-items-center rounded-full bg-white text-ocean-600 shadow-deep ring-1 ring-ocean-100 sm:h-14 sm:w-14"
+        className="group relative grid h-12 w-12 place-items-center rounded-full bg-white text-ocean-700 shadow-deep ring-1 ring-ocean-100 sm:h-14 sm:w-14"
         aria-label="Nhắn tin qua Zalo"
       >
         <span className="pointer-events-none absolute right-full mr-3 whitespace-nowrap rounded-lg bg-deep-900 px-3 py-1.5 text-xs font-semibold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
@@ -40,6 +42,7 @@ export default function FloatingContact({ settings = {} }) {
       {/* Hotline — có vòng lan toả (ripple) để thu hút chú ý */}
       <motion.a
         href={telHref}
+        onClick={() => fbTrack("Contact", { method: "hotline" })}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.15 }}

@@ -1,15 +1,19 @@
 "use client";
+import { NAM_THANH_LAP, soNamHoatDong } from "@/app/lib/seo";
 import Image from "next/image";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  HeartHandshake, ShieldCheck, BadgeCheck, Users2, MapPinned,
-  X, ArrowRight,
+  HeartHandshake, ShieldCheck, BadgeCheck, Users2, MapPinned, MapPin,
+  X, ArrowRight, Images, Play,
 } from "lucide-react";
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import CountUp from "@/components/CountUp";
+import TeamCarousel from "@/components/TeamCarousel";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
+import { anhThuNho, mediaKhoanhKhac } from "@/app/lib/youtube";
 
 const values = [
   {
@@ -36,7 +40,7 @@ const values = [
 
 const milestones = [
   {
-    year: "2017",
+    year: String(NAM_THANH_LAP),
     title: "Thành lập PSV Travel",
     desc: "PSV Travel chính thức hoạt động trong lĩnh vực du lịch lữ hành, đặt nền móng cho hành trình phát triển và phục vụ khách hàng.",
   },
@@ -57,36 +61,110 @@ const milestones = [
   },
 ];
 
+const chuCaiDau = (ten) => (ten || "?").trim().charAt(0).toUpperCase();
+
+// Bố cục bento kiểu tạp chí — giống trang "Khoảnh khắc du khách": ô nổi bật lớn
+// xen ô cao, ô rộng cho nhịp thị giác. Chỉ áp span từ sm trở lên; điện thoại giữ
+// lưới 2 cột đều để không rối.
+function bentoSpan(i) {
+  const m = i % 8;
+  if (m === 0) return "sm:col-span-2 sm:row-span-2"; // ô nổi bật
+  if (m === 3) return "sm:row-span-2"; // ô cao
+  if (m === 5) return "lg:col-span-2"; // ô rộng
+  return "";
+}
+
 function MomentCard({ m, i, onOpen }) {
   const nhan = m.caption || m.trip || m.name || "Khoảnh khắc cùng PSV Travel";
   return (
     <motion.button
       onClick={() => onOpen(m)}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.5, delay: (i % 6) * 0.06, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -6 }}
-      aria-label={nhan}
-      className="group relative aspect-[4/3] overflow-hidden rounded-2xl text-left shadow-card"
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.45, delay: Math.min(i, 8) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+      aria-label={`${m.videoId ? "Xem video" : "Xem ảnh"}: ${nhan}`}
+      className={`group relative overflow-hidden rounded-2xl bg-deep-900 text-left shadow-card outline-none focus-visible:ring-4 focus-visible:ring-ocean-400/50 ${bentoSpan(i)}`}
     >
       <Image
         src={m.photo}
         alt={nhan}
         fill
         quality={90}
-        sizes="(max-width: 640px) 50vw, 25vw"
-        className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110"
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-deep-950/85 via-deep-950/10 to-transparent" />
-      <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-sunset-500 transition-transform duration-400 ease-enter group-hover:scale-x-100" />
-      <p className="absolute inset-x-0 bottom-0 p-4 text-sm font-medium text-white">{nhan}</p>
+      <div className="absolute inset-0 bg-gradient-to-t from-deep-950/80 via-deep-950/10 to-transparent transition-opacity duration-500 group-hover:from-deep-950/90" />
+
+      {/* Khoảnh khắc có video cảm nhận: nút phát giữa ảnh + nhãn "Video" */}
+      {m.videoId ? (
+        <>
+          <span className="absolute left-1/2 top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-sunset-600/95 text-white shadow-lg ring-4 ring-white/25 transition-transform duration-300 group-hover:scale-110 sm:h-14 sm:w-14">
+            <Play className="ml-0.5 h-5 w-5 fill-current sm:h-6 sm:w-6" aria-hidden="true" />
+          </span>
+          <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-sunset-700 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+            <Play className="h-3 w-3 fill-current" aria-hidden="true" /> Video
+          </span>
+        </>
+      ) : null}
+
+      {!m.videoId && m.photos && m.photos.length > 1 ? (
+        <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full border border-white/20 bg-deep-950/55 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+          <Images className="h-3.5 w-3.5" aria-hidden="true" />
+          {m.photos.length}
+        </span>
+      ) : null}
+
+      <div className="absolute inset-x-0 bottom-0 p-3.5">
+        {m.caption && (
+          <p className={`line-clamp-2 text-sm leading-snug text-white ${m.name ? "mb-2 max-h-0 opacity-0 transition-all duration-500 ease-out group-hover:max-h-20 group-hover:opacity-100" : "font-medium"}`}>
+            {m.caption}
+          </p>
+        )}
+        {m.name && (
+          <div className="flex items-center gap-2">
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-white/80 bg-gradient-to-br from-ocean-500 to-teal-500 text-[10px] font-bold text-white">
+              {chuCaiDau(m.name || m.trip)}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-xs font-semibold text-white">{m.name || m.trip || "Khoảnh khắc PSV"}</p>
+              {m.trip && m.name && (
+                <p className="flex items-center gap-1 truncate text-[11px] text-white/75">
+                  <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
+                  <span className="truncate">{m.trip}</span>
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </motion.button>
   );
 }
 
-export default function AboutUs({ moments = [] }) {
+export default function AboutUs({ moments = [], team = [], aboutImages = [], videoGioiThieu = null, tieuDeVideo = null }) {
   const [active, setActive] = useState(null);
+  const [photoIndex, setPhotoIndex] = useState(0); // ảnh đang xem trong khoảnh khắc
+
+  // Ảnh khối "Khoảnh khắc đáng nhớ": ưu tiên ảnh admin thêm ở "Hình ảnh Về chúng
+  // tôi"; nếu chưa có thì dùng ảnh khách gửi (Khoảnh Khắc Du Khách) để không trống.
+  const galleryItems = aboutImages.length > 0
+    ? aboutImages.map((im) => ({
+        id: `about-${im.id}`,
+        photo: im.image,
+        photos: [im.image],
+        caption: im.caption || "",
+        name: null,
+        trip: null,
+      }))
+    : moments;
+
+  // Mở khoảnh khắc và luôn bắt đầu từ ảnh chính.
+  const openMoment = (m) => { setActive(m); setPhotoIndex(0); };
+  const closeMoment = () => setActive(null);
+
+  // Bộ media (video nếu có, rồi ảnh chính + ảnh phụ) của khoảnh khắc đang mở.
+  const activeMedia = mediaKhoanhKhac(active);
+  const activeItem = activeMedia[photoIndex] ?? activeMedia[0] ?? null;
 
   return (
     <div>
@@ -101,7 +179,7 @@ export default function AboutUs({ moments = [] }) {
       <section className="bg-foam py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
           <SectionReveal>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Câu chuyện của PSV</span>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Câu chuyện của PSV</span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
               Bắt đầu từ tình yêu <span className="text-gradient-ocean">xê dịch</span>
             </h2>
@@ -110,7 +188,7 @@ export default function AboutUs({ moments = [] }) {
               trình du lịch trong nước và quốc tế cùng nhiều dịch vụ hỗ trợ hành trình.
             </p>
             <p className="mt-4 leading-relaxed text-ink-muted">
-              Được thành lập từ năm 2017, PSV Travel không ngừng hoàn thiện sản phẩm, nâng cao chất lượng
+              Hoạt động từ năm {NAM_THANH_LAP}, PSV Travel không ngừng hoàn thiện sản phẩm, nâng cao chất lượng
               dịch vụ và xây dựng đội ngũ chuyên nghiệp với mong muốn mang đến cho khách hàng những chuyến
               đi trọn vẹn, thuận tiện và đáng nhớ.
             </p>
@@ -121,7 +199,7 @@ export default function AboutUs({ moments = [] }) {
 
             <div className="mx-auto mt-9 grid max-w-lg grid-cols-3 gap-4 sm:gap-6">
               {[
-                { to: 9, suffix: " năm", label: "Hoạt động" },
+                { to: soNamHoatDong(), suffix: " năm", label: "Hoạt động" },
                 { to: 10000, suffix: "+", label: "Khách/năm" },
                 { to: 300, suffix: "+", label: "Tuyến tour" },
               ].map((s) => (
@@ -138,6 +216,23 @@ export default function AboutUs({ moments = [] }) {
           </SectionReveal>
         </div>
       </section>
+
+      {/* ===== VIDEO GIỚI THIỆU — Admin → Cài đặt; trống thì ẩn ===== */}
+      {videoGioiThieu && (
+        <section className="bg-foam pb-16 sm:pb-20">
+          <div className="mx-auto max-w-5xl px-5 sm:px-8">
+            <SectionReveal className="mx-auto mb-8 max-w-2xl text-center">
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Video giới thiệu</span>
+              <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+                {tieuDeVideo || "Gặp gỡ đội ngũ PSV Travel"}
+              </h2>
+            </SectionReveal>
+            <SectionReveal delay={0.1}>
+              <YouTubeEmbed videoId={videoGioiThieu} title={tieuDeVideo || "Video giới thiệu PSV Travel"} />
+            </SectionReveal>
+          </div>
+        </section>
+      )}
 
       {/* ===== GIÁ TRỊ CỐT LÕI ===== */}
       <section className="relative overflow-hidden bg-deep-gradient py-16 text-white sm:py-20">
@@ -219,17 +314,25 @@ export default function AboutUs({ moments = [] }) {
               thuận tiện, an tâm và trọn vẹn.
             </p>
           </SectionReveal>
+
+          {/* Đội ngũ do admin thêm (Admin → Đội ngũ). Chưa có ai thì ẩn,
+              chỉ giữ đoạn giới thiệu bằng chữ ở trên. */}
+          {team.length > 0 && (
+            <div className="mt-14">
+              <TeamCarousel members={team} />
+            </div>
+          )}
         </div>
       </section>
 
       {/* ===== KHOẢNH KHẮC ĐÁNG NHỚ =====
           Ảnh lấy từ Admin → Khoảnh Khắc Du Khách. Chưa có ảnh thật thì ẩn cả
           khối — không dựng ảnh minh hoạ để khỏi hứa hẹn thứ không có. */}
-      {moments.length > 0 && (
+      {galleryItems.length > 0 && (
         <section className="bg-foam py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <SectionReveal className="text-center">
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Khoảnh khắc đáng nhớ</span>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Khoảnh khắc đáng nhớ</span>
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                 Những hành trình được tạo nên từ sự đồng hành
               </h2>
@@ -241,9 +344,9 @@ export default function AboutUs({ moments = [] }) {
               </p>
             </SectionReveal>
 
-            <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {moments.map((m, i) => (
-                <MomentCard key={m.id ?? i} m={m} i={i} onOpen={setActive} />
+            <div className="mt-12 grid auto-rows-[10.5rem] grid-cols-2 gap-3 sm:auto-rows-[12rem] sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+              {galleryItems.map((m, i) => (
+                <MomentCard key={m.id ?? i} m={m} i={i} onOpen={openMoment} />
               ))}
             </div>
           </div>
@@ -254,7 +357,7 @@ export default function AboutUs({ moments = [] }) {
       <section className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
           <SectionReveal>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Cam kết của PSV Travel</span>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Cam kết của PSV Travel</span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">Khách hàng là trên hết</h2>
             <p className="mt-5 leading-relaxed text-ink-muted">
               Với phương châm “Khách hàng là trên hết”, PSV Travel cam kết mang đến những sản phẩm và dịch
@@ -303,7 +406,7 @@ export default function AboutUs({ moments = [] }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setActive(null)}
+            onClick={closeMoment}
             className="fixed inset-0 z-[100] grid place-items-center bg-deep-950/90 p-5 backdrop-blur-sm"
           >
             <motion.div
@@ -311,20 +414,70 @@ export default function AboutUs({ moments = [] }) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.94, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative max-h-[85vh] w-full max-w-3xl overflow-hidden rounded-3xl bg-white"
+              className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-3xl bg-white"
             >
               <button
-                onClick={() => setActive(null)}
+                onClick={closeMoment}
                 aria-label="Đóng"
                 className="tap-44 absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-deep-900 shadow"
               >
                 <X className="h-5 w-5" />
               </button>
-              <img
-                src={active.photo}
-                alt={active.caption || "Khoảnh khắc cùng PSV Travel"}
-                className="max-h-[70vh] w-full object-contain bg-deep-950"
-              />
+
+              <div className="relative bg-deep-950">
+                {activeItem?.loai === "video" ? (
+                  <YouTubeEmbed
+                    key={`${active.id}-video`}
+                    videoId={activeItem.id}
+                    title={active.caption || `Cảm nhận của ${active.name || "khách hàng"}`}
+                    tronGoc="rounded-none"
+                    className="shadow-none"
+                  />
+                ) : (
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={photoIndex}
+                      src={activeItem?.src}
+                      alt={active.caption || "Khoảnh khắc cùng PSV Travel"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="max-h-[68vh] w-full object-contain"
+                    />
+                  </AnimatePresence>
+                )}
+                {activeMedia.length > 1 ? (
+                  <span className="absolute left-3 top-3 z-10 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+                    {photoIndex + 1}/{activeMedia.length}
+                  </span>
+                ) : null}
+              </div>
+
+              {/* Dải ảnh nhỏ — bấm để đổi ảnh lớn */}
+              {activeMedia.length > 1 ? (
+                <div className="flex gap-2 overflow-x-auto px-5 pt-4">
+                  {activeMedia.map((item, gi) => (
+                    <button
+                      key={gi}
+                      type="button"
+                      onClick={() => setPhotoIndex(gi)}
+                      aria-label={item.loai === "video" ? "Xem video" : `Xem ảnh ${gi + 1}`}
+                      className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition ${
+                        gi === photoIndex ? "border-ocean-500" : "border-transparent opacity-70 hover:opacity-100"
+                      }`}
+                    >
+                      <img src={item.loai === "video" ? anhThuNho(item.id) : item.src} alt="" onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} className="h-full w-full bg-deep-900 object-cover" />
+                      {item.loai === "video" && (
+                        <span className="absolute inset-0 grid place-items-center bg-deep-950/35">
+                          <Play className="ml-0.5 h-5 w-5 fill-white text-white" aria-hidden="true" />
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+
               {(active.caption || active.trip) && (
                 <p className="p-5 text-center text-sm text-ink">{active.caption || active.trip}</p>
               )}

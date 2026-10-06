@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
+import { TomTatTour } from "@/components/DoanGioiThieu";
 import DomesticTours from "@/components/pages/DomesticTours";
 import { pageMeta } from "@/app/lib/seo";
 import { getTours, getOrbitImages, getCategories } from "@/app/lib/api";
@@ -24,7 +25,10 @@ export default async function Page() {
   const anhVongXoay = orbitImages.length
     ? orbitImages
     : tours.length
-    ? Array.from({ length: 10 }, (_, i) => tours[i % tours.length].image)
+    ? Array.from({ length: 10 }, (_, i) => {
+        const t = tours[i % tours.length];
+        return { src: t.image, alt: t.name };
+      })
     : [];
 
   return (
@@ -56,6 +60,7 @@ export default async function Page() {
               tour đều có lịch trình chi tiết theo ngày, ảnh thực tế và ngày khởi hành rõ ràng để
               bạn dễ chọn.
             </p>
+            <TomTatTour tours={tours} danhMuc={danhMuc} loai="tour trong nước" basePath="/tour-trong-nuoc" />
             <p>
               Giá tour trong nước phổ biến từ khoảng vài triệu đến trên mười triệu đồng mỗi khách,
               <strong> trọn gói minh bạch</strong> — thường đã gồm vé máy bay hoặc xe, khách sạn theo

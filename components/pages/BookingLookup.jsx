@@ -75,7 +75,7 @@ export default function BookingLookup() {
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <div className="rounded-3xl bg-white p-6 shadow-card sm:p-8">
             <div className="flex items-center gap-3">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-ocean-50 text-ocean-600">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-ocean-50 text-ocean-700">
                 <FileSearch className="h-5 w-5" />
               </span>
               <div>
@@ -166,7 +166,7 @@ export default function BookingLookup() {
               >
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ocean-50 bg-ocean-50/40 px-6 py-4">
                   <p className="flex items-center gap-2 font-mono text-sm font-bold text-deep-900">
-                    <Ticket className="h-4 w-4 text-ocean-600" />
+                    <Ticket className="h-4 w-4 text-ocean-700" />
                     {donHang.booking_code}
                   </p>
                   <span
@@ -222,6 +222,10 @@ export default function BookingLookup() {
                     <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-ocean-50 pt-4">
                       <p className="font-display text-xl font-bold text-ocean-700">
                         {dinhDangTien(donHang.total_price)}
+                        {/* Tour chưa có giá trẻ em: tổng chưa gồm trẻ em */}
+                        {donHang.cho_bao_gia_tre_em && (
+                          <span className="block font-body text-xs font-normal text-ink-muted">chưa gồm trẻ em — nhân viên sẽ báo giá</span>
+                        )}
                       </p>
                       {donHang.tour_slug && (
                         <Link

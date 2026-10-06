@@ -1,4 +1,4 @@
-import { getTours, getGuides, getVisaSlugs, getEventSlugs } from "@/app/lib/api";
+import { getTours, getGuides, getVisaSlugs, getEventSlugs, getDestinationSlugs, getJobSlugs } from "@/app/lib/api";
 import { SITE_URL } from "./lib/seo";
 
 // Sitemap dựng lại mỗi giờ để tour và bài viết mới sớm được Google ghi nhận
@@ -7,9 +7,19 @@ export const revalidate = 3600;
 export default async function sitemap() {
   const now = new Date();
 
+  // Đổi chuỗi ngày từ backend thành Date hợp lệ; hỏng/thiếu thì dùng thời điểm
+  // hiện tại. Nhờ vậy mỗi trang có lastmod THẬT thay vì cùng một mốc dựng site
+  // (công cụ audit cảnh báo mọi lastmod giống hệt nhau).
+  const ngay = (v) => {
+    if (!v) return now;
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? now : d;
+  };
+
   const staticPaths = [
     "", "/tour-trong-nuoc", "/tour-nuoc-ngoai", "/ve-may-bay",
     "/lam-visa", "/team-building", "/cam-nang", "/khoanh-khac-du-khach", "/ve-chung-toi", "/lien-he",
+    "/khuyen-mai", "/diem-den", "/cau-hoi-thuong-gap", "/tuyen-dung",
     // Các trang pháp lý bắt buộc — cần Google lập chỉ mục để chứng minh website
     // đã công khai đầy đủ theo quy định
     "/chinh-sach-bao-mat", "/dieu-khoan-su-dung", "/chinh-sach-thanh-toan", "/chinh-sach-huy-hoan",
@@ -39,22 +49,24 @@ export default async function sitemap() {
     }
   };
 
-  const [domestic, abroad, guides, visaSlugs, eventSlugs] = await Promise.all([
+  const [domestic, abroad, guides, visaSlugs, eventSlugs, destSlugs, jobSlugs] = await Promise.all([
     anToan(() => getTours({ type: "domestic" })),
     anToan(() => getTours({ type: "abroad" })),
     anToan(() => getGuides()),
     anToan(() => getVisaSlugs()),
     anToan(() => getEventSlugs()),
+    anToan(() => getDestinationSlugs()),
+    anToan(() => getJobSlugs()),
   ]);
 
   const tourEntries = [
-    ...domestic.map((t) => ({ base: "/tour-trong-nuoc", slug: t.slug })),
-    ...abroad.map((t) => ({ base: "/tour-nuoc-ngoai", slug: t.slug })),
+    ...domestic.map((t) => ({ base: "/tour-trong-nuoc", slug: t.slug, updatedAt: t.updatedAt })),
+    ...abroad.map((t) => ({ base: "/tour-nuoc-ngoai", slug: t.slug, updatedAt: t.updatedAt })),
   ]
     .filter((x) => x.slug)
-    .map(({ base, slug }) => ({
+    .map(({ base, slug, updatedAt }) => ({
       url: `${SITE_URL}${base}/${slug}`,
-      lastModified: now,
+      lastModified: ngay(updatedAt),
       changeFrequency: "weekly",
       priority: 0.8,
     }));
@@ -64,7 +76,7 @@ export default async function sitemap() {
     .filter((g) => g?.slug)
     .map((g) => ({
       url: `${SITE_URL}/cam-nang/${g.slug}`,
-      lastModified: now,
+      lastModified: ngay(g.updatedAt),
       changeFrequency: "monthly",
       priority: 0.6,
     }));
@@ -89,5 +101,25 @@ export default async function sitemap() {
       priority: 0.6,
     }));
 
-  return [...staticEntries, ...tourEntries, ...guideEntries, ...visaEntries, ...eventEntries];
+  // Trang chi tiết điểm đến
+  const destEntries = (destSlugs || [])
+    .filter(Boolean)
+    .map((slug) => ({
+      url: `${SITE_URL}/diem-den/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    }));
+
+  // Trang chi tiết tin tuyển dụng
+  const jobEntries = (jobSlugs || [])
+    .filter(Boolean)
+    .map((slug) => ({
+      url: `${SITE_URL}/tuyen-dung/${slug}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.5,
+    }));
+
+  return [...staticEntries, ...tourEntries, ...guideEntries, ...visaEntries, ...eventEntries, ...destEntries, ...jobEntries];
 }

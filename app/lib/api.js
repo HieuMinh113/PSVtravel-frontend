@@ -73,6 +73,9 @@ function mapTour(t) {
     id: t.id,
     slug: t.slug,
     name: t.name,
+    // "Tiêu đề SEO" nhân viên tự viết trong admin (tối đa 70 ký tự) — chỉ dùng
+    // cho thẻ <title> trên Google; tên tour hiển thị trên web giữ nguyên.
+    seoTitle: t.seo_title ?? null,
     type: t.type,
     region: t.region,
     country: t.country,
@@ -123,6 +126,7 @@ function mapTour(t) {
     })),
     description: t.description,
     updatedAt: t.updated_at ?? null,
+    videoId: t.video_id ?? null, // mã video YouTube (chỉ có ở trang chi tiết)
   };
 }
 
@@ -184,16 +188,23 @@ export async function getFeaturedReviews() {
 }
 export async function getMoments() {
   const json = await layJSON(`/moments`);
-  return (json?.data ?? []).map((m, i) => ({
-    id: i,
-    name: m.customer_name,
-    trip: m.tour_name,
-    photo: m.image,
-    caption: m.caption,
-    avatar: null, // model Moment chưa có
-    rating: null,
-    date: null,
-  }));
+  return (json?.data ?? []).map((m, i) => {
+    // Ảnh chính đứng đầu, rồi tới các ảnh phụ (bỏ trùng) → bộ ảnh để xem lớn.
+    const gallery = Array.isArray(m.gallery) ? m.gallery.filter(Boolean) : [];
+    const photos = [m.image, ...gallery].filter((u, idx, arr) => u && arr.indexOf(u) === idx);
+    return {
+      id: i,
+      name: m.customer_name,
+      trip: m.tour_name,
+      photo: m.image,
+      photos, // ảnh chính + ảnh phụ
+      videoId: m.video_id ?? null, // video cảm nhận của khách (YouTube)
+      caption: m.caption,
+      avatar: null, // model Moment chưa có
+      rating: null,
+      date: null,
+    };
+  });
 }
 // Chuyển một bản ghi visa từ backend sang hình dạng giao diện dùng.
 function mapVisa(c) {
@@ -279,9 +290,13 @@ function mapGuide(g) {
     author: g.author_name ?? null,
     views: g.view_count ?? 0,
     date: g.published_at ? g.published_at.split("-").reverse().join("/") : null, // yyyy-mm-dd → dd/mm/yyyy
+    updatedAt: g.updated_at ?? g.published_at ?? null, // cho sitemap lastmod thật
+    videoId: g.video_id ?? null, // video minh hoạ (YouTube)
     content: g.content ?? null,
     metaTitle: g.meta_title ?? g.title,
     metaDescription: g.meta_description ?? g.excerpt,
+    // Tour gắn kèm (nếu admin có chọn) — để hiện ô đặt tour bên bài viết.
+    tour: g.tour ? mapTour(g.tour) : null,
   };
 }
 
@@ -300,7 +315,9 @@ export async function getGuideBySlug(slug) {
 
 export async function getGuideSlugs() {
   const json = await layJSON(`/guides-slugs`);
-  return json ?? [];
+  // Nhận cả mảng trần lẫn { data: [...] } như các hàm *Slugs khác — lệch dạng
+  // là generateStaticParams gọi .map() trên object, cả lượt build hỏng.
+  return Array.isArray(json) ? json : json?.data ?? [];
 }
 
 // ---- Sự kiện / Team Building ----
@@ -346,6 +363,8 @@ function mapEventDetail(e) {
     priceNote: e.price_note ?? null,
     metaTitle: e.meta_title ?? e.title,
     metaDescription: e.meta_description ?? e.summary,
+    videoId: e.video_id ?? null, // clip recap sự kiện (YouTube)
+    updatedAt: e.updated_at ?? null,
   };
 }
 
@@ -364,6 +383,92 @@ export async function getEventSlugs() {
   const json = await layJSON(`/events-slugs`);
   return (json ?? []).filter(slugHopLe);
 }
+
+// Đội ngũ / ban lãnh đạo cho trang Về chúng tôi
+export async function getTeamMembers() {
+  const json = await layJSON(`/team-members`);
+  return (json?.data ?? []).map((m) => ({
+    id: m.id,
+    name: m.name,
+    position: m.position,
+    email: m.email ?? null,
+    photo: m.photo ?? null,
+    bio: m.bio ?? "",
+  }));
+}
+
+// Ảnh trang "Về chúng tôi" do admin thêm (Nội dung → Hình ảnh Về chúng tôi).
+export async function getAboutImages() {
+  const json = await layJSON(`/about-images`);
+  return (json?.data ?? []).map((m) => ({
+    id: m.id,
+    image: m.image,
+    caption: m.caption ?? "",
+  }));
+}
+
+// ===== Nội dung marketing do admin quản lý =====
+
+export async function getPromotions() {
+  const json = await layJSON(`/promotions`);
+  return json?.data ?? [];
+}
+
+export async function getDestinations({ featured } = {}) {
+  const json = await layJSON(`/destinations${featured ? "?featured=1" : ""}`);
+  return json?.data ?? [];
+}
+
+export async function getDestinationBySlug(slug) {
+  const json = await layJSON(`/destinations/${slug}`);
+  return json?.data ?? null;
+}
+
+export async function getDestinationSlugs() {
+  const json = await layJSON(`/destinations-slugs`);
+  return Array.isArray(json) ? json : json?.data ?? [];
+}
+
+export async function getFaqs() {
+  const json = await layJSON(`/faqs`);
+  return json?.data ?? [];
+}
+
+export async function getJobs() {
+  const json = await layJSON(`/jobs`);
+  return json?.data ?? [];
+}
+
+export async function getJobBySlug(slug) {
+  const json = await layJSON(`/jobs/${slug}`);
+  return json?.data ?? null;
+}
+
+export async function getJobSlugs() {
+  const json = await layJSON(`/jobs-slugs`);
+  return Array.isArray(json) ? json : json?.data ?? [];
+}
+
+export async function getPartners() {
+  const json = await layJSON(`/partners`);
+  return json?.data ?? [];
+}
+
+// Khách đăng ký nhận ưu đãi — đi qua route cùng origin /api/subscribe
+// (không gọi chéo tên miền sang API, tránh CORS chặn ở production).
+export async function subscribeEmail(email, source = "trang-chu") {
+  const res = await fetch(`/api/subscribe`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ email, source }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(json?.message || "Đăng ký thất bại, vui lòng thử lại.");
+  }
+  return json;
+}
+
 
 // Đánh giá đã duyệt của một gói (dựng sẵn ở trang chi tiết cho SEO)
 export async function getEventReviews(slug) {

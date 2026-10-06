@@ -32,7 +32,7 @@ function FaqItem({ item, isOpen, onToggle }) {
           transition={{ duration: 0.3 }}
           className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-ocean-50"
         >
-          <ChevronDown className="h-4 w-4 text-ocean-600" />
+          <ChevronDown className="h-4 w-4 text-ocean-700" />
         </motion.span>
       </button>
       <motion.div
@@ -70,7 +70,7 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
       <section className="bg-foam py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Dịch vụ nổi bật</span>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Dịch vụ nổi bật</span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
               Visa các quốc gia phổ biến
             </h2>
@@ -153,7 +153,7 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
             <div className="absolute left-0 right-0 top-7 hidden h-0.5 bg-gradient-to-r from-ocean-200 via-teal-300 to-gold-300 lg:block" />
             {steps.map((s, i) => (
               <SectionReveal key={s.title} delay={i * 0.1} className="group relative text-center">
-                <div className="mx-auto grid h-14 w-14 place-items-center rounded-full border-4 border-ocean-50 bg-ocean-600 font-display text-lg font-bold text-white shadow-md transition-transform duration-400 ease-enter group-hover:scale-110">
+                <div className="mx-auto grid h-14 w-14 place-items-center rounded-full border-4 border-ocean-50 bg-ocean-700 font-display text-lg font-bold text-white shadow-md transition-transform duration-400 ease-enter group-hover:scale-110">
                   {i + 1}
                 </div>
                 <h3 className="mt-4 font-display text-base font-semibold text-deep-900">{s.title}</h3>

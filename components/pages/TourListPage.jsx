@@ -157,7 +157,7 @@ export default function TourListPage({
                       aria-pressed={dangChon}
                       className={`relative shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-300 ease-enter ${
                         dangChon
-                          ? "bg-ocean-600 text-white shadow-[0_4px_14px_-4px_rgba(1,105,169,0.6)]"
+                          ? "bg-ocean-700 text-white shadow-[0_4px_14px_-4px_rgba(1,105,169,0.6)]"
                           : "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
                       }`}
                     >
@@ -236,11 +236,18 @@ export default function TourListPage({
               </button>
             </div>
           ) : (
+            <>
+            {/* Tiêu đề ẩn cho trình đọc màn hình: tên thẻ tour là h3, thiếu h2 ở
+                giữa thì thứ tự tiêu đề nhảy cóc h1 → h3 (Lighthouse báo lỗi). */}
+            <h2 className="sr-only">
+              {basePath === "/tour-nuoc-ngoai" ? "Danh sách tour nước ngoài" : "Danh sách tour trong nước"}
+            </h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((tour, i) => (
                 <TourCard key={tour.slug} tour={tour} basePath={basePath} index={i} />
               ))}
             </div>
+            </>
           )}
         </div>
       </section>

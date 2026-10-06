@@ -43,7 +43,7 @@ export default function Guides({ guides: apiGuides = [] }) {
                   aria-pressed={dangChon}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 ease-enter ${
                     dangChon
-                      ? "bg-ocean-600 text-white shadow-[0_4px_14px_-4px_rgba(1,105,169,0.6)]"
+                      ? "bg-ocean-700 text-white shadow-[0_4px_14px_-4px_rgba(1,105,169,0.6)]"
                       : "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
                   }`}
                 >
@@ -73,9 +73,12 @@ export default function Guides({ guides: apiGuides = [] }) {
             </div>
           ) : (
             <>
-              {/* ===== BÀI NỔI BẬT — ảnh lớn nằm ngang ===== */}
+              {/* ===== BÀI NỔI BẬT — ảnh lớn nằm ngang =====
+                  Dùng div thường (không "hiện dần khi cuộn"): bài nằm ngay dưới
+                  hero, nếu chờ bộ theo dõi cuộn thì khi chuyển trang phía client
+                  đôi khi không kích hoạt -> bài bị ẩn, phải F5 mới thấy. */}
               {baiNoiBat && (
-                <SectionReveal className="mt-10">
+                <div className="mt-10">
                   <motion.article whileHover={{ y: -6 }} className="card-surface group overflow-hidden">
                     <Link href={`/cam-nang/${baiNoiBat.slug}`} className="grid grid-cols-1 lg:grid-cols-2">
                       <div className="relative h-60 overflow-hidden lg:h-full lg:min-h-[320px]">
@@ -84,14 +87,13 @@ export default function Guides({ guides: apiGuides = [] }) {
                             src={baiNoiBat.image}
                             alt={baiNoiBat.title}
                             fill
-                            quality={90}
                             sizes="(max-width: 1024px) 100vw, 50vw"
                             className="object-cover transition-transform duration-700 ease-enter group-hover:scale-105"
                           />
                         ) : (
                           <div className="h-full w-full bg-gradient-to-br from-ocean-200 to-teal-200" />
                         )}
-                        <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-sunset-600 px-3 py-1 text-xs font-bold text-white shadow">
+                        <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-sunset-700 px-3 py-1 text-xs font-bold text-white shadow">
                           <Sparkles className="h-3.5 w-3.5" /> Mới nhất
                         </span>
                       </div>
@@ -119,7 +121,7 @@ export default function Guides({ guides: apiGuides = [] }) {
                       </div>
                     </Link>
                   </motion.article>
-                </SectionReveal>
+                </div>
               )}
 
               {/* ===== CÁC BÀI CÒN LẠI ===== */}
@@ -129,8 +131,7 @@ export default function Guides({ guides: apiGuides = [] }) {
                     <motion.article
                       key={g.slug}
                       initial={{ opacity: 0, y: 24 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.2 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: (i % 6) * 0.06, ease: [0.22, 1, 0.36, 1] }}
                       whileHover={{ y: -6 }}
                       className="card-surface group flex flex-col overflow-hidden"
@@ -138,7 +139,7 @@ export default function Guides({ guides: apiGuides = [] }) {
                       <Link href={`/cam-nang/${g.slug}`} className="flex flex-1 flex-col">
                         <div className="relative h-48 overflow-hidden">
                           {g.image ? (
-                            <Image src={g.image} alt={g.title} fill sizes="(max-width: 640px) 100vw, 33vw" quality={90} className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
+                            <Image src={g.image} alt={g.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110" />
                           ) : (
                             <div className="h-full w-full bg-gradient-to-br from-ocean-100 to-teal-100" />
                           )}

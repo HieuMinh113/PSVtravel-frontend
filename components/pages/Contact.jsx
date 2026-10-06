@@ -8,6 +8,8 @@ import {
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/SocialIcons";
+import { fbTrack } from "@/app/lib/fbpixel";
+import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 
 
 export default function Contact({ settings = {} }) {
@@ -56,7 +58,7 @@ export default function Contact({ settings = {} }) {
         };
       }),
   ];
-  const contactEmail = settings.email || "hi@psvtravel.com";
+  const contactEmail = settings.email || "nguyendusit399@gmail.com";
   const workingHours = settings.working_hours || "Thứ 2 – Chủ nhật: 7:30 – 21:30";
 
   const socials = [
@@ -92,6 +94,9 @@ export default function Contact({ settings = {} }) {
       }
 
       setSubmitted(true);
+      // Khách đã gửi form liên hệ (tên + SĐT + nhu cầu) → một "Lead" thực sự.
+      fbTrack("Lead", { content_name: form.subject, content_category: "lien-he" });
+      gtagConversion(CONVERSION_LIEN_HE, { value: 1.0, currency: "VND" });
       setForm({ name: "", phone: "", email: "", subject: "Tư vấn tour trong nước", message: "", website: "" });
     } catch {
       setLoi("Không kết nối được máy chủ. Vui lòng gọi hotline giúp chúng tôi.");
@@ -145,6 +150,7 @@ export default function Contact({ settings = {} }) {
                 <SectionReveal key={k.label} delay={i * 0.08}>
                   <Boc
                     {...(k.href ? { href: k.href } : {})}
+                    {...(k.href?.startsWith("tel:") ? { onClick: () => fbTrack("Contact", { method: "hotline" }) } : {})}
                     className={`card-surface group flex h-full items-start gap-4 p-5 ${k.href ? "cursor-pointer" : ""}`}
                   >
                     <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br ${k.mau} text-white shadow transition-transform duration-400 ease-enter group-hover:scale-110`}>
@@ -163,7 +169,7 @@ export default function Contact({ settings = {} }) {
           <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.1fr]">
             {/* Văn phòng + mạng xã hội */}
             <SectionReveal>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Hệ thống văn phòng</span>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Hệ thống văn phòng</span>
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900">Ghé thăm chúng tôi</h2>
 
               <div className="mt-7 space-y-3">
@@ -180,7 +186,7 @@ export default function Contact({ settings = {} }) {
                       </p>
                       <a
                         href={`tel:${o.phone.replace(/[^0-9]/g, "")}`}
-                        className="mt-1.5 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 transition-colors hover:text-sunset-700"
+                        className="vung-bam mt-1.5 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 transition-colors hover:text-sunset-700"
                       >
                         <Phone className="h-3.5 w-3.5" /> {o.phone}
                       </a>
@@ -261,7 +267,7 @@ export default function Contact({ settings = {} }) {
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-ink-muted">Chủ đề quan tâm</label>
-                    <select value={form.subject} onChange={doiO("subject")} className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white">
+                    <select aria-label="Chủ đề quan tâm" value={form.subject} onChange={doiO("subject")} className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white">
                       <option>Tư vấn tour trong nước</option>
                       <option>Tư vấn tour nước ngoài</option>
                       <option>Dịch vụ visa</option>
@@ -295,7 +301,7 @@ export default function Contact({ settings = {} }) {
                     )}
                   </button>
                   <p className="text-center text-xs text-ink-subtle">
-                    Hoặc gọi trực tiếp <a href={`tel:${hotline.replace(/[^0-9]/g, "")}`} className="font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
+                    Hoặc gọi trực tiếp <a href={`tel:${hotline.replace(/[^0-9]/g, "")}`} onClick={() => fbTrack("Contact", { method: "hotline" })} className="vung-bam font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
                   </p>
                 </form>
               )}

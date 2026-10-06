@@ -27,9 +27,14 @@ const nextConfig = {
       "img-src 'self' data: https:",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "script-src 'self' 'unsafe-inline'",
+      // Meta Pixel + thẻ Google Ads (gtag) nạp script từ tên miền của họ
+      // googleads.g.doubleclick.net / googleadservices.com: gtag của Google Ads
+      // nạp thêm script đo chuyển đổi "view-through" từ đây — thiếu thì
+      // PageSpeed báo lỗi CSP trong mục Best Practices.
+      "script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.google.com",
       "connect-src 'self' https:",
-      "frame-src 'self' https://www.google.com https://maps.google.com",
+      // Bản đồ Google + video YouTube (nhúng qua youtube-nocookie)
+      "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube-nocookie.com https://www.youtube.com https://td.doubleclick.net",
       "base-uri 'self'",
       "form-action 'self'",
     ].join("; ");
@@ -45,6 +50,7 @@ const nextConfig = {
   // Gói sẵn mọi thứ cần khi chạy vào .next/standalone để đóng ảnh Docker nhẹ.
   // Không ảnh hưởng gì lúc chạy `npm run dev` trên máy lập trình.
   output: "standalone",
+
   images: {
     // Next 16 chặn tối ưu ảnh từ IP nội bộ để phòng SSRF. Ở đây phải mở, cả
     // khi chạy thật:
@@ -60,7 +66,9 @@ const nextConfig = {
 
     // Next 16 bắt buộc khai báo trước các mức chất lượng được phép dùng.
     // Mặc định chỉ có [75]; thêm 90 cho ảnh bìa tour và ảnh lớn cho nét.
-    qualities: [75, 90],
+    // 50 dành cho ảnh nền Hero trang chủ: ảnh chỉ hiện mờ 35% dưới lớp phủ tối
+    // nên nén mạnh hơn không nhìn ra khác biệt, mà nhẹ đi ~1/3.
+    qualities: [50, 75, 90],
     remotePatterns: [
       ...mayChuAnh,
       // Máy lập trình: tuỳ người mà .env ghi localhost hay 127.0.0.1
@@ -69,6 +77,8 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "plus.unsplash.com" },
       { protocol: "https", hostname: "picsum.photos" },
+      // Ảnh thu nhỏ của video YouTube (khoảnh khắc dạng video không có ảnh riêng)
+      { protocol: "https", hostname: "i.ytimg.com" },
     ],
   },
 };

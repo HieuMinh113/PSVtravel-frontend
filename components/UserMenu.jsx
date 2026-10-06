@@ -69,7 +69,7 @@ export default function UserMenu({ solid = false }) {
         href="/dang-nhap"
         className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300 ${
           solid
-            ? "bg-ocean-600 text-white hover:bg-ocean-700"
+            ? "bg-ocean-700 text-white hover:bg-ocean-800"
             : "bg-white/15 text-white backdrop-blur hover:bg-white/25"
         }`}
       >
@@ -101,13 +101,13 @@ export default function UserMenu({ solid = false }) {
         ) : (
           <span
             className={`grid h-7 w-7 place-items-center rounded-full text-xs font-bold ${
-              solid ? "bg-ocean-600 text-white" : "bg-white/25 text-white"
+              solid ? "bg-ocean-700 text-white" : "bg-white/25 text-white"
             }`}
           >
             {chuDau}
           </span>
         )}
-        <span className="hidden max-w-[10ch] truncate xl:inline">{user.name}</span>
+        <span className="hidden max-w-[12ch] truncate 2xl:inline">{user.name}</span>
         <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
       </button>
 
@@ -125,7 +125,7 @@ export default function UserMenu({ solid = false }) {
               <div className="flex items-center gap-2">
                 <p className="truncate text-sm font-bold text-deep-900">{user.name}</p>
                 {user.la_nhan_vien && (
-                  <span className="shrink-0 rounded-full bg-ocean-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                  <span className="shrink-0 rounded-full bg-ocean-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
                     Nhân viên
                   </span>
                 )}
@@ -140,7 +140,7 @@ export default function UserMenu({ solid = false }) {
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-deep-800 transition-colors hover:bg-ocean-50"
               >
-                <Ticket className="h-4 w-4 text-ocean-600" />
+                <Ticket className="h-4 w-4 text-ocean-700" />
                 Đơn đặt tour của tôi
               </Link>
               <Link
@@ -149,7 +149,7 @@ export default function UserMenu({ solid = false }) {
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-deep-800 transition-colors hover:bg-ocean-50"
               >
-                <Settings className="h-4 w-4 text-ocean-600" />
+                <Settings className="h-4 w-4 text-ocean-700" />
                 Hồ sơ &amp; mật khẩu
               </Link>
             </div>
@@ -168,7 +168,7 @@ export default function UserMenu({ solid = false }) {
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-50"
                 >
-                  <ShieldCheck className="h-4 w-4 text-ocean-600" />
+                  <ShieldCheck className="h-4 w-4 text-ocean-700" />
                   <span className="flex-1">Vào trang quản trị</span>
                   <ExternalLink className="h-3.5 w-3.5 text-ink-subtle" />
                 </a>

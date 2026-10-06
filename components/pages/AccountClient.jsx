@@ -71,6 +71,7 @@ function TheDon({ don, index }) {
             </span>
             <span className="flex items-center gap-1.5">
               <Wallet className="h-4 w-4 text-ocean-500" /> {tienVN(don.total_price)}
+              {don.cho_bao_gia_tre_em && <span className="text-xs text-ink-muted">(chưa gồm trẻ em — chờ báo giá)</span>}
             </span>
           </div>
 
@@ -92,7 +93,7 @@ function TheDon({ don, index }) {
                 <button
                   type="button"
                   onClick={() => setMoDanhGia(true)}
-                  className="flex items-center gap-1.5 rounded-full bg-sunset-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sunset-500"
+                  className="flex items-center gap-1.5 rounded-full bg-sunset-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sunset-800"
                 >
                   <Star className="h-4 w-4" />
                   Đánh giá tour
@@ -264,7 +265,7 @@ export default function AccountClient({ user, donBanDau = [], loiTaiDon = false,
           {user.avatar ? (
             <Image src={user.avatar} alt="" width={64} height={64} className="h-16 w-16 rounded-full object-cover" />
           ) : (
-            <span className="grid h-16 w-16 place-items-center rounded-full bg-ocean-600 font-display text-2xl font-bold text-white">
+            <span className="grid h-16 w-16 place-items-center rounded-full bg-ocean-700 font-display text-2xl font-bold text-white">
               {(user.name || "?").trim().charAt(0).toUpperCase()}
             </span>
           )}
@@ -285,7 +286,7 @@ export default function AccountClient({ user, donBanDau = [], loiTaiDon = false,
               type="button"
               onClick={() => setTab(t.key)}
               className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
-                tab === t.key ? "bg-ocean-600 text-white" : "text-ink-muted hover:bg-ocean-50"
+                tab === t.key ? "bg-ocean-700 text-white" : "text-ink-muted hover:bg-ocean-50"
               }`}
             >
               <t.icon className="h-4 w-4" />
@@ -344,7 +345,7 @@ export default function AccountClient({ user, donBanDau = [], loiTaiDon = false,
               {/* Hồ sơ */}
               <section className="rounded-2xl bg-white p-6 shadow-card sm:p-7">
                 <h2 className="flex items-center gap-2 font-display text-lg font-bold text-deep-900">
-                  <UserCog className="h-5 w-5 text-ocean-600" /> Thông tin cá nhân
+                  <UserCog className="h-5 w-5 text-ocean-700" /> Thông tin cá nhân
                 </h2>
 
                 <form onSubmit={guiHoSo} className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -381,7 +382,7 @@ export default function AccountClient({ user, donBanDau = [], loiTaiDon = false,
               {/* Mật khẩu */}
               <section className="rounded-2xl bg-white p-6 shadow-card sm:p-7">
                 <h2 className="flex items-center gap-2 font-display text-lg font-bold text-deep-900">
-                  <KeyRound className="h-5 w-5 text-ocean-600" /> Đổi mật khẩu
+                  <KeyRound className="h-5 w-5 text-ocean-700" /> Đổi mật khẩu
                 </h2>
                 <p className="mt-1.5 text-sm text-ink-muted">
                   Đổi xong bạn sẽ được đăng xuất khỏi mọi thiết bị và cần đăng nhập lại.

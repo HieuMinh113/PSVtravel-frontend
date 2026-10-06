@@ -80,7 +80,7 @@ export default function SearchBar({ diemDenTrongNuoc = [], diemDenNuocNgoai = []
             key={t.id}
             onClick={() => doiTab(t.id)}
             className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
-              type === t.id ? "bg-ocean-500 text-white" : "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
+              type === t.id ? "bg-ocean-700 text-white" : "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
             }`}
           >
             {t.label}
@@ -131,7 +131,7 @@ export default function SearchBar({ diemDenTrongNuoc = [], diemDenNuocNgoai = []
           </select>
         </div>
 
-        <button type="submit" className="btn-cta !py-3.5 !px-6">
+        <button type="submit" aria-label="Tìm tour" className="btn-cta !py-3.5 !px-6">
           <Search className="h-4 w-4" />
           <span className="hidden sm:inline">Tìm tour</span>
         </button>

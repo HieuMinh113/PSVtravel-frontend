@@ -2,11 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays, Eye, User, ArrowLeft, ArrowRight, Quote } from "lucide-react";
 import GhiNhanLuotXem from "@/components/GhiNhanLuotXem";
+import TourBookingBox from "@/components/TourBookingBox";
+import { locHtml } from "@/app/lib/sanitize";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
 
 // Trang chi tiết bài viết cẩm nang — component phía server (không cần "use client")
 // để nội dung bài viết được render sẵn trong HTML, tốt cho SEO.
-export default function GuideDetail({ guide }) {
+export default function GuideDetail({ guide, settings = {} }) {
   if (!guide) return null;
+
+  // Đường dẫn tới trang tour gắn kèm (trong nước / nước ngoài) để đặt ngay bên bài.
+  const tourLink = guide.tour
+    ? `${guide.tour.type === "abroad" ? "/tour-nuoc-ngoai" : "/tour-trong-nuoc"}/${guide.tour.slug}`
+    : null;
 
   return (
     <>
@@ -26,15 +34,15 @@ export default function GuideDetail({ guide }) {
 
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-4xl px-5 pb-10 pt-24 sm:px-8">
           <div className="mb-3 flex items-center gap-1.5 text-xs text-white/75">
-            <Link href="/" className="transition-colors hover:text-gold-300">Trang chủ</Link>
+            <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>
             <span>/</span>
-            <Link href="/cam-nang" className="transition-colors hover:text-gold-300">Cẩm nang</Link>
+            <Link href="/cam-nang" className="vung-bam transition-colors hover:text-gold-300">Cẩm nang</Link>
             <span>/</span>
             <span className="line-clamp-1 text-white/90">{guide.title}</span>
           </div>
 
           {guide.category && (
-            <span className="inline-block rounded-full bg-sunset-600 px-3.5 py-1 text-xs font-bold text-white shadow">
+            <span className="inline-block rounded-full bg-sunset-700 px-3.5 py-1 text-xs font-bold text-white shadow">
               {guide.category}
             </span>
           )}
@@ -60,7 +68,8 @@ export default function GuideDetail({ guide }) {
 
       {/* Nội dung bài viết */}
       <section className="bg-foam py-12 sm:py-16">
-        <div className="mx-auto max-w-3xl px-5 sm:px-8">
+        <div className={guide.tour ? "mx-auto grid max-w-6xl items-start gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_360px]" : "mx-auto max-w-3xl px-5 sm:px-8"}>
+          <div className="min-w-0">
           {guide.excerpt && (
             <div className="relative rounded-2xl border-l-4 border-sunset-500 bg-white p-6 shadow-card">
               <Quote className="absolute right-5 top-5 h-8 w-8 text-sunset-100" />
@@ -70,10 +79,16 @@ export default function GuideDetail({ guide }) {
             </div>
           )}
 
+          {/* Video minh hoạ — ô riêng trong admin (không nhúng iframe vào nội dung
+              bài, bộ lọc an toàn sẽ loại) */}
+          {guide.videoId && (
+            <YouTubeEmbed videoId={guide.videoId} title={`Video: ${guide.title}`} className="mt-10" />
+          )}
+
           {guide.content ? (
             <div
               className="prose-psv mt-10"
-              dangerouslySetInnerHTML={{ __html: guide.content }}
+              dangerouslySetInnerHTML={{ __html: locHtml(guide.content) }}
             />
           ) : (
             <p className="mt-10 text-ink-muted">Nội dung bài viết đang được cập nhật.</p>
@@ -109,6 +124,13 @@ export default function GuideDetail({ guide }) {
               <ArrowLeft className="h-4 w-4" /> Xem thêm cẩm nang
             </Link>
           </div>
+          </div>
+
+          {guide.tour && (
+            <aside className="lg:sticky lg:top-24 lg:self-start">
+              <TourBookingBox tour={guide.tour} settings={settings} tourLink={tourLink} />
+            </aside>
+          )}
         </div>
       </section>
     </article>

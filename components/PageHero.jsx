@@ -20,8 +20,8 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
       }`}
     >
       {/* Nền Aurora: mesh gradient nhiều điểm dừng trôi rất chậm, có cả sắc ấm —
-          cho chiều sâu thay vì một mảng xanh phẳng. Chỉ đổi background-position
-          nên không gây reflow. */}
+          cho chiều sâu thay vì một mảng xanh phẳng. Chuyển động bằng transform
+          (GPU) — xem .animate-aurora trong globals.css. */}
       <div className="absolute inset-0 bg-aurora-deep bg-[length:190%_190%] animate-aurora opacity-80" />
       <div className="absolute inset-0 bg-duotone-glow opacity-70" />
       <div
@@ -35,7 +35,7 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
       {hasOrbit ? (
         <>
           {/* Vòng ảnh xoay bao quanh khối chữ — cùng kích thước với Hero trang chủ */}
-          <div className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div aria-hidden="true" className="orbit-layer pointer-events-none absolute inset-0 flex items-center justify-center">
             <OrbitGallery
               images={orbitImages}
               radiusLg={470}
@@ -80,12 +80,12 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
       <div className={`relative z-10 mx-auto text-center ${hasOrbit ? "max-w-3xl" : "max-w-5xl"}`}>
         {crumbs.length > 0 && (
           <div className="mb-4 flex flex-wrap items-center justify-center gap-1.5 text-xs text-white/80">
-            <Link href="/" className="transition-colors hover:text-gold-300">Trang chủ</Link>
+            <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>
             {crumbs.map((c, i) => (
               <span key={i} className="flex items-center gap-1.5">
                 <ChevronRight className="h-3 w-3 text-white/50" />
                 {c.to ? (
-                  <Link href={c.to} className="transition-colors hover:text-gold-300">{c.label}</Link>
+                  <Link href={c.to} className="vung-bam transition-colors hover:text-gold-300">{c.label}</Link>
                 ) : (
                   <span className="font-medium text-white">{c.label}</span>
                 )}
@@ -107,7 +107,7 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
         )}
 
         <motion.h1
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className={`mt-4 font-display font-bold leading-[1.12] text-white ${
@@ -128,7 +128,7 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
 
         {description && (
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mx-auto mt-5 max-w-2xl text-white/85"

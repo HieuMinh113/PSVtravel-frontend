@@ -6,7 +6,7 @@ import AccountClient from "@/components/pages/AccountClient";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Tài khoản của tôi | PSV Travel",
+  title: "Tài khoản của tôi", // đuôi " | PSV Travel" do template ở layout gốc tự thêm
   robots: { index: false, follow: false },
 };
 

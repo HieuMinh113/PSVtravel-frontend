@@ -7,9 +7,11 @@ import { formatVND } from "@/data/tours";
 
 // Nhãn khuyến mãi: mỗi loại một màu riêng, tất cả đều đạt tương phản với chữ trắng
 const tagStyles = {
-  "Bán chạy": "bg-teal-600",
-  "Mới": "bg-ocean-600",
-  "Giảm giá": "bg-sunset-600",
+  // Tông -700: chữ trắng trên nền -600 chỉ đạt tương phản 3,6–4:1, dưới chuẩn
+  // WCAG AA 4,5:1 cho chữ nhỏ (Lighthouse báo lỗi).
+  "Bán chạy": "bg-teal-800",
+  "Mới": "bg-ocean-700",
+  "Giảm giá": "bg-sunset-700",
   "Cao cấp": "bg-deep-800",
 };
 
@@ -53,7 +55,7 @@ export default function TourCard({ tour, basePath, index = 0 }) {
             src={tour.image}
             alt={tour.name}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" quality={90}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110"
           />
 
@@ -62,7 +64,7 @@ export default function TourCard({ tour, basePath, index = 0 }) {
           <div className="absolute inset-0 bg-gradient-to-t from-deep-950/55 via-deep-950/5 to-transparent transition-opacity duration-500 group-hover:from-deep-950/70" />
 
           {tour.tag && (
-            <span className={`absolute left-3 top-3 rounded-full ${tagStyles[tour.tag] || "bg-ocean-600"} px-3 py-1 text-xs font-semibold text-white shadow-sm`}>
+            <span className={`absolute left-3 top-3 rounded-full ${tagStyles[tour.tag] || "bg-ocean-700"} px-3 py-1 text-xs font-semibold text-white shadow-sm`}>
               {tour.tag}
             </span>
           )}

@@ -43,6 +43,7 @@ h1, h2, h3, h4 {
     scroll-behavior: auto !important;
   }
   .animate-aurora,
+  .animate-aurora::before,
   .animate-marquee,
   .animate-ripple,
   .animate-drift,
@@ -78,7 +79,10 @@ img:not([src="/logo.png"]) {
 
 /* ===== Tối ưu đa nền tảng ===== */
 html, body {
-  overflow-x: hidden;
+  /* Dùng clip thay cho hidden: vẫn chặn tràn ngang nhưng KHÔNG biến trang
+     thành vùng cuộn riêng — nhờ vậy position: sticky (thanh lọc danh mục,
+     ô đặt tour) mới bám theo khi cuộn. hidden làm hỏng toàn bộ sticky. */
+  overflow-x: clip;
   max-width: 100%;
 }
 
@@ -113,17 +117,96 @@ img, video {
   }
 }
 
-.tap-44 {
-  position: relative;
+/* Đặt trong @layer components: Tailwind xếp lớp này TRƯỚC các tiện ích, nên
+   nút nào ghi thêm "absolute" (nút đóng lightbox, nút xoá ô tìm kiếm...) thì
+   absolute thắng. Trước đây khối này nằm ngoài layer, đứng sau tiện ích nên
+   "position: relative" đè mất "absolute" — nút đóng ảnh ở trang Về chúng tôi
+   bị kéo lệch về góc trái, lòi ra một dải trắng phía trên ảnh. */
+@layer components {
+  .tap-44 {
+    position: relative;
+  }
+  .tap-44::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Link chữ nhỏ (chân trang, đường dẫn "Trang chủ / …", "Xem tất cả", số
+     hotline) chỉ cao 14–20px — dưới mức tối thiểu 24px cho ngón tay trên điện
+     thoại. Lớp phủ trong suốt kéo vùng bấm lên/xuống thêm 5px mà KHÔNG đổi bố
+     cục (không đụng padding/margin, nên không đè các mt-* sẵn có). */
+  .vung-bam {
+    position: relative;
+  }
+  .vung-bam::after {
+    content: "";
+    position: absolute;
+    inset: -5px -2px;
+  }
 }
-.tap-44::after {
+
+/* ===== Khối dưới màn hình đầu (HydrateKhiThay) =====
+   content-visibility: auto — khối chưa lọt vào tầm nhìn thì trình duyệt bỏ qua
+   việc tính bố cục và vẽ, tới gần mới làm. Trang chủ dài hơn 1.000 thẻ nên
+   đây là phần tốn nhất lúc mở trang trên điện thoại.
+   contain-intrinsic-size giữ chỗ ước lượng để thanh cuộn không co giật;
+   "auto" = sau lần vẽ đầu trình duyệt nhớ chiều cao thật. */
+.khoi-duoi-man-hinh {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
+/* ===== Nền Aurora chạy bằng GPU =====
+   Trước đây nền trôi bằng cách đổi background-position: trình duyệt phải VẼ LẠI
+   cả mảng gradient lớn (có khi cả màn hình) ở mọi khung hình, suốt thời gian
+   trang mở — PageSpeed báo "non-composited animation", điện thoại yếu nóng máy
+   và hao pin. Nay lớp gradient được vẽ MỘT LẦN lên một lớp phụ (::before) rộng
+   hơn khung 30% mỗi phía, rồi chỉ dịch chuyển lớp đó bằng transform — việc này
+   card đồ hoạ làm, không phải vẽ lại. Giữ nguyên các lớp đang dùng ở 16 chỗ
+   (bg-aurora-deep ... animate-aurora), không phải sửa từng trang.
+   - background-size: 0 0 ở chính phần tử: ẩn bản gradient đứng yên của nó,
+     lớp ::before lấy lại ảnh nền bằng "inherit".
+   - Dịch tối đa 12% bề rộng lớp phụ (~19% khung) < 30% phần dư → không lộ mép. */
+.animate-aurora {
+  animation: none;
+  overflow: hidden;
+  background-size: 0 0;
+}
+.animate-aurora::before {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 44px;
-  height: 44px;
-  transform: translate(-50%, -50%);
+  inset: -30%;
+  background-image: inherit;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  animation: aurora-troi 14s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes aurora-troi {
+  0%, 100% { transform: translate3d(-12%, -8%, 0); }
+  50% { transform: translate3d(12%, 8%, 0); }
+}
+
+/* ===== Thanh tiến trình chuyển trang (components/ThanhTienTrinh.jsx) =====
+   Chạy nhanh tới ~70% rồi chậm dần (trông như đang chờ máy chủ), trang mới
+   hiện thì vụt tới 100% và mờ đi. Chỉ dùng transform/opacity → chạy trên GPU. */
+.thanh-tien-trinh-chay {
+  transform: scaleX(0.08);
+  animation: thanh-chay 8s cubic-bezier(0.1, 0.6, 0.2, 1) forwards;
+}
+.thanh-tien-trinh-xong {
+  transform: scaleX(1);
+  opacity: 0;
+  transition: transform 0.2s ease-out, opacity 0.3s ease 0.1s;
+}
+@keyframes thanh-chay {
+  from { transform: scaleX(0.08); }
+  to { transform: scaleX(0.92); }
 }
 
 /* ===== An toàn khi phóng to trình duyệt ===== */
@@ -245,6 +328,40 @@ img, video {
   transition: opacity 0.3s ease;
 }
 
+/* Kích thước vòng ảnh — tính hoàn toàn bằng CSS nên đúng ngay từ lần vẽ đầu,
+   không phải chờ JavaScript đo rồi co lại (nguyên nhân làm đầu trang giật).
+   Bán kính/cỡ ảnh từng mức do OrbitGallery truyền vào qua biến --r-*, --card-*.
+   Quy tắc giống hệt bản JavaScript cũ:
+   - dưới 480px cỡ nhỏ, dưới 1024px cỡ vừa (iPad dọc), còn lại cỡ lớn;
+   - trục ngang không vượt nửa bề rộng màn hình, trục dọc = 0,72 × bán kính
+     nhưng không vượt nửa chiều cao (trừ 96px thanh điều hướng);
+   - tối thiểu 84px ngang / 70px dọc. */
+.orbit-khung {
+  --r: var(--r-sm);
+  --card: var(--card-sm);
+  --rx: max(84px, min(var(--r), 50vw - var(--card) / 2 - 12px));
+  --ry: max(70px, min(var(--r) * 0.72, (100vh - 96px) / 2 - var(--card) / 2 - 12px));
+  width: calc(var(--rx) * 2 + var(--card));
+  height: calc(var(--ry) * 2 + var(--card));
+}
+@supports (height: 100svh) {
+  .orbit-khung {
+    --ry: max(70px, min(var(--r) * 0.72, (100svh - 96px) / 2 - var(--card) / 2 - 12px));
+  }
+}
+@media (min-width: 480px) {
+  .orbit-khung { --r: var(--r-md); --card: var(--card-md); }
+}
+@media (min-width: 1024px) {
+  .orbit-khung { --r: var(--r-lg); --card: var(--card-lg); }
+}
+.orbit-anh {
+  width: var(--card);
+  height: var(--card);
+  margin-left: calc(var(--card) / -2);
+  margin-top: calc(var(--card) / -2);
+}
+
 /* Màn hình thấp: làm mờ bớt để chữ nổi lên, không thu nhỏ nữa */
 @media (max-height: 740px) {
   .orbit-layer { opacity: 0.7; }
@@ -259,4 +376,43 @@ img, video {
 /* iPad dọc: vòng ảnh mờ bớt để không tranh chấp với tiêu đề */
 @media (min-width: 641px) and (max-width: 1023px) {
   .orbit-layer { opacity: 0.5; }
+}
+
+
+/* Lá vàng trên các trang khách hàng trong tháng 10. Chỉ transform/opacity để
+   giữ cuộn mượt; lớp trang trí không chặn nhấp chuột hay chạm màn hình. */
+.autumn-leaves {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: hidden;
+}
+.autumn-leaf {
+  position: absolute;
+  top: -30px;
+  left: var(--leaf-x);
+  background-image: url('/autumn-leaves.webp');
+  background-size: 300% 100%;
+  background-position: var(--leaf-image-position) center;
+  background-repeat: no-repeat;
+  opacity: .82;
+  filter: drop-shadow(0 1px 1px rgba(4, 18, 31, .16));
+  will-change: transform;
+  animation: autumn-fall var(--leaf-duration) linear var(--leaf-delay) infinite;
+}
+@keyframes autumn-fall {
+  0% { transform: translate3d(0, -4vh, 0) rotate(-25deg); }
+  50% { transform: translate3d(var(--leaf-drift-mobile, var(--leaf-drift)), 55vh, 0) rotate(155deg); }
+  100% { transform: translate3d(0, 115vh, 0) rotate(355deg); }
+}
+@media (max-width: 640px) {
+  .autumn-leaf:nth-child(n+3):nth-child(-n+6) { display: none; }
+  .autumn-leaf:nth-child(1) { left: 1%; --leaf-drift-mobile: 2vw; }
+  .autumn-leaf:nth-child(2) { left: 5%; --leaf-drift-mobile: -2vw; }
+  .autumn-leaf:nth-child(7) { left: 90%; --leaf-drift-mobile: 1vw; }
+  .autumn-leaf:nth-child(8) { left: 95%; --leaf-drift-mobile: -2vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .autumn-leaves { display: none; }
 }

@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Send, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import { fbTrack } from "@/app/lib/fbpixel";
+import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 
 // Form yêu cầu tổ chức sự kiện / team building.
 //
@@ -52,6 +54,9 @@ export default function TeamBuildingForm({ goi = "", hotline = "0907 870 707" })
       }
 
       setXong(true);
+      // Doanh nghiệp gửi yêu cầu báo giá team building → Lead + chuyển đổi Google Ads
+      fbTrack("Lead", { content_name: goi || form.package || "team-building", content_category: "team-building" });
+      gtagConversion(CONVERSION_LIEN_HE, { value: 1.0, currency: "VND" });
       setForm((f) => ({
         ...f, name: "", phone: "", email: "", company: "",
         group_size: "", event_date: "", location: "", budget: "", message: "",
@@ -95,11 +100,11 @@ export default function TeamBuildingForm({ goi = "", hotline = "0907 870 707" })
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label className={nhan}>Họ và tên <span className="text-sunset-600">*</span></label>
+          <label className={nhan}>Họ và tên <span className="text-sunset-700">*</span></label>
           <input required value={form.name} onChange={doiO("name")} placeholder="Nguyễn Văn A" className={oInput} />
         </div>
         <div>
-          <label className={nhan}>Số điện thoại <span className="text-sunset-600">*</span></label>
+          <label className={nhan}>Số điện thoại <span className="text-sunset-700">*</span></label>
           <input required type="tel" inputMode="tel" value={form.phone} onChange={doiO("phone")} placeholder="09xx xxx xxx" className={oInput} />
         </div>
         <div>
@@ -154,7 +159,7 @@ export default function TeamBuildingForm({ goi = "", hotline = "0907 870 707" })
         )}
       </button>
       <p className="text-center text-xs text-ink-subtle">
-        Hoặc gọi trực tiếp <a href={`tel:${soGoi}`} className="font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
+        Hoặc gọi trực tiếp <a href={`tel:${soGoi}`} className="vung-bam font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
       </p>
     </form>
   );

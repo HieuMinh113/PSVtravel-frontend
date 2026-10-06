@@ -1,4 +1,5 @@
 import { FileText, CalendarClock, Phone } from "lucide-react";
+import { locHtml } from "@/app/lib/sanitize";
 import PageHero from "@/components/PageHero";
 
 /**
@@ -27,10 +28,10 @@ export default function TrangTinh({ page, tieuDe, moTa, hotline }) {
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <article className="rounded-3xl bg-white p-6 shadow-card sm:p-9">
             {coNoiDung ? (
-              <div className="prose-psv" dangerouslySetInnerHTML={{ __html: page.body }} />
+              <div className="prose-psv" dangerouslySetInnerHTML={{ __html: locHtml(page.body) }} />
             ) : (
               <div className="py-8 text-center">
-                <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-ocean-50 text-ocean-600">
+                <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-ocean-50 text-ocean-700">
                   <FileText className="h-6 w-6" />
                 </span>
                 <h2 className="mt-4 font-display text-lg font-bold text-deep-900">

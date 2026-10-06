@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useTime, useTransform } from "framer-motion";
 
 /**
@@ -15,7 +15,7 @@ import { motion, useTime, useTransform } from "framer-motion";
  * ngang (cách tâm 560px) sau một phần tư vòng sẽ nhảy lên cao 560px, vượt khỏi
  * khung nhìn và bị cắt mất. Chỉ đúng khi quỹ đạo là hình tròn.
  */
-function AnhTrenQuyDao({ src, gocBanDau, radiusX, radiusY, cardSize, duration }) {
+function AnhTrenQuyDao({ src, alt, gocBanDau, radiusX, radiusY, duration }) {
   const time = useTime();
 
   const goc = useTransform(time, (t) => gocBanDau + (t / (duration * 1000)) * 360);
@@ -23,22 +23,25 @@ function AnhTrenQuyDao({ src, gocBanDau, radiusX, radiusY, cardSize, duration })
   const x = useTransform(goc, (g) => Math.cos((g * Math.PI) / 180) * radiusX);
   const y = useTransform(goc, (g) => Math.sin((g * Math.PI) / 180) * radiusY);
 
+  // Chưa đo xong khung (lúc máy chủ dựng HTML, trước khi JavaScript chạy):
+  // đặt ảnh bằng CSS thuần — cos()/sin() nhân với bán kính do CSS tính — nên
+  // ảnh nằm ĐÚNG chỗ ngay từ khung hình đầu tiên. Đo xong thì framer-motion
+  // tiếp quản; useTime bắt đầu từ 0 nên góc lúc tiếp quản trùng góc ban đầu,
+  // ảnh không giật.
+  const daDo = radiusX != null;
+  const viTriTinh = `translate(calc(cos(${gocBanDau}deg) * var(--rx)), calc(sin(${gocBanDau}deg) * var(--ry)))`;
+
   return (
     <motion.div
-      className="absolute left-1/2 top-1/2 overflow-hidden rounded-2xl shadow-lg ring-2 ring-white/80"
-      style={{
-        x,
-        y,
-        width: cardSize,
-        height: cardSize,
-        marginLeft: -cardSize / 2,
-        marginTop: -cardSize / 2,
-      }}
+      className="orbit-anh absolute left-1/2 top-1/2 overflow-hidden rounded-2xl shadow-lg ring-2 ring-white/80"
+      style={daDo ? { x, y } : { transform: viTriTinh }}
     >
-      <Image src={src} alt="" draggable={false} fill sizes="200px" className="object-cover" />
+      <Image src={src} alt={alt} draggable={false} fill sizes="(max-width: 1023px) 64px, 96px" className="object-cover" />
     </motion.div>
   );
 }
+
+const ALT_MAC_DINH = "Tour du lịch cùng PSV Travel";
 
 export default function OrbitGallery({
   images,
@@ -62,67 +65,74 @@ export default function OrbitGallery({
   // trôi, băng đánh giá chạy ngang, nhấp nháy (xem globals.css). Vòng này quay
   // 50 giây một vòng và nằm ở nền phía sau nên êm hơn hẳn.
 
-  const [{ radiusX, radiusY, cardSize }, setDims] = useState({
-    radiusX: radiusLg,
-    radiusY: Math.round(radiusLg * 0.72),
-    cardSize: cardSizeLg,
-  });
+  // KÍCH THƯỚC DO CSS TÍNH, không do JavaScript đo.
+  //
+  // Trước đây khung lấy cỡ desktop làm mặc định rồi đợi JavaScript đo màn
+  // hình mới co lại. Trên điện thoại, HTML từ máy chủ vẽ khung rộng ~1200px,
+  // 2–4 giây sau JavaScript chạy xong mới co về ~390px → cả đầu trang giật một
+  // cái (CLS 0,50 — Google chấm "kém"), kèm cảnh báo lệch HTML khi hydrate.
+  //
+  // Nay cỡ ảnh, bán kính, giới hạn theo bề rộng/chiều cao màn hình đều viết
+  // bằng CSS (lớp .orbit-khung trong globals.css) — đúng ngay từ khung hình
+  // đầu. JavaScript chỉ ĐỌC lại khung đã vẽ để biết bán kính cho chuyển động.
+  const khungRef = useRef(null);
+  const [{ radiusX, radiusY }, setDims] = useState({ radiusX: null, radiusY: null });
 
   useEffect(() => {
-    const handleResize = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-
-      // iPad dọc (768–1023px) dùng cỡ vừa, không dùng cỡ desktop — bán kính
-      // desktop lớn hơn nửa màn hình nên ảnh hai bên văng hết ra ngoài.
-      let radius, cardSize;
-      if (w < 480) [radius, cardSize] = [radiusSm, cardSizeSm];
-      else if (w < 1024) [radius, cardSize] = [radiusMd, cardSizeMd];
-      else [radius, cardSize] = [radiusLg, cardSizeLg];
-
-      // Trừ hao 96px chiều cao cho thanh điều hướng cố định phía trên
-      const tranNgang = Math.floor(w / 2 - cardSize / 2 - 12);
-      const tranDoc = Math.floor((h - 96) / 2 - cardSize / 2 - 12);
-
+    const khung = khungRef.current;
+    if (!khung) return;
+    const doLai = () => {
+      const anh = khung.querySelector(".orbit-anh");
+      const cardSize = anh ? anh.offsetWidth : 0;
       setDims({
-        radiusX: Math.max(Math.min(radius, tranNgang), 84),
-        radiusY: Math.max(Math.min(Math.round(radius * 0.72), tranDoc), 70),
-        cardSize,
+        radiusX: (khung.offsetWidth - cardSize) / 2,
+        radiusY: (khung.offsetHeight - cardSize) / 2,
       });
     };
+    doLai();
+    const ro = new ResizeObserver(doLai);
+    ro.observe(khung);
+    return () => ro.disconnect();
+  }, []);
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [radiusLg, radiusMd, radiusSm, cardSizeLg, cardSizeMd, cardSizeSm]);
-
-  const angleStep = 360 / images.length;
+  // Mỗi ảnh là chuỗi URL hoặc { src, alt }. Có tên tour thì dùng làm alt: công
+  // cụ SEO đếm ảnh thiếu alt (alt="" bị tính là thiếu) và Google Hình ảnh cũng
+  // dựa vào alt. Vòng ảnh vẫn là trang trí nên lớp chứa nó đặt aria-hidden —
+  // trình đọc màn hình không đọc lại một loạt tên tour.
+  const dsAnh = images.map((a) =>
+    typeof a === "string" ? { src: a, alt: ALT_MAC_DINH } : { src: a.src, alt: a.alt || ALT_MAC_DINH }
+  );
+  const angleStep = 360 / dsAnh.length;
 
   return (
     <div
-      className="relative mx-auto"
+      ref={khungRef}
+      className="orbit-khung relative mx-auto max-w-full"
       style={{
-        width: radiusX * 2 + cardSize,
-        height: radiusY * 2 + cardSize,
-        maxWidth: "100%",
+        "--r-sm": `${radiusSm}px`,
+        "--r-md": `${radiusMd}px`,
+        "--r-lg": `${radiusLg}px`,
+        "--card-sm": `${cardSizeSm}px`,
+        "--card-md": `${cardSizeMd}px`,
+        "--card-lg": `${cardSizeLg}px`,
       }}
     >
       {/* Đường dẫn hướng mờ phía sau, cho thấy quỹ đạo */}
       {showRing && (
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-dashed border-white/25"
-          style={{ width: radiusX * 2, height: radiusY * 2 }}
+          style={{ width: "calc(var(--rx) * 2)", height: "calc(var(--ry) * 2)" }}
         />
       )}
 
-      {images.map((src, i) => (
+      {dsAnh.map(({ src, alt }, i) => (
         <AnhTrenQuyDao
           key={src + i}
           src={src}
+          alt={alt}
           gocBanDau={angleStep * i}
           radiusX={radiusX}
           radiusY={radiusY}
-          cardSize={cardSize}
           duration={duration}
         />
       ))}

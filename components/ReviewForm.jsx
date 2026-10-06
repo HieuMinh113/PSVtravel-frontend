@@ -101,7 +101,7 @@ export default function ReviewForm({ slug, tourName }) {
         </p>
         <Link
           href="/dang-nhap"
-          className="flex items-center gap-1.5 rounded-full bg-ocean-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean-700"
+          className="flex items-center gap-1.5 rounded-full bg-ocean-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean-800"
         >
           <LogIn className="h-4 w-4" /> Đăng nhập để đánh giá
         </Link>
@@ -141,7 +141,7 @@ export default function ReviewForm({ slug, tourName }) {
   return (
     <form onSubmit={gui} className="mt-8 rounded-2xl bg-white p-6 shadow-card sm:p-7">
       <h3 className="flex items-center gap-2 font-display text-lg font-bold text-deep-900">
-        <PenLine className="h-5 w-5 text-ocean-600" /> Chia sẻ cảm nhận của bạn
+        <PenLine className="h-5 w-5 text-ocean-700" /> Chia sẻ cảm nhận của bạn
       </h3>
       <p className="mt-1.5 text-sm text-ink-muted">
         Về hành trình <span className="font-semibold text-deep-900">{tourName}</span>

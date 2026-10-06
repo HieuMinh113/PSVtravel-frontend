@@ -31,7 +31,7 @@ export default function TeamBuilding({ events = [], settings = {} }) {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {camKet.map((c, i) => (
               <SectionReveal key={c.title} delay={i * 0.08} className="card-surface flex items-start gap-4 p-5">
-                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-ocean-50 text-ocean-600">
+                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-ocean-50 text-ocean-700">
                   <c.icon className="h-5 w-5" />
                 </span>
                 <div>
@@ -49,7 +49,7 @@ export default function TeamBuilding({ events = [], settings = {} }) {
         <section className="bg-foam py-14 sm:py-16">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <SectionReveal>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Gói gợi ý</span>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Gói gợi ý</span>
               <h2 className="mt-3 font-display text-3xl font-bold text-deep-900">Chọn gói phù hợp với đoàn của bạn</h2>
               <p className="mt-2 max-w-2xl text-ink-muted">Mỗi gói đều có thể tùy chỉnh theo số lượng khách, ngân sách và điểm đến bạn mong muốn.</p>
             </SectionReveal>
@@ -63,7 +63,7 @@ export default function TeamBuilding({ events = [], settings = {} }) {
       <section className="bg-white py-14 sm:py-20">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_1.1fr]">
           <SectionReveal>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-600">Bắt đầu</span>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Bắt đầu</span>
             <h2 className="mt-3 font-display text-3xl font-bold text-deep-900">Gửi yêu cầu tổ chức</h2>
             <p className="mt-3 text-ink-muted">
               Cho chúng tôi biết quy mô đoàn, thời gian và ngân sách dự kiến. Bộ phận sự kiện sẽ tư vấn kịch bản và gửi báo giá phù hợp nhất.

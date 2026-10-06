@@ -11,7 +11,7 @@ import { Phone, Mail, FileSearch, Clock3 } from "lucide-react";
  */
 export default function TopBar({ settings = {} }) {
   const hotline = settings.hotline || "0907 870 707";
-  const email = settings.email || "hi@psvtravel.com";
+  const email = settings.email || "nguyendusit399@gmail.com";
   const gioLamViec = settings.working_hours || "Hỗ trợ 24/7, kể cả cuối tuần";
 
   // tel: phải bỏ hết khoảng trắng thì máy Android/iOS mới bấm gọi được
@@ -47,7 +47,7 @@ export default function TopBar({ settings = {} }) {
 
           <a
             href={`tel:${soGoi}`}
-            className="flex items-center gap-1.5 rounded-full bg-sunset-600 px-3.5 py-1 font-bold tracking-wide text-white transition-colors hover:bg-sunset-500"
+            className="flex items-center gap-1.5 rounded-full bg-sunset-700 px-3.5 py-1 font-bold tracking-wide text-white transition-colors hover:bg-sunset-800"
           >
             <Phone className="h-3.5 w-3.5" />
             Hotline: {hotline}
