@@ -28,7 +28,9 @@ const MUC_DICH = [
 const DOI_TUONG = [
   ["", "Chưa rõ / để chuyên viên tư vấn"],
   ["nhan_vien", "Nhân viên"],
+  ["nha_nuoc", "Công chức / viên chức nhà nước"],
   ["chu_doanh_nghiep", "Chủ doanh nghiệp"],
+  ["ho_kinh_doanh", "Hộ kinh doanh"],
   ["tu_do", "Lao động tự do"],
   ["huu_tri", "Hưu trí"],
   ["hoc_sinh", "Học sinh / sinh viên"],
