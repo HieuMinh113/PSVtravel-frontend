@@ -19,6 +19,9 @@ export async function POST(request) {
 
   const ra = new FormData();
   ra.append("token", String(vao.get("token") || ""));
+  // Số thứ tự giấy tờ (ô khách chọn) — không có thì backend xếp vào "Giấy tờ khác"
+  const muc = String(vao.get("muc") ?? "");
+  if (/^\d{1,3}$/.test(muc)) ra.append("muc", muc);
   ra.append("file", tep, tep.name || "giay-to");
 
   try {

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import NopHoSoVisa from "@/components/pages/NopHoSoVisa";
-import { getVisaCountry, getSettings } from "@/app/lib/api";
+import { getVisaCountry, getSettings, getPhieuVisa } from "@/app/lib/api";
 import { layNguoiDung } from "@/app/lib/auth";
 
 // Có đăng nhập thì điền sẵn họ tên / SĐT / email — mỗi người khác nhau nên
@@ -18,8 +18,13 @@ export async function generateMetadata({ params }) {
 
 export default async function Page({ params }) {
   const { slug } = await params;
-  const [visa, settings, user] = await Promise.all([getVisaCountry(slug), getSettings(), layNguoiDung()]);
+  const [visa, settings, user, phieu] = await Promise.all([
+    getVisaCountry(slug),
+    getSettings(),
+    layNguoiDung(),
+    getPhieuVisa(),
+  ]);
   if (!visa) notFound();
 
-  return <NopHoSoVisa visa={visa} settings={settings} user={user} />;
+  return <NopHoSoVisa visa={visa} settings={settings} user={user} phieu={phieu} />;
 }

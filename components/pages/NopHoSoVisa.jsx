@@ -1,9 +1,9 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   AlertCircle, CheckCircle2, FileText, Image as IconAnh, Loader2, Paperclip,
-  Phone, Send, ShieldCheck, X, BadgeCheck,
+  Phone, Send, ShieldCheck, X, BadgeCheck, ChevronDown, Upload,
 } from "lucide-react";
 import PageHero from "@/components/PageHero";
 
@@ -12,6 +12,10 @@ import PageHero from "@/components/PageHero";
 // Hai bước (xem app/api/visa): gửi thông tin trước → nhận mã hồ sơ + mã tải
 // file → gửi từng file một. File nào lỗi thì chỉ file đó lỗi, hồ sơ vẫn đã nộp;
 // nhân viên sẽ liên hệ để khách gửi bổ sung.
+//
+// Giấy tờ: chọn "Bạn hiện là" thì hiện danh sách giấy tờ theo mẫu của nước đó;
+// mỗi giấy tờ có ô tải riêng để nhân viên xuất ZIP ra đúng tên (Hộ chiếu.pdf…).
+// File không thuộc giấy nào thì vào "Giấy tờ khác".
 
 const MUC_DICH = [
   ["du_lich", "Du lịch"],
@@ -48,7 +52,42 @@ function cauLoi(res, data) {
   return loiO || data?.message || "Gửi chưa được. Vui lòng thử lại.";
 }
 
-export default function NopHoSoVisa({ visa, settings = {}, user = null }) {
+// Một ô trong phiếu thông tin (câu hỏi do backend trả về)
+function OPhieu({ cau, giaTri, doi }) {
+  const id = `pt-${cau.khoa}`;
+  if (cau.kieu === "co_khong") {
+    return (
+      <fieldset className="sm:col-span-2">
+        <legend className="text-xs font-semibold text-ink-muted">{cau.nhan}</legend>
+        <div className="mt-1.5 flex gap-4">
+          {Object.entries(cau.lua_chon || {}).map(([v, t]) => (
+            <label key={v} className="flex items-center gap-2 text-sm text-ink">
+              <input type="radio" name={id} value={v} checked={giaTri === v} onChange={() => doi(v)} className="accent-ocean-700" /> {t}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    );
+  }
+  const rong = cau.kieu === "textarea" ? "sm:col-span-2" : "";
+  return (
+    <div className={rong}>
+      <label htmlFor={id} className="text-xs font-semibold text-ink-muted">{cau.nhan}</label>
+      {cau.kieu === "textarea" ? (
+        <textarea id={id} rows={2} maxLength={2000} value={giaTri || ""} onChange={(e) => doi(e.target.value)} className={`${oNhap} resize-none`} />
+      ) : cau.kieu === "chon" ? (
+        <select id={id} value={giaTri || ""} onChange={(e) => doi(e.target.value)} className={oNhap}>
+          <option value="">—</option>
+          {Object.entries(cau.lua_chon || {}).map(([v, t]) => <option key={v} value={v}>{t}</option>)}
+        </select>
+      ) : (
+        <input id={id} type={cau.kieu === "date" ? "date" : "text"} maxLength={300} value={giaTri || ""} onChange={(e) => doi(e.target.value)} className={oNhap} />
+      )}
+    </div>
+  );
+}
+
+export default function NopHoSoVisa({ visa, settings = {}, user = null, phieu = [] }) {
   const hotline = settings.hotline || "0907 870 707";
   const homNay = new Date().toISOString().slice(0, 10);
 
@@ -64,8 +103,12 @@ export default function NopHoSoVisa({ visa, settings = {}, user = null }) {
     dong_y: false,
     website: "", // ô bẫy chống bot
   });
-  const [tep, setTep] = useState([]);
+  const [tep, setTep] = useState([]); // [{ file, giay }] — giay = tên giấy tờ, null = giấy tờ khác
   const [loiTep, setLoiTep] = useState("");
+  const [dsGiay, setDsGiay] = useState([]); // [{ muc, ten, ghi_chu }]
+  const [dangTaiDs, setDangTaiDs] = useState(false);
+  const [thongTin, setThongTin] = useState({});
+  const giayDangChon = useRef(null);
   const [loi, setLoi] = useState("");
   const [dangGui, setDangGui] = useState(false);
   const [tienDo, setTienDo] = useState(null); // { xong, tong }
@@ -74,6 +117,36 @@ export default function NopHoSoVisa({ visa, settings = {}, user = null }) {
 
   const doiO = (k) => (e) =>
     setForm((f) => ({ ...f, [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
+
+  // Đổi mục đích / đối tượng → lấy lại danh sách giấy tờ của mẫu phù hợp
+  useEffect(() => {
+    if (!form.profile) {
+      setDsGiay([]);
+      return;
+    }
+    let huy = false;
+    setDangTaiDs(true);
+    const q = new URLSearchParams({ visa_country: visa.slug, purpose: form.purpose, profile: form.profile });
+    fetch(`/api/visa/checklist?${q}`)
+      .then((r) => r.json())
+      .then((d) => !huy && setDsGiay(d?.data?.items ?? []))
+      .catch(() => !huy && setDsGiay([]))
+      .finally(() => !huy && setDangTaiDs(false));
+    return () => {
+      huy = true;
+    };
+  }, [form.purpose, form.profile, visa.slug]);
+
+  // File đã chọn cho giấy tờ không còn trong danh sách mới → chuyển sang "Giấy tờ khác"
+  useEffect(() => {
+    const ten = new Set(dsGiay.map((g) => g.ten));
+    setTep((cu) => cu.map((t) => (t.giay && !ten.has(t.giay) ? { ...t, giay: null } : t)));
+  }, [dsGiay]);
+
+  const moChonTep = (giay) => {
+    giayDangChon.current = giay;
+    chonTep.current?.click();
+  };
 
   const themTep = (e) => {
     const moi = Array.from(e.target.files || []);
@@ -84,16 +157,17 @@ export default function NopHoSoVisa({ visa, settings = {}, user = null }) {
       if (f.size > TOI_DA_MB * 1024 * 1024) return boQua.push(`${f.name}: lớn hơn ${TOI_DA_MB}MB`), false;
       return true;
     });
+    const giay = giayDangChon.current;
 
     setTep((cu) => {
-      const gop = [...cu, ...hopLe];
+      const gop = [...cu, ...hopLe.map((file) => ({ file, giay }))];
       if (gop.length > TOI_DA_FILE) boQua.push(`Tối đa ${TOI_DA_FILE} file — đã bỏ bớt ${gop.length - TOI_DA_FILE} file`);
       return gop.slice(0, TOI_DA_FILE);
     });
     setLoiTep(boQua.join(". "));
   };
 
-  const boTep = (i) => setTep((cu) => cu.filter((_, j) => j !== i));
+  const boTep = (t) => setTep((cu) => cu.filter((x) => x !== t));
 
   const gui = async (e) => {
     e.preventDefault();
@@ -105,7 +179,7 @@ export default function NopHoSoVisa({ visa, settings = {}, user = null }) {
       const res = await fetch("/api/visa", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ ...form, visa_country: visa.slug, profile: form.profile || null }),
+        body: JSON.stringify({ ...form, visa_country: visa.slug, profile: form.profile || null, thong_tin: thongTin }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -113,24 +187,27 @@ export default function NopHoSoVisa({ visa, settings = {}, user = null }) {
         return;
       }
 
-      const { code, upload_token: token, documents = [] } = data.data || {};
+      const { code, upload_token: token, documents = [], items = [] } = data.data || {};
+      const mucTheoTen = Object.fromEntries(items.map((g) => [g.ten, g.muc]));
       const tepLoi = [];
 
       // Gửi lần lượt từng file để thấy tiến độ và để file lỗi không kéo theo file khác
       for (let i = 0; i < tep.length; i++) {
         setTienDo({ xong: i, tong: tep.length });
+        const { file, giay } = tep[i];
         const fd = new FormData();
         fd.append("code", code);
         fd.append("token", token);
-        fd.append("file", tep[i]);
+        if (giay && mucTheoTen[giay] !== undefined) fd.append("muc", String(mucTheoTen[giay]));
+        fd.append("file", file);
         try {
           const r = await fetch("/api/visa/tep", { method: "POST", body: fd });
           if (!r.ok) {
             const d = await r.json().catch(() => ({}));
-            tepLoi.push(`${tep[i].name} — ${cauLoi(r, d)}`);
+            tepLoi.push(`${file.name} — ${cauLoi(r, d)}`);
           }
         } catch {
-          tepLoi.push(`${tep[i].name} — mất kết nối`);
+          tepLoi.push(`${file.name} — mất kết nối`);
         }
       }
 
@@ -283,38 +360,100 @@ export default function NopHoSoVisa({ visa, settings = {}, user = null }) {
               </div>
             </div>
 
-            {/* Giấy tờ */}
+            {/* Giấy tờ — mỗi giấy một ô tải riêng */}
             <div>
               <p className="text-xs font-semibold text-ink-muted">Giấy tờ (không bắt buộc)</p>
               <p className="mt-0.5 text-xs text-ink-subtle">
-                Ảnh chụp hoặc PDF: hộ chiếu, CCCD, giấy tờ công việc... Tối đa {TOI_DA_FILE} file, mỗi file {TOI_DA_MB}MB.
+                Ảnh chụp hoặc PDF, tải vào đúng ô từng giấy. Tối đa {TOI_DA_FILE} file, mỗi file {TOI_DA_MB}MB.
                 Chưa có sẵn cũng không sao — chuyên viên sẽ liên hệ để bạn gửi bổ sung.
               </p>
               <input ref={chonTep} type="file" multiple accept={LOAI_FILE.join(",")} onChange={themTep} className="hidden" />
-              <button
-                type="button"
-                onClick={() => chonTep.current?.click()}
-                disabled={tep.length >= TOI_DA_FILE}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-ocean-200 px-4 py-5 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50 disabled:opacity-50"
-              >
-                <Paperclip className="h-4 w-4" /> Chọn file ({tep.length}/{TOI_DA_FILE})
-              </button>
-              {loiTep && <p className="mt-2 text-xs text-rose-600">{loiTep}</p>}
-              {tep.length > 0 && (
-                <ul className="mt-3 space-y-2">
-                  {tep.map((f, i) => (
-                    <li key={`${f.name}-${i}`} className="flex items-center gap-3 rounded-xl bg-ocean-50/60 px-3 py-2 text-sm">
-                      {f.type === "application/pdf" ? <FileText className="h-4 w-4 shrink-0 text-ocean-600" /> : <IconAnh className="h-4 w-4 shrink-0 text-ocean-600" />}
-                      <span className="min-w-0 flex-1 truncate text-deep-900">{f.name}</span>
-                      <span className="shrink-0 text-xs text-ink-subtle">{dungLuong(f.size)}</span>
-                      <button type="button" onClick={() => boTep(i)} disabled={dangGui} aria-label={`Bỏ ${f.name}`} className="shrink-0 rounded-full p-1 text-ink-subtle hover:bg-white hover:text-rose-600">
-                        <X className="h-4 w-4" />
-                      </button>
+
+              {!form.profile ? (
+                <p className="mt-3 rounded-xl bg-ocean-50/70 px-4 py-3 text-sm text-ocean-800">
+                  Chọn mục <strong>“Bạn hiện là”</strong> ở trên để hiện danh sách giấy tờ cần chuẩn bị.
+                </p>
+              ) : dangTaiDs ? (
+                <p className="mt-3 flex items-center gap-2 text-sm text-ink-subtle"><Loader2 className="h-4 w-4 animate-spin" /> Đang tải danh sách giấy tờ...</p>
+              ) : dsGiay.length === 0 ? (
+                <p className="mt-3 rounded-xl bg-ocean-50/70 px-4 py-3 text-sm text-ocean-800">
+                  Chuyên viên sẽ tư vấn giấy tờ cho trường hợp của bạn. Có sẵn giấy tờ nào thì tải vào ô “Giấy tờ khác”.
+                </p>
+              ) : null}
+
+              <ul className="mt-3 divide-y divide-ocean-50 rounded-xl ring-1 ring-ocean-100">
+                {[...dsGiay, { muc: "khac", ten: null, ghi_chu: "File không thuộc giấy tờ nào ở trên" }].map((g) => {
+                  const cua = tep.filter((t) => t.giay === g.ten);
+                  return (
+                    <li key={g.muc} className="px-4 py-3">
+                      <div className="flex items-start gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="flex items-center gap-1.5 text-sm font-semibold text-deep-900">
+                            {cua.length > 0 && <CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" />}
+                            {g.ten ?? "Giấy tờ khác"}
+                          </p>
+                          {g.ghi_chu && <p className="mt-0.5 text-xs text-ink-subtle">{g.ghi_chu}</p>}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => moChonTep(g.ten)}
+                          disabled={dangGui || tep.length >= TOI_DA_FILE}
+                          className="flex shrink-0 items-center gap-1.5 rounded-full border border-ocean-200 px-3 py-1.5 text-xs font-semibold text-ocean-700 transition-colors hover:bg-ocean-50 disabled:opacity-50"
+                        >
+                          <Upload className="h-3.5 w-3.5" /> Tải lên
+                        </button>
+                      </div>
+                      {cua.length > 0 && (
+                        <ul className="mt-2 space-y-1.5">
+                          {cua.map((t, i) => (
+                            <li key={`${t.file.name}-${i}`} className="flex items-center gap-3 rounded-lg bg-ocean-50/60 px-3 py-1.5 text-sm">
+                              {t.file.type === "application/pdf" ? <FileText className="h-4 w-4 shrink-0 text-ocean-600" /> : <IconAnh className="h-4 w-4 shrink-0 text-ocean-600" />}
+                              <span className="min-w-0 flex-1 truncate text-deep-900">{t.file.name}</span>
+                              <span className="shrink-0 text-xs text-ink-subtle">{dungLuong(t.file.size)}</span>
+                              <button type="button" onClick={() => boTep(t)} disabled={dangGui} aria-label={`Bỏ ${t.file.name}`} className="shrink-0 rounded-full p-1 text-ink-subtle hover:bg-white hover:text-rose-600">
+                                <X className="h-4 w-4" />
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </li>
-                  ))}
-                </ul>
-              )}
+                  );
+                })}
+              </ul>
+              <p className="mt-2 text-right text-xs text-ink-subtle"><Paperclip className="mr-1 inline h-3.5 w-3.5" />{tep.length}/{TOI_DA_FILE} file</p>
+              {loiTep && <p className="mt-1 text-xs text-rose-600">{loiTep}</p>}
             </div>
+
+            {/* Phiếu thông tin — không bắt buộc */}
+            {phieu.length > 0 && (
+              <details className="group rounded-xl ring-1 ring-ocean-100">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3">
+                  <span>
+                    <span className="block text-sm font-semibold text-deep-900">Điền phiếu thông tin xin visa</span>
+                    <span className="block text-xs text-ink-subtle">Không bắt buộc — điền trước giúp làm hồ sơ nhanh hơn, chuyên viên đỡ phải hỏi lại.</span>
+                  </span>
+                  <ChevronDown className="h-4 w-4 shrink-0 text-ocean-600 transition-transform group-open:rotate-180" />
+                </summary>
+                <div className="space-y-5 border-t border-ocean-50 px-4 py-4">
+                  {phieu.map((nhom) => (
+                    <div key={nhom.tieu_de}>
+                      <p className="text-sm font-bold text-ocean-800">{nhom.tieu_de}</p>
+                      <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        {nhom.cau_hoi.map((cau) => (
+                          <OPhieu
+                            key={cau.khoa}
+                            cau={cau}
+                            giaTri={thongTin[cau.khoa]}
+                            doi={(v) => setThongTin((t) => ({ ...t, [cau.khoa]: v }))}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            )}
 
             {/* Ô bẫy chống bot: ẩn khỏi mắt người và khỏi trình đọc màn hình */}
             <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">

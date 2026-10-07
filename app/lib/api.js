@@ -236,6 +236,12 @@ export async function getVisaCountry(slug) {
   return mapVisa(json?.data ?? json);
 }
 
+// Câu hỏi "Phiếu thông tin xin visa" — backend giữ danh sách, web chỉ hiện ra
+export async function getPhieuVisa() {
+  const json = await layJSON(`/visa-applications/phieu`);
+  return json?.data ?? [];
+}
+
 // Một slug hợp lệ chỉ gồm chữ THƯỜNG, số và dấu gạch ngang ở giữa —
 // ví dụ "visa-nhat-ban". Dữ liệu admin nhập tay đôi khi lẫn chữ hoa hoặc
 // dấu cách thừa ("Chau-a ", "Chau-a") — những slug đó KHÔNG mở được trang
