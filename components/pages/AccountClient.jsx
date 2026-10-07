@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Ticket, UserCog, CalendarDays, Users2, Wallet, ArrowRight,
-  Loader2, CheckCircle2, AlertCircle, KeyRound, Save, Star,
+  Loader2, CheckCircle2, AlertCircle, KeyRound, Save, Star, Stamp, FileWarning, Clock,
 } from "lucide-react";
 import ReviewForm from "@/components/ReviewForm";
 import { baoNguoiDungDoi } from "@/app/lib/useNguoiDung";
@@ -131,6 +131,78 @@ function TheDon({ don, index }) {
   );
 }
 
+/* ---------- Thẻ một hồ sơ visa ---------- */
+const mauVisa = {
+  moi: "bg-ocean-50 text-ocean-700 ring-ocean-200",
+  dang_gom: "bg-amber-50 text-amber-700 ring-amber-200",
+  cho_nop: "bg-ocean-50 text-ocean-700 ring-ocean-200",
+  da_nop: "bg-ocean-50 text-ocean-700 ring-ocean-200",
+  dau: "bg-teal-50 text-teal-700 ring-teal-200",
+  truot: "bg-rose-50 text-rose-700 ring-rose-200",
+  huy: "bg-slate-100 text-slate-600 ring-slate-200",
+};
+
+const ngayVN = (s) => (s ? s.slice(0, 10).split("-").reverse().join("/") : null);
+
+function TheHoSoVisa({ hs, index }) {
+  const conLam = ["moi", "dang_gom", "cho_nop", "da_nop"].includes(hs.status);
+  const dong = [
+    hs.travel_date && ["Ngày dự kiến đi", ngayVN(hs.travel_date)],
+    hs.appointment_at && ["Lịch hẹn", `${hs.appointment_at.slice(11, 16)} ${ngayVN(hs.appointment_at)}`],
+    hs.result_expected_on && ["Hẹn trả kết quả", ngayVN(hs.result_expected_on)],
+    hs.visa_expiry && ["Visa hết hạn", ngayVN(hs.visa_expiry)],
+  ].filter(Boolean);
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      className="rounded-2xl bg-white p-5 shadow-card sm:p-6"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="font-display text-lg font-bold text-deep-900">Visa {hs.country}{hs.purpose ? ` · ${hs.purpose}` : ""}</p>
+          <p className="mt-0.5 font-mono text-xs text-ink-subtle">{hs.code} · nộp {ngayVN(hs.created_at)}</p>
+        </div>
+        <span className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 ${mauVisa[hs.status] || mauVisa.moi}`}>
+          {hs.status_label}
+        </span>
+      </div>
+
+      {dong.length > 0 && (
+        <dl className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+          {dong.map(([nhan, giaTri]) => (
+            <div key={nhan}>
+              <dt className="text-xs text-ink-subtle">{nhan}</dt>
+              <dd className="font-semibold text-deep-900">{giaTri}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      {conLam && hs.documents_total > 0 && (
+        <div className="mt-4 border-t border-ocean-50 pt-4">
+          <p className="flex items-center gap-2 text-sm font-semibold text-deep-900">
+            <Clock className="h-4 w-4 text-ocean-500" />
+            Đã nhận {hs.documents_received}/{hs.documents_total} giấy tờ
+          </p>
+          {hs.missing_documents.length > 0 && (
+            <div className="mt-3 rounded-xl bg-amber-50 px-4 py-3 ring-1 ring-amber-100">
+              <p className="flex items-center gap-2 text-xs font-semibold text-amber-800">
+                <FileWarning className="h-4 w-4" /> Còn thiếu — gửi cho chuyên viên phụ trách qua Zalo
+              </p>
+              <ul className="mt-2 list-disc space-y-0.5 pl-5 text-sm text-amber-900">
+                {hs.missing_documents.map((g) => <li key={g}>{g}</li>)}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </motion.article>
+  );
+}
+
 /* ---------- Hộp thông báo dùng chung ---------- */
 function ThongBao({ loai, noiDung }) {
   if (!noiDung) return null;
@@ -153,7 +225,9 @@ function ThongBao({ loai, noiDung }) {
 const oNhap =
   "mt-2 w-full rounded-xl border border-ocean-100 bg-white px-4 py-3 text-sm text-deep-900 outline-none transition-colors placeholder:text-ink-subtle/60 focus:border-ocean-400 disabled:bg-ocean-50/50 disabled:text-ink-subtle";
 
-export default function AccountClient({ user, donBanDau = [], loiTaiDon = false, tabBanDau = "don-hang" }) {
+export default function AccountClient({
+  user, donBanDau = [], loiTaiDon = false, hoSoVisa = [], loiTaiVisa = false, tabBanDau = "don-hang",
+}) {
   const [tab, setTab] = useState(tabBanDau);
   const router = useRouter();
 
@@ -253,7 +327,8 @@ export default function AccountClient({ user, donBanDau = [], loiTaiDon = false,
 
   const cacTab = [
     { key: "don-hang", label: "Đơn đặt tour", icon: Ticket },
-    { key: "ho-so", label: "Hồ sơ & mật khẩu", icon: UserCog },
+    { key: "visa", label: "Hồ sơ visa", icon: Stamp },
+    { key: "ho-so", label: "Thông tin & mật khẩu", icon: UserCog },
   ];
 
   return (
@@ -331,6 +406,35 @@ export default function AccountClient({ user, donBanDau = [], loiTaiDon = false,
                 </div>
               ) : (
                 donBanDau.map((don, i) => <TheDon key={don.booking_code} don={don} index={i} />)
+              )}
+            </motion.div>
+          ) : tab === "visa" ? (
+            <motion.div
+              key="visa"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="mt-6 space-y-4"
+            >
+              {loiTaiVisa ? (
+                <div className="rounded-2xl bg-white p-8 text-center shadow-card">
+                  <AlertCircle className="mx-auto h-8 w-8 text-rose-400" />
+                  <p className="mt-3 text-sm text-ink-muted">Không tải được hồ sơ visa. Vui lòng thử lại sau ít phút.</p>
+                </div>
+              ) : hoSoVisa.length === 0 ? (
+                <div className="rounded-2xl bg-white p-10 text-center shadow-card">
+                  <Stamp className="mx-auto h-9 w-9 text-ocean-300" />
+                  <p className="mt-4 font-display text-lg font-bold text-deep-900">Bạn chưa nộp hồ sơ visa nào</p>
+                  <p className="mx-auto mt-2 max-w-sm text-sm text-ink-muted">
+                    Hồ sơ nộp trên website lúc đang đăng nhập sẽ hiện ở đây, kèm trạng thái và giấy tờ còn thiếu.
+                  </p>
+                  <Link href="/lam-visa" className="btn-cta mt-6 !px-6 !py-3 text-sm">
+                    Xem dịch vụ visa <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              ) : (
+                hoSoVisa.map((hs, i) => <TheHoSoVisa key={hs.code} hs={hs} index={i} />)
               )}
             </motion.div>
           ) : (

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { locHtml } from "@/app/lib/sanitize";
-import { Clock, BadgeCheck, FileCheck2, Phone, ArrowRight, Wallet } from "lucide-react";
+import { Clock, BadgeCheck, FileCheck2, FileUp, Phone, ArrowRight, Wallet } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 
@@ -125,6 +125,12 @@ export default function VisaDetail({ visa, related = [], settings = {} }) {
                 >
                   <Phone className="h-4 w-4" /> Gọi tư vấn {hotline}
                 </a>
+                <Link
+                  href={`/lam-visa/${visa.slug}/nop-ho-so`}
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-ocean-700 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ocean-800"
+                >
+                  <FileUp className="h-4 w-4" /> Nộp hồ sơ online
+                </Link>
                 <Link
                   href="/lien-he"
                   className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-ocean-200 px-5 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-50"

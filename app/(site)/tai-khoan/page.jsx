@@ -16,15 +16,20 @@ export default async function Page({ searchParams }) {
 
   const { tab } = await searchParams;
 
-  // Lấy lịch sử đơn ngay ở server để trang hiện ra là có dữ liệu luôn
-  const { ok, data } = await goiApiCoToken("/auth/bookings?per_page=20");
+  // Lấy lịch sử đơn + hồ sơ visa ngay ở server để trang hiện ra là có dữ liệu luôn
+  const [{ ok, data }, visa] = await Promise.all([
+    goiApiCoToken("/auth/bookings?per_page=20"),
+    goiApiCoToken("/auth/visa-cases"),
+  ]);
 
   return (
     <AccountClient
       user={user}
       donBanDau={ok ? data?.data ?? [] : []}
       loiTaiDon={!ok}
-      tabBanDau={tab === "ho-so" ? "ho-so" : "don-hang"}
+      hoSoVisa={visa.ok ? visa.data?.data ?? [] : []}
+      loiTaiVisa={!visa.ok}
+      tabBanDau={["ho-so", "visa"].includes(tab) ? tab : "don-hang"}
     />
   );
 }
