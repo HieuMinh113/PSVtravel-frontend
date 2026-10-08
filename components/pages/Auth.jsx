@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, User, Phone, Eye, EyeOff, ArrowRight, AtSign, ShieldCheck, Loader2 } from "lucide-react";
+import { Mail, Lock, User, Phone, Eye, EyeOff, ArrowRight, AtSign, ShieldCheck, Loader2, KeyRound } from "lucide-react";
 
 // Gọi các route handler của chính Next (cùng tên miền) — token được cất vào
 // cookie httpOnly ở phía máy chủ, JavaScript trong trình duyệt không đọc được.
@@ -29,7 +29,7 @@ function docLoi(data) {
 
 export default function Auth() {
   const router = useRouter();
-  const [mode, setMode] = useState("login"); // login | register | otp
+  const [mode, setMode] = useState("login"); // login | register | otp | quen_mk | dat_lai_mk
   const [showPass, setShowPass] = useState(false);
   const [dangGui, setDangGui] = useState(false);
   const [loi, setLoi] = useState("");
@@ -42,6 +42,9 @@ export default function Auth() {
   });
 
   const [emailChoXacThuc, setEmailChoXacThuc] = useState("");
+  // Quên mật khẩu: email nhận mã, rồi mã + mật khẩu mới
+  const [emailQuenMk, setEmailQuenMk] = useState("");
+  const [datLai, setDatLai] = useState({ code: "", password: "", password_confirmation: "" });
   const [maOtp, setMaOtp] = useState("");
   const [demNguoc, setDemNguoc] = useState(0);
 
@@ -125,6 +128,42 @@ export default function Auth() {
     setLoi(docLoi(data));
   };
 
+  // Quên mật khẩu — bước 1: gửi mã tới email (cũng dùng cho "Gửi lại mã")
+  const guiMaQuenMk = async (e) => {
+    e?.preventDefault();
+    if (demNguoc > 0 && mode === "dat_lai_mk") return;
+    setLoi(""); setDangGui(true);
+
+    const { ok, data } = await goiApi("/api/auth/forgot-password", { email: emailQuenMk });
+    setDangGui(false);
+
+    if (ok) {
+      setEmailQuenMk(data?.data?.email || emailQuenMk);
+      setThongBao(data?.message || "Mã đặt lại mật khẩu đã được gửi tới email của bạn.");
+      setDemNguoc(60);
+      setMode("dat_lai_mk");
+      return;
+    }
+
+    setLoi(docLoi(data));
+  };
+
+  // Quên mật khẩu — bước 2: mã + mật khẩu mới → đăng nhập luôn
+  const xuLyDatLaiMk = async (e) => {
+    e.preventDefault();
+    setLoi(""); setDangGui(true);
+
+    const { ok, data } = await goiApi("/api/auth/reset-password", { email: emailQuenMk, ...datLai });
+    setDangGui(false);
+
+    if (ok) {
+      window.location.assign("/tai-khoan");
+      return;
+    }
+
+    setLoi(docLoi(data));
+  };
+
   const guiLaiMa = async () => {
     if (demNguoc > 0) return;
     setLoi(""); setDangGui(true);
@@ -178,7 +217,7 @@ export default function Auth() {
 
         {/* Panel form */}
         <div className="p-8 sm:p-10">
-          {mode !== "otp" && (
+          {(mode === "login" || mode === "register") && (
             <div className="mb-8 flex rounded-full bg-ocean-50 p-1">
               {[
                 { id: "login", label: "Đăng nhập" },
@@ -259,6 +298,20 @@ export default function Auth() {
                       {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
+                </div>
+
+                <div className="-mt-2 text-right">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Ô đăng nhập đang là email thì điền sẵn cho khách
+                      if (dangNhap.login.includes("@")) setEmailQuenMk(dangNhap.login.trim());
+                      doiMode("quen_mk");
+                    }}
+                    className="text-xs font-semibold text-ocean-700 hover:text-ocean-800"
+                  >
+                    Quên mật khẩu?
+                  </button>
                 </div>
 
                 <button type="submit" disabled={dangGui} className="btn-cta w-full !py-3.5 disabled:opacity-60">
@@ -401,6 +454,154 @@ export default function Auth() {
                   Đã có tài khoản?{" "}
                   <button type="button" onClick={() => doiMode("login")} className="font-semibold text-ocean-700 hover:text-ocean-800">
                     Đăng nhập
+                  </button>
+                </p>
+              </motion.form>
+            )}
+
+            {/* ================= QUÊN MẬT KHẨU: NHẬP EMAIL ================= */}
+            {mode === "quen_mk" && (
+              <motion.form
+                key="quen_mk"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-5"
+                onSubmit={guiMaQuenMk}
+              >
+                <div className="text-center">
+                  <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-ocean-50">
+                    <KeyRound className="h-7 w-7 text-ocean-700" />
+                  </div>
+                  <h1 className="mt-4 font-display text-2xl font-bold text-deep-900">Quên mật khẩu</h1>
+                  <p className="mt-1 text-sm text-ink-muted">
+                    Nhập email đã đăng ký, chúng tôi sẽ gửi mã gồm 6 chữ số để đặt lại mật khẩu.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-ink-muted">Email</label>
+                  <div className="relative mt-1.5">
+                    <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
+                    <input
+                      required
+                      type="email"
+                      value={emailQuenMk}
+                      onChange={(e) => setEmailQuenMk(e.target.value)}
+                      placeholder="ban@email.com"
+                      className="w-full rounded-xl border border-ocean-100 bg-ocean-50/40 py-3 pl-11 pr-4 text-sm outline-none focus:border-ocean-400 focus:bg-white"
+                    />
+                  </div>
+                </div>
+
+                <button type="submit" disabled={dangGui} className="btn-cta w-full !py-3.5 disabled:opacity-60">
+                  {dangGui ? <><Loader2 className="h-4 w-4 animate-spin" /> Đang gửi...</> : <>Gửi mã xác thực <ArrowRight className="h-4 w-4" /></>}
+                </button>
+
+                <p className="text-center text-xs text-ink-subtle">
+                  <button type="button" onClick={() => doiMode("login")} className="font-semibold text-ocean-700 hover:text-ocean-800">
+                    Quay lại đăng nhập
+                  </button>
+                </p>
+              </motion.form>
+            )}
+
+            {/* ================= QUÊN MẬT KHẨU: MÃ + MẬT KHẨU MỚI ================= */}
+            {mode === "dat_lai_mk" && (
+              <motion.form
+                key="dat_lai_mk"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-5"
+                onSubmit={xuLyDatLaiMk}
+              >
+                <div className="text-center">
+                  <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-ocean-50">
+                    <ShieldCheck className="h-7 w-7 text-ocean-700" />
+                  </div>
+                  <h1 className="mt-4 font-display text-2xl font-bold text-deep-900">Đặt lại mật khẩu</h1>
+                  <p className="mt-1 text-sm text-ink-muted">
+                    Nhập mã gồm 6 chữ số đã gửi tới<br />
+                    <span className="font-semibold text-deep-900">{emailQuenMk}</span>
+                  </p>
+                </div>
+
+                <div>
+                  <input
+                    required
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    maxLength={6}
+                    value={datLai.code}
+                    onChange={(e) => setDatLai((f) => ({ ...f, code: e.target.value.replace(/[^0-9]/g, "") }))}
+                    placeholder="000000"
+                    aria-label="Mã xác thực 6 chữ số"
+                    className="w-full rounded-xl border border-ocean-100 bg-ocean-50/40 py-4 text-center font-display text-3xl font-bold tracking-[0.5em] outline-none focus:border-ocean-400 focus:bg-white"
+                  />
+                  <p className="mt-2 text-center text-xs text-ink-subtle">Mã có hiệu lực trong 10 phút</p>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-ink-muted">Mật khẩu mới</label>
+                  <div className="relative mt-1.5">
+                    <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
+                    <input
+                      required
+                      type={showPass ? "text" : "password"}
+                      autoComplete="new-password"
+                      value={datLai.password}
+                      onChange={(e) => setDatLai((f) => ({ ...f, password: e.target.value }))}
+                      placeholder="Tối thiểu 8 ký tự, có chữ và số"
+                      className="w-full rounded-xl border border-ocean-100 bg-ocean-50/40 py-3 pl-11 pr-11 text-sm outline-none focus:border-ocean-400 focus:bg-white"
+                    />
+                    <button type="button" onClick={() => setShowPass((s) => !s)} aria-label={showPass ? "Ẩn mật khẩu" : "Hiện mật khẩu"} aria-pressed={showPass} className="absolute right-1.5 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-lg text-ocean-400 transition-colors hover:text-ocean-600">
+                      {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-ink-muted">Nhập lại mật khẩu mới</label>
+                  <div className="relative mt-1.5">
+                    <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
+                    <input
+                      required
+                      type={showPass ? "text" : "password"}
+                      autoComplete="new-password"
+                      value={datLai.password_confirmation}
+                      onChange={(e) => setDatLai((f) => ({ ...f, password_confirmation: e.target.value }))}
+                      placeholder="Nhập lại mật khẩu mới"
+                      className="w-full rounded-xl border border-ocean-100 bg-ocean-50/40 py-3 pl-11 pr-4 text-sm outline-none focus:border-ocean-400 focus:bg-white"
+                    />
+                  </div>
+                </div>
+
+                <button type="submit" disabled={dangGui || datLai.code.length !== 6} className="btn-cta w-full !py-3.5 disabled:opacity-60">
+                  {dangGui ? <><Loader2 className="h-4 w-4 animate-spin" /> Đang xử lý...</> : <>Đặt lại mật khẩu <ArrowRight className="h-4 w-4" /></>}
+                </button>
+
+                <div className="text-center text-xs text-ink-muted">
+                  Không nhận được mã? Kiểm tra cả mục Spam/Quảng cáo, hoặc{" "}
+                  <button
+                    type="button"
+                    onClick={() => guiMaQuenMk()}
+                    disabled={demNguoc > 0 || dangGui}
+                    className="font-semibold text-ocean-700 hover:text-ocean-800 disabled:text-deep-800/35"
+                  >
+                    {demNguoc > 0 ? `gửi lại sau ${demNguoc}s` : "gửi lại mã"}
+                  </button>
+                </div>
+
+                <p className="text-center text-xs text-ink-subtle">
+                  <button type="button" onClick={() => doiMode("quen_mk")} className="font-semibold text-ocean-700 hover:text-ocean-800">
+                    Đổi email
+                  </button>
+                  <span className="mx-2 text-ink-subtle">·</span>
+                  <button type="button" onClick={() => doiMode("login")} className="font-semibold text-ocean-700 hover:text-ocean-800">
+                    Quay lại đăng nhập
                   </button>
                 </p>
               </motion.form>
