@@ -6,8 +6,9 @@ import { motion } from "framer-motion";
 import { CalendarDays, Eye, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
+import BanDoCamNang from "@/components/camnang/BanDoCamNang";
 
-export default function Guides({ guides: apiGuides = [] }) {
+export default function Guides({ guides: apiGuides = [], banDo = null }) {
   // Chỉ hiện bài viết thật từ admin. Trước đây DB trống thì đổ ra 6 bài mẫu
   // với ảnh Unsplash — khách đọc tưởng bài thật, bấm vào lỗi 404, mà một trong
   // số ảnh đó nay đã bị xoá khỏi Unsplash nên trang báo lỗi ảnh.
@@ -24,15 +25,27 @@ export default function Guides({ guides: apiGuides = [] }) {
 
   return (
     <div>
-      <PageHero
-        eyebrow="Cẩm nang du lịch"
-        title="Kinh nghiệm & mẹo hay cho mỗi hành trình"
-        description="Tổng hợp cẩm nang, mẹo vặt, ẩm thực và kinh nghiệm visa được chọn lọc từ đội ngũ hướng dẫn viên giàu kinh nghiệm."
-        crumbs={[{ label: "Cẩm nang" }]}
-      />
+      {/* Có dữ liệu bản đồ (admin đã thêm nước / thành phố / điểm): quả địa cầu
+          làm phần đầu trang. Chưa có thì giữ phần đầu trang như cũ. */}
+      {banDo ? (
+        <BanDoCamNang data={banDo} />
+      ) : (
+        <PageHero
+          eyebrow="Cẩm nang du lịch"
+          title="Kinh nghiệm & mẹo hay cho mỗi hành trình"
+          description="Tổng hợp cẩm nang, mẹo vặt, ẩm thực và kinh nghiệm visa được chọn lọc từ đội ngũ hướng dẫn viên giàu kinh nghiệm."
+          crumbs={[{ label: "Cẩm nang" }]}
+        />
+      )}
 
       <section className="bg-foam py-14 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          {banDo && (
+            <SectionReveal className="mb-8 text-center">
+              <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">Tất cả bài cẩm nang</h2>
+              <p className="mx-auto mt-2 max-w-2xl text-ink-muted">Kinh nghiệm, mẹo vặt, ẩm thực và thủ tục visa — lọc theo chuyên mục.</p>
+            </SectionReveal>
+          )}
           <SectionReveal className="flex flex-wrap justify-center gap-2">
             {categories.map((c) => {
               const dangChon = category === c;

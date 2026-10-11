@@ -91,3 +91,14 @@ export function FlagTaiwan(props) {
     </svg>
   );
 }
+export function FlagVietnam(props) {
+  return (
+    <svg viewBox="0 0 36 24" className={props.className}>
+      <clipPath id="vn"><rect width="36" height="24" rx="4" /></clipPath>
+      <g clipPath="url(#vn)">
+        <rect width="36" height="24" fill="#DA251D" />
+        <path d="M18 5 L19.65 10.1 L25 10.1 L20.7 13.25 L22.35 18.35 L18 15.2 L13.65 18.35 L15.3 13.25 L11 10.1 L16.35 10.1 Z" fill="#FFFF00" />
+      </g>
+    </svg>
+  );
+}

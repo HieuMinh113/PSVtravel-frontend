@@ -17,7 +17,7 @@ export default function FloatingContact({ settings = {} }) {
     : null;
 
   return (
-    <div className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-5 z-40 flex flex-col items-end gap-3 sm:right-6">
+    <div data-lien-he-noi className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-5 z-40 flex flex-col items-end gap-3 sm:right-6">
       {/* Zalo — chỉ hiện khi admin đã cấu hình, tránh nút dẫn tới link hỏng */}
       {zaloHref && (
       <motion.a

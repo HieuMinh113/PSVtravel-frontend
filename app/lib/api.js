@@ -319,6 +319,15 @@ export async function getGuideBySlug(slug) {
   return mapGuide(json?.data ?? json);
 }
 
+// Bản đồ cẩm nang: nước (kèm hình dạng để tô trên quả địa cầu) → thành phố →
+// điểm → bài viết. Dữ liệu phụ: lỗi / chưa có thì trả null, trang Cẩm nang
+// tự quay về dạng danh sách bài như cũ.
+export async function getGuideMap() {
+  const json = await layJSON(`/guide-map`);
+  const d = json?.data;
+  return d?.countries?.length ? d : null;
+}
+
 export async function getGuideSlugs() {
   const json = await layJSON(`/guides-slugs`);
   // Nhận cả mảng trần lẫn { data: [...] } như các hàm *Slugs khác — lệch dạng

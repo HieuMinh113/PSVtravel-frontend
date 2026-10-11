@@ -416,3 +416,111 @@ img, video {
 @media (prefers-reduced-motion: reduce) {
   .autumn-leaves { display: none; }
 }
+
+/* ===== Bản đồ cẩm nang (components/camnang/BanDoCamNang.jsx) =====
+   Ghim là <button> thật gắn trên bản đồ MapLibre. Ghim nằm khuất sau quả địa
+   cầu hoặc không thuộc cấp đang xem thì ẩn hẳn (visibility) — không bấm nhầm,
+   không nhận Tab. */
+@layer components {
+  .nut-ban-do {
+    @apply grid h-11 w-11 place-items-center rounded-xl bg-white/95 text-ink shadow-card
+           transition-colors duration-200 hover:bg-white hover:text-ocean-700;
+  }
+  .dong-ds {
+    @apply flex min-h-[44px] w-full items-center gap-3 rounded-xl px-2 py-2 text-left
+           transition-colors duration-200 hover:bg-ocean-50;
+  }
+  .chip-loai {
+    @apply inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-ocean-100 bg-white px-3
+           text-xs font-semibold text-ink-muted transition-colors duration-200 hover:border-ocean-300 hover:text-ocean-700;
+  }
+  .chip-loai-chon {
+    @apply border-ocean-700 bg-ocean-700 text-white hover:border-ocean-700 hover:text-white;
+  }
+
+  /* Nước có cẩm nang (mức quả địa cầu): chấm đúng vị trí, nhãn lệch sang phải */
+  .ghim-nuoc {
+    @apply relative grid h-11 w-11 place-items-center;
+  }
+  .ghim-nuoc-cham {
+    @apply relative h-3.5 w-3.5 rounded-full border-2 border-white bg-teal-500 shadow
+           transition-transform duration-200;
+  }
+  .ghim-nuoc-cham::after {
+    content: "";
+    @apply absolute inset-0 animate-ripple rounded-full bg-teal-400;
+  }
+  .ghim-nhan {
+    @apply absolute left-9 top-1/2 flex -translate-y-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-white/95
+           py-1 pl-2 pr-3 text-[13px] font-semibold text-deep-900 shadow-card transition-[transform,opacity] duration-200 ease-enter;
+  }
+  .ghim-nuoc:hover .ghim-nhan, .ghim-nuoc:focus-visible .ghim-nhan, .ghim-nuoc-tro .ghim-nhan { @apply scale-105 text-ocean-700; }
+  .ghim-nuoc:hover .ghim-nuoc-cham, .ghim-nuoc-tro .ghim-nuoc-cham { @apply scale-125; }
+
+  /* Nhãn đè lên nhãn quan trọng hơn: ẩn chữ, giữ chấm; rê chuột / Tab vào thì hiện */
+  .nhan-chong [data-nhan] { opacity: 0; pointer-events: none; }
+  .nhan-trai [data-nhan] { left: auto; right: 2.25rem; }
+  .nhan-chong:hover, .nhan-chong:focus-within { z-index: 5; }
+  .nhan-chong:hover [data-nhan], .nhan-chong:focus-within [data-nhan] { opacity: 1; }
+
+  /* Thành phố (mức quốc gia): chấm đúng toạ độ, nhãn lệch sang phải */
+  .ghim-tp {
+    @apply relative grid h-11 w-11 place-items-center;
+  }
+  .ghim-tp-cham {
+    @apply h-4 w-4 rounded-full border-[3px] border-white bg-sunset-600 shadow-[0_0_0_4px_rgba(234,88,12,0.25)]
+           transition-transform duration-200;
+  }
+  .ghim-tp:hover .ghim-tp-cham, .ghim-tp:focus-visible .ghim-tp-cham { @apply scale-125; }
+  .ghim-tp-nhan {
+    @apply absolute left-9 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-white/95 px-2.5 py-1
+           text-sm font-bold text-deep-900 shadow-card;
+  }
+
+  /* Điểm trong thành phố: tròn màu theo loại + biểu tượng; tên hiện khi phóng gần */
+  .ghim-diem {
+    @apply relative grid h-11 w-11 place-items-center;
+  }
+  .ghim-diem-tron {
+    @apply grid h-9 w-9 place-items-center rounded-full border-2 border-white text-white shadow-[0_3px_10px_rgba(7,30,51,0.35)]
+           transition-transform duration-200 ease-enter;
+  }
+  .ghim-diem:hover .ghim-diem-tron, .ghim-diem:focus-visible .ghim-diem-tron { @apply scale-110; }
+  .ghim-diem-chon { z-index: 2; }
+  .ghim-diem-chon .ghim-diem-tron { @apply scale-125 ring-4 ring-gold-400; }
+  .nhan-diem {
+    @apply pointer-events-none absolute left-1/2 top-full -mt-0.5 -translate-x-1/2 whitespace-nowrap rounded-md bg-white/95
+           px-2 py-0.5 text-xs font-semibold text-deep-900 shadow transition-opacity duration-200;
+  }
+  .ban-do-cn:not(.zm-duong) .ghim-diem:not(.ghim-diem-chon):not(:hover):not(:focus-visible) .nhan-diem { opacity: 0; }
+
+  .nhan-quan-dao {
+    @apply pointer-events-none block whitespace-nowrap text-[11px] font-semibold italic text-ocean-800;
+    text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 6px #fff;
+  }
+  .ban-do-cn.zm-thap .nhan-quan-dao, .ban-do-cn.zm-cao .nhan-quan-dao { display: none; }
+}
+.ghim-an, .ban-do-cn .maplibregl-marker-covered { visibility: hidden !important; }
+.ban-do-cn .maplibregl-marker:has(.ghim-diem-chon) { z-index: 3; }
+.ban-do-cn .maplibregl-ctrl-attrib { font-size: 11px; }
+.ghim-gop { visibility: hidden !important; }
+.ghim-diem[data-so]::after {
+  content: attr(data-so);
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #0A2A45;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  box-shadow: 0 0 0 2px #fff;
+}
+/* Bản đồ cẩm nang trên điện thoại: tấm trượt đang mở thì cất nút liên hệ nổi (nó đè lên danh sách) */
+html.an-lien-he-noi [data-lien-he-noi] { opacity: 0; pointer-events: none; transform: translateY(12px); }
+[data-lien-he-noi] { transition: opacity 0.25s ease, transform 0.25s ease; }
