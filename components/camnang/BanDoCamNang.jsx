@@ -63,6 +63,13 @@ function docUrl(cm) {
   return { nuoc, tp, diem };
 }
 
+/** Giữ đúng các cấp có thật trong dữ liệu (trang bài truyền chỗ bắt đầu vào). */
+function chuanHoa(cm, s) {
+  const n = s?.nuoc && cm.nuoc.get(s.nuoc);
+  const t = n && s.tp && cm.tp.get(s.tp);
+  return { nuoc: n ? n.slug : null, tp: t && t.nuoc === n.slug ? t.slug : null, diem: null };
+}
+
 function urlCua(s) {
   const p = new URLSearchParams(window.location.search);
   for (const k of ["nuoc", "tp", "diem"]) (s[k] ? p.set(k, s[k]) : p.delete(k));
@@ -121,7 +128,15 @@ const Co = ({ code, className }) => {
   );
 };
 
-export default function BanDoCamNang({ data }) {
+/**
+ * @param cheDo   "trang": phần đầu trang /cam-nang, chỗ đang xem ghi lên địa chỉ trang.
+ *                "nhung": đặt cuối trang bài cẩm nang để chọn chỗ khác — không đổi địa
+ *                chỉ trang, chỉ nạp bản đồ khi người đọc cuộn gần tới.
+ * @param batDau  { nuoc, tp } — chỗ mở sẵn (trang bài: thành phố của bài)
+ * @param dangDoc slug bài đang đọc — điểm của bài này được đánh dấu "Đang đọc"
+ */
+export default function BanDoCamNang({ data, cheDo = "trang", batDau = null, dangDoc = null }) {
+  const laNhung = cheDo === "nhung";
   const cm = useMemo(() => lapChiMuc(data), [data]);
   const [chon, setChon] = useState({ nuoc: null, tp: null, diem: null });
   const [che, setChe] = useState("dang_tai"); // dang_tai | san_sang | loi
@@ -134,6 +149,8 @@ export default function BanDoCamNang({ data }) {
   const [tro, setTro] = useState(null); // nước đang rê chuột vào
   const [dai, setDai] = useState("zm-thap"); // dải zoom: ẩn / hiện nhãn quần đảo, tên điểm
   const [toan, setToan] = useState(false); // điện thoại: bản đồ toàn màn hình, kéo bằng một ngón
+  const [duocNap, setDuocNap] = useState(!laNhung); // trang bài: chờ cuộn gần tới mới tải bản đồ
+  const voRef = useRef(null);
   const [caoDau, setCaoDau] = useState(124); // chiều cao phần đầu tấm trượt khi thu gọn
   const [cum, setCum] = useState({}); // id điểm đại diện → số điểm gộp chung (điểm sát nhau đè lên nhau)
   const cumRef = useRef({}); // id điểm đại diện → [id các điểm trong cụm]
@@ -160,6 +177,7 @@ export default function BanDoCamNang({ data }) {
 
   // ---------- Điều hướng (ghi lên địa chỉ trang) ----------
   const vuaBam = useRef(false); // chỉ dời focus khi người dùng tự bấm, không phải lúc mở link
+  const laNhungRef = useRef(laNhung);
   const di = useCallback((moi, { thayThe = false } = {}) => {
     const s = { nuoc: null, tp: null, diem: null, ...moi };
     vuaBam.current = !thayThe;
@@ -169,6 +187,7 @@ export default function BanDoCamNang({ data }) {
     else if (s.nuoc) setMoRong(false);
     setTuKhoa("");
     if (!s.tp) setLoc(null);
+    if (laNhungRef.current) return; // nhúng trong trang bài: không đổi địa chỉ trang
     const url = urlCua(s);
     if (url !== window.location.pathname + window.location.search) {
       window.history[thayThe ? "replaceState" : "pushState"](null, "", url);
@@ -184,12 +203,40 @@ export default function BanDoCamNang({ data }) {
     else if (c.nuoc) di({});
   }, [di]);
 
+  const batDauKhoa = JSON.stringify(batDau ?? {});
   useEffect(() => {
+    if (laNhung) {
+      // Mở bài từ bản đồ (?diem=…): về đúng thành phố của điểm vừa bấm (một bài có thể gắn nhiều điểm)
+      const id = new URLSearchParams(window.location.search).get("diem");
+      const d = id && cm.diem.get(id);
+      setChon(chuanHoa(cm, d && d.guide?.slug === dangDoc ? d : JSON.parse(batDauKhoa)));
+      return;
+    }
     setChon(docUrl(cm));
     const f = () => setChon(docUrl(cm));
     window.addEventListener("popstate", f);
     return () => window.removeEventListener("popstate", f);
-  }, [cm]);
+  }, [cm, laNhung, batDauKhoa, dangDoc]);
+
+  // Trang bài: chỉ tải bản đồ (~300 KB) khi người đọc cuộn tới gần
+  useEffect(() => {
+    if (duocNap || !voRef.current) return;
+    const io = new IntersectionObserver(([m]) => m.isIntersecting && setDuocNap(true), { rootMargin: "600px 0px" });
+    io.observe(voRef.current);
+    return () => io.disconnect();
+  }, [duocNap]);
+
+  // ---------- Mở bài cẩm nang của một điểm ----------
+  const dangDocIds = useMemo(
+    () => new Set([...cm.diem.values()].filter((d) => dangDoc && d.guide?.slug === dangDoc).map((d) => d.id)),
+    [cm, dangDoc],
+  );
+  const linkBai = (d) => `/cam-nang/${d.guide.slug}?diem=${d.id}`;
+  // Trước khi sang bài: ghi địa chỉ hiện tại về cấp thành phố — bấm Back quay lại đúng bản đồ thành phố đó
+  const truocKhiMoBai = (d) => {
+    if (!laNhung) window.history.replaceState(null, "", urlCua({ nuoc: d.nuoc, tp: d.tp }));
+  };
+  const veDauBai = () => window.scrollTo({ top: 0, behavior: giamChuyenDong() ? "auto" : "smooth" });
 
   // Thông báo cho trình đọc màn hình + mở bảng khi chọn điểm (điện thoại)
   useEffect(() => {
@@ -232,6 +279,7 @@ export default function BanDoCamNang({ data }) {
 
   // ---------- Tạo bản đồ ----------
   useEffect(() => {
+    if (!duocNap) return;
     let huy = false;
     let map = null;
     (async () => {
@@ -350,7 +398,7 @@ export default function BanDoCamNang({ data }) {
       map?.remove();
       mapRef.current = null;
     };
-  }, [data, cm, dungXoay, henXoay]);
+  }, [data, cm, dungXoay, henXoay, duocNap]);
 
   const thuTuDiem = useMemo(() => {
     const m = new Map();
@@ -447,7 +495,7 @@ export default function BanDoCamNang({ data }) {
         if (!c) continue;
         const r = c.getBoundingClientRect();
         const id = khoa.slice(2);
-        dsDiem.push({ el, id, x: r.left + r.width / 2, y: r.top + r.height / 2, uu: id === chonRef.current.diem ? 1e9 : -(thuTuDiem.get(id) ?? 0) });
+        dsDiem.push({ el, id, x: r.left + r.width / 2, y: r.top + r.height / 2, uu: id === chonRef.current.diem || dangDocIds.has(id) ? 1e9 : -(thuTuDiem.get(id) ?? 0) });
       }
       dsDiem.sort((a, b) => b.uu - a.uu);
       const nhom = {};
@@ -520,7 +568,7 @@ export default function BanDoCamNang({ data }) {
       map.off("moveend", dung);
       cancelAnimationFrame(hen);
     };
-  }, [che, phanTu, chon, thuTuDiem]);
+  }, [che, phanTu, chon, thuTuDiem, dangDocIds]);
 
   // Bấm ghim cụm: phóng tới mức các điểm tách ra (cách nhau ≥ ~44px)
   const moCum = (ids) => {
@@ -639,6 +687,7 @@ export default function BanDoCamNang({ data }) {
   };
 
   const tieuDe = diem ? diem.name : tp ? tp.name : nuoc ? nuoc.name : "Chọn điểm đến";
+  const TieuDeBang = laNhung ? "h3" : "h2";
 
   // Ẩn / hiện ghim theo cấp đang xem (ghim ẩn: không bấm được, không nhận Tab)
   useEffect(() => {
@@ -648,9 +697,10 @@ export default function BanDoCamNang({ data }) {
 
   return (
     <section
-      aria-labelledby="ban-do-tieu-de"
+      id={laNhung ? "ban-do-cam-nang" : undefined}
+      aria-labelledby={laNhung ? "ban-do-dau" : "ban-do-tieu-de"}
       onKeyDown={banPhim}
-      className="relative overflow-hidden bg-deep-950 px-3 pb-10 pt-28 sm:px-6 lg:pt-[7.5rem]"
+      className={`relative overflow-hidden bg-deep-950 px-3 sm:px-6 ${laNhung ? "py-12 sm:py-16" : "pb-10 pt-28 lg:pt-[7.5rem]"}`}
     >
       {/* Nền vũ trụ: mesh gradient thương hiệu + chấm sao */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-aurora-deep opacity-60" />
@@ -662,6 +712,17 @@ export default function BanDoCamNang({ data }) {
 
       <div className="relative mx-auto max-w-7xl">
         <div className="mb-4 flex flex-col gap-3 px-2 lg:flex-row lg:items-end lg:justify-between">
+          {laNhung ? (
+            <div className="max-w-3xl">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-300">Bản đồ cẩm nang</p>
+              <h2 id="ban-do-dau" className="mt-1 font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
+                Khám phá cẩm nang khác trên bản đồ
+              </h2>
+              <p className="mt-2 text-white/85">
+                {tp ? `Chọn điểm khác ở ${tp.name}, ` : "Chọn một điểm, "}hoặc bấm biểu tượng quả địa cầu để sang nước khác.
+              </p>
+            </div>
+          ) : (
           <div className="max-w-3xl">
             <nav aria-label="Đường dẫn" className="mb-2 flex items-center gap-1.5 text-xs text-white/80">
               <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>
@@ -675,6 +736,7 @@ export default function BanDoCamNang({ data }) {
               Chọn một nước, phóng vào thành phố — mỗi điểm trên bản đồ là một bài cẩm nang do hướng dẫn viên PSV viết.
             </p>
           </div>
+          )}
           <dl className="flex gap-2 text-sm">
             {[
               [cm.nuoc.size, "nước"],
@@ -693,7 +755,10 @@ export default function BanDoCamNang({ data }) {
         </div>
 
         {/* Ô giữ chỗ: khung bản đồ chuyển sang toàn màn hình thì trang phía sau không bị xô */}
-        <div className="relative h-[78svh] min-h-[540px] lg:h-[calc(100svh-15.5rem)] lg:max-h-[860px] lg:min-h-[560px]">
+        <div
+          ref={voRef}
+          className={`relative min-h-[540px] lg:min-h-[560px] ${laNhung ? "h-[74svh] lg:h-[min(78svh,760px)]" : "h-[78svh] lg:h-[calc(100svh-15.5rem)] lg:max-h-[860px]"}`}
+        >
         <div
           onPointerEnter={(e) => {
             if (e.pointerType !== "mouse") return;
@@ -831,9 +896,9 @@ export default function BanDoCamNang({ data }) {
                     <ArrowLeft className="h-5 w-5" aria-hidden="true" />
                   </button>
                 )}
-                <h2 id="ban-do-tieu-de" ref={diem ? undefined : tieuDeRef} tabIndex={-1} className="truncate font-display text-xl font-bold text-deep-900 focus:outline-none">
+                <TieuDeBang id="ban-do-tieu-de" ref={diem ? undefined : tieuDeRef} tabIndex={-1} className="truncate font-display text-xl font-bold text-deep-900 focus:outline-none">
                   {diem ? (tp?.name ?? tieuDe) : tieuDe}
-                </h2>
+                </TieuDeBang>
               </div>
             </div>
             </div>
@@ -865,7 +930,7 @@ export default function BanDoCamNang({ data }) {
                   )}
 
                   {ketQua ? (
-                    <KetQuaTim ketQua={ketQua} cm={cm} di={di} />
+                    <KetQuaTim ketQua={ketQua} cm={cm} di={di} linkBai={linkBai} truocKhiMoBai={truocKhiMoBai} />
                   ) : cap === "the_gioi" ? (
                     <>
                       <p className="mb-2 text-sm text-ink-muted">
@@ -916,7 +981,7 @@ export default function BanDoCamNang({ data }) {
                   ) : (
                     <>
                       {tp.intro && <p className="mb-3 text-sm text-ink-muted">{tp.intro}</p>}
-                      {tp.guide && (
+                      {tp.guide && tp.guide.slug !== dangDoc && (
                         <Link href={`/cam-nang/${tp.guide.slug}`} className="mb-3 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-ocean-700 to-ocean-600 p-3 text-white shadow-card transition-transform duration-300 ease-enter hover:-translate-y-0.5">
                           <BookOpen aria-hidden="true" className="h-5 w-5 shrink-0 text-gold-300" />
                           <span className="min-w-0 flex-1">
@@ -945,21 +1010,41 @@ export default function BanDoCamNang({ data }) {
                       <ul className="space-y-1.5">
                         {diemHien.map((d) => {
                           const L = loaiCua(d.type);
+                          const dangDocNay = dangDocIds.has(d.id);
+                          const noiDungDong = (
+                            <>
+                              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-white shadow-sm" style={{ backgroundColor: L.mau }}>
+                                <L.Icon aria-hidden="true" className="h-5 w-5" />
+                              </span>
+                              <span className="min-w-0 flex-1">
+                                <span className="block font-semibold text-deep-900 group-hover:text-ocean-700">{d.name}</span>
+                                {d.guide ? (
+                                  <span className="line-clamp-1 block text-xs text-ink-muted">
+                                    {dangDocNay ? <span className="font-semibold text-sunset-700">Đang đọc · </span> : null}
+                                    {d.guide.title}
+                                  </span>
+                                ) : (
+                                  <span className="block text-xs text-ink-subtle">{L.nhan}</span>
+                                )}
+                              </span>
+                              {d.guide ? (
+                                <BookOpen aria-hidden="true" className="h-4 w-4 shrink-0 text-sunset-600" />
+                              ) : (
+                                <ChevronRight aria-hidden="true" className="h-4 w-4 text-ink-subtle transition-transform group-hover:translate-x-0.5" />
+                              )}
+                            </>
+                          );
                           return (
                             <li key={d.id}>
-                              <button type="button" onClick={() => di({ nuoc: d.nuoc, tp: d.tp, diem: d.id })} className="dong-ds group">
-                                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-white shadow-sm" style={{ backgroundColor: L.mau }}>
-                                  <L.Icon aria-hidden="true" className="h-5 w-5" />
-                                </span>
-                                <span className="min-w-0 flex-1">
-                                  <span className="block font-semibold text-deep-900 group-hover:text-ocean-700">{d.name}</span>
-                                  <span className="block text-xs text-ink-subtle">
-                                    {L.nhan}
-                                    {d.guide ? " · có bài cẩm nang" : ""}
-                                  </span>
-                                </span>
-                                <ChevronRight aria-hidden="true" className="h-4 w-4 text-ink-subtle transition-transform group-hover:translate-x-0.5" />
-                              </button>
+                              {d.guide && !dangDocNay ? (
+                                <Link href={linkBai(d)} prefetch={false} onClick={() => truocKhiMoBai(d)} className="dong-ds group">
+                                  {noiDungDong}
+                                </Link>
+                              ) : (
+                                <button type="button" onClick={() => (dangDocNay ? veDauBai() : di({ nuoc: d.nuoc, tp: d.tp, diem: d.id }))} className="dong-ds group">
+                                  {noiDungDong}
+                                </button>
+                              )}
                             </li>
                           );
                         })}
@@ -1028,26 +1113,65 @@ export default function BanDoCamNang({ data }) {
             const d = cm.diem.get(ma);
             const L = loaiCua(d.type);
             const dangChon = chon.diem === d.id;
-            noiDung = (
-              <button
-                type="button"
-                tabIndex={hien ? 0 : -1}
-                onClick={() => {
-                  const nhom = cumRef.current[d.id];
-                  if (nhom?.length > 1 && moCum(nhom)) return;
-                  di({ nuoc: d.nuoc, tp: d.tp, diem: d.id });
-                }}
-                aria-pressed={dangChon}
-                aria-label={cum[d.id] ? `${d.name} và ${cum[d.id] - 1} điểm sát bên — bấm để phóng gần` : `${d.name} — ${L.nhan}`}
-                data-so={cum[d.id] ? cum[d.id] : undefined}
-                className={`ghim-diem ${dangChon ? "ghim-diem-chon" : ""}`}
-              >
+            const dangDocNay = dangDocIds.has(d.id);
+            const laCum = !!cum[d.id];
+            const nhan = laCum
+              ? `${d.name} và ${cum[d.id] - 1} điểm sát bên — bấm để phóng gần`
+              : dangDocNay
+                ? `${d.name} — bài bạn đang đọc`
+                : d.guide
+                  ? `${d.name} — đọc cẩm nang: ${d.guide.title}`
+                  : `${d.name} — ${L.nhan}`;
+            const ruot = (
+              <>
                 <span aria-hidden="true" data-cham className="ghim-diem-tron" style={{ backgroundColor: L.mau }}>
                   <L.Icon className="h-[18px] w-[18px]" />
                 </span>
-                <span aria-hidden="true" className="nhan-diem">{d.name}</span>
-              </button>
+                <span aria-hidden="true" className="nhan-diem">
+                  {d.name}
+                  {dangDocNay ? <span className="ml-1 text-sunset-700">· Đang đọc</span> : null}
+                </span>
+              </>
             );
+            const lop = `ghim-diem ${dangChon || dangDocNay ? "ghim-diem-chon" : ""} ${dangDocNay ? "ghim-diem-dang-doc" : ""}`;
+            const moCumNeuCo = (e) => {
+              const nhom = cumRef.current[d.id];
+              if (nhom?.length > 1 && moCum(nhom)) {
+                e.preventDefault();
+                return true;
+              }
+              return false;
+            };
+            noiDung =
+              d.guide && !dangDocNay ? (
+                <Link
+                  href={linkBai(d)}
+                  prefetch={false}
+                  tabIndex={hien ? 0 : -1}
+                  onClick={(e) => !moCumNeuCo(e) && truocKhiMoBai(d)}
+                  aria-label={nhan}
+                  data-so={laCum ? cum[d.id] : undefined}
+                  className={lop}
+                >
+                  {ruot}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  tabIndex={hien ? 0 : -1}
+                  onClick={(e) => {
+                    if (moCumNeuCo(e)) return;
+                    if (dangDocNay) veDauBai();
+                    else di({ nuoc: d.nuoc, tp: d.tp, diem: d.id });
+                  }}
+                  aria-pressed={d.guide ? undefined : dangChon}
+                  aria-label={nhan}
+                  data-so={laCum ? cum[d.id] : undefined}
+                  className={lop}
+                >
+                  {ruot}
+                </button>
+              );
           } else {
             noiDung = <span className="nhan-quan-dao">{QUAN_DAO[+ma].ten}</span>;
           }
@@ -1125,7 +1249,7 @@ function TheDiem({ diem, tieuDeRef, onDong }) {
   );
 }
 
-function KetQuaTim({ ketQua, cm, di }) {
+function KetQuaTim({ ketQua, cm, di, linkBai, truocKhiMoBai }) {
   const tong = ketQua.nuoc.length + ketQua.tp.length + ketQua.diem.length;
   if (!tong) return <p className="py-6 text-center text-sm text-ink-muted">Chưa có điểm nào khớp. Thử tên khác, hoặc chọn trên quả địa cầu.</p>;
   const Nhom = ({ tieuDe, children }) => (
@@ -1165,17 +1289,29 @@ function KetQuaTim({ ketQua, cm, di }) {
         <Nhom tieuDe="Điểm">
           {ketQua.diem.map((d) => {
             const L = loaiCua(d.type);
+            const noiDung = (
+              <>
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-white" style={{ backgroundColor: L.mau }}>
+                  <L.Icon aria-hidden="true" className="h-4 w-4" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-semibold text-deep-900">{d.name}</span>
+                  <span className="block text-xs text-ink-subtle">{d.tenTp} · {cm.nuoc.get(d.nuoc)?.name}</span>
+                </span>
+                {d.guide && <BookOpen aria-hidden="true" className="h-4 w-4 shrink-0 text-sunset-600" />}
+              </>
+            );
             return (
               <li key={d.id}>
-                <button type="button" onClick={() => di({ nuoc: d.nuoc, tp: d.tp, diem: d.id })} className="dong-ds">
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-white" style={{ backgroundColor: L.mau }}>
-                    <L.Icon aria-hidden="true" className="h-4 w-4" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold text-deep-900">{d.name}</span>
-                    <span className="block text-xs text-ink-subtle">{d.tenTp} · {cm.nuoc.get(d.nuoc)?.name}</span>
-                  </span>
-                </button>
+                {d.guide ? (
+                  <Link href={linkBai(d)} prefetch={false} onClick={() => truocKhiMoBai(d)} className="dong-ds">
+                    {noiDung}
+                  </Link>
+                ) : (
+                  <button type="button" onClick={() => di({ nuoc: d.nuoc, tp: d.tp, diem: d.id })} className="dong-ds">
+                    {noiDung}
+                  </button>
+                )}
               </li>
             );
           })}

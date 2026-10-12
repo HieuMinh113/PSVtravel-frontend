@@ -524,3 +524,5 @@ img, video {
 /* Bản đồ cẩm nang trên điện thoại: tấm trượt đang mở thì cất nút liên hệ nổi (nó đè lên danh sách) */
 html.an-lien-he-noi [data-lien-he-noi] { opacity: 0; pointer-events: none; transform: translateY(12px); }
 [data-lien-he-noi] { transition: opacity 0.25s ease, transform 0.25s ease; }
+/* Điểm của bài đang đọc (bản đồ cuối trang bài): luôn hiện tên */
+.ban-do-cn .ghim-diem-dang-doc .nhan-diem { opacity: 1 !important; }

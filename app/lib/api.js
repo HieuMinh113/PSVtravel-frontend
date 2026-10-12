@@ -303,6 +303,9 @@ function mapGuide(g) {
     metaDescription: g.meta_description ?? g.excerpt,
     // Tour gắn kèm (nếu admin có chọn) — để hiện ô đặt tour bên bài viết.
     tour: g.tour ? mapTour(g.tour) : null,
+    // Bài nằm ở điểm / thành phố nào trên bản đồ cẩm nang (trang bài mở bản đồ đúng chỗ)
+    mapSpots: g.map_spots ?? [],
+    mapCities: g.map_cities ?? [],
   };
 }
 

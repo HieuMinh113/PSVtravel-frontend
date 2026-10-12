@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import GuideDetail from "@/components/pages/GuideDetail";
 import { pageMeta, JsonLd, SITE_URL, videoJsonLd } from "@/app/lib/seo";
-import { getGuideBySlug, getGuideSlugs, getSettings } from "@/app/lib/api";
+import { getGuideBySlug, getGuideMap, getGuideSlugs, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
 
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
 
 export default async function Page({ params }) {
   const { slug } = await params;
-  const [guide, settings] = await Promise.all([getGuideBySlug(slug), getSettings()]);
+  const [guide, settings, banDo] = await Promise.all([getGuideBySlug(slug), getSettings(), getGuideMap()]);
   if (!guide) notFound();
 
   const jsonLd = {
@@ -50,7 +50,7 @@ export default async function Page({ params }) {
           url: `${SITE_URL}/cam-nang/${guide.slug}`,
         })}
       />
-      <GuideDetail guide={guide} settings={settings} />
+      <GuideDetail guide={guide} settings={settings} banDo={banDo} />
     </>
   );
 }

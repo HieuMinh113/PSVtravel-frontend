@@ -1,15 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, Eye, User, ArrowLeft, ArrowRight, Quote } from "lucide-react";
+import { CalendarDays, Eye, User, ArrowLeft, ArrowRight, Quote, MapPin, Navigation } from "lucide-react";
 import GhiNhanLuotXem from "@/components/GhiNhanLuotXem";
 import TourBookingBox from "@/components/TourBookingBox";
 import { locHtml } from "@/app/lib/sanitize";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
+import BanDoCamNang from "@/components/camnang/BanDoCamNang";
+import NutXemBanDo from "@/components/camnang/NutXemBanDo";
 
 // Trang chi tiết bài viết cẩm nang — component phía server (không cần "use client")
 // để nội dung bài viết được render sẵn trong HTML, tốt cho SEO.
-export default function GuideDetail({ guide, settings = {} }) {
+export default function GuideDetail({ guide, settings = {}, banDo = null }) {
   if (!guide) return null;
+
+  // Bài nằm ở đâu trên bản đồ cẩm nang: điểm đầu tiên gắn bài, không có thì
+  // thành phố nhận bài làm bài tổng quan. Bản đồ cuối bài mở sẵn ở đó.
+  const diemDau = guide.mapSpots?.[0] ?? null;
+  const tpDau = diemDau ?? guide.mapCities?.[0] ?? null;
+  const batDau = tpDau ? { nuoc: tpDau.nuoc, tp: tpDau.tp } : null;
 
   // Đường dẫn tới trang tour gắn kèm (trong nước / nước ngoài) để đặt ngay bên bài.
   const tourLink = guide.tour
@@ -63,6 +71,28 @@ export default function GuideDetail({ guide, settings = {} }) {
             )}
             <span className="flex items-center gap-1.5"><Eye className="h-4 w-4 text-gold-400" /> {guide.views ?? 0} lượt xem</span>
           </div>
+
+          {/* Vị trí của bài trên bản đồ cẩm nang — bấm để xuống bản đồ cuối bài */}
+          {banDo && tpDau && (
+            <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
+              <NutXemBanDo className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 font-semibold text-white backdrop-blur transition-colors hover:bg-white/20">
+                <MapPin aria-hidden="true" className="h-4 w-4 text-gold-300" />
+                {diemDau ? `${diemDau.name} · ${diemDau.ten_tp}` : tpDau.ten_tp}
+                <span className="font-normal text-white/80">— xem trên bản đồ</span>
+              </NutXemBanDo>
+              {diemDau && (
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${diemDau.lat},${diemDau.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full px-3 text-white/85 transition-colors hover:text-gold-300"
+                >
+                  <Navigation aria-hidden="true" className="h-4 w-4" /> Chỉ đường
+                  <span className="sr-only">(mở Google Maps ở thẻ mới)</span>
+                </a>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -134,6 +164,9 @@ export default function GuideDetail({ guide, settings = {} }) {
         </div>
       </section>
     </article>
+
+    {/* Quả địa cầu cuối bài: chọn điểm khác trong thành phố, hoặc sang nước khác */}
+    {banDo && <BanDoCamNang data={banDo} cheDo="nhung" batDau={batDau} dangDoc={guide.slug} />}
     </>
   );
 }
