@@ -32,6 +32,16 @@ export const MAU = {
 };
 
 const TEN = ["coalesce", ["get", "name:vi"], ["get", "name:latin"], ["get", "name"]];
+
+/** Màu admin chọn cho từng nước (Bản đồ: Quốc gia); sai dạng thì về xanh lá mặc định. */
+export const mauNuoc = (hex) => (/^#[0-9a-f]{6}$/i.test(hex || "") ? hex : MAU.nuocCoCamNang);
+
+/** Viền: cùng màu nhưng đậm hơn (nhân độ sáng 0,55) để nước nào cũng có viền rõ. */
+export const mauVien = (hex) => {
+  const h = mauNuoc(hex);
+  const dam = (i) => Math.round(parseInt(h.slice(i, i + 2), 16) * 0.55).toString(16).padStart(2, "0");
+  return `#${dam(1)}${dam(3)}${dam(5)}`;
+};
 const CHU = ["Noto Sans Regular"];
 const CHU_DAM = ["Noto Sans Bold"];
 const lop = (id, type, sourceLayer, rest) => ({ id, type, source: "omt", "source-layer": sourceLayer, ...rest });
@@ -167,13 +177,14 @@ export function kieuBanDo({ coNen }) {
       ...(coNen
         ? lopNenChiTiet()
         : [{ id: "dat-lien", type: "fill", source: "dat-lien", paint: { "fill-color": MAU.dat, "fill-outline-color": "#d9cfb6" } }]),
-      // Nước có cẩm nang: tô xanh lá logo trên quả địa cầu, nhạt dần khi phóng vào
+      // Nước có cẩm nang: tô màu admin chọn cho từng nước (mặc định xanh lá
+      // logo) trên quả địa cầu, nhạt dần khi phóng vào
       {
         id: "nuoc-to",
         type: "fill",
         source: "nuoc-cam-nang",
         paint: {
-          "fill-color": MAU.nuocCoCamNang,
+          "fill-color": ["coalesce", ["get", "mau"], MAU.nuocCoCamNang],
           "fill-opacity": [
             "interpolate", ["linear"], ["zoom"],
             1, ["case", dangTro, 0.8, daChon, 0.3, 0.55],
@@ -188,7 +199,7 @@ export function kieuBanDo({ coNen }) {
         source: "nuoc-cam-nang",
         layout: { "line-join": "round" },
         paint: {
-          "line-color": MAU.vienNuocCoCamNang,
+          "line-color": ["coalesce", ["get", "mau_vien"], MAU.vienNuocCoCamNang],
           "line-width": ["case", daChon, 2.4, dangTro, 1.8, 0.8],
           "line-opacity": ["interpolate", ["linear"], ["zoom"], 5, 0.9, 8, 0],
         },

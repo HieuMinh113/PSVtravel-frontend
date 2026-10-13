@@ -448,13 +448,16 @@ img, video {
   .ghim-nuoc {
     @apply relative grid h-11 w-11 place-items-center;
   }
+  /* Chấm cùng màu nước (admin chọn ở "Bản đồ: Quốc gia"), mặc định xanh lá */
   .ghim-nuoc-cham {
-    @apply relative h-3.5 w-3.5 rounded-full border-2 border-white bg-teal-500 shadow
+    @apply relative h-3.5 w-3.5 rounded-full border-2 border-white shadow
            transition-transform duration-200;
+    background-color: var(--mau-nuoc, theme("colors.teal.500"));
   }
   .ghim-nuoc-cham::after {
     content: "";
-    @apply absolute inset-0 animate-ripple rounded-full bg-teal-400;
+    @apply absolute inset-0 animate-ripple rounded-full;
+    background-color: var(--mau-nuoc, theme("colors.teal.400"));
   }
   .ghim-nhan {
     @apply absolute left-9 top-1/2 flex -translate-y-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-white/95

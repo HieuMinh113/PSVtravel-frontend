@@ -19,7 +19,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { createPortal } from "react-dom";
 import { ArrowLeft, BookOpen, ChevronRight, Earth, Maximize2, Minimize2, Minus, Navigation, Plus, Search, X } from "lucide-react";
 import { FlagChina, FlagJapan, FlagKorea, FlagSingapore, FlagTaiwan, FlagThailand, FlagVietnam } from "@/components/FlagIcons";
-import { coNenChiTiet, kieuBanDo } from "./kieuBanDo";
+import { coNenChiTiet, kieuBanDo, mauNuoc, mauVien } from "./kieuBanDo";
 import { loaiCua } from "./loaiDiem";
 
 const THU_VIEN = "/vendor/maplibre-6.11.2/maplibre-gl.mjs";
@@ -332,7 +332,7 @@ export default function BanDoCamNang({ data, cheDo = "trang", batDau = null, dan
             type: "FeatureCollection",
             features: data.countries.map((n) => ({
               type: "Feature",
-              properties: { code: n.code, slug: n.slug },
+              properties: { code: n.code, slug: n.slug, mau: mauNuoc(n.color), mau_vien: mauVien(n.color) },
               geometry: n.geometry,
             })),
           });
@@ -934,7 +934,7 @@ export default function BanDoCamNang({ data, cheDo = "trang", batDau = null, dan
                   ) : cap === "the_gioi" ? (
                     <>
                       <p className="mb-2 text-sm text-ink-muted">
-                        Bấm vào nước được tô <span className="font-semibold text-teal-800">màu xanh</span> trên quả địa cầu, hoặc chọn ở đây:
+                        Bấm vào nước được <span className="font-semibold text-deep-900">tô màu</span> trên quả địa cầu, hoặc chọn ở đây:
                       </p>
                       <ul className="space-y-1.5">
                         {[...cm.nuoc.values()].map((n) => (
@@ -1084,7 +1084,7 @@ export default function BanDoCamNang({ data, cheDo = "trang", batDau = null, dan
                 data-uu-tien={n.soDiem}
                 className={`ghim-nuoc ${tro === n.code ? "ghim-nuoc-tro" : ""}`}
               >
-                <span aria-hidden="true" data-cham className="ghim-nuoc-cham" />
+                <span aria-hidden="true" data-cham className="ghim-nuoc-cham" style={{ "--mau-nuoc": mauNuoc(n.color) }} />
                 <span aria-hidden="true" data-nhan className="ghim-nhan">
                   <Co code={n.code} className="h-3.5 w-5 rounded-sm" />
                   {n.name}
