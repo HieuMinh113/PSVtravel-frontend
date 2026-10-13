@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FileSearch, Loader2, AlertCircle, CalendarDays, Users2,
-  Phone, ArrowRight, Ticket, Wallet,
+  Phone, ArrowRight, Ticket, Wallet, FileClock,
 } from "lucide-react";
 import PageHero from "@/components/PageHero";
 
@@ -202,6 +202,12 @@ export default function BookingLookup() {
                           <CalendarDays className="h-4 w-4 shrink-0 text-ocean-500" />
                           Khởi hành {donHang.start_date}
                           {donHang.end_date && ` – ${donHang.end_date}`}
+                        </div>
+                      )}
+                      {donHang.visa_deadline && (
+                        <div className="flex items-center gap-2 font-medium text-sunset-700">
+                          <FileClock className="h-4 w-4 shrink-0" />
+                          Hạn nộp hồ sơ visa {donHang.visa_deadline}
                         </div>
                       )}
                       <div className="flex items-center gap-2 text-ink-muted">

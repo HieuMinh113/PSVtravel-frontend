@@ -81,6 +81,8 @@ function mapTour(t) {
     country: t.country,
     days: `${t.duration_days} ngày ${t.duration_nights} đêm`,
     departure: t.departure_from ? `Từ ${t.departure_from}` : "",
+    // Quy tắc chung "nộp hồ sơ visa trước ngày khởi hành N ngày" (null = không đặt)
+    visaDeadlineDays: t.visa_deadline_days ?? null,
     price: t.adult_price,
     childPrice: t.child_price ?? null,
     oldPrice: t.old_price,
@@ -110,6 +112,9 @@ function mapTour(t) {
       startISO: d.start_date ?? null, // Y-m-d cho schema
       price: d.price,
       seatsLeft: d.seats_left,
+      // Hạn nộp hồ sơ visa của đợt này (đã tính theo quy tắc chung nếu đợt không có hạn riêng)
+      visaDeadline: d.visa_deadline_display ?? null,
+      visaDeadlineISO: d.visa_deadline ?? null,
     })),
     images: (t.images ?? []).map((img) => img.url),
     // Khối "Những thông tin cần lưu ý" ở cuối trang tour

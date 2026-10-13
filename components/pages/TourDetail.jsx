@@ -18,6 +18,7 @@ import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwa
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
 import ReviewForm from "@/components/ReviewForm";
+import HanNopVisa from "@/components/HanNopVisa";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 
 const flagBySlug = {
@@ -697,6 +698,16 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       <span className="flex items-center gap-1.5 text-ink-muted"><Clock className="h-4 w-4 text-ocean-500" /> Thời gian xử lý: <strong className="text-deep-900">{visaInfo.time}</strong></span>
                       <span className="flex items-center gap-1.5 text-ink-muted"><BadgeCheck className="h-4 w-4 text-teal-600" /> Tỷ lệ đậu: <strong className="text-deep-900">{visaInfo.rate}</strong></span>
                       <span className="flex items-center gap-1.5 text-ink-muted"><FileCheck2 className="h-4 w-4 text-ocean-500" /> Phí dịch vụ từ: <strong className="text-deep-900">{visaInfo.price}</strong></span>
+                      {(dotDangChon?.visaDeadline || tour.visaDeadlineDays) && (
+                        <span className="flex items-center gap-1.5 text-ink-muted">
+                          <CalendarDays className="h-4 w-4 text-sunset-600" /> Hạn nộp hồ sơ:{" "}
+                          <strong className="text-deep-900">
+                            {dotDangChon?.visaDeadline
+                              ? `${dotDangChon.visaDeadline} (đợt ${dotDangChon.startDate})`
+                              : `trước khởi hành ${tour.visaDeadlineDays} ngày`}
+                          </strong>
+                        </span>
+                      )}
                     </div>
                     <Link href="/lam-visa" className="flex shrink-0 items-center justify-center gap-2 rounded-full bg-ocean-50 px-5 py-2.5 text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-100">
                       Xem dịch vụ làm visa <ArrowRight className="h-4 w-4" />
@@ -846,6 +857,13 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                           <CalendarDays className="h-4 w-4 text-ocean-500" /> {tour.startDate || "Liên hệ để biết lịch"}
                         </div>
                       )}
+                      {/* Hạn nộp hồ sơ visa của ngày đang chọn (tour nước ngoài) */}
+                      <HanNopVisa
+                        className="mt-2"
+                        ngay={dotDangChon?.visaDeadline}
+                        iso={dotDangChon?.visaDeadlineISO}
+                        soNgay={dotDangChon ? null : tour.visaDeadlineDays}
+                      />
                     </div>
 
                     <div>

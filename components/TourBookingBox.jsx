@@ -10,6 +10,7 @@ import { createBooking } from "@/app/lib/api";
 import { fbTrack } from "@/app/lib/fbpixel";
 import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 import { formatVND } from "@/data/tours";
+import HanNopVisa from "@/components/HanNopVisa";
 
 // Ô đặt tour dùng lại được: trang chi tiết tour và bài cẩm nang (gắn tour) đều
 // dùng chung. Nhận `tour` đã map và `settings` (lấy hotline). `tourLink` để hiện
@@ -236,6 +237,12 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
                   <CalendarDays className="h-4 w-4 text-ocean-500" /> {tour.startDate || "Liên hệ để biết lịch"}
                 </div>
               )}
+              <HanNopVisa
+                className="mt-2"
+                ngay={dotDangChon?.visaDeadline}
+                iso={dotDangChon?.visaDeadlineISO}
+                soNgay={dotDangChon ? null : tour.visaDeadlineDays}
+              />
             </div>
 
             <div>

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Ticket, UserCog, CalendarDays, Users2, Wallet, ArrowRight,
-  Loader2, CheckCircle2, AlertCircle, KeyRound, Save, Star, Stamp, FileWarning, Clock,
+  Loader2, CheckCircle2, AlertCircle, KeyRound, Save, Star, Stamp, FileWarning, Clock, FileClock,
 } from "lucide-react";
 import ReviewForm from "@/components/ReviewForm";
 import { baoNguoiDungDoi } from "@/app/lib/useNguoiDung";
@@ -63,6 +63,12 @@ function TheDon({ don, index }) {
             {don.start_date && (
               <span className="flex items-center gap-1.5">
                 <CalendarDays className="h-4 w-4 text-ocean-500" /> {don.start_date}
+              </span>
+            )}
+            {/* Hạn nộp hồ sơ visa (tour nước ngoài) — chỉ nhắc khi đơn còn hiệu lực */}
+            {don.visa_deadline && !["cancelled", "completed"].includes(don.status) && (
+              <span className="flex items-center gap-1.5 font-medium text-sunset-700">
+                <FileClock className="h-4 w-4" /> Hạn nộp visa {don.visa_deadline}
               </span>
             )}
             <span className="flex items-center gap-1.5">
