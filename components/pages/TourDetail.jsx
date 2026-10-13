@@ -148,7 +148,7 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
                         {doan.buoi}
                       </span>
                     )}
-                    <p className="flex-1 text-ink-muted">{toDamDiemDen(doan.noiDung)}</p>
+                    <p className="flex-1 whitespace-pre-line text-ink-muted">{toDamDiemDen(doan.noiDung)}</p>
                   </div>
                 ))}
               </div>
@@ -471,6 +471,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
   // giá người lớn trong khi máy chủ tính 0đ — khách thấy một số, email ghi số khác.
   const childPrice = tour.childPrice ?? null;
   const treEmChoBaoGia = childPrice === null;
+  const infantPrice = tour.infantPrice ?? null;
   // adults/children có thể là chuỗi rỗng trong lúc người dùng đang xoá để gõ số
   // mới — quy về số trước khi tính, tránh hiện NaN trên bảng giá.
   const soNguoiLon = parseInt(adults, 10) || 0;
@@ -557,7 +558,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
             <span className="text-white/90">{tour.name}</span>
           </div>
           <div className="flex items-center gap-1.5 text-sm font-medium text-ocean-200">
-            <MapPin className="h-4 w-4" /> {tour.region} {tour.country ? `· ${tour.country}` : ""}
+            <MapPin className="h-4 w-4" /> {tour.region} {tour.country && tour.country !== tour.region ? `· ${tour.country}` : ""}
           </div>
           <h1 className="mt-2 max-w-3xl font-display text-3xl font-bold leading-tight text-white sm:text-4xl">{tour.name}</h1>
           <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-white/85">
@@ -908,6 +909,12 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                         </div>
                       </div>
                     </div>
+
+                    {infantPrice !== null && (
+                      <p className="-mt-1 px-1 text-xs leading-relaxed text-ink-muted">
+                        Em bé (dưới 2 tuổi): <strong className="font-semibold text-ink">{formatVND(infantPrice)}</strong> — nhân viên cộng khi gọi xác nhận
+                      </p>
+                    )}
 
                     {/* BẢNG TÍNH TIỀN — tách rõ từng dòng thay vì chỉ một con số tổng.
                         Minh bạch giá là yếu tố tin cậy hàng đầu khi đặt tour trực tuyến. */}

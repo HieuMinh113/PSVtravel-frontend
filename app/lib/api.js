@@ -85,6 +85,8 @@ function mapTour(t) {
     visaDeadlineDays: t.visa_deadline_days ?? null,
     price: t.adult_price,
     childPrice: t.child_price ?? null,
+    // Giá em bé (dưới 2 tuổi) — chỉ để khách xem, đặt online chưa tính em bé
+    infantPrice: t.infant_price ?? null,
     oldPrice: t.old_price,
     rating: Number(t.rating) || 0,
     reviews: t.review_count ?? 0,

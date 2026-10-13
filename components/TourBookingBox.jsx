@@ -64,6 +64,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
   // giá người lớn trong khi máy chủ tính 0đ — khách thấy một số, email ghi số khác.
   const childPrice = tour.childPrice ?? null;
   const treEmChoBaoGia = childPrice === null;
+  const infantPrice = tour.infantPrice ?? null;
   const soNguoiLon = parseInt(adults, 10) || 0;
   const soTreEm = parseInt(children, 10) || 0;
   const total = soNguoiLon * donGiaNguoiLon + (treEmChoBaoGia ? 0 : soTreEm * childPrice);
@@ -286,6 +287,12 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
                 </div>
               </div>
             </div>
+
+            {infantPrice !== null && (
+              <p className="-mt-1 px-1 text-xs leading-relaxed text-ink-muted">
+                Em bé (dưới 2 tuổi): <strong className="font-semibold text-ink">{formatVND(infantPrice)}</strong> — nhân viên cộng khi gọi xác nhận
+              </p>
+            )}
 
             <div className="space-y-1.5 rounded-xl bg-ocean-50/60 p-3.5 text-sm">
               <div className="flex items-center justify-between text-ink-muted">
