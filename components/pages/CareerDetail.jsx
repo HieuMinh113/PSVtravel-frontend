@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { locHtml } from "@/app/lib/sanitize";
-import { Briefcase, MapPin, Clock, Wallet, Users, CalendarDays, ArrowLeft, ArrowRight } from "lucide-react";
+import { Briefcase, MapPin, Clock, Wallet, Users, CalendarDays, ArrowLeft, Send } from "lucide-react";
+import UngTuyen, { NutMoUngTuyen } from "@/components/pages/UngTuyen";
 
 function ngayVietNam(iso) {
   if (!iso) return null;
@@ -42,6 +43,9 @@ export default function CareerDetail({ job }) {
               </span>
             ))}
           </div>
+          <NutMoUngTuyen className="btn-cta mt-7 !px-7 !py-3 text-sm">
+            <Send className="h-4 w-4" /> Ứng tuyển ngay
+          </NutMoUngTuyen>
         </div>
       </section>
 
@@ -76,15 +80,8 @@ export default function CareerDetail({ job }) {
           </div>
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-3xl bg-white p-6 shadow-card ring-1 ring-ocean-100">
-              <h3 className="font-display text-lg font-bold text-deep-900">Ứng tuyển vị trí này</h3>
-              <p className="mt-2 text-sm text-ink-muted">
-                Gửi hồ sơ (CV) của bạn cho chúng tôi. Đội ngũ nhân sự sẽ liên hệ trong thời gian sớm nhất.
-              </p>
-              <Link href="/lien-he" className="btn-cta mt-5 w-full !py-3 text-sm">
-                Gửi hồ sơ ứng tuyển <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+            {/* Thẻ "Ứng tuyển vị trí này" + hộp thoại gửi CV / portfolio */}
+            <UngTuyen job={{ slug: j.slug, title: j.title }} />
           </aside>
         </div>
       </section>

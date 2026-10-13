@@ -209,6 +209,12 @@ img, video {
   to { transform: scaleX(0.92); }
 }
 
+/* Hộp thoại (ứng tuyển…) hiện ra: mờ → rõ, trượt lên nhẹ */
+@keyframes hop-thoai-vao {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
 /* ===== An toàn khi phóng to trình duyệt ===== */
 @media (max-height: 500px) {
   .sticky {
