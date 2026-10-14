@@ -39,7 +39,7 @@ export default function Newsletter({ source = "trang-chu" }) {
       <form onSubmit={submit} className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-          <input
+          <input aria-label="Email nhận tin khuyến mãi"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

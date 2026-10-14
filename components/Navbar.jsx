@@ -291,7 +291,10 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
           />
         </Link>
 
-        <div className="hidden items-center gap-0.5 lg:flex xl:gap-1">
+        {/* Menu ngang chỉ hiện từ 1280px: 11 mục không đủ chỗ ở 1024–1279px (iPad ngang,
+            laptop nhỏ) — "Liên hệ", nút Đăng nhập bị đẩy ra ngoài mép màn hình, không bấm được.
+            Dưới 1280px dùng nút ☰ như điện thoại. */}
+        <div className="hidden items-center gap-0.5 xl:flex xl:gap-1">
           {links.map((l) =>
             l.submenu ? (
               <div
@@ -301,7 +304,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                 onMouseLeave={() => setMegaOpenKey((k) => (k === l.drop ? null : k))}
               >
                 <span
-                  className={`flex cursor-default items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-[12.5px] lg:px-3 font-medium transition-colors duration-300 ${
+                  className={`flex cursor-default items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-[12.5px] 2xl:px-3 font-medium transition-colors duration-300 ${
                     solid ? "text-deep-800 hover:text-ocean-600" : "text-white/85 hover:text-white"
                   }`}
                 >
@@ -345,7 +348,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                 <NavLink
                   href={l.to}
                   className={({ isActive }) =>
-                    `relative flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-[12.5px] lg:px-3 xl:px-3 font-medium transition-colors duration-300 ${
+                    `relative flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-[12.5px] 2xl:px-3 font-medium transition-colors duration-300 ${
                       solid
                         ? isActive
                           ? "text-ocean-700"
@@ -385,7 +388,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                 key={l.to}
                 href={l.to}
                 className={({ isActive }) =>
-                  `relative whitespace-nowrap rounded-full px-2.5 py-2 text-[12.5px] lg:px-3 xl:px-3 font-medium transition-colors duration-300 ${
+                  `relative whitespace-nowrap rounded-full px-2 py-2 text-[12.5px] 2xl:px-3 font-medium transition-colors duration-300 ${
                     solid
                       ? isActive
                         ? "text-ocean-700"
@@ -414,7 +417,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
           )}
         </div>
 
-        <div className="hidden shrink-0 items-center gap-2 lg:flex xl:gap-3">
+        <div className="hidden shrink-0 items-center gap-2 xl:flex xl:gap-3">
           <UserMenu solid={solid} />
         </div>
 
@@ -424,7 +427,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
           // này để chữ trắng trơn nên trên những trang có nền sáng ngay từ đầu
           // (Tài khoản, Đăng nhập) thì trắng trên trắng — nút biến mất, khách
           // phải cuộn xuống mới thấy. Cho nó một nền tối mờ để nổi trên mọi nền.
-          className={`grid h-10 w-10 place-items-center rounded-full transition-colors lg:hidden ${
+          className={`grid h-10 w-10 place-items-center rounded-full transition-colors xl:hidden ${
             solid
               ? "text-deep-900 hover:bg-ocean-50"
               : "bg-deep-950/55 text-white backdrop-blur-sm"
@@ -442,7 +445,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="overflow-hidden bg-white lg:hidden"
+            className="overflow-hidden bg-white xl:hidden"
           >
             {/* Ngăn kéo tự cuộn được — xem ghi chú ở chỗ tính caoToiDa */}
             <div

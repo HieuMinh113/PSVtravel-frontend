@@ -159,7 +159,7 @@ export default function Gallery({ photos = [], settings = {} }) {
                       <div className="min-w-0">
                         <p className="truncate text-xs font-semibold text-white">{p.name || "Khách hàng PSV"}</p>
                         {p.trip && (
-                          <p className="flex items-center gap-1 truncate text-[11px] text-white/75">
+                          <p className="flex items-center gap-1 truncate text-xs text-white/75">
                             <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
                             <span className="truncate">{p.trip}</span>
                           </p>

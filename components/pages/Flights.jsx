@@ -32,8 +32,7 @@ export default function Flights({ airlines = [], deals = [], settings = {} }) {
       <section className="bg-foam pb-16 pt-14 sm:pb-20 sm:pt-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Ưu đãi hôm nay</span>
-            <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">Vé máy bay giá hời</h2>
+            <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">Vé máy bay giá hời</h2>
             <p className="mx-auto mt-3 max-w-xl text-ink-muted">
               Giá tham khảo cho một chiều, đã gồm thuế phí. Liên hệ để nhận giá tốt nhất theo ngày bay của bạn.
             </p>

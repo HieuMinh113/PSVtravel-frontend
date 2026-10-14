@@ -18,8 +18,10 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
   return (
     <section
       className={`relative overflow-hidden bg-deep-gradient px-5 sm:px-8 ${
+        // Điện thoại: banner thấp hơn một màn hình để lộ ra thẻ tour đầu tiên — trước
+        // đây banner chiếm trọn màn hình đầu, khách không thấy tour nào nếu chưa cuộn
         hasOrbit
-          ? "flex min-h-[100dvh] flex-col items-center justify-center py-28"
+          ? "flex min-h-[70svh] flex-col items-center justify-center pb-16 pt-28 sm:min-h-[100dvh] sm:py-28"
           : "pb-20 pt-32 sm:pt-40"
       }`}
     >
@@ -118,7 +120,7 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className={`mt-4 font-display font-bold leading-[1.12] text-white ${
-            hasOrbit ? "text-4xl sm:text-6xl" : "text-4xl sm:text-5xl"
+            hasOrbit ? "text-[2rem] sm:text-6xl" : "text-[2rem] sm:text-5xl"
           }`}
         >
           {title}

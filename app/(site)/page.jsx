@@ -48,12 +48,12 @@ export default async function Page() {
 
   // Hình bìa tất cả tour đang bán (bỏ trùng) — dùng cho vòng xoay & nền Hero.
   const anhBiaTour = [
-    ...new Set([...domestic, ...abroad].map((t) => t.image).filter(Boolean)),
+    ...new Set([...domestic, ...abroad].filter((t) => t.coAnhBia).map((t) => t.image)),
   ];
 
   // Ảnh bìa → tên tour, làm chữ thay thế (alt) cho ảnh vòng xoay & nền Hero
   const tenAnhTour = Object.fromEntries(
-    [...domestic, ...abroad].filter((t) => t.image).map((t) => [t.image, t.name])
+    [...domestic, ...abroad].filter((t) => t.coAnhBia).map((t) => [t.image, t.name])
   );
 
   const upcoming = [...domestic, ...abroad]

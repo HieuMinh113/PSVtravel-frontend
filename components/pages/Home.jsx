@@ -109,7 +109,7 @@ export default function Home({
   // Ảnh nền Hero lấy từ chính các tour sắp khởi hành — nền luôn phản ánh đúng
   // thứ đang bán. Lấy tối đa 4 ảnh để không tải quá nặng ở màn hình đầu.
   const heroImages = useMemo(() => {
-    const tuTour = upcoming.map((t) => t.image).filter(Boolean);
+    const tuTour = upcoming.filter((t) => t.coAnhBia).map((t) => t.image);
     // Chưa có tour sắp khởi hành thì lấy hình bìa các tour khác (ảnh thật của
     // công ty), Unsplash chỉ là chốt chặn cuối khi cả hai đều trống.
     const nguon = tuTour.length ? tuTour : anhBiaTour;

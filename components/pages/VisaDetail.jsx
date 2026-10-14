@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { locHtml } from "@/app/lib/sanitize";
-import { Clock, BadgeCheck, FileCheck2, FileUp, Phone, ArrowRight, Wallet } from "lucide-react";
+import { Clock, BadgeCheck, FileCheck2, FileUp, Phone, ArrowRight, Wallet, Globe2 } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 
@@ -105,7 +105,9 @@ export default function VisaDetail({ visa, related = [], settings = {} }) {
                     className="h-9 w-12 rounded object-cover shadow-sm ring-1 ring-white/30"
                   />
                 ) : (
-                  <span className="text-3xl">🌐</span>
+                  <span className="grid h-9 w-12 place-items-center rounded bg-white/15 ring-1 ring-white/30">
+                    <Globe2 aria-hidden="true" className="h-5 w-5" />
+                  </span>
                 )}
                 <div>
                   <p className="font-display text-base font-bold">Visa {visa.name}</p>
@@ -164,10 +166,12 @@ export default function VisaDetail({ visa, related = [], settings = {} }) {
                   {c.flagImage ? (
                     <img src={c.flagImage} alt={`Cờ ${c.name}`} className="h-8 w-11 rounded object-cover ring-1 ring-ocean-100" />
                   ) : (
-                    <span className="text-2xl">🌐</span>
+                    <span className="grid h-8 w-11 place-items-center rounded bg-ocean-50 text-ocean-700 ring-1 ring-ocean-100">
+                      <Globe2 aria-hidden="true" className="h-4 w-4" />
+                    </span>
                   )}
                   <span className="text-sm font-semibold text-deep-900 group-hover:text-ocean-700">{c.name}</span>
-                  {c.rate && <span className="text-xs text-teal-700">Đậu {c.rate}</span>}
+                  {c.rate && <span className="text-xs text-teal-800">Đậu {c.rate}</span>}
                 </Link>
               ))}
             </div>

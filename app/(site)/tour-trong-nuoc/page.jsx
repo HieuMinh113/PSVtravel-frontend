@@ -23,7 +23,7 @@ export default async function Page() {
 
   // Chưa upload ảnh vòng xoay thì lấy tạm ảnh bìa tour đang bán — chỉ tour CÓ
   // ảnh bìa, tour chưa có ảnh mà lọt vào thì vòng xoay hiện ô trống
-  const tourCoAnh = tours.filter((t) => t.image);
+  const tourCoAnh = tours.filter((t) => t.coAnhBia);
   const anhVongXoay = orbitImages.length
     ? orbitImages
     : tourCoAnh.length

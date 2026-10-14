@@ -167,7 +167,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                           <h3 className="line-clamp-2 font-display text-lg font-semibold leading-snug text-deep-900 transition-colors group-hover:text-ocean-700">
                             {g.title}
                           </h3>
-                          <p className="mt-2 line-clamp-2 flex-1 text-sm text-ink-muted">{g.excerpt}</p>
+                          <p className="mt-2 line-clamp-2 flex-1 text-base text-ink-muted">{g.excerpt}</p>
                           <div className="mt-4 flex items-center justify-between border-t border-ocean-50 pt-3 text-xs text-ink-subtle">
                             <span className="flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" /> {g.date}</span>
                             <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {g.readTime || `${g.views ?? 0} lượt xem`}</span>

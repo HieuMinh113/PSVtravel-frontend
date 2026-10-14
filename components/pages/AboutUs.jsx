@@ -128,7 +128,7 @@ function MomentCard({ m, i, onOpen }) {
             <div className="min-w-0">
               <p className="truncate text-xs font-semibold text-white">{m.name || m.trip || "Khoảnh khắc PSV"}</p>
               {m.trip && m.name && (
-                <p className="flex items-center gap-1 truncate text-[11px] text-white/75">
+                <p className="flex items-center gap-1 truncate text-xs text-white/75">
                   <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
                   <span className="truncate">{m.trip}</span>
                 </p>
@@ -179,8 +179,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
       <section className="bg-foam py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
           <SectionReveal>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Câu chuyện của PSV</span>
-            <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+            <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
               Bắt đầu từ tình yêu <span className="text-gradient-ocean">xê dịch</span>
             </h2>
             <p className="mt-5 leading-relaxed text-ink-muted">
@@ -209,7 +208,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
                   <p className="font-display text-[clamp(0.95rem,4.6vw,1.875rem)] font-bold leading-tight text-ocean-700">
                     <CountUp to={s.to} suffix={s.suffix} />
                   </p>
-                  <p className="mt-1 text-[11px] leading-snug text-ink-muted sm:text-xs">{s.label}</p>
+                  <p className="mt-1 text-xs leading-snug text-ink-muted">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -222,8 +221,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
         <section className="bg-foam pb-16 sm:pb-20">
           <div className="mx-auto max-w-5xl px-5 sm:px-8">
             <SectionReveal className="mx-auto mb-8 max-w-2xl text-center">
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Video giới thiệu</span>
-              <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+              <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                 {tieuDeVideo || "Gặp gỡ đội ngũ PSV Travel"}
               </h2>
             </SectionReveal>
@@ -239,8 +237,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
         <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora opacity-70" />
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="mx-auto max-w-2xl text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Giá trị cốt lõi</span>
-            <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Điều làm nên PSV Travel</h2>
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">Điều làm nên PSV Travel</h2>
           </SectionReveal>
 
           <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -263,8 +260,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
       <section className="bg-foam py-16 sm:py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-teal-700">Hành trình phát triển</span>
-            <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">Những cột mốc của PSV Travel</h2>
+            <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">Những cột mốc của PSV Travel</h2>
           </SectionReveal>
 
           <div className="relative mt-12">
@@ -297,8 +293,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
       <section className="bg-ocean-50/50 py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
           <SectionReveal>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-teal-700">Con người PSV Travel</span>
-            <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+            <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
               Đội ngũ đứng sau mỗi hành trình
             </h2>
             <p className="mt-5 leading-relaxed text-ink-muted">
@@ -332,8 +327,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
         <section className="bg-foam py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <SectionReveal className="text-center">
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Khoảnh khắc đáng nhớ</span>
-              <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+              <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                 Những hành trình được tạo nên từ sự đồng hành
               </h2>
               <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-ink-muted">
@@ -357,8 +351,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
       <section className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
           <SectionReveal>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Cam kết của PSV Travel</span>
-            <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">Khách hàng là trên hết</h2>
+            <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">Khách hàng là trên hết</h2>
             <p className="mt-5 leading-relaxed text-ink-muted">
               Với phương châm “Khách hàng là trên hết”, PSV Travel cam kết mang đến những sản phẩm và dịch
               vụ du lịch chất lượng, phù hợp với nhu cầu và ngân sách của từng khách hàng.
@@ -379,10 +372,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
       <section className="relative overflow-hidden bg-deep-gradient py-16 sm:py-20">
         <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora opacity-70" />
         <SectionReveal className="relative mx-auto max-w-3xl px-5 text-center text-white sm:px-8">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-gold-400">
-            Sẵn sàng cho hành trình tiếp theo?
-          </span>
-          <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">
+          <h2 className="font-display text-3xl font-bold sm:text-4xl">
             Hãy để PSV Travel đồng hành cùng bạn trong những chuyến đi đáng nhớ
           </h2>
           <div className="mt-8 flex flex-wrap justify-center gap-3">

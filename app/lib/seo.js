@@ -101,7 +101,7 @@ export function tourMeta(tour, basePath) {
     tour.price
   )}/khách. ${(tour.highlights || []).slice(0, 3).join(", ")}.`;
   // Ưu tiên "Tiêu đề SEO" nhân viên tự viết trong admin; trống thì dùng tên tour
-  return pageMeta({ title: tour.seoTitle || tour.name, description, path, image: tour.image });
+  return pageMeta({ title: tour.seoTitle || tour.name, description, path, image: tour.coAnhBia ? tour.image : undefined });
 }
 
 // JSON-LD tổ chức (đặt ở layout gốc)
@@ -242,7 +242,7 @@ export function tourJsonLd(tour, basePath) {
     "@type": "TouristTrip",
     name: tour.name,
     description: boDauSao((tour.highlights || []).join(", ")),
-    image: tour.image,
+    image: tour.coAnhBia ? tour.image : undefined,
     url,
     touristType: "Leisure",
     // itinerary theo schema.org phải là ItemList (không phải mảng ListItem trần)
@@ -305,7 +305,7 @@ export function tourProductJsonLd(tour, basePath) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: tour.name,
-    ...(tour.image ? { image: [tour.image] } : {}),
+    ...(tour.coAnhBia ? { image: [tour.image] } : {}),
     description: boDauSao((tour.highlights || []).join(", ")) || tour.name,
     brand: { "@type": "Brand", name: SITE_NAME },
     ...(tour.slug ? { sku: tour.slug } : {}),

@@ -41,7 +41,7 @@ function FaqItem({ item, isOpen, onToggle }) {
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        <p className="px-5 pb-5 text-sm leading-relaxed text-ink-muted">{item.a}</p>
+        <p className="px-5 pb-5 text-base leading-relaxed text-ink-muted">{item.a}</p>
       </motion.div>
     </div>
   );
@@ -70,8 +70,7 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
       <section className="bg-foam py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Dịch vụ nổi bật</span>
-            <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+            <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
               Visa các quốc gia phổ biến
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-ink-muted">
@@ -108,12 +107,19 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
                     {c.flagImage ? (
                       <img src={c.flagImage} alt={c.name} className="h-9 w-12 rounded object-cover shadow-sm ring-1 ring-ocean-100" />
                     ) : (
-                      <span className="text-3xl">{c.flag || "🌐"}</span>
+                      c.flag ? (
+                        <span className="text-3xl">{c.flag}</span>
+                      ) : (
+                        // Chưa có cờ: biểu tượng quả địa cầu (SVG) thay cho emoji 🌐
+                        <span className="grid h-9 w-12 place-items-center rounded bg-ocean-50 text-ocean-700 ring-1 ring-ocean-100">
+                          <Globe2 aria-hidden="true" className="h-5 w-5" />
+                        </span>
+                      )
                     )}
                     <div className="min-w-0">
                       <p className="truncate font-display text-base font-semibold text-deep-900">{c.name}</p>
                       {c.rate && (
-                        <p className="flex items-center gap-1 text-xs font-medium text-teal-700">
+                        <p className="flex items-center gap-1 text-xs font-medium text-teal-800">
                           <BadgeCheck className="h-3.5 w-3.5" /> Tỷ lệ đậu {c.rate}
                         </p>
                       )}
@@ -127,7 +133,7 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
                       <Clock className="h-3.5 w-3.5 text-ocean-500" /> {c.time || "—"}
                     </span>
                     <div className="text-right">
-                      <p className="text-[0.7rem] text-ink-subtle">Phí từ</p>
+                      <p className="text-xs text-ink-muted">Phí từ</p>
                       <p className="font-display text-base font-bold text-sunset-700">{c.price}</p>
                     </div>
                   </div>
@@ -142,9 +148,8 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
       <section className="bg-ocean-50/50 py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-teal-700">Quy trình</span>
-            <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
-              4 bước đơn giản, minh bạch
+            <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+              Quy trình 4 bước đơn giản, minh bạch
             </h2>
           </SectionReveal>
 
@@ -157,7 +162,7 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
                   {i + 1}
                 </div>
                 <h3 className="mt-4 font-display text-base font-semibold text-deep-900">{s.title}</h3>
-                <p className="mt-2 text-sm text-ink-muted">{s.desc}</p>
+                <p className="mt-2 text-base text-ink-muted">{s.desc}</p>
               </SectionReveal>
             ))}
           </div>
@@ -168,8 +173,7 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
       <section className="bg-foam py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-teal-700">Giải đáp</span>
-            <h2 className="mt-3 font-display text-3xl font-bold text-deep-900">Câu hỏi thường gặp</h2>
+            <h2 className="font-display text-3xl font-bold text-deep-900">Câu hỏi thường gặp</h2>
           </SectionReveal>
 
           <div className="mt-10 space-y-3">

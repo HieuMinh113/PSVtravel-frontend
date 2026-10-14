@@ -272,7 +272,7 @@ export default function Auth() {
                   <label className="text-xs font-semibold text-ink-muted">Email, tên đăng nhập hoặc số điện thoại</label>
                   <div className="relative mt-1.5">
                     <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                    <input
+                    <input aria-label="Email, tên đăng nhập hoặc số điện thoại"
                       required
                       value={dangNhap.login}
                       onChange={(e) => setDangNhap((f) => ({ ...f, login: e.target.value }))}
@@ -286,7 +286,7 @@ export default function Auth() {
                   <label className="text-xs font-semibold text-ink-muted">Mật khẩu</label>
                   <div className="relative mt-1.5">
                     <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                    <input
+                    <input aria-label="Mật khẩu"
                       required
                       type={showPass ? "text" : "password"}
                       value={dangNhap.password}
@@ -348,7 +348,7 @@ export default function Auth() {
                     <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
                     <div className="relative mt-1.5">
                       <User className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                      <input
+                      <input aria-label="Họ và tên"
                         required
                         value={dangKy.name}
                         onChange={(e) => setDangKy((f) => ({ ...f, name: e.target.value }))}
@@ -361,7 +361,7 @@ export default function Auth() {
                     <label className="text-xs font-semibold text-ink-muted">Tên đăng nhập</label>
                     <div className="relative mt-1.5">
                       <AtSign className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                      <input
+                      <input aria-label="Tên đăng nhập"
                         required
                         value={dangKy.username}
                         onChange={(e) => setDangKy((f) => ({ ...f, username: e.target.value.toLowerCase() }))}
@@ -377,7 +377,7 @@ export default function Auth() {
                     <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
                     <div className="relative mt-1.5">
                       <Phone className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                      <input
+                      <input aria-label="Số điện thoại"
                         required
                         value={dangKy.phone}
                         onChange={(e) => setDangKy((f) => ({ ...f, phone: e.target.value }))}
@@ -390,7 +390,7 @@ export default function Auth() {
                     <label className="text-xs font-semibold text-ink-muted">Email</label>
                     <div className="relative mt-1.5">
                       <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                      <input
+                      <input aria-label="Email"
                         required
                         type="email"
                         value={dangKy.email}
@@ -406,7 +406,7 @@ export default function Auth() {
                   <label className="text-xs font-semibold text-ink-muted">Mật khẩu</label>
                   <div className="relative mt-1.5">
                     <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                    <input
+                    <input aria-label="Mật khẩu"
                       required
                       type={showPass ? "text" : "password"}
                       value={dangKy.password}
@@ -424,7 +424,7 @@ export default function Auth() {
                   <label className="text-xs font-semibold text-ink-muted">Nhập lại mật khẩu</label>
                   <div className="relative mt-1.5">
                     <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                    <input
+                    <input aria-label="Nhập lại mật khẩu"
                       required
                       type={showPass ? "text" : "password"}
                       value={dangKy.password_confirmation}
@@ -484,7 +484,7 @@ export default function Auth() {
                   <label className="text-xs font-semibold text-ink-muted">Email</label>
                   <div className="relative mt-1.5">
                     <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                    <input
+                    <input aria-label="Email"
                       required
                       type="email"
                       value={emailQuenMk}
@@ -548,7 +548,7 @@ export default function Auth() {
                   <label className="text-xs font-semibold text-ink-muted">Mật khẩu mới</label>
                   <div className="relative mt-1.5">
                     <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                    <input
+                    <input aria-label="Mật khẩu mới"
                       required
                       type={showPass ? "text" : "password"}
                       autoComplete="new-password"
@@ -567,7 +567,7 @@ export default function Auth() {
                   <label className="text-xs font-semibold text-ink-muted">Nhập lại mật khẩu mới</label>
                   <div className="relative mt-1.5">
                     <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                    <input
+                    <input aria-label="Nhập lại mật khẩu mới"
                       required
                       type={showPass ? "text" : "password"}
                       autoComplete="new-password"
@@ -630,7 +630,7 @@ export default function Auth() {
                 </div>
 
                 <div>
-                  <input
+                  <input aria-label="Mã xác thực 6 chữ số gửi qua email"
                     required
                     inputMode="numeric"
                     maxLength={6}

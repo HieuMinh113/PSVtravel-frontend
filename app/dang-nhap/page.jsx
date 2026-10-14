@@ -9,5 +9,11 @@ export const metadata = { ...pageMeta({
 }), robots: { index: false, follow: true } };
 
 export default function Page() {
-  return <Auth />;
+  // Trang đăng nhập nằm ngoài khung chung (không có menu / chân trang) nên tự
+  // khai báo vùng nội dung chính cho trình đọc màn hình
+  return (
+    <main>
+      <Auth />
+    </main>
+  );
 }

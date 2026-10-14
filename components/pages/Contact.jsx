@@ -169,8 +169,7 @@ export default function Contact({ settings = {} }) {
           <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.1fr]">
             {/* Văn phòng + mạng xã hội */}
             <SectionReveal>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Hệ thống văn phòng</span>
-              <h2 className="mt-3 font-display text-3xl font-bold text-deep-900">Ghé thăm chúng tôi</h2>
+              <h2 className="font-display text-3xl font-bold text-deep-900">Ghé thăm văn phòng PSV Travel</h2>
 
               <div className="mt-7 space-y-3">
                 {vanPhong.map((o) => (
@@ -180,7 +179,7 @@ export default function Contact({ settings = {} }) {
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="font-display text-base font-semibold text-deep-900">{o.city}</p>
-                      <p className="mt-0.5 flex items-start gap-1.5 text-sm text-ink-muted">
+                      <p className="mt-0.5 flex items-start gap-1.5 text-base text-ink-muted">
                         <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ocean-500" />
                         {o.address}
                       </p>
@@ -238,7 +237,7 @@ export default function Contact({ settings = {} }) {
                     <CheckCircle2 className="h-11 w-11 text-teal-600" />
                   </div>
                   <h3 className="mt-5 font-display text-xl font-bold text-deep-900">Đã gửi thành công!</h3>
-                  <p className="mt-2 max-w-sm text-sm text-ink-muted">
+                  <p className="mt-2 max-w-sm text-base text-ink-muted">
                     Cảm ơn bạn đã liên hệ. Đội ngũ tư vấn viên sẽ phản hồi trong vòng 15 phút làm việc.
                   </p>
                   <button onClick={() => setSubmitted(false)} className="mt-6 text-sm font-semibold text-ocean-700 hover:text-ocean-800">
@@ -249,21 +248,21 @@ export default function Contact({ settings = {} }) {
                 <form onSubmit={handleSubmit} className="relative space-y-5">
                   <div>
                     <h3 className="font-display text-xl font-bold text-deep-900">Gửi lời nhắn cho chúng tôi</h3>
-                    <p className="mt-1 text-sm text-ink-muted">Chúng tôi phản hồi trong vòng 15 phút làm việc.</p>
+                    <p className="mt-1 text-base text-ink-muted">Chúng tôi phản hồi trong vòng 15 phút làm việc.</p>
                   </div>
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     <div>
                       <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
-                      <input required value={form.name} onChange={doiO("name")} placeholder="Nguyễn Văn A" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                      <input aria-label="Họ và tên" required value={form.name} onChange={doiO("name")} placeholder="Nguyễn Văn A" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
-                      <input required type="tel" inputMode="tel" value={form.phone} onChange={doiO("phone")} placeholder="09xx xxx xxx" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                      <input aria-label="Số điện thoại" required type="tel" inputMode="tel" value={form.phone} onChange={doiO("phone")} placeholder="09xx xxx xxx" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                     </div>
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-ink-muted">Email <span className="font-normal text-ink-subtle">(không bắt buộc)</span></label>
-                    <input type="email" value={form.email} onChange={doiO("email")} placeholder="ban@email.com" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                    <input aria-label="Email (không bắt buộc)" type="email" value={form.email} onChange={doiO("email")} placeholder="ban@email.com" className="mt-1.5 w-full rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-ink-muted">Chủ đề quan tâm</label>
@@ -277,7 +276,7 @@ export default function Contact({ settings = {} }) {
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-ink-muted">Lời nhắn</label>
-                    <textarea required rows={4} minLength={10} maxLength={2000} value={form.message} onChange={doiO("message")} placeholder="Nội dung bạn muốn trao đổi..." className="mt-1.5 w-full resize-none rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                    <textarea aria-label="Lời nhắn" required rows={4} minLength={10} maxLength={2000} value={form.message} onChange={doiO("message")} placeholder="Nội dung bạn muốn trao đổi..." className="mt-1.5 w-full resize-none rounded-xl border border-ocean-100 bg-ocean-50/40 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                   </div>
                   {/* Ô bẫy chống bot: ẩn khỏi mắt người và khỏi trình đọc màn hình.
                       Bot điền hết mọi ô sẽ tự lộ ra và bị backend từ chối. */}

@@ -18,6 +18,16 @@ const LEAVES = [
 export default function AutumnLeaves({ initialAutumn = false }) {
   const [visible, setVisible] = useState(initialAutumn);
 
+  // Lá chỉ rơi ở màn hình đầu. Cuộn xuống phần nội dung (danh sách tour, form
+  // đặt tour…) thì lá mờ dần rồi ẩn — trước đây lá bay đè lên chữ và nút bấm.
+  const [daCuon, setDaCuon] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setDaCuon(window.scrollY > window.innerHeight * 0.5);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   useEffect(() => {
     const refresh = () => setVisible(isAutumnSeason());
     refresh();
@@ -28,7 +38,7 @@ export default function AutumnLeaves({ initialAutumn = false }) {
   if (!visible) return null;
 
   return (
-    <div className="autumn-leaves" aria-hidden="true">
+    <div className={`autumn-leaves${daCuon ? " autumn-leaves-an" : ""}`} aria-hidden="true">
       {LEAVES.map((leaf, index) => (
         <span
           key={index}

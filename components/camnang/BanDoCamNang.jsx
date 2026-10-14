@@ -714,8 +714,7 @@ export default function BanDoCamNang({ data, cheDo = "trang", batDau = null, dan
         <div className="mb-4 flex flex-col gap-3 px-2 lg:flex-row lg:items-end lg:justify-between">
           {laNhung ? (
             <div className="max-w-3xl">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-300">Bản đồ cẩm nang</p>
-              <h2 id="ban-do-dau" className="mt-1 font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
+              <h2 id="ban-do-dau" className="font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
                 Khám phá cẩm nang khác trên bản đồ
               </h2>
               <p className="mt-2 text-white/85">
@@ -959,7 +958,7 @@ export default function BanDoCamNang({ data, cheDo = "trang", batDau = null, dan
                     </>
                   ) : cap === "nuoc" ? (
                     <>
-                      {nuoc.intro && <p className="mb-3 text-sm text-ink-muted">{nuoc.intro}</p>}
+                      {nuoc.intro && <p className="mb-3 text-base text-ink-muted">{nuoc.intro}</p>}
                       <ul className="space-y-2">
                         {nuoc.cities.map((t) => (
                           <li key={t.slug}>
@@ -980,7 +979,7 @@ export default function BanDoCamNang({ data, cheDo = "trang", batDau = null, dan
                     </>
                   ) : (
                     <>
-                      {tp.intro && <p className="mb-3 text-sm text-ink-muted">{tp.intro}</p>}
+                      {tp.intro && <p className="mb-3 text-base text-ink-muted">{tp.intro}</p>}
                       {tp.guide && tp.guide.slug !== dangDoc && (
                         <Link href={`/cam-nang/${tp.guide.slug}`} className="mb-3 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-ocean-700 to-ocean-600 p-3 text-white shadow-card transition-transform duration-300 ease-enter hover:-translate-y-0.5">
                           <BookOpen aria-hidden="true" className="h-5 w-5 shrink-0 text-gold-300" />
@@ -1217,7 +1216,7 @@ function TheDiem({ diem, tieuDeRef, onDong }) {
       <h3 id={`diem-${diem.id}`} ref={tieuDeRef} tabIndex={-1} className="mt-2 font-display text-xl font-bold leading-snug text-deep-900 focus:outline-none">
         {diem.name}
       </h3>
-      {diem.summary && <p className="mt-1.5 text-sm text-ink-muted">{diem.summary}</p>}
+      {diem.summary && <p className="mt-1.5 text-base text-ink-muted">{diem.summary}</p>}
 
       {diem.guide ? (
         <div className="mt-4 rounded-2xl border border-ocean-100 bg-ocean-50/60 p-3">
@@ -1225,7 +1224,7 @@ function TheDiem({ diem, tieuDeRef, onDong }) {
             <BookOpen aria-hidden="true" className="h-3.5 w-3.5" /> Cẩm nang
           </p>
           <p className="mt-1 font-semibold leading-snug text-deep-900">{diem.guide.title}</p>
-          {diem.guide.excerpt && <p className="mt-1 line-clamp-3 text-sm text-ink-muted">{diem.guide.excerpt}</p>}
+          {diem.guide.excerpt && <p className="mt-1 line-clamp-3 text-base text-ink-muted">{diem.guide.excerpt}</p>}
         </div>
       ) : null}
 

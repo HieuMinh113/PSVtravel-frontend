@@ -65,6 +65,10 @@ async function layJSON(duongDan, { batBuoc = false } = {}) {
 }
 
 // Chuyển dữ liệu tour từ backend sang đúng hình dạng giao diện quen dùng
+// Tour chưa có ảnh bìa: ảnh thay thế nền nhạt có logo PSV — thẻ tour, trang
+// chi tiết không bị ô ảnh vỡ. Vòng xoay / nền đầu trang chỉ dùng ảnh thật (coAnhBia).
+export const ANH_TOUR_MAC_DINH = "/anh-tour-mac-dinh.jpg";
+
 function mapTour(t) {
   if (!t) return null;
   const dep = Array.isArray(t.departures) && t.departures.length ? t.departures[0] : null;
@@ -98,7 +102,8 @@ function mapTour(t) {
     // Đợt xa nhất và số chỗ nhiều nhất — dùng để lọc theo ngày và số khách
     lastDepartureDate: t.last_departure_date ?? null,
     maxSeatsLeft: t.max_seats_left ?? null,
-    image: t.cover_image,
+    image: t.cover_image || ANH_TOUR_MAC_DINH,
+    coAnhBia: Boolean(t.cover_image),
     tag: t.tag,
     categorySlugs: t.category_slugs ?? [],
     highlights: t.highlights ?? [],

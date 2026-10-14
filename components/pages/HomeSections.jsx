@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ShieldCheck, Clock3, HeartHandshake, BadgePercent, ArrowRight,
-  Plane, MapPinned, Tag, Newspaper, Handshake, Clock, CalendarDays,
+  Plane, Handshake, Clock, CalendarDays,
 } from "lucide-react";
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
@@ -90,10 +90,7 @@ export function KhoiTourSapKhoiHanh({ promo = null, upcoming = [] }) {
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">
-                <Clock3 className="h-3.5 w-3.5" /> Sắp khởi hành
-              </span>
-              <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+              <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                 Tour sát ngày — <span className="text-gradient-warm">đặt ngay kẻo lỡ</span>
               </h2>
             </div>
@@ -103,7 +100,9 @@ export function KhoiTourSapKhoiHanh({ promo = null, upcoming = [] }) {
             </Link>
           </SectionReveal>
 
-          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {/* 4 tour mà xếp 3 cột thì tour thứ 4 nằm lẻ một hàng, trống cả mảng bên
+              phải — 4 tour thì xếp 2 × 2 (màn vừa) hoặc 4 cột (màn rộng) */}
+          <div className={`mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 ${upcoming.length === 4 ? "xl:grid-cols-4" : "lg:grid-cols-3"}`}>
             {upcoming.map((tour, i) => (
               <TourCard
                 key={tour.slug}
@@ -129,10 +128,7 @@ export function KhoiUuDaiDiemDen({ promotions = [], diemDen = [] }) {
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <SectionReveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">
-                  <Tag className="h-3.5 w-3.5" /> Ưu đãi hôm nay
-                </span>
-                <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+                <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                   Đừng bỏ lỡ những <span className="text-gradient-ocean">deal hời</span>
                 </h2>
               </div>
@@ -194,10 +190,7 @@ export function KhoiUuDaiDiemDen({ promotions = [], diemDen = [] }) {
       <section className="bg-ocean-50/50 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <span className="flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-teal-700">
-              <MapPinned className="h-3.5 w-3.5" /> Điểm đến nổi bật
-            </span>
-            <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+            <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
               Bạn muốn <span className="text-gradient-ocean">khám phá</span> nơi nào?
             </h2>
           </SectionReveal>
@@ -256,8 +249,7 @@ export function KhoiViSaoChonVideo({ videoTrangChu = null, tieuDeVideo = null })
         <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-ocean-500/20 blur-3xl" />
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="mx-auto max-w-2xl text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Vì sao chọn chúng tôi</span>
-            <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
               Đồng hành đáng tin cậy cho mọi hành trình
             </h2>
           </SectionReveal>
@@ -281,8 +273,7 @@ export function KhoiViSaoChonVideo({ videoTrangChu = null, tieuDeVideo = null })
         <section className="bg-foam pt-16 sm:pt-20">
           <div className="mx-auto max-w-5xl px-5 sm:px-8">
             <SectionReveal className="mx-auto mb-8 max-w-2xl text-center">
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-sunset-700">Video giới thiệu</span>
-              <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+              <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                 {tieuDeVideo || "Hành trình cùng PSV Travel"}
               </h2>
             </SectionReveal>
@@ -330,10 +321,7 @@ export function KhoiCuoiTrang({ latestGuides = [], partners = [] }) {
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <SectionReveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.25em] text-teal-700">
-                  <Newspaper className="h-3.5 w-3.5" /> Cẩm nang du lịch
-                </span>
-                <h2 className="mt-3 font-display text-3xl font-bold text-deep-900 sm:text-4xl">
+                <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
                   Kinh nghiệm cho chuyến đi trọn vẹn
                 </h2>
               </div>

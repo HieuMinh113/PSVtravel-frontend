@@ -92,7 +92,7 @@ export default function EventReviewForm({ slug }) {
 
       <div>
         <label className="text-xs font-semibold text-ink-muted">Tên của bạn</label>
-        <input
+        <input aria-label="Tên của bạn"
           required
           value={form.customer_name}
           onChange={doiO("customer_name")}
@@ -102,7 +102,7 @@ export default function EventReviewForm({ slug }) {
       </div>
       <div>
         <label className="text-xs font-semibold text-ink-muted">Nội dung</label>
-        <textarea
+        <textarea aria-label="Nội dung"
           required
           rows={4}
           minLength={10}

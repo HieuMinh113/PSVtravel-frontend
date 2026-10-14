@@ -150,6 +150,32 @@ img, video {
   }
 }
 
+/* ===== Thẻ tour hẹp =====
+   Lưới 4 cột (trang chủ, máy tính) hay 2 cột trên máy tính bảng nhỏ làm thẻ
+   chỉ còn ~240px: giá và nút "Xem chi tiết" không đủ chỗ đứng cạnh nhau, chữ
+   giá đè lên nút. Đo theo bề rộng CHÍNH thẻ (container query) chứ không theo
+   màn hình, nên thẻ ở lưới nào cũng tự co đúng lúc.
+   Chọn 2 lớp để thắng px-4 / text-xl của Tailwind (utilities in sau). */
+.the-tour-than {
+  container-type: inline-size;
+}
+@container (max-width: 270px) {
+  .the-tour-than .the-tour-gia {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+  .the-tour-than .the-tour-nut {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+/* Hẹp hơn nữa thì bỏ hẳn nút — cả thẻ vốn đã là link */
+@container (max-width: 225px) {
+  .the-tour-than .the-tour-nut {
+    display: none;
+  }
+}
+
 /* ===== Khối dưới màn hình đầu (HydrateKhiThay) =====
    content-visibility: auto — khối chưa lọt vào tầm nhìn thì trình duyệt bỏ qua
    việc tính bố cục và vẽ, tới gần mới làm. Trang chủ dài hơn 1.000 thẻ nên
@@ -308,7 +334,8 @@ img, video {
 
 /* ===== Nội dung bài viết cẩm nang (HTML từ admin) ===== */
 .prose-psv { color: #4A6076; line-height: 1.8; font-size: 1.0625rem; }
-.prose-psv h2 { font-size: 1.5rem; font-weight: 700; margin: 2rem 0 0.75rem; color: #0b2440; }
+.prose-psv h2 { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 0.75rem; color: #0b2440; }
+@media (min-width: 640px) { .prose-psv h2 { font-size: 1.5rem; } }
 .prose-psv h3 { font-size: 1.2rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #0b2440; }
 .prose-psv p { margin: 1rem 0; }
 .prose-psv ul, .prose-psv ol { margin: 1rem 0; padding-left: 1.5rem; }
@@ -396,6 +423,13 @@ img, video {
   z-index: 40;
   pointer-events: none;
   overflow: hidden;
+  transition: opacity 0.6s ease, visibility 0s linear 0s;
+}
+/* Đã cuộn qua màn hình đầu: lá mờ dần rồi ẩn hẳn (không đè lên nội dung đang đọc) */
+.autumn-leaves-an {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0s linear 0.6s;
 }
 .autumn-leaf {
   position: absolute;
@@ -416,10 +450,9 @@ img, video {
   100% { transform: translate3d(0, 115vh, 0) rotate(355deg); }
 }
 @media (max-width: 640px) {
-  .autumn-leaf:nth-child(n+3):nth-child(-n+6) { display: none; }
+  /* Điện thoại: chỉ 2 lá sát hai mép (màn hẹp, nhiều lá là che chữ) */
+  .autumn-leaf:nth-child(n+2):nth-child(-n+7) { display: none; }
   .autumn-leaf:nth-child(1) { left: 1%; --leaf-drift-mobile: 2vw; }
-  .autumn-leaf:nth-child(2) { left: 5%; --leaf-drift-mobile: -2vw; }
-  .autumn-leaf:nth-child(7) { left: 90%; --leaf-drift-mobile: 1vw; }
   .autumn-leaf:nth-child(8) { left: 95%; --leaf-drift-mobile: -2vw; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -534,7 +567,29 @@ img, video {
   box-shadow: 0 0 0 2px #fff;
 }
 /* Bản đồ cẩm nang trên điện thoại: tấm trượt đang mở thì cất nút liên hệ nổi (nó đè lên danh sách) */
-html.an-lien-he-noi [data-lien-he-noi] { opacity: 0; pointer-events: none; transform: translateY(12px); }
+html.an-lien-he-noi [data-lien-he-noi],
+[data-lien-he-noi][data-an] { opacity: 0; pointer-events: none; transform: translateY(12px); }
+/* Trang chi tiết tour trên điện thoại / máy tính bảng: thanh "Đặt tour ngay" dưới đáy đã có
+   nút gọi — cất nút nổi đi cho khỏi hai lớp nổi chồng nhau che nội dung */
+@media (max-width: 1023px) {
+  html:has([data-thanh-dat-tour]) [data-lien-he-noi] { display: none; }
+}
 [data-lien-he-noi] { transition: opacity 0.25s ease, transform 0.25s ease; }
 /* Điểm của bài đang đọc (bản đồ cuối trang bài): luôn hiện tên */
 .ban-do-cn .ghim-diem-dang-doc .nhan-diem { opacity: 1 !important; }
+
+/* Ô nhập trên điện thoại / máy tính bảng: chữ tối thiểu 16px. Dưới 16px, Safari
+   trên iPhone tự phóng to cả trang mỗi lần bấm vào ô, khách phải tự thu nhỏ lại.
+   !important vì các ô đang đặt cỡ chữ bằng lớp text-sm của Tailwind. */
+@media (max-width: 1023px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Tiêu đề ngắt dòng cân đối — không để dòng cuối chỉ còn trơ một chữ */
+h1, h2, h3 {
+  text-wrap: balance;
+}

@@ -101,41 +101,41 @@ export default function TeamBuildingForm({ goi = "", hotline = "0907 870 707" })
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
           <label className={nhan}>Họ và tên <span className="text-sunset-700">*</span></label>
-          <input required value={form.name} onChange={doiO("name")} placeholder="Nguyễn Văn A" className={oInput} />
+          <input aria-label="Họ và tên" required value={form.name} onChange={doiO("name")} placeholder="Nguyễn Văn A" className={oInput} />
         </div>
         <div>
           <label className={nhan}>Số điện thoại <span className="text-sunset-700">*</span></label>
-          <input required type="tel" inputMode="tel" value={form.phone} onChange={doiO("phone")} placeholder="09xx xxx xxx" className={oInput} />
+          <input aria-label="Số điện thoại" required type="tel" inputMode="tel" value={form.phone} onChange={doiO("phone")} placeholder="09xx xxx xxx" className={oInput} />
         </div>
         <div>
           <label className={nhan}>Email <span className="font-normal text-ink-subtle">(không bắt buộc)</span></label>
-          <input type="email" value={form.email} onChange={doiO("email")} placeholder="ban@email.com" className={oInput} />
+          <input aria-label="Email (không bắt buộc)" type="email" value={form.email} onChange={doiO("email")} placeholder="ban@email.com" className={oInput} />
         </div>
         <div>
           <label className={nhan}>Công ty / đơn vị</label>
-          <input value={form.company} onChange={doiO("company")} placeholder="Tên công ty" className={oInput} />
+          <input aria-label="Công ty / đơn vị" value={form.company} onChange={doiO("company")} placeholder="Tên công ty" className={oInput} />
         </div>
         <div>
           <label className={nhan}>Số người dự kiến</label>
-          <input value={form.group_size} onChange={doiO("group_size")} placeholder="VD: 80 người" className={oInput} />
+          <input aria-label="Số người dự kiến" value={form.group_size} onChange={doiO("group_size")} placeholder="VD: 80 người" className={oInput} />
         </div>
         <div>
           <label className={nhan}>Ngày mong muốn</label>
-          <input value={form.event_date} onChange={doiO("event_date")} placeholder="VD: cuối tháng 11" className={oInput} />
+          <input aria-label="Ngày mong muốn" value={form.event_date} onChange={doiO("event_date")} placeholder="VD: cuối tháng 11" className={oInput} />
         </div>
         <div>
           <label className={nhan}>Địa điểm mong muốn</label>
-          <input value={form.location} onChange={doiO("location")} placeholder="VD: Vũng Tàu" className={oInput} />
+          <input aria-label="Địa điểm mong muốn" value={form.location} onChange={doiO("location")} placeholder="VD: Vũng Tàu" className={oInput} />
         </div>
         <div>
           <label className={nhan}>Ngân sách dự kiến</label>
-          <input value={form.budget} onChange={doiO("budget")} placeholder="VD: 1.5 triệu/khách" className={oInput} />
+          <input aria-label="Ngân sách dự kiến" value={form.budget} onChange={doiO("budget")} placeholder="VD: 1.5 triệu/khách" className={oInput} />
         </div>
       </div>
 
       <div>
         <label className={nhan}>Nội dung cần trao đổi</label>
-        <textarea rows={4} maxLength={2000} value={form.message} onChange={doiO("message")} placeholder="Mô tả nhu cầu, yêu cầu riêng của đoàn..." className={`${oInput} resize-none`} />
+        <textarea aria-label="Nội dung cần trao đổi" rows={4} maxLength={2000} value={form.message} onChange={doiO("message")} placeholder="Mô tả nhu cầu, yêu cầu riêng của đoàn..." className={`${oInput} resize-none`} />
       </div>
 
       {/* Ô bẫy chống bot — ẩn khỏi mắt người và trình đọc màn hình */}

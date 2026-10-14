@@ -91,7 +91,7 @@ export default function SearchBar({ diemDenTrongNuoc = [], diemDenNuocNgoai = []
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1.4fr_1fr_1fr_auto]">
         <div className="relative">
           <MapPin className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-500" />
-          <input
+          <input aria-label="Điểm đến bạn muốn đi"
             list="destinations"
             value={dest}
             onChange={(e) => setDest(e.target.value)}

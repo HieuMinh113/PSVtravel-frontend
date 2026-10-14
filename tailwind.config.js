@@ -3,6 +3,11 @@ export default {
   content: ["./app/**/*.{js,jsx}", "./components/**/*.{js,jsx}"],
   theme: {
     extend: {
+      // Cỡ chữ nhỏ nhất dùng cho chữ đọc (ngày, nhãn, chú thích): 13px thay vì 12px —
+      // 12px khó đọc với khách lớn tuổi, nhất là trên điện thoại.
+      fontSize: {
+        xs: ["0.8125rem", { lineHeight: "1.125rem" }],
+      },
       colors: {
         // Bảng màu "PSVTravel" — đúng 3 màu trong logo: xanh dương, xanh lá, vàng
         deep: {

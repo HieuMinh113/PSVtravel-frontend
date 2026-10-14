@@ -89,7 +89,7 @@ function TheDon({ don, index }) {
                   rõ chuyến đi nhất. Đã đánh giá rồi thì chỉ ghi nhận, không cho
                   gửi trùng. */}
               {don.da_danh_gia && (
-                <span className="flex items-center gap-1.5 text-sm font-semibold text-teal-700">
+                <span className="flex items-center gap-1.5 text-sm font-semibold text-teal-800">
                   <Star className="h-4 w-4 fill-teal-600 text-teal-600" />
                   Đã đánh giá
                 </span>

@@ -188,7 +188,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
               <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
               <div className="relative mt-1.5">
                 <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                <input
+                <input aria-label="Họ và tên"
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   maxLength={100}
@@ -202,7 +202,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
               <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
               <div className="relative mt-1.5">
                 <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                <input
+                <input aria-label="Số điện thoại"
                   value={form.contact}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, contact: e.target.value.replace(/[^0-9+ ]/g, "").slice(0, 15) }))

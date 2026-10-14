@@ -128,7 +128,7 @@ export default function ReviewForm({ slug, tourName }) {
       >
         <CheckCircle2 className="h-8 w-8 text-teal-600" />
         <p className="font-display text-lg font-bold text-teal-800">Cảm ơn bạn đã chia sẻ!</p>
-        <p className="max-w-sm text-sm text-teal-700">
+        <p className="max-w-sm text-sm text-teal-800">
           Đánh giá đang chờ duyệt và sẽ hiển thị công khai sau ít phút.
         </p>
       </motion.div>

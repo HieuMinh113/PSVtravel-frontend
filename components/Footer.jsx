@@ -118,7 +118,7 @@ export default function Footer({ settings = {} }) {
             </div>
           ) : (
             <form onSubmit={handleSubscribe} className="flex w-full max-w-sm gap-2">
-              <input
+              <input aria-label="Email nhận tin khuyến mãi"
                 type="email"
                 required
                 value={email}
@@ -168,7 +168,7 @@ export default function Footer({ settings = {} }) {
               </p>
               <div className="mt-2.5 flex flex-wrap gap-2">
                 {thanhToan.map((t) => (
-                  <span key={t} className="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] text-white/70">
+                  <span key={t} className="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/70">
                     {t}
                   </span>
                 ))}
@@ -178,34 +178,34 @@ export default function Footer({ settings = {} }) {
 
           <div>
             <h2 className="font-display text-base font-semibold text-white/90">Khám phá</h2>
-            <ul className="mt-4 space-y-2.5 text-sm text-white/65">
-              <li><Link href="/tour-trong-nuoc" className="vung-bam transition-colors hover:text-teal-400">Tour trong nước</Link></li>
-              <li><Link href="/tour-nuoc-ngoai" className="vung-bam transition-colors hover:text-teal-400">Tour nước ngoài</Link></li>
-              <li><Link href="/ve-may-bay" className="vung-bam transition-colors hover:text-teal-400">Vé máy bay</Link></li>
-              <li><Link href="/lam-visa" className="vung-bam transition-colors hover:text-teal-400">Làm visa</Link></li>
-              <li><Link href="/cam-nang" className="vung-bam transition-colors hover:text-teal-400">Cẩm nang du lịch</Link></li>
-              <li><Link href="/khoanh-khac-du-khach" className="vung-bam transition-colors hover:text-teal-400">Khoảnh khắc du khách</Link></li>
-              <li><Link href="/khuyen-mai" className="vung-bam transition-colors hover:text-teal-400">Khuyến mãi &amp; ưu đãi</Link></li>
-              <li><Link href="/diem-den" className="vung-bam transition-colors hover:text-teal-400">Điểm đến nổi bật</Link></li>
+            <ul className="mt-4 space-y-0.5 text-sm text-white/65 sm:space-y-2.5">
+              <li><Link href="/tour-trong-nuoc" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Tour trong nước</Link></li>
+              <li><Link href="/tour-nuoc-ngoai" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Tour nước ngoài</Link></li>
+              <li><Link href="/ve-may-bay" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Vé máy bay</Link></li>
+              <li><Link href="/lam-visa" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Làm visa</Link></li>
+              <li><Link href="/cam-nang" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Cẩm nang du lịch</Link></li>
+              <li><Link href="/khoanh-khac-du-khach" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Khoảnh khắc du khách</Link></li>
+              <li><Link href="/khuyen-mai" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Khuyến mãi &amp; ưu đãi</Link></li>
+              <li><Link href="/diem-den" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Điểm đến nổi bật</Link></li>
             </ul>
           </div>
 
           <div>
             <h2 className="font-display text-base font-semibold text-white/90">Hỗ trợ khách hàng</h2>
-            <ul className="mt-4 space-y-2.5 text-sm text-white/65">
+            <ul className="mt-4 space-y-0.5 text-sm text-white/65 sm:space-y-2.5">
               <li>
-                <Link href="/tra-cuu-booking" className="vung-bam flex items-center gap-1.5 font-semibold text-teal-400 transition-colors hover:text-teal-300">
+                <Link href="/tra-cuu-booking" className="vung-bam flex items-center gap-1.5 py-1.5 font-semibold text-teal-400 transition-colors hover:text-teal-300 sm:py-0">
                   <FileSearch className="h-3.5 w-3.5" /> Tra cứu đơn đặt tour
                 </Link>
               </li>
-              <li><Link href="/ve-chung-toi" className="vung-bam transition-colors hover:text-teal-400">Về chúng tôi</Link></li>
-              <li><Link href="/lien-he" className="vung-bam transition-colors hover:text-teal-400">Liên hệ</Link></li>
-              <li><Link href="/cau-hoi-thuong-gap" className="vung-bam transition-colors hover:text-teal-400">Câu hỏi thường gặp</Link></li>
-              <li><Link href="/tuyen-dung" className="vung-bam transition-colors hover:text-teal-400">Tuyển dụng</Link></li>
-              <li><Link href="/chinh-sach-bao-mat" className="vung-bam transition-colors hover:text-teal-400">Chính sách bảo mật</Link></li>
-              <li><Link href="/dieu-khoan-su-dung" className="vung-bam transition-colors hover:text-teal-400">Điều khoản sử dụng</Link></li>
-              <li><Link href="/chinh-sach-thanh-toan" className="vung-bam transition-colors hover:text-teal-400">Chính sách thanh toán</Link></li>
-              <li><Link href="/chinh-sach-huy-hoan" className="vung-bam transition-colors hover:text-teal-400">Chính sách huỷ &amp; hoàn tiền</Link></li>
+              <li><Link href="/ve-chung-toi" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Về chúng tôi</Link></li>
+              <li><Link href="/lien-he" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Liên hệ</Link></li>
+              <li><Link href="/cau-hoi-thuong-gap" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Câu hỏi thường gặp</Link></li>
+              <li><Link href="/tuyen-dung" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Tuyển dụng</Link></li>
+              <li><Link href="/chinh-sach-bao-mat" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Chính sách bảo mật</Link></li>
+              <li><Link href="/dieu-khoan-su-dung" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Điều khoản sử dụng</Link></li>
+              <li><Link href="/chinh-sach-thanh-toan" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Chính sách thanh toán</Link></li>
+              <li><Link href="/chinh-sach-huy-hoan" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Chính sách huỷ &amp; hoàn tiền</Link></li>
             </ul>
 
             <h2 className="mt-6 font-display text-base font-semibold text-white/90">Liên hệ</h2>
@@ -290,7 +290,7 @@ export default function Footer({ settings = {} }) {
                   className="flex shrink-0 items-center gap-2.5 self-start rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 transition-colors hover:border-teal-400/50 hover:bg-white/10"
                 >
                   <BadgeCheck className="h-7 w-7 shrink-0 text-teal-400" />
-                  <span className="text-left text-[11px] leading-tight text-white/75">
+                  <span className="text-left text-xs leading-tight text-white/75">
                     Đã thông báo
                     <br />
                     <strong className="text-xs text-white">Bộ Công Thương</strong>

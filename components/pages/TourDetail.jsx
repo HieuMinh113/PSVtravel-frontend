@@ -142,7 +142,7 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
                   với nhau — "Sáng" và "Chiều" dài ngắn khác nhau. */}
               <div className="flex flex-col gap-3">
                 {tachBuoi(day.desc).map((doan, k) => (
-                  <div key={k} className="flex gap-2 text-sm leading-relaxed">
+                  <div key={k} className="flex gap-2 text-base leading-relaxed">
                     {doan.buoi && (
                       <span className="w-[3.25rem] shrink-0 font-semibold text-ocean-700">
                         {doan.buoi}
@@ -199,11 +199,11 @@ function ReviewCard({ r, index }) {
           </div>
         </div>
         <Quote className="mt-3 h-4 w-4 text-sunset-300" />
-        <p className="mt-1.5 flex-1 text-sm leading-relaxed text-ink">{r.comment}</p>
+        <p className="mt-1.5 flex-1 text-base leading-relaxed text-ink">{r.comment}</p>
         {r.reply && (
           <div className="mt-3 rounded-xl bg-ocean-50/70 p-3">
             <p className="text-xs font-semibold text-ocean-700">Phản hồi từ PSV Travel</p>
-            <p className="mt-1 text-sm text-ink-muted">{r.reply}</p>
+            <p className="mt-1 text-base text-ink-muted">{r.reply}</p>
           </div>
         )}
       </div>
@@ -211,7 +211,9 @@ function ReviewCard({ r, index }) {
   );
 }
 
-// Một dòng trong khối "Những thông tin cần lưu ý".
+// Một dòng trong khối "Những thông tin cần lưu ý". Nội dung giới hạn bề rộng
+// (max-w-2xl ≈ 75 chữ/dòng): khối này trải hết chiều ngang trang, để dòng chữ
+// dài tới 160 ký tự thì mắt đọc tới cuối dòng là lạc sang dòng khác.
 //
 // Nội dung do nhân viên gõ trong admin nên phải giữ nguyên cách xuống dòng —
 // bảng phí huỷ tour mà dồn hết thành một đoạn thì không ai đọc nổi. Danh sách
@@ -236,7 +238,7 @@ function LuuYItem({ tieuDe, noiDung, muc, isOpen, onToggle }) {
         className="overflow-hidden"
       >
         {muc ? (
-          <ul className="space-y-1.5 pb-4 text-sm leading-relaxed text-ink-muted">
+          <ul className="max-w-2xl space-y-1.5 pb-4 text-base leading-relaxed text-ink-muted">
             {muc.map((dong, i) => (
               <li key={i} className="flex gap-2">
                 <span className="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-ocean-400" />
@@ -245,7 +247,7 @@ function LuuYItem({ tieuDe, noiDung, muc, isOpen, onToggle }) {
             ))}
           </ul>
         ) : (
-          <p className="whitespace-pre-line pb-4 text-sm leading-relaxed text-ink-muted">{noiDung}</p>
+          <p className="max-w-2xl whitespace-pre-line pb-4 text-base leading-relaxed text-ink-muted">{noiDung}</p>
         )}
       </motion.div>
     </div>
@@ -270,7 +272,7 @@ function FaqItem({ item, isOpen, onToggle }) {
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        <p className="px-4 pb-4 pl-11 text-sm leading-relaxed text-ink-muted sm:px-5 sm:pb-5">{item.a}</p>
+        <p className="px-4 pb-4 pl-11 text-base leading-relaxed text-ink-muted sm:px-5 sm:pb-5">{item.a}</p>
       </motion.div>
     </div>
   );
@@ -363,7 +365,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     // Admin đã tự chọn ảnh cho Thư viện thì tôn trọng đúng lựa chọn đó,
     // không chèn thêm ảnh ngày vào giữa.
     if (thuVien.length > 0) {
-      return [...new Set([tour.image, ...thuVien].filter(Boolean))];
+      return [...new Set([tour.coAnhBia ? tour.image : null, ...thuVien].filter(Boolean))];
     }
 
     // Lấy xoay vòng: ảnh đầu của mỗi ngày trước, hết một lượt mới quay lại lấy
@@ -590,8 +592,9 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_380px]">
           {/* Nội dung chính */}
           <div>
-            {/* Tìm tour khác — giống thanh lọc ở trang danh sách, tự đổi danh mục theo loại tour đang xem */}
-            <SectionReveal className="sticky top-20 z-20 mb-6 rounded-2xl border border-ocean-100 bg-white/90 p-3 shadow-sm backdrop-blur-lg sm:p-4">
+            {/* Tìm tour khác — giống thanh lọc ở trang danh sách, tự đổi danh mục theo loại tour đang xem.
+                Chỉ dính khi cuộn trên máy tính: trên điện thoại nó đè lên chữ đang đọc */}
+            <SectionReveal className="z-20 mb-6 lg:sticky lg:top-20 rounded-2xl border border-ocean-100 bg-white/90 p-3 shadow-sm backdrop-blur-lg sm:p-4">
               <div className="flex flex-wrap items-center gap-3">
                 <AnimatePresence mode="wait" initial={false}>
                   {detailSearchOpen ? (
@@ -605,7 +608,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       className="relative shrink-0 overflow-hidden"
                     >
                       <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                      <input
+                      <input aria-label="Tìm tour hoặc điểm đến khác"
                         autoFocus
                         value={detailQuery}
                         onChange={(e) => setDetailQuery(e.target.value)}
@@ -637,7 +640,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                 </AnimatePresence>
 
                 <div className="flex flex-1 flex-wrap items-center gap-2">
-                  <SlidersHorizontal className="h-4 w-4 shrink-0 text-ocean-500" />
+                  {detailDanhMuc.length > 0 && <SlidersHorizontal aria-hidden="true" className="h-4 w-4 shrink-0 text-ocean-500" />}
                   {detailDanhMuc.map((d) => (
                     <button
                       key={d.slug || "tat-ca"}
@@ -716,7 +719,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                   </div>
                 ) : (
                   <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-                    <span className="flex items-center gap-2 text-sm font-medium text-teal-700">
+                    <span className="flex items-center gap-2 text-sm font-medium text-teal-800">
                       <BadgeCheck className="h-5 w-5 text-teal-600" /> {visaInfo.note}
                     </span>
                     <span className="text-xs text-ink-subtle">Vui lòng kiểm tra hộ chiếu còn hạn tối thiểu 6 tháng.</span>
@@ -803,7 +806,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
                       <div className="relative mt-1.5">
                         <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                        <input
+                        <input aria-label="Họ và tên"
                           value={form.name}
                           onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                           maxLength={100}
@@ -817,7 +820,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
                       <div className="relative mt-1.5">
                         <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                        <input
+                        <input aria-label="Số điện thoại"
                           value={form.contact}
                           onChange={(e) =>
                             setForm((f) => ({
@@ -1054,8 +1057,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
       <section className="bg-foam py-14 sm:py-16">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 sm:px-8 lg:grid-cols-[1.3fr_1fr]">
           <SectionReveal>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-teal-700">Giải đáp</span>
-            <h2 className="mt-2 font-display text-2xl font-bold text-deep-900 sm:text-3xl">Câu hỏi thường gặp</h2>
+            <h2 className="font-display text-2xl font-bold text-deep-900 sm:text-3xl">Câu hỏi thường gặp</h2>
             <div className="mt-6 space-y-3">
               {faqs.map((f, i) => (
                 <FaqItem key={f.q} item={f} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? -1 : i)} />
@@ -1084,19 +1086,19 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                     <label className="text-xs font-semibold text-ink-muted">Họ và tên</label>
                     <div className="relative mt-1.5">
                       <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                      <input required value={askForm.name} onChange={(e) => setAskForm((f) => ({ ...f, name: e.target.value }))} placeholder="Nguyễn Văn A" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                      <input aria-label="Họ và tên" required value={askForm.name} onChange={(e) => setAskForm((f) => ({ ...f, name: e.target.value }))} placeholder="Nguyễn Văn A" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                     </div>
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-ink-muted">Số điện thoại</label>
                     <div className="relative mt-1.5">
                       <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
-                      <input required value={askForm.phone} onChange={(e) => setAskForm((f) => ({ ...f, phone: e.target.value }))} placeholder="09xx xxx xxx" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                      <input aria-label="Số điện thoại" required value={askForm.phone} onChange={(e) => setAskForm((f) => ({ ...f, phone: e.target.value }))} placeholder="09xx xxx xxx" className="w-full rounded-xl border border-ocean-100 bg-ocean-50/50 py-2.5 pl-10 pr-3 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                     </div>
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-ink-muted">Câu hỏi của bạn (không bắt buộc)</label>
-                    <textarea rows={3} placeholder="Ví dụ: Tour có hỗ trợ ăn chay không?" className="mt-1.5 w-full resize-none rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
+                    <textarea aria-label="Câu hỏi của bạn (không bắt buộc)" rows={3} placeholder="Ví dụ: Tour có hỗ trợ ăn chay không?" className="mt-1.5 w-full resize-none rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-ocean-400 focus:bg-white" />
                   </div>
                   <button type="submit" className="btn-cta w-full !py-3">Gửi câu hỏi <ArrowRight className="h-4 w-4" /></button>
                 </motion.form>
@@ -1111,14 +1113,17 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-teal-700">Trải nghiệm thực tế</span>
-              <h2 className="mt-2 font-display text-2xl font-bold text-deep-900 sm:text-3xl">Đánh giá từ khách hàng</h2>
+              <h2 className="font-display text-2xl font-bold text-deep-900 sm:text-3xl">Đánh giá từ khách hàng</h2>
             </div>
-            <div className="flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 shadow-card">
-              <Star className="h-5 w-5 fill-gold-500 text-gold-500" />
-              <span className="font-display text-xl font-bold text-deep-900">{tour.rating > 0 ? tour.rating : "—"}</span>
-              <span className="text-sm text-ink-subtle">/5 · {tour.reviews} đánh giá</span>
-            </div>
+            {/* Chưa có đánh giá thì không hiện ô điểm "— /5 · 0 đánh giá" (trông như lỗi) —
+                dòng "Chưa có đánh giá" bên dưới đã nói rõ */}
+            {tour.reviews > 0 && (
+              <div className="flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 shadow-card">
+                <Star className="h-5 w-5 fill-gold-500 text-gold-500" />
+                <span className="font-display text-xl font-bold text-deep-900">{tour.rating > 0 ? tour.rating : "—"}</span>
+                <span className="text-sm text-ink-subtle">/5 · {tour.reviews} đánh giá</span>
+              </div>
+            )}
           </SectionReveal>
           {reviews.length === 0 ? (
             <p className="rounded-2xl border border-dashed border-ocean-200 bg-white py-12 text-center text-sm text-ink-muted">
@@ -1146,19 +1151,34 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed inset-x-0 bottom-0 z-30 border-t border-ocean-100 bg-white/95 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-4 pr-16 shadow-[0_-8px_30px_rgba(7,30,51,0.12)] backdrop-blur-lg lg:hidden"
+            // data-thanh-dat-tour: có thanh này thì nút gọi nổi tự cất đi (xem globals.css) —
+            // nút gọi đã nằm ngay trong thanh, hai lớp nổi chồng nhau thì che mất nội dung
+            data-thanh-dat-tour
+            className="fixed inset-x-0 bottom-0 z-30 border-t border-ocean-100 bg-white/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(7,30,51,0.12)] backdrop-blur-lg lg:hidden"
           >
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 {tour.oldPrice && <p className="truncate text-xs text-ink-subtle line-through">{formatVND(tour.oldPrice)}</p>}
                 <p className="truncate font-display text-lg font-bold text-ocean-700">{formatVND(tour.price)}</p>
               </div>
-              <button
-                onClick={scrollToBooking}
-                className="btn-cta shrink-0 !px-5 !py-3 text-sm"
-              >
-                Đặt tour ngay <ArrowRight className="h-4 w-4" />
-              </button>
+              <div className="flex shrink-0 items-center gap-2">
+                <a
+                  href={`tel:${hotline.replace(/[^0-9+]/g, "")}`}
+                  onClick={() => fbTrack("Contact", { method: "hotline", content_name: tour.name })}
+                  aria-label={`Gọi tư vấn ${hotline}`}
+                  className="grid h-12 w-12 place-items-center rounded-full border border-ocean-200 text-ocean-700 transition-colors active:bg-ocean-50"
+                >
+                  <Phone className="h-5 w-5" />
+                </a>
+                <button
+                  onClick={scrollToBooking}
+                  // Nhãn ngắn: thêm nút gọi bên cạnh nên chữ dài sẽ cắt mất giá
+                  // trên điện thoại 360px
+                  className="btn-cta shrink-0 !px-5 !py-3 text-sm"
+                >
+                  Đặt tour <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           </motion.div>
         )}

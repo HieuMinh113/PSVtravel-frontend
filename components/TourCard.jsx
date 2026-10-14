@@ -88,7 +88,7 @@ export default function TourCard({ tour, basePath, index = 0 }) {
           </span>
         </div>
 
-        <div className="flex flex-1 flex-col p-5">
+        <div className="the-tour-than flex flex-1 flex-col p-5">
           <h3 className="line-clamp-2 font-display text-lg font-semibold leading-snug text-deep-900 transition-colors group-hover:text-ocean-700">
             {tour.name}
           </h3>
@@ -129,13 +129,13 @@ export default function TourCard({ tour, basePath, index = 0 }) {
               {ngayKhoiHanh.map((ngay) => (
                 <span
                   key={ngay}
-                  className="rounded-md bg-ocean-50 px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-ocean-700"
+                  className="rounded-md bg-ocean-50 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-ocean-700"
                 >
                   {ngayGon(ngay)}
                 </span>
               ))}
               {conNua > 0 && (
-                <span className="text-[11px] font-medium text-ink-subtle">+{conNua}</span>
+                <span className="text-xs font-medium text-ink-subtle">+{conNua}</span>
               )}
             </div>
           )}
@@ -145,13 +145,13 @@ export default function TourCard({ tour, basePath, index = 0 }) {
               {tour.oldPrice && (
                 <p className="text-xs text-ink-subtle line-through">{formatVND(tour.oldPrice)}</p>
               )}
-              <p className="font-display text-xl font-bold text-ocean-700">{formatVND(tour.price)}</p>
+              <p className="the-tour-gia whitespace-nowrap font-display text-xl font-bold text-ocean-700">{formatVND(tour.price)}</p>
               {tour.departure && (
                 <p className="truncate text-xs text-ink-subtle">{tour.departure}</p>
               )}
             </div>
 
-            <span className="shrink-0 rounded-full border border-ocean-200 px-4 py-2 text-xs font-semibold text-ocean-700 transition-colors duration-300 group-hover:border-sunset-600 group-hover:bg-sunset-600 group-hover:text-white">
+            <span className="the-tour-nut shrink-0 rounded-full border border-ocean-200 px-4 py-2 text-xs font-semibold text-ocean-700 transition-colors duration-300 group-hover:border-sunset-600 group-hover:bg-sunset-600 group-hover:text-white">
               Xem chi tiết
             </span>
           </div>

@@ -116,7 +116,7 @@ export default function TourListPage({
                     className="relative shrink-0 overflow-hidden"
                   >
                     <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-500" />
-                    <input
+                    <input aria-label="Tìm theo tên tour hoặc điểm đến"
                       autoFocus
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
