@@ -102,7 +102,7 @@ export default function TourListPage({
       <section id="ket-qua-tour" className="scroll-mt-20 bg-foam py-14 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           {/* Bộ lọc */}
-          <SectionReveal className="sticky top-20 z-20 mb-8 rounded-2xl border border-ocean-100 bg-white/92 p-4 shadow-card backdrop-blur-lg sm:p-5">
+          <SectionReveal className="sticky top-20 z-20 mb-8 rounded-2xl bg-white p-4 shadow-card sm:p-5">
             <div className="flex flex-wrap items-center gap-3">
               {/* Icon tìm kiếm — bấm vào mới xổ ra ô nhập */}
               <AnimatePresence mode="wait" initial={false}>

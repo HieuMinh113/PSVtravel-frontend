@@ -61,7 +61,7 @@ export default function Faqs({ items = [] }) {
       <section className="bg-foam py-14 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           {items.length === 0 ? (
-            <SectionReveal className="mx-auto max-w-md rounded-3xl border border-white/60 bg-white/70 p-10 text-center shadow-card backdrop-blur">
+            <SectionReveal className="mx-auto max-w-md rounded-3xl bg-white p-10 text-center shadow-card">
               <HelpCircle className="mx-auto h-10 w-10 text-ocean-300" />
               <p className="mt-4 text-ink-muted">Nội dung đang được cập nhật.</p>
             </SectionReveal>

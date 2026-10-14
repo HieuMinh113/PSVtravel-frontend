@@ -38,7 +38,7 @@ const camKet = [
 
 export default function TrustBar() {
   return (
-    <section className="border-b border-ocean-100 bg-white">
+    <section className="bg-white">
       <div className="mx-auto grid max-w-7xl gap-x-6 gap-y-7 px-5 py-8 sm:grid-cols-2 sm:px-8 lg:grid-cols-4 lg:py-9">
         {camKet.map((c, i) => (
           <motion.div

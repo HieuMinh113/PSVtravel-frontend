@@ -65,6 +65,22 @@ export default async function Page() {
     )
     .slice(0, 6);
 
+  // Ảnh lớn của khối "Vì sao chọn chúng tôi": ảnh bìa thật của một tour đang
+  // bán, bấm vào là tới tour đó. Ưu tiên tour KHÔNG nằm trong nhóm sắp khởi
+  // hành — nhóm đó đã có ảnh ở nền đầu trang và ở khối "Tour sát ngày".
+  const coAnhBia = [...domestic, ...abroad].filter((t) => t.coAnhBia);
+  const tourAnhViSao =
+    coAnhBia.find((t) => !upcoming.includes(t)) ??
+    upcoming.filter((t) => t.coAnhBia).at(-1) ??
+    null;
+  const anhViSao = tourAnhViSao
+    ? {
+        src: tourAnhViSao.image,
+        ten: tourAnhViSao.name,
+        href: `${tourAnhViSao.type === "domestic" ? "/tour-trong-nuoc" : "/tour-nuoc-ngoai"}/${tourAnhViSao.slug}`,
+      }
+    : null;
+
   // Tên điểm đến THẬT đang có tour (danh mục trong admin) — đoạn giới thiệu tự
   // cập nhật khi thêm/bớt điểm đến, không phải sửa chữ.
   const tenDiemDen = (loai) =>
@@ -90,6 +106,7 @@ export default async function Page() {
       partners={partners}
       videoTrangChu={settings?.home_video_url ?? null}
       tieuDeVideo={settings?.home_video_title ?? null}
+      anhViSao={anhViSao}
     />
 
     <DoanGioiThieu tieuDe="Đặt tour du lịch trong nước và nước ngoài cùng PSV Travel">

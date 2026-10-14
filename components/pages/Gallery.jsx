@@ -60,31 +60,31 @@ export default function Gallery({ photos = [], settings = {} }) {
         <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
           {/* Dải thống kê — chip kính mờ, chứng minh xã hội */}
           <div className="mb-10 flex flex-wrap items-center justify-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm text-ink-muted shadow-card backdrop-blur">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm text-ink-muted shadow-card">
               <Camera className="h-4 w-4 text-ocean-700" />
               <strong className="font-display text-base font-bold text-ocean-700">{list.length}</strong>
               khoảnh khắc
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm text-ink-muted shadow-card backdrop-blur">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm text-ink-muted shadow-card">
               <Images className="h-4 w-4 text-teal-600" />
               <strong className="font-display text-base font-bold text-teal-700">{soAnh}</strong>
               tấm ảnh
             </span>
             {soVideo > 0 && (
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm text-ink-muted shadow-card backdrop-blur">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm text-ink-muted shadow-card">
                 <Play className="h-4 w-4 fill-sunset-600 text-sunset-700" />
                 <strong className="font-display text-base font-bold text-sunset-700">{soVideo}</strong>
                 video cảm nhận
               </span>
             )}
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm text-ink-muted shadow-card backdrop-blur">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm text-ink-muted shadow-card">
               <ShieldCheck className="h-4 w-4 text-sunset-700" />
               100% ảnh thật từ khách
             </span>
           </div>
 
           {list.length === 0 ? (
-            <SectionReveal className="mx-auto max-w-md rounded-3xl border border-white/60 bg-white/70 p-10 text-center shadow-card backdrop-blur">
+            <SectionReveal className="mx-auto max-w-md rounded-3xl bg-white p-10 text-center shadow-card">
               <Camera className="mx-auto h-10 w-10 text-ocean-300" />
               <p className="mt-4 text-ink-muted">
                 Chưa có khoảnh khắc nào được chia sẻ. Hãy là người đầu tiên gửi ảnh chuyến đi của bạn!
@@ -127,14 +127,14 @@ export default function Gallery({ photos = [], settings = {} }) {
 
                   {/* Huy hiệu số ảnh — mẫu "+n" */}
                   {!p.videoId && p.photos && p.photos.length > 1 ? (
-                    <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full border border-white/20 bg-deep-950/55 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+                    <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white">
                       <Images className="h-3.5 w-3.5" aria-hidden="true" />
                       {p.photos.length}
                     </span>
                   ) : null}
 
                   {p.rating ? (
-                    <span className="absolute right-2.5 top-2.5 flex items-center gap-0.5 rounded-full bg-white/95 px-2 py-1 shadow-sm backdrop-blur">
+                    <span className="absolute right-2.5 top-2.5 flex items-center gap-0.5 rounded-full bg-white px-2 py-1 shadow-sm">
                       {Array.from({ length: p.rating }).map((_, r) => (
                         <Star key={r} className="h-3 w-3 fill-gold-500 text-gold-500" aria-hidden="true" />
                       ))}
@@ -152,7 +152,7 @@ export default function Gallery({ photos = [], settings = {} }) {
                       {p.avatar ? (
                         <img src={p.avatar} alt="" className="h-7 w-7 rounded-full border-2 border-white/80 object-cover" />
                       ) : (
-                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-white/80 bg-gradient-to-br from-ocean-500 to-teal-500 text-[10px] font-bold text-white">
+                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-white/80 bg-ocean-700 text-[10px] font-bold text-white">
                           {chuCaiDau(p.name)}
                         </span>
                       )}
@@ -229,7 +229,7 @@ export default function Gallery({ photos = [], settings = {} }) {
             )}
 
             {/* Số thứ tự khoảnh khắc trong bộ sưu tập */}
-            <span className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur">
+            <span className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold text-white">
               {activeIndex + 1} / {list.length}
             </span>
 
@@ -267,7 +267,7 @@ export default function Gallery({ photos = [], settings = {} }) {
                   </AnimatePresence>
                 )}
                 {activeMedia.length > 1 ? (
-                  <span className="absolute left-3 top-3 z-10 rounded-full bg-deep-950/65 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+                  <span className="absolute left-3 top-3 z-10 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white">
                     {photoIndex + 1}/{activeMedia.length}
                   </span>
                 ) : null}
@@ -278,7 +278,7 @@ export default function Gallery({ photos = [], settings = {} }) {
                   {active.avatar ? (
                     <img src={active.avatar} alt="" className="h-11 w-11 rounded-full object-cover" />
                   ) : (
-                    <span className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-ocean-500 to-teal-500 text-sm font-bold text-white">
+                    <span className="grid h-11 w-11 place-items-center rounded-full bg-ocean-700 text-sm font-bold text-white">
                       {chuCaiDau(active.name)}
                     </span>
                   )}

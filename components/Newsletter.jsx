@@ -28,7 +28,7 @@ export default function Newsletter({ source = "trang-chu" }) {
 
   if (state === "done") {
     return (
-      <div className="flex items-center justify-center gap-2 rounded-full bg-white/15 px-5 py-3 text-sm font-semibold text-white backdrop-blur">
+      <div className="flex items-center justify-center gap-2 rounded-full bg-white/15 px-5 py-3 text-sm font-semibold text-white">
         <CheckCircle2 className="h-5 w-5 text-teal-300" /> Cảm ơn bạn! Chúng tôi sẽ gửi ưu đãi mới nhất qua email.
       </div>
     );

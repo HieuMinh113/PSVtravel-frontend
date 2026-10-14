@@ -113,21 +113,21 @@ export default function Contact({ settings = {} }) {
       label: "Hotline 24/7",
       value: hotline,
       href: `tel:${hotline.replace(/[^0-9]/g, "")}`,
-      mau: "from-sunset-500 to-sunset-600",
+      mau: "bg-sunset-700",
     },
     {
       icon: Mail,
       label: "Email hỗ trợ",
       value: contactEmail,
       href: `mailto:${contactEmail}`,
-      mau: "from-ocean-500 to-ocean-600",
+      mau: "bg-ocean-700",
     },
     {
       icon: Clock,
       label: "Giờ làm việc",
       value: workingHours,
       href: null,
-      mau: "from-teal-500 to-teal-600",
+      mau: "bg-teal-800",
     },
   ];
 
@@ -153,7 +153,7 @@ export default function Contact({ settings = {} }) {
                     {...(k.href?.startsWith("tel:") ? { onClick: () => fbTrack("Contact", { method: "hotline" }) } : {})}
                     className={`card-surface group flex h-full items-start gap-4 p-5 ${k.href ? "cursor-pointer" : ""}`}
                   >
-                    <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br ${k.mau} text-white shadow transition-transform duration-400 ease-enter group-hover:scale-110`}>
+                    <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${k.mau} text-white transition-transform duration-400 ease-enter group-hover:scale-110`}>
                       <k.icon className="h-5 w-5" />
                     </span>
                     <div className="min-w-0">

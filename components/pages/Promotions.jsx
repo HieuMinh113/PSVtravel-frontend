@@ -29,7 +29,7 @@ export default function Promotions({ items = [] }) {
           {/* Tiêu đề ẩn: tên thẻ là h3, thiếu h2 thì thứ tự tiêu đề nhảy cóc (Lighthouse) */}
           <h2 className="sr-only">Các chương trình khuyến mãi</h2>
           {items.length === 0 ? (
-            <SectionReveal className="mx-auto max-w-md rounded-3xl border border-white/60 bg-white/70 p-10 text-center shadow-card backdrop-blur">
+            <SectionReveal className="mx-auto max-w-md rounded-3xl bg-white p-10 text-center shadow-card">
               <Tag className="mx-auto h-10 w-10 text-ocean-300" />
               <p className="mt-4 text-ink-muted">
                 Hiện chưa có chương trình khuyến mãi nào. Vui lòng quay lại sau nhé!
@@ -55,7 +55,7 @@ export default function Promotions({ items = [] }) {
                         </span>
                       )}
                       {p.badge && (
-                        <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-bold text-sunset-700 backdrop-blur">
+                        <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-xs font-bold text-sunset-700">
                           <Sparkles className="h-3 w-3" /> {p.badge}
                         </span>
                       )}

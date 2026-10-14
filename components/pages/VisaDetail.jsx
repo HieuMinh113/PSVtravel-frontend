@@ -97,7 +97,7 @@ export default function VisaDetail({ visa, related = [], settings = {} }) {
           {/* Cột liên hệ — sticky trên desktop */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="card-surface overflow-hidden ring-1 ring-ocean-100">
-              <div className="flex items-center gap-3 bg-gradient-to-r from-ocean-600 to-teal-600 px-6 py-5 text-white">
+              <div className="flex items-center gap-3 bg-ocean-700 px-6 py-5 text-white">
                 {visa.flagImage ? (
                   <img
                     src={visa.flagImage}

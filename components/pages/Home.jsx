@@ -56,9 +56,12 @@ const ORBIT_DU_PHONG = [
 const trustSignals = [
   // Ghi đúng tên pháp nhân như trên giấy chứng nhận đăng ký doanh nghiệp —
   // khách đem tra cứu là khớp từng chữ.
-  { icon: Building2, text: "CÔNG TY CỔ PHẦN DU LỊCH P.S.V TRAVEL" },
+  // Điện thoại: ẩn dòng tên pháp nhân (dài, chiếm 2 dòng) để dải "Sắp khởi
+  // hành" vẫn lọt màn hình đầu; tên đầy đủ vẫn có ở chân trang, MST vẫn hiện.
+  { icon: Building2, text: "CÔNG TY CỔ PHẦN DU LỊCH P.S.V TRAVEL", anTrenDienThoai: true },
   { icon: ShieldCheck, text: "MST 0314542363" },
-  { icon: Headset, text: "Hotline 24/7: 0907 870 707" },
+  // Điện thoại: nhãn ngắn để MST + hotline nằm chung một dòng
+  { icon: Headset, text: "Hotline 24/7: 0907 870 707", textNgan: "Hotline 0907 870 707" },
 ];
 
 export default function Home({
@@ -77,6 +80,7 @@ export default function Home({
   partners = [],
   videoTrangChu = null,
   tieuDeVideo = null,
+  anhViSao = null,
 }) {
   const [autumn, setAutumn] = useState(initialAutumn);
   useEffect(() => {
@@ -165,14 +169,14 @@ export default function Home({
         />
 
         {/* KHỐI CHỮ — chiếm phần giữa, tự căn giữa theo chiều cao còn lại */}
-        <div className="relative z-10 flex flex-1 items-center justify-center px-5 pb-6 pt-[clamp(6rem,13vh,7.5rem)] sm:px-8">
+        <div className="relative z-10 flex flex-1 items-center justify-center px-5 pb-6 pt-[clamp(5.5rem,11vh,7.5rem)] sm:px-8 sm:pt-[clamp(6rem,13vh,7.5rem)]">
           <div className="flex w-full max-w-3xl flex-col items-center text-center">
             {/* Nhãn thông điệp màu ấm — bật hẳn khỏi nền xanh, mắt bắt được đầu tiên */}
             <motion.span
               initial={{ opacity: 0, y: -14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
-              className="inline-flex items-center gap-2 rounded-full bg-sunset-700/95 px-4 py-1.5 text-[clamp(0.65rem,1.6vw,0.75rem)] font-bold uppercase tracking-[0.18em] text-white shadow-glow-warm backdrop-blur"
+              className="inline-flex items-center gap-2 rounded-full bg-sunset-700 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-white"
             >
               <Sparkles className="h-3.5 w-3.5 shrink-0" />
               {autumn ? "THÁNG 10 – CHẠM SẮC THU" : "HÀNH TRÌNH MỚI – TRẢI NGHIỆM MỚI"}
@@ -182,17 +186,17 @@ export default function Home({
               initial={{ y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.12 }}
-              className="mt-[clamp(1rem,3vh,1.5rem)] font-display text-[clamp(1.9rem,5.2vw,3.6rem)] font-bold leading-[1.1] text-white"
+              className="mt-[clamp(1rem,3vh,1.5rem)] font-display text-[clamp(2rem,5.2vw,3.6rem)] font-bold leading-[1.1] text-white"
             >
               Chạm thế giới<br />
-              <span className="bg-gradient-to-r from-ocean-300 to-teal-300 bg-clip-text text-transparent">Trọn từng hành trình</span>
+              <span className="text-ocean-300">Trọn từng hành trình</span>
             </motion.h1>
 
             <motion.p
               initial={{ y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.26 }}
-              className="mt-[clamp(0.75rem,2vh,1.25rem)] max-w-xl text-[clamp(0.9rem,1.9vw,1.125rem)] text-white/85"
+              className="mt-[clamp(0.75rem,2vh,1.25rem)] max-w-xl text-base text-white/85 sm:text-lg"
             >
               {autumn ? "Theo nắng vàng, tìm miền mới — khám phá những hành trình đáng nhớ cùng PSV Travel." : <><strong className="font-semibold text-white">300+ tuyến tour</strong> trong nước và quốc tế,
               giá trọn gói minh bạch — đồng hành cùng hơn 10.000 lượt khách mỗi năm.</>}
@@ -207,12 +211,19 @@ export default function Home({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="mt-[clamp(0.9rem,2.2vh,1.5rem)] flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
+              className="mt-[clamp(0.9rem,2.2vh,1.5rem)] flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-5"
             >
               {trustSignals.map((t) => (
-                <span key={t.text} className="flex items-center gap-1.5 text-[clamp(0.7rem,1.6vw,0.875rem)] font-medium text-white/85">
+                <span key={t.text} className={`${t.anTrenDienThoai ? "hidden sm:flex" : "flex"} items-center gap-1.5 text-xs font-medium text-white/85 sm:text-sm`}>
                   <t.icon className="h-4 w-4 shrink-0 text-gold-400" />
-                  {t.text}
+                  {t.textNgan ? (
+                    <>
+                      <span className="sm:hidden">{t.textNgan}</span>
+                      <span className="hidden sm:inline">{t.text}</span>
+                    </>
+                  ) : (
+                    t.text
+                  )}
                 </span>
               ))}
             </motion.div>
@@ -245,7 +256,7 @@ export default function Home({
                   <Link
                     key={tour.slug}
                     href={`${tour.type === "domestic" ? "/tour-trong-nuoc" : "/tour-nuoc-ngoai"}/${tour.slug}`}
-                    className={`glass-surface group flex items-center gap-3 rounded-2xl p-2.5 transition-all duration-300 ease-enter hover:-translate-y-1 hover:bg-white/25 ${
+                    className={`group flex items-center gap-3 rounded-2xl bg-deep-950/50 p-2.5 transition-colors duration-300 hover:bg-deep-950/65 ${
                       i === 0 ? "" : i === 1 ? "hidden sm:flex" : "hidden lg:flex"
                     }`}
                   >
@@ -280,7 +291,7 @@ export default function Home({
           trang máy không phải gánh cả trang một lượt. Xem HydrateKhiThay.jsx. */}
       <KhoiTourSapKhoiHanh promo={promo} upcoming={upcoming} />
       <KhoiUuDaiDiemDen promotions={promotions} diemDen={diemDen} />
-      <KhoiViSaoChonVideo videoTrangChu={videoTrangChu} tieuDeVideo={tieuDeVideo} />
+      <KhoiViSaoChonVideo anhViSao={anhViSao} videoTrangChu={videoTrangChu} tieuDeVideo={tieuDeVideo} />
       <KhoiDanhGia reviews={reviews} />
       <KhoiCuoiTrang latestGuides={latestGuides} partners={partners} />
     </div>

@@ -75,7 +75,7 @@ export default function GuideDetail({ guide, settings = {}, banDo = null }) {
           {/* Vị trí của bài trên bản đồ cẩm nang — bấm để xuống bản đồ cuối bài */}
           {banDo && tpDau && (
             <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
-              <NutXemBanDo className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 font-semibold text-white backdrop-blur transition-colors hover:bg-white/20">
+              <NutXemBanDo className="inline-flex min-h-[40px] items-center gap-2 rounded-full bg-white/15 px-4 font-semibold text-white transition-colors hover:bg-white/25">
                 <MapPin aria-hidden="true" className="h-4 w-4 text-gold-300" />
                 {diemDau ? `${diemDau.name} · ${diemDau.ten_tp}` : tpDau.ten_tp}
                 <span className="font-normal text-white/80">— xem trên bản đồ</span>

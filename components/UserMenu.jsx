@@ -70,7 +70,7 @@ export default function UserMenu({ solid = false }) {
         className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300 ${
           solid
             ? "bg-ocean-700 text-white hover:bg-ocean-800"
-            : "bg-white/15 text-white backdrop-blur hover:bg-white/25"
+            : "bg-white/15 text-white hover:bg-white/25"
         }`}
       >
         <User className="h-4 w-4" />
@@ -92,7 +92,7 @@ export default function UserMenu({ solid = false }) {
         className={`flex items-center gap-2 whitespace-nowrap rounded-full py-1.5 pl-1.5 pr-3 text-sm font-semibold transition-colors duration-300 ${
           solid
             ? "bg-ocean-50 text-ocean-800 hover:bg-ocean-100"
-            : "bg-white/15 text-white backdrop-blur hover:bg-white/25"
+            : "bg-white/15 text-white hover:bg-white/25"
         }`}
       >
         {user.avatar ? (

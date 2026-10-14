@@ -63,7 +63,7 @@ export default function TeamBuildingGrid({ events = [] }) {
                 </div>
               )}
               {e.featured && (
-                <span className="absolute left-3 top-3 rounded-full bg-sunset-500 px-3 py-1 text-xs font-bold text-white shadow">Nổi bật</span>
+                <span className="absolute left-3 top-3 rounded-full bg-sunset-700 px-3 py-1 text-xs font-bold text-white shadow">Nổi bật</span>
               )}
             </div>
             <div className="flex flex-1 flex-col p-5">

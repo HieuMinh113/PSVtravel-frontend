@@ -68,7 +68,7 @@ export default function SearchBar({ diemDenTrongNuoc = [], diemDenNuocNgoai = []
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="relative mx-auto w-full max-w-4xl rounded-3xl bg-white/95 p-3 shadow-deep backdrop-blur-xl sm:p-4"
+      className="relative mx-auto w-full max-w-4xl rounded-3xl bg-white p-3 shadow-deep sm:p-4"
     >
       <div className="flex gap-2 pb-3">
         {[

@@ -81,7 +81,7 @@ export default function Flights({ airlines = [], deals = [], settings = {} }) {
                   </div>
                   <a
                     href={`tel:${hotline.replace(/[^0-9+]/g, "")}`}
-                    className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-full border border-ocean-200 text-xs font-semibold text-ocean-700 transition-colors group-hover:border-sunset-600 group-hover:bg-sunset-600 group-hover:text-white"
+                    className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-full border border-ocean-200 text-xs font-semibold text-ocean-700 transition-colors group-hover:border-sunset-700 group-hover:bg-sunset-700 group-hover:text-white"
                   >
                     <Phone className="h-3.5 w-3.5" /> Đặt vé ngay
                   </a>

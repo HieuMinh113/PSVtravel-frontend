@@ -742,7 +742,7 @@ export default function BanDoCamNang({ data, cheDo = "trang", batDau = null, dan
               [tongTp, "thành phố"],
               [tongDiem, "điểm cẩm nang"],
             ].map(([so, nhan]) => (
-              <div key={nhan} className="rounded-2xl border border-white/15 bg-white/10 px-3.5 py-1.5 text-white backdrop-blur">
+              <div key={nhan} className="rounded-2xl bg-white/10 px-3.5 py-1.5 text-white">
                 <dt className="sr-only">{nhan}</dt>
                 <dd>
                   <span className="font-display text-xl font-bold text-gold-300">{so}</span>{" "}
@@ -981,7 +981,7 @@ export default function BanDoCamNang({ data, cheDo = "trang", batDau = null, dan
                     <>
                       {tp.intro && <p className="mb-3 text-base text-ink-muted">{tp.intro}</p>}
                       {tp.guide && tp.guide.slug !== dangDoc && (
-                        <Link href={`/cam-nang/${tp.guide.slug}`} className="mb-3 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-ocean-700 to-ocean-600 p-3 text-white shadow-card transition-transform duration-300 ease-enter hover:-translate-y-0.5">
+                        <Link href={`/cam-nang/${tp.guide.slug}`} className="mb-3 flex items-center gap-3 rounded-2xl bg-ocean-700 p-3 text-white shadow-card transition-transform duration-300 ease-enter hover:-translate-y-0.5">
                           <BookOpen aria-hidden="true" className="h-5 w-5 shrink-0 text-gold-300" />
                           <span className="min-w-0 flex-1">
                             <span className="block text-[11px] font-semibold uppercase tracking-wider text-white/75">Cẩm nang tổng quan</span>

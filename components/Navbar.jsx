@@ -87,9 +87,8 @@ function MegaPanel({ config }) {
       exit="exit"
       className="absolute left-1/2 top-full mt-3 w-[400px] -translate-x-1/2 overflow-hidden rounded-3xl bg-white shadow-deep ring-1 ring-black/5"
     >
-      {/* Đầu bảng — gradient thương hiệu, thay vì chữ xám đơn điệu */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-ocean-500 to-teal-500 px-5 py-4">
-        <div className="pointer-events-none absolute -right-4 -top-6 h-20 w-20 rounded-full bg-white/10 blur-xl" />
+      {/* Đầu bảng — nền xanh thương hiệu phẳng (chữ trắng 5.8:1) */}
+      <div className="relative overflow-hidden bg-ocean-700 px-5 py-4">
         <div className="relative flex items-center gap-2.5 text-white">
           <span className="grid h-8 w-8 place-items-center rounded-full bg-white/15">
             <Compass className="h-4 w-4" />
@@ -142,7 +141,7 @@ function MegaPanel({ config }) {
       <div className="px-3 pb-3">
         <Link
           href={config.to}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-ocean-500 to-teal-500 py-3 text-sm font-semibold text-white shadow-glow transition-transform duration-200 hover:-translate-y-0.5"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-ocean-700 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-ocean-800"
         >
           {config.ctaLabel} <ArrowRight className="h-4 w-4" />
         </Link>
@@ -263,7 +262,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        solid ? "bg-white/85 shadow-md backdrop-blur-lg" : "bg-transparent"
+        solid ? "bg-white shadow-md" : "bg-transparent"
       }`}
     >
       {/* Thanh hotline: hiện khi ở đầu trang, tự thu lại khi khách cuộn xuống
@@ -294,7 +293,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
         {/* Menu ngang chỉ hiện từ 1280px: 11 mục không đủ chỗ ở 1024–1279px (iPad ngang,
             laptop nhỏ) — "Liên hệ", nút Đăng nhập bị đẩy ra ngoài mép màn hình, không bấm được.
             Dưới 1280px dùng nút ☰ như điện thoại. */}
-        <div className="hidden items-center gap-0.5 xl:flex xl:gap-1">
+        <div className="hidden items-center xl:flex 2xl:gap-1">
           {links.map((l) =>
             l.submenu ? (
               <div
@@ -304,7 +303,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                 onMouseLeave={() => setMegaOpenKey((k) => (k === l.drop ? null : k))}
               >
                 <span
-                  className={`flex cursor-default items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-[12.5px] 2xl:px-3 font-medium transition-colors duration-300 ${
+                  className={`flex cursor-default items-center gap-1 whitespace-nowrap rounded-full px-1.5 py-2 text-xs 2xl:px-3 font-medium transition-colors duration-300 ${
                     solid ? "text-deep-800 hover:text-ocean-600" : "text-white/85 hover:text-white"
                   }`}
                 >
@@ -348,7 +347,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                 <NavLink
                   href={l.to}
                   className={({ isActive }) =>
-                    `relative flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-[12.5px] 2xl:px-3 font-medium transition-colors duration-300 ${
+                    `relative flex items-center gap-1 whitespace-nowrap rounded-full px-1.5 py-2 text-xs 2xl:px-3 font-medium transition-colors duration-300 ${
                       solid
                         ? isActive
                           ? "text-ocean-700"
@@ -370,7 +369,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                       {isActive && (
                         <motion.span
                           layoutId="nav-underline"
-                          className={`absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full ${
+                          className={`absolute inset-x-1.5 -bottom-0.5 h-0.5 rounded-full 2xl:inset-x-3 ${
                             solid ? "bg-ocean-500" : "bg-teal-400"
                           }`}
                         />
@@ -388,7 +387,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                 key={l.to}
                 href={l.to}
                 className={({ isActive }) =>
-                  `relative whitespace-nowrap rounded-full px-2 py-2 text-[12.5px] 2xl:px-3 font-medium transition-colors duration-300 ${
+                  `relative whitespace-nowrap rounded-full px-1.5 py-2 text-xs 2xl:px-3 font-medium transition-colors duration-300 ${
                     solid
                       ? isActive
                         ? "text-ocean-700"
@@ -405,7 +404,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
                     {isActive && (
                       <motion.span
                         layoutId="nav-underline"
-                        className={`absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full ${
+                        className={`absolute inset-x-1.5 -bottom-0.5 h-0.5 rounded-full 2xl:inset-x-3 ${
                           solid ? "bg-ocean-500" : "bg-teal-400"
                         }`}
                       />
@@ -430,7 +429,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
           className={`grid h-10 w-10 place-items-center rounded-full transition-colors xl:hidden ${
             solid
               ? "text-deep-900 hover:bg-ocean-50"
-              : "bg-deep-950/55 text-white backdrop-blur-sm"
+              : "bg-deep-950/60 text-white"
           }`}
           aria-label="Mở menu"
         >

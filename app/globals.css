@@ -270,48 +270,32 @@ img, video {
   pointer-events: none;
 }
 
-.text-gradient-ocean {
-  background: linear-gradient(90deg, #0D3A5C, #0169A9 50%, #44B01E 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Nhấn chữ bằng màu ấm — dùng cho số liệu, từ khoá cần bật lên khỏi nền xanh */
-.text-gradient-warm {
-  background: linear-gradient(90deg, #EA580C, #F0D000 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 /* ===== NÚT CHUYỂN ĐỔI =====
-   Trước đây nút chính dùng gradient xanh dương → xanh lá, cùng họ lạnh với nền
-   nên bị "chìm". Nay chuyển sang dải cam ấm — màu bổ túc của xanh dương chủ đạo,
-   nên mắt bắt được ngay. Chữ trắng trên #EA580C đạt 4.6:1, qua chuẩn WCAG AA. */
+   Nút phẳng một màu (trước là dải cam chuyển màu + quầng sáng). Cam đậm
+   #C2410C (sunset-700): chữ trắng đạt 5.2:1, qua chuẩn WCAG AA. Cam #EA580C cũ
+   chỉ đạt 3.6:1 — phần sáng nhất của dải chuyển màu còn thấp hơn. */
 .btn-cta {
   @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full
-         bg-cta-warm bg-[length:160%_100%] bg-left px-7 py-3.5
-         font-body font-semibold text-white shadow-glow-warm
-         transition-all duration-300 ease-enter
-         hover:bg-right hover:-translate-y-0.5 hover:shadow-[0_12px_38px_-8px_rgba(234,88,12,0.65)]
-         active:translate-y-0;
+         bg-sunset-700 px-7 py-3.5 font-body font-semibold text-white
+         transition-colors duration-300
+         hover:bg-sunset-800 active:bg-sunset-900;
 }
 
-/* Nút phụ giữ tông xanh thương hiệu — dùng cho hành động thứ cấp */
+/* Nút phụ giữ tông xanh thương hiệu — dùng cho hành động thứ cấp.
+   ocean-700: chữ trắng 5.8:1 (dải xanh dương → xanh lá cũ chỉ 2–3:1). */
 .btn-ocean {
   @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full
-         bg-gradient-to-r from-ocean-500 to-teal-500 bg-[length:160%_100%] bg-left
-         px-7 py-3.5 font-body font-semibold text-white shadow-glow
-         transition-all duration-300 ease-enter
-         hover:bg-right hover:-translate-y-0.5 active:translate-y-0;
+         bg-ocean-700 px-7 py-3.5 font-body font-semibold text-white
+         transition-colors duration-300
+         hover:bg-ocean-800 active:bg-ocean-900;
 }
 
+/* Nút trên nền ảnh/nền tối: lớp trắng mờ phẳng, không viền, không kính mờ */
 .btn-ghost {
   @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full
-         border border-white/40 bg-white/10 px-7 py-3.5 font-body font-semibold text-white
-         backdrop-blur-md transition-all duration-300 ease-enter
-         hover:bg-white/20 hover:-translate-y-0.5;
+         bg-white/15 px-7 py-3.5 font-body font-semibold text-white
+         transition-colors duration-300
+         hover:bg-white/25;
 }
 
 /* ===== BỀ MẶT THẺ =====
@@ -324,19 +308,16 @@ img, video {
   @apply shadow-card-hover;
 }
 
-/* Thẻ kính mờ — dùng trên nền ảnh/gradient đậm (Glassmorphism) */
-.glass-surface {
-  background: rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-}
-
 /* ===== Nội dung bài viết cẩm nang (HTML từ admin) ===== */
-.prose-psv { color: #4A6076; line-height: 1.8; font-size: 1.0625rem; }
+.prose-psv { color: #3A4F63; line-height: 1.75; font-size: 1.125rem; }
 .prose-psv h2 { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 0.75rem; color: #0b2440; }
-@media (min-width: 640px) { .prose-psv h2 { font-size: 1.5rem; } }
-.prose-psv h3 { font-size: 1.2rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #0b2440; }
+.prose-psv h3 { font-size: 1.125rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #0b2440; }
+/* Cỡ chữ bài viết nằm trên đúng thang chung của web (18 / 20 / 24px) — trước
+   là 17 / 19.2 / 24px, mỗi trang thêm 2 cỡ lẻ */
+@media (min-width: 640px) {
+  .prose-psv h2 { font-size: 1.5rem; }
+  .prose-psv h3 { font-size: 1.25rem; }
+}
 .prose-psv p { margin: 1rem 0; }
 .prose-psv ul, .prose-psv ol { margin: 1rem 0; padding-left: 1.5rem; }
 .prose-psv ul { list-style: disc; }

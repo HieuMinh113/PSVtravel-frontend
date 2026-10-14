@@ -108,7 +108,7 @@ function MomentCard({ m, i, onOpen }) {
       ) : null}
 
       {!m.videoId && m.photos && m.photos.length > 1 ? (
-        <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full border border-white/20 bg-deep-950/55 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+        <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white">
           <Images className="h-3.5 w-3.5" aria-hidden="true" />
           {m.photos.length}
         </span>
@@ -122,7 +122,7 @@ function MomentCard({ m, i, onOpen }) {
         )}
         {m.name && (
           <div className="flex items-center gap-2">
-            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-white/80 bg-gradient-to-br from-ocean-500 to-teal-500 text-[10px] font-bold text-white">
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-white/80 bg-ocean-700 text-[10px] font-bold text-white">
               {chuCaiDau(m.name || m.trip)}
             </span>
             <div className="min-w-0">
@@ -180,7 +180,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
         <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
           <SectionReveal>
             <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
-              Bắt đầu từ tình yêu <span className="text-gradient-ocean">xê dịch</span>
+              Bắt đầu từ tình yêu <span className="text-ocean-700">xê dịch</span>
             </h2>
             <p className="mt-5 leading-relaxed text-ink-muted">
               PSV Travel là doanh nghiệp hoạt động trong lĩnh vực du lịch lữ hành, cung cấp các chương
@@ -243,7 +243,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
           <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {values.map((v, i) => (
               <SectionReveal key={v.title} delay={i * 0.08}>
-                <div className="h-full rounded-3xl bg-white/10 p-6 backdrop-blur-sm ring-1 ring-white/15 transition-transform duration-400 ease-enter hover:-translate-y-1.5">
+                <div className="h-full rounded-3xl bg-white/10 p-6">
                   <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white/15 text-gold-300">
                     <v.icon className="h-6 w-6" />
                   </span>
@@ -270,7 +270,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
                 <SectionReveal key={m.title} delay={i * 0.08}>
                   <div className={`relative flex gap-5 sm:w-1/2 ${i % 2 ? "sm:ml-auto sm:pl-10" : "sm:pr-10 sm:text-right"}`}>
                     <span
-                      className={`absolute top-1.5 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-600 text-white shadow-glow ${
+                      className={`absolute top-1.5 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-700 text-white ${
                         i % 2 ? "left-0 sm:-left-5" : "left-0 sm:-right-5 sm:left-auto"
                       }`}
                     >
@@ -438,7 +438,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
                   </AnimatePresence>
                 )}
                 {activeMedia.length > 1 ? (
-                  <span className="absolute left-3 top-3 z-10 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+                  <span className="absolute left-3 top-3 z-10 rounded-full bg-deep-950/70 px-2.5 py-1 text-xs font-semibold text-white">
                     {photoIndex + 1}/{activeMedia.length}
                   </span>
                 ) : null}

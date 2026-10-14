@@ -107,13 +107,13 @@ export default function Footer({ settings = {} }) {
 
       {/* Dải đăng ký nhận ưu đãi — nổi lên trên nền footer, tạo điểm nhấn */}
       <div className="relative mx-auto max-w-7xl px-5 pt-14 sm:px-8">
-        <div className="flex flex-col items-center justify-between gap-5 rounded-3xl bg-gradient-to-r from-ocean-500 to-teal-500 p-6 shadow-glow sm:flex-row sm:p-8">
+        <div className="flex flex-col items-center justify-between gap-5 rounded-3xl bg-ocean-700 p-6 sm:flex-row sm:p-8">
           <div className="text-center sm:text-left">
             <p className="font-display text-lg font-bold sm:text-xl">Đừng bỏ lỡ ưu đãi mới nhất</p>
             <p className="mt-1 text-sm text-white/80">Nhận thông tin khuyến mãi tour hè, vé máy bay giá tốt mỗi tuần.</p>
           </div>
           {subscribed ? (
-            <div className="flex items-center gap-2 rounded-full bg-white/15 px-5 py-3 text-sm font-semibold backdrop-blur">
+            <div className="flex items-center gap-2 rounded-full bg-white/15 px-5 py-3 text-sm font-semibold">
               <CheckCircle2 className="h-4 w-4" /> Đã đăng ký thành công!
             </div>
           ) : (
@@ -124,7 +124,7 @@ export default function Footer({ settings = {} }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email của bạn"
-                className="w-full rounded-full border border-white/30 bg-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/60 outline-none backdrop-blur focus:border-white/60"
+                className="w-full rounded-full border border-white/30 bg-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/70 outline-none focus:border-white/60"
               />
               <button type="submit" className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-ocean-700 transition-transform hover:scale-105" aria-label="Đăng ký">
                 <Send className="h-4 w-4" />
@@ -228,7 +228,7 @@ export default function Footer({ settings = {} }) {
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-teal-400" />
               {address}
             </p>
-            <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 shadow-inner">
+            <div className="mt-4 overflow-hidden rounded-2xl">
               <BanDoVanPhong src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.5717490899699!2d106.72970614717165!3d10.743722563232383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xbcd98d0b27b3a57%3A0xfb2c9ac902c59146!2zQ8OUTkcgVFkgQ-G7lCBQSOG6pk4gRFUgTOG7ikNIIFAuUy5WIFRSQVZFTA!5e0!3m2!1svi!2s!4v1784579444253!5m2!1svi!2s" />
             </div>
             <a

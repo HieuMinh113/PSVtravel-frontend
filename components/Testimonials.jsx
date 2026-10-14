@@ -13,7 +13,7 @@ function TestimonialCard({ t }) {
         <div className="relative h-40 overflow-hidden">
           <Image src={t.photo} alt={t.trip || t.name} fill sizes="340px" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-deep-950/70 via-deep-950/0 to-transparent" />
-          <span className="absolute right-3 top-3 flex items-center gap-0.5 rounded-full bg-white/90 px-2 py-1 backdrop-blur">
+          <span className="absolute right-3 top-3 flex items-center gap-0.5 rounded-full bg-white px-2 py-1">
             {Array.from({ length: t.rating || 0 }).map((_, i) => (
               <Star key={i} className="h-3 w-3 fill-teal-500 text-teal-500" />
             ))}
@@ -65,7 +65,7 @@ export default function Testimonials({ reviews = [] }) {
     <section className="overflow-hidden bg-ocean-50/60 py-20">
       <SectionReveal className="mx-auto max-w-3xl px-5 text-center">
         <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
-          Hơn <span className="text-gradient-ocean">10.000 lượt khách</span> mỗi năm
+          Hơn <span className="text-ocean-700">10.000 lượt khách</span> mỗi năm
         </h2>
         <p className="mt-3 text-ink-muted">
           Những trải nghiệm thật từ khách hàng đã đồng hành cùng PSVTravel trên khắp mọi miền.
@@ -89,7 +89,7 @@ export default function Testimonials({ reviews = [] }) {
       <SectionReveal className="mt-12 flex justify-center">
         <Link
           href="/khoanh-khac-du-khach"
-          className="flex items-center gap-2 rounded-full bg-gradient-to-r from-ocean-500 to-teal-500 px-6 py-3 text-sm font-semibold text-white shadow-glow transition-transform hover:-translate-y-0.5"
+          className="flex min-h-[44px] items-center gap-2 rounded-full bg-ocean-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-ocean-800"
         >
           <Images className="h-4 w-4" /> Xem thêm khoảnh khắc từ du khách <ArrowRight className="h-4 w-4" />
         </Link>

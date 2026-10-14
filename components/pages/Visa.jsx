@@ -24,7 +24,7 @@ const faqs = [
 
 function FaqItem({ item, isOpen, onToggle }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-ocean-100 bg-white transition-shadow duration-300 hover:shadow-card">
+    <div className="overflow-hidden rounded-2xl bg-white shadow-card transition-shadow duration-300 hover:shadow-card-hover">
       <button onClick={onToggle} className="flex w-full items-center justify-between gap-4 p-5 text-left">
         <span className="font-display text-base font-semibold text-deep-900">{item.q}</span>
         <motion.span
@@ -79,7 +79,7 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
           </SectionReveal>
 
           {countries.length === 0 ? (
-            <div className="mt-10 rounded-3xl border border-dashed border-ocean-200 bg-white py-16 text-center">
+            <div className="mt-10 rounded-3xl bg-white py-16 text-center shadow-card">
               <Globe2 className="mx-auto h-10 w-10 text-ocean-300" />
               <p className="mt-4 font-display text-lg font-semibold text-deep-900">Đang cập nhật danh sách quốc gia</p>
               <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="btn-cta mt-6 !px-6 !py-3 text-sm">
@@ -101,7 +101,7 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
                   {/* Cả thẻ là liên kết tới trang chi tiết visa của quốc gia đó */}
                   <Link href={`/lam-visa/${c.slug}`} className="absolute inset-0 z-10" aria-label={`Xem chi tiết visa ${c.name}`} />
                   {/* Vạch nhấn trượt lên khi rê chuột — tín hiệu thẻ tương tác được */}
-                  <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-ocean-500 to-teal-500 transition-transform duration-400 ease-enter group-hover:scale-x-100" />
+                  <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-ocean-600 transition-transform duration-400 ease-enter group-hover:scale-x-100" />
 
                   <div className="flex items-center gap-3">
                     {c.flagImage ? (
@@ -128,7 +128,7 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
                     <ArrowRight className="ml-auto h-4 w-4 shrink-0 -translate-x-1 text-ocean-400 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:text-ocean-600 group-hover:opacity-100" />
                   </div>
 
-                  <div className="mt-4 flex items-end justify-between border-t border-ocean-50 pt-3">
+                  <div className="mt-4 flex items-end justify-between">
                     <span className="flex items-center gap-1 text-xs text-ink-subtle">
                       <Clock className="h-3.5 w-3.5 text-ocean-500" /> {c.time || "—"}
                     </span>
@@ -173,7 +173,7 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
       <section className="bg-foam py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <SectionReveal className="text-center">
-            <h2 className="font-display text-3xl font-bold text-deep-900">Câu hỏi thường gặp</h2>
+            <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">Câu hỏi thường gặp</h2>
           </SectionReveal>
 
           <div className="mt-10 space-y-3">
@@ -188,10 +188,10 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
       <section className="relative overflow-hidden bg-deep-gradient py-16 text-center text-white">
         <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora opacity-75" />
         <div className="relative mx-auto max-w-2xl px-5">
-          <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white/10 backdrop-blur">
+          <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white/10">
             <FileCheck2 className="h-7 w-7 text-gold-400" />
           </div>
-          <h2 className="mt-4 font-display text-2xl font-bold sm:text-3xl">Cần tư vấn hồ sơ visa của bạn?</h2>
+          <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Cần tư vấn hồ sơ visa của bạn?</h2>
           <p className="mx-auto mt-2 max-w-md text-white/85">
             Gửi thông tin để chuyên viên visa liên hệ tư vấn miễn phí trong 15 phút.
           </p>

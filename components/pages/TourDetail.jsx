@@ -113,7 +113,7 @@ function tachBuoi(noiDung) {
 
 function ItineraryItem({ day, index, isOpen, onToggle }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-ocean-100 bg-white">
+    <div className="overflow-hidden rounded-2xl bg-white shadow-card">
       <button onClick={onToggle} className="flex w-full items-center gap-4 p-5 text-left">
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-700 font-display text-sm font-bold text-white">
           {index + 1}
@@ -256,7 +256,7 @@ function LuuYItem({ tieuDe, noiDung, muc, isOpen, onToggle }) {
 
 function FaqItem({ item, isOpen, onToggle }) {
   return (
-    <div className="rounded-2xl border border-ocean-100 bg-white">
+    <div className="rounded-2xl bg-white shadow-card">
       <button onClick={onToggle} className="flex w-full items-center justify-between gap-4 p-4 text-left sm:p-5">
         <span className="flex items-start gap-2.5 font-display text-sm font-semibold text-deep-900 sm:text-base">
           <HelpCircle className="mt-0.5 h-4 w-4 shrink-0 text-ocean-500" />
@@ -594,7 +594,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
           <div>
             {/* Tìm tour khác — giống thanh lọc ở trang danh sách, tự đổi danh mục theo loại tour đang xem.
                 Chỉ dính khi cuộn trên máy tính: trên điện thoại nó đè lên chữ đang đọc */}
-            <SectionReveal className="z-20 mb-6 lg:sticky lg:top-20 rounded-2xl border border-ocean-100 bg-white/90 p-3 shadow-sm backdrop-blur-lg sm:p-4">
+            <SectionReveal className="z-20 mb-6 lg:sticky lg:top-20 rounded-2xl bg-white p-3 shadow-sm sm:p-4">
               <div className="flex flex-wrap items-center gap-3">
                 <AnimatePresence mode="wait" initial={false}>
                   {detailSearchOpen ? (
@@ -688,7 +688,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
             {/* ===== HƯỚNG DẪN VISA — chỉ hiện với tour nước ngoài ===== */}
             {visaInfo && (
               <SectionReveal delay={0.2} className="mt-8 card-surface overflow-hidden">
-                <div className="flex items-center gap-3 bg-gradient-to-r from-ocean-600 to-teal-600 px-6 py-4 text-white">
+                <div className="flex items-center gap-3 bg-ocean-700 px-6 py-4 text-white">
                   {VisaFlag && <VisaFlag className="h-7 w-10 rounded shadow-sm ring-1 ring-white/30" />}
                   <div>
                     <p className="font-display text-base font-bold">Hướng dẫn visa {tour.country}</p>
@@ -737,14 +737,12 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="card-surface scroll-mt-24 overflow-hidden ring-1 ring-ocean-100"
+              className="card-surface scroll-mt-24 overflow-hidden"
             >
-              {/* ĐẦU THẺ — khối giá.
-                  Nền tối + Aurora thay cho gradient xanh phẳng: giá nổi bật hơn hẳn,
-                  và nút cam bên dưới có nền lạnh để bật lên. */}
-              <div className="relative overflow-hidden bg-deep-gradient p-5 text-white">
-                <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora opacity-70" />
-
+              {/* ĐẦU THẺ — khối giá. Nền xanh đậm phẳng: giá và chữ trắng đọc rõ
+                  (8.3:1). Nền chuyển màu cũ nhạt dần về góc phải, chữ trắng ở đó
+                  chỉ còn khoảng 3:1. */}
+              <div className="relative overflow-hidden bg-ocean-800 p-5 text-white">
                 <div className="relative">
                   {/* seatsLeft = 0 nghĩa là HẾT CHỖ. Trước đây viết `tour.seatsLeft ? ...`
                       nên số 0 bị JavaScript coi là rỗng và rơi vào nhánh "Đang nhận đặt
@@ -768,7 +766,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                     {tour.oldPrice && (
                       <span className="text-sm text-white/60 line-through">{formatVND(tour.oldPrice)}</span>
                     )}
-                    <span className="font-display text-[2rem] font-bold leading-none">{formatVND(donGiaNguoiLon)}</span>
+                    <span className="font-display text-3xl font-bold leading-none">{formatVND(donGiaNguoiLon)}</span>
                   </div>
 
                   {/* Số tiền tiết kiệm nêu thành con số cụ thể — thuyết phục hơn nhiều
@@ -951,7 +949,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                     </a>
 
                     {/* Ba cam kết ngắn — gỡ nốt do dự cuối cùng trước khi bấm nút */}
-                    <div className="grid grid-cols-3 gap-2 border-t border-ocean-100 pt-4 text-center">
+                    <div className="grid grid-cols-3 gap-2 pt-2 text-center">
                       {[
                         { icon: ShieldCheck, text: "Không phụ thu ẩn" },
                         { icon: CheckCircle2, text: "Xác nhận 15 phút" },
@@ -1004,7 +1002,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                 />
                 <div className="absolute inset-0 bg-deep-950/0 transition-colors duration-300 group-hover:bg-deep-950/20" />
                 {/* Dấu phóng to hiện khi rê chuột — cho biết ảnh bấm được */}
-                <span className="absolute right-2.5 top-2.5 grid h-8 w-8 place-items-center rounded-full bg-white/90 opacity-0 shadow backdrop-blur transition-opacity duration-300 group-hover:opacity-100">
+                <span className="absolute right-2.5 top-2.5 grid h-8 w-8 place-items-center rounded-full bg-white opacity-0 shadow transition-opacity duration-300 group-hover:opacity-100">
                   <Images className="h-4 w-4 text-ocean-700" />
                 </span>
               </button>
@@ -1022,7 +1020,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
         <section className="bg-foam pb-14 sm:pb-16">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <SectionReveal className="card-surface px-5 py-2 sm:px-8 sm:py-3">
-              <h2 className="border-b border-ocean-100 py-3.5 font-display text-lg font-bold text-deep-900">
+              <h2 className="pb-1 pt-4 font-display text-lg font-bold text-deep-900">
                 Những thông tin cần lưu ý
               </h2>
               {cacMucLuuY.map((muc, i) => (
@@ -1126,7 +1124,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
             )}
           </SectionReveal>
           {reviews.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-ocean-200 bg-white py-12 text-center text-sm text-ink-muted">
+            <p className="rounded-2xl bg-white py-12 text-center text-base text-ink-muted">
               Chưa có đánh giá cho tour này.
             </p>
           ) : (
@@ -1154,7 +1152,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
             // data-thanh-dat-tour: có thanh này thì nút gọi nổi tự cất đi (xem globals.css) —
             // nút gọi đã nằm ngay trong thanh, hai lớp nổi chồng nhau thì che mất nội dung
             data-thanh-dat-tour
-            className="fixed inset-x-0 bottom-0 z-30 border-t border-ocean-100 bg-white/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(7,30,51,0.12)] backdrop-blur-lg lg:hidden"
+            className="fixed inset-x-0 bottom-0 z-30 bg-white px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(7,30,51,0.12)] lg:hidden"
           >
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">

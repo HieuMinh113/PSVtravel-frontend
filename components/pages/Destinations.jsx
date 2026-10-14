@@ -22,7 +22,7 @@ export default function Destinations({ items = [] }) {
           {/* Tiêu đề ẩn: tên thẻ là h3, thiếu h2 thì thứ tự tiêu đề nhảy cóc (Lighthouse) */}
           <h2 className="sr-only">Danh sách điểm đến</h2>
           {items.length === 0 ? (
-            <SectionReveal className="mx-auto max-w-md rounded-3xl border border-white/60 bg-white/70 p-10 text-center shadow-card backdrop-blur">
+            <SectionReveal className="mx-auto max-w-md rounded-3xl bg-white p-10 text-center shadow-card">
               <Compass className="mx-auto h-10 w-10 text-ocean-300" />
               <p className="mt-4 text-ink-muted">Danh sách điểm đến đang được cập nhật.</p>
             </SectionReveal>

@@ -83,7 +83,7 @@ export default function TourCard({ tour, basePath, index = 0 }) {
             </span>
           </div>
 
-          <span className="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 translate-x-2 place-items-center rounded-full bg-white/95 opacity-0 shadow backdrop-blur transition-all duration-300 ease-enter group-hover:translate-x-0 group-hover:opacity-100">
+          <span className="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 translate-x-2 place-items-center rounded-full bg-white opacity-0 shadow transition-all duration-300 ease-enter group-hover:translate-x-0 group-hover:opacity-100">
             <ArrowUpRight className="h-4 w-4 text-ocean-700" />
           </span>
         </div>
@@ -140,7 +140,7 @@ export default function TourCard({ tour, basePath, index = 0 }) {
             </div>
           )}
 
-          <div className="mt-auto flex items-end justify-between gap-3 border-t border-ocean-50 pt-4">
+          <div className="mt-auto flex items-end justify-between gap-3 pt-4">
             <div className="min-w-0">
               {tour.oldPrice && (
                 <p className="text-xs text-ink-subtle line-through">{formatVND(tour.oldPrice)}</p>
@@ -151,7 +151,7 @@ export default function TourCard({ tour, basePath, index = 0 }) {
               )}
             </div>
 
-            <span className="the-tour-nut shrink-0 rounded-full border border-ocean-200 px-4 py-2 text-xs font-semibold text-ocean-700 transition-colors duration-300 group-hover:border-sunset-600 group-hover:bg-sunset-600 group-hover:text-white">
+            <span className="the-tour-nut shrink-0 rounded-full border border-ocean-200 px-4 py-2 text-xs font-semibold text-ocean-700 transition-colors duration-300 group-hover:border-sunset-700 group-hover:bg-sunset-700 group-hover:text-white">
               Xem chi tiết
             </span>
           </div>

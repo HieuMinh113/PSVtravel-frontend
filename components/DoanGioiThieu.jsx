@@ -15,7 +15,7 @@ import { formatVND } from "@/app/lib/seo";
 // Component máy chủ, không hiệu ứng: chữ có ngay trong HTML và luôn hiển thị.
 export default function DoanGioiThieu({ tieuDe, children }) {
   return (
-    <section className="border-t border-ocean-50 bg-foam py-14 sm:py-16">
+    <section className="bg-foam py-14 sm:py-16">
       <div className="prose-psv mx-auto max-w-3xl px-5 text-ink-muted sm:px-8">
         <h2>{tieuDe}</h2>
         {children}

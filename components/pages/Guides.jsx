@@ -158,7 +158,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-deep-950/45 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                           {g.category && (
-                            <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-ocean-700 shadow-sm backdrop-blur">
+                            <span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 text-xs font-semibold text-ocean-700 shadow-sm">
                               {g.category}
                             </span>
                           )}
@@ -168,7 +168,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                             {g.title}
                           </h3>
                           <p className="mt-2 line-clamp-2 flex-1 text-base text-ink-muted">{g.excerpt}</p>
-                          <div className="mt-4 flex items-center justify-between border-t border-ocean-50 pt-3 text-xs text-ink-subtle">
+                          <div className="mt-4 flex items-center justify-between text-xs text-ink-subtle">
                             <span className="flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" /> {g.date}</span>
                             <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {g.readTime || `${g.views ?? 0} lượt xem`}</span>
                           </div>

@@ -69,7 +69,7 @@ export default function FloatingContact({ settings = {} }) {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.15 }}
         whileHover={{ scale: 1.08 }}
-        className="group relative grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-ocean-500 to-teal-500 text-white shadow-glow sm:h-16 sm:w-16"
+        className="group relative grid h-12 w-12 place-items-center rounded-full bg-ocean-700 text-white shadow-lg sm:h-16 sm:w-16"
         aria-label={`Gọi hotline ${hotline}`}
       >
         <span className="absolute inset-0 -z-10 rounded-full bg-ocean-400 animate-ripple" />

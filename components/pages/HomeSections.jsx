@@ -3,8 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ShieldCheck, Clock3, HeartHandshake, BadgePercent, ArrowRight,
-  Plane, Handshake, Clock, CalendarDays,
+  BadgePercent, ArrowRight, Plane, Handshake, Clock, CalendarDays,
 } from "lucide-react";
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
@@ -22,10 +21,10 @@ import { soNamHoatDong } from "@/app/lib/seo";
 // 1 giây trên điện thoại. Nội dung, giao diện giữ nguyên như cũ.
 
 const whyUs = [
-  { icon: ShieldCheck, title: "Cam kết minh bạch", desc: "Giá tour trọn gói, không phụ thu ẩn, huỷ/đổi lịch linh hoạt." },
-  { icon: BadgePercent, title: "Giá tốt mỗi ngày", desc: "Giá trọn gói minh bạch, so sánh trực tiếp giữa các tuyến để bạn chọn được mức phù hợp." },
-  { icon: HeartHandshake, title: "Hỗ trợ 24/7", desc: "Đội ngũ tư vấn viên đồng hành xuyên suốt hành trình của bạn." },
-  { icon: Clock3, title: "Xác nhận tức thì", desc: "Đặt chỗ và nhận xác nhận tour chỉ trong vài phút." },
+  { title: "Cam kết minh bạch", desc: "Giá tour trọn gói, không phụ thu ẩn, huỷ/đổi lịch linh hoạt." },
+  { title: "Giá tốt mỗi ngày", desc: "Giá trọn gói minh bạch, so sánh trực tiếp giữa các tuyến để bạn chọn được mức phù hợp." },
+  { title: "Hỗ trợ 24/7", desc: "Đội ngũ tư vấn viên đồng hành xuyên suốt hành trình của bạn." },
+  { title: "Xác nhận tức thì", desc: "Đặt chỗ và nhận xác nhận tour chỉ trong vài phút." },
 ];
 
 // Dải cam kết + banner khuyến mãi + tour sát ngày khởi hành
@@ -91,7 +90,7 @@ export function KhoiTourSapKhoiHanh({ promo = null, upcoming = [] }) {
           <SectionReveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
-                Tour sát ngày — <span className="text-gradient-warm">đặt ngay kẻo lỡ</span>
+                Tour sát ngày — <span className="text-sunset-700">đặt ngay kẻo lỡ</span>
               </h2>
             </div>
             <Link href="/tour-trong-nuoc" className="vung-bam group flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800">
@@ -129,7 +128,7 @@ export function KhoiUuDaiDiemDen({ promotions = [], diemDen = [] }) {
             <SectionReveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
               <div>
                 <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
-                  Đừng bỏ lỡ những <span className="text-gradient-ocean">deal hời</span>
+                  Đừng bỏ lỡ những <span className="text-ocean-700">deal hời</span>
                 </h2>
               </div>
               <Link href="/khuyen-mai" className="vung-bam hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-ocean-800 sm:inline-flex">
@@ -191,7 +190,7 @@ export function KhoiUuDaiDiemDen({ promotions = [], diemDen = [] }) {
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionReveal className="text-center">
             <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
-              Bạn muốn <span className="text-gradient-ocean">khám phá</span> nơi nào?
+              Bạn muốn <span className="text-ocean-700">khám phá</span> nơi nào?
             </h2>
           </SectionReveal>
 
@@ -240,37 +239,88 @@ export function KhoiUuDaiDiemDen({ promotions = [], diemDen = [] }) {
 }
 
 // Vì sao chọn chúng tôi + video giới thiệu + số liệu
-export function KhoiViSaoChonVideo({ videoTrangChu = null, tieuDeVideo = null }) {
+export function KhoiViSaoChonVideo({ anhViSao = null, videoTrangChu = null, tieuDeVideo = null }) {
+  // Chỉ ba con số, đều là số liệu công ty cung cấp. Trước đây còn ô
+  // "98% khách hàng hài lòng" — con số không ai đo được và không có nguồn,
+  // nên bỏ thay vì bịa tiếp.
+  const soLieu = [
+    { to: 10000, suffix: "+", label: "lượt khách mỗi năm" },
+    { to: 300, suffix: "+", label: "tuyến tour trong & ngoài nước" },
+    // Tự tính từ năm thành lập 2013 (NAM_THANH_LAP) — không ghi cứng
+    { to: soNamHoatDong(), suffix: " năm", label: "hoạt động trong ngành" },
+  ];
+  const coAnh = Boolean(anhViSao);
+
   return (
     <>
-      {/* ===== VÌ SAO CHỌN CHÚNG TÔI ===== */}
-      <section className="relative overflow-hidden bg-deep-gradient py-20 text-white">
-        <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora opacity-60" />
-        <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-ocean-500/20 blur-3xl" />
-        <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
-          <SectionReveal className="mx-auto max-w-2xl text-center">
+      {/* ===== VÌ SAO CHỌN CHÚNG TÔI =====
+          Ảnh thật của một tour đang bán + số liệu + 4 lý do viết thành danh
+          sách. Trước đây là hàng 4 ô icon giống hệt nhau trên nền chuyển màu và
+          một dải 3 thẻ số liệu riêng bên dưới — kiểu bố cục rập khuôn, không
+          cho khách thấy chuyến đi thật nào.
+          Máy tính: ảnh lớn bên trái, chữ bên phải. Điện thoại: tiêu đề → ảnh →
+          số liệu → lý do. */}
+      <section className="bg-deep-900 py-20 text-white sm:py-24">
+        <div className={`mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 ${coAnh ? "lg:grid-cols-12 lg:gap-x-16 lg:gap-y-10" : ""}`}>
+          <SectionReveal className={coAnh ? "lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:self-end" : "max-w-2xl"}>
             <h2 className="font-display text-3xl font-bold sm:text-4xl">
               Đồng hành đáng tin cậy cho mọi hành trình
             </h2>
           </SectionReveal>
 
-          <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {whyUs.map((w, i) => (
-              <SectionReveal key={w.title} delay={i * 0.1} className="group text-center">
-                <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-white/10 backdrop-blur transition-all duration-400 ease-enter group-hover:scale-110 group-hover:bg-white/20">
-                  <w.icon className="h-6 w-6 text-teal-300" />
+          {coAnh && (
+            <SectionReveal className="lg:col-span-7 lg:col-start-1 lg:row-span-2 lg:row-start-1">
+              <Link
+                href={anhViSao.href}
+                className="group relative block aspect-[4/3] overflow-hidden rounded-3xl bg-deep-800 lg:aspect-auto lg:h-full lg:min-h-[480px]"
+              >
+                <Image
+                  src={anhViSao.src}
+                  alt={anhViSao.ten}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 720px"
+                  unoptimized={!duocToiUu(anhViSao.src)}
+                  className="object-cover transition-transform duration-700 ease-enter group-hover:scale-105"
+                />
+                {/* Lớp tối dưới chân ảnh để dòng chữ trắng luôn đọc được */}
+                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
+                <span className="absolute inset-x-5 bottom-4 flex items-center gap-1.5 text-sm font-semibold text-white sm:inset-x-6 sm:bottom-5">
+                  <span className="truncate">Xem tour {anhViSao.ten}</span>
+                  <ArrowRight className="h-4 w-4 shrink-0 transition-transform duration-300 ease-enter group-hover:translate-x-1" />
+                </span>
+              </Link>
+            </SectionReveal>
+          )}
+
+          <div className={coAnh ? "lg:col-span-5 lg:col-start-8 lg:row-start-2" : ""}>
+            {/* Điện thoại: mỗi số một dòng (3 cột thì "10.000+" tràn ô).
+                Từ máy tính bảng: 3 cột ngang. */}
+            <div className="grid gap-4 sm:grid-cols-3 sm:gap-6">
+              {soLieu.map((s) => (
+                <div key={s.label} className="flex items-baseline gap-3 sm:block">
+                  <p className="shrink-0 font-display text-3xl font-bold leading-tight text-gold-300">
+                    <CountUp to={s.to} suffix={s.suffix} />
+                  </p>
+                  <p className="text-sm text-white/80 sm:mt-1">{s.label}</p>
                 </div>
-                <h3 className="mt-4 font-display text-lg font-semibold">{w.title}</h3>
-                <p className="mt-2 text-sm text-white/75">{w.desc}</p>
-              </SectionReveal>
-            ))}
+              ))}
+            </div>
+
+            <ul className={`mt-10 grid gap-x-10 gap-y-6 sm:grid-cols-2 ${coAnh ? "lg:grid-cols-1" : "lg:grid-cols-4"}`}>
+              {whyUs.map((w) => (
+                <li key={w.title}>
+                  <h3 className="font-display text-xl font-semibold">{w.title}</h3>
+                  <p className="mt-1 text-base text-white/80">{w.desc}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
 
       {/* ===== VIDEO GIỚI THIỆU — admin dán link YouTube trong Cài đặt; trống thì ẩn ===== */}
       {videoTrangChu && (
-        <section className="bg-foam pt-16 sm:pt-20">
+        <section className="bg-foam py-16 sm:py-20">
           <div className="mx-auto max-w-5xl px-5 sm:px-8">
             <SectionReveal className="mx-auto mb-8 max-w-2xl text-center">
               <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
@@ -283,30 +333,6 @@ export function KhoiViSaoChonVideo({ videoTrangChu = null, tieuDeVideo = null })
           </div>
         </section>
       )}
-
-      {/* ===== SỐ LIỆU ===== */}
-      <section className="bg-foam py-14">
-        {/* Chỉ ba con số, đều là số liệu công ty cung cấp. Trước đây còn ô
-            "98% khách hàng hài lòng" — con số không ai đo được và không có
-            nguồn, nên bỏ thay vì bịa tiếp. */}
-        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-5 sm:grid-cols-3 sm:px-8">
-          {[
-            { to: 10000, suffix: "+", label: "Lượt khách mỗi năm" },
-            { to: 300, suffix: "+", label: "Tuyến tour trong & ngoài nước" },
-            // Tự tính từ năm thành lập 2013 (NAM_THANH_LAP) — không ghi cứng
-            { to: soNamHoatDong(), suffix: " năm", label: "Hoạt động trong ngành" },
-          ].map((s, i) => (
-            <SectionReveal key={s.label} delay={i * 0.08} className="rounded-2xl bg-white px-4 py-6 text-center shadow-card">
-              {/* Cỡ chữ co theo bề ngang: ô hai cột trên điện thoại chỉ rộng
-                  khoảng 118px, số dài như 18.400+ ở cỡ cứng sẽ tràn ra ngoài. */}
-              <p className="font-display text-[clamp(1.35rem,6vw,2.25rem)] font-bold leading-tight text-ocean-700">
-                <CountUp to={s.to} suffix={s.suffix} />
-              </p>
-              <p className="mt-1.5 text-xs text-ink-muted sm:text-sm">{s.label}</p>
-            </SectionReveal>
-          ))}
-        </div>
-      </section>
     </>
   );
 }
@@ -388,8 +414,8 @@ export function KhoiCuoiTrang({ latestGuides = [], partners = [] }) {
             <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora opacity-75" />
             <div className="relative mx-auto max-w-xl">
               <BadgePercent className="mx-auto h-9 w-9 text-gold-400" />
-              <h2 className="mt-3 font-display text-2xl font-bold text-white sm:text-3xl">Nhận ưu đãi sớm nhất</h2>
-              <p className="mx-auto mt-2 max-w-md text-sm text-white/85">
+              <h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">Nhận ưu đãi sớm nhất</h2>
+              <p className="mx-auto mt-2 max-w-md text-base text-white/85">
                 Đăng ký email để không bỏ lỡ các chương trình khuyến mãi tour, vé máy bay và visa mới nhất.
               </p>
               <div className="mx-auto mt-6 max-w-md">

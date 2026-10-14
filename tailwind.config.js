@@ -23,7 +23,7 @@ export default {
         // Ba mức dưới đây đều đã đạt chuẩn, dùng thay cho mọi chỗ opacity chữ.
         ink: {
           DEFAULT: "#0A2A45", // chữ chính        — 14.8:1 trên nền trắng
-          muted: "#4A6076",   // chữ phụ           —  7.1:1
+          muted: "#3A4F63",   // chữ phụ, đoạn văn —  8.5:1 (trước #4A6076 chỉ 6.5:1, nhìn nhạt)
           subtle: "#5E7385",  // chú thích, meta   —  5.2:1
           onDark: "#E8F2F8",  // chữ trên nền tối
         },
@@ -72,7 +72,8 @@ export default {
         // ===== Màu ấm bổ túc (MỚI) =====
         // Xanh dương #009DF6 có màu bổ túc nằm ở dải cam. Thang này cho phép nút
         // chuyển đổi "nhảy" ra khỏi nền xanh — nguyên tắc cặp bổ túc của Aurora UI.
-        // sunset-600 = #EA580C: chữ trắng đặt lên đạt 4.6:1, vừa qua chuẩn AA.
+        // Chữ trắng trên sunset-600 (#EA580C) chỉ đạt 3.6:1 — nút dùng sunset-700
+        // (#C2410C, 5.2:1).
         sunset: {
           50: "#FFF7ED",
           100: "#FFEDD5",
@@ -107,7 +108,6 @@ export default {
         // Dùng làm nền cho các khối lớn (hero, dải CTA) thay cho màu phẳng.
         "aurora": "radial-gradient(at 18% 22%, rgba(0,157,246,0.28) 0px, transparent 55%), radial-gradient(at 82% 18%, rgba(240,208,0,0.20) 0px, transparent 50%), radial-gradient(at 70% 82%, rgba(80,208,32,0.22) 0px, transparent 52%), radial-gradient(at 25% 88%, rgba(234,88,12,0.14) 0px, transparent 48%)",
         "aurora-deep": "radial-gradient(at 15% 20%, rgba(0,133,210,0.55) 0px, transparent 55%), radial-gradient(at 85% 25%, rgba(80,208,32,0.28) 0px, transparent 50%), radial-gradient(at 60% 90%, rgba(234,88,12,0.22) 0px, transparent 50%)",
-        "cta-warm": "linear-gradient(120deg, #F97316 0%, #EA580C 55%, #C2410C 100%)",
       },
       keyframes: {
         drift: {
@@ -157,9 +157,6 @@ export default {
       },
       boxShadow: {
         deep: "0 20px 60px -15px rgba(7, 30, 51, 0.35)",
-        glow: "0 0 40px rgba(80, 208, 32, 0.4)",
-        // Quầng sáng ấm cho nút chuyển đổi — cùng tông với nút nên trông tự nhiên
-        "glow-warm": "0 8px 30px -8px rgba(234, 88, 12, 0.55)",
         // Bóng đổ nhiều lớp: mềm và thật hơn bóng một lớp
         card: "0 1px 2px rgba(10,42,69,0.04), 0 8px 24px -8px rgba(10,42,69,0.12)",
         "card-hover": "0 2px 4px rgba(10,42,69,0.05), 0 18px 40px -12px rgba(10,42,69,0.20)",

@@ -108,7 +108,7 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-gold-300 backdrop-blur"
+            className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-gold-300"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-gold-400" />
             {eyebrow}
@@ -140,7 +140,7 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
             initial={{ y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mx-auto mt-5 max-w-2xl text-white/85"
+            className="mx-auto mt-5 max-w-2xl text-white"
           >
             {description}
           </motion.p>

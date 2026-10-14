@@ -26,7 +26,7 @@ export default function Careers({ items = [] }) {
           {/* Tiêu đề ẩn: tên vị trí là h3, thiếu h2 thì thứ tự tiêu đề nhảy cóc (Lighthouse) */}
           <h2 className="sr-only">Các vị trí đang tuyển</h2>
           {items.length === 0 ? (
-            <SectionReveal className="mx-auto max-w-md rounded-3xl border border-white/60 bg-white/70 p-10 text-center shadow-card backdrop-blur">
+            <SectionReveal className="mx-auto max-w-md rounded-3xl bg-white p-10 text-center shadow-card">
               <Briefcase className="mx-auto h-10 w-10 text-ocean-300" />
               <p className="mt-4 text-ink-muted">
                 Hiện chưa có vị trí tuyển dụng. Bạn có thể gửi hồ sơ ứng tuyển tự do qua trang liên hệ.

@@ -94,7 +94,7 @@ export default function ReviewForm({ slug, tourName }) {
   // Chưa đăng nhập: mời đăng nhập, không giấu biệt chức năng
   if (!nguoiDung) {
     return (
-      <div className="mt-8 flex flex-col items-center gap-3 rounded-2xl border border-dashed border-ocean-200 bg-ocean-50/40 px-6 py-7 text-center">
+      <div className="mt-8 flex flex-col items-center gap-3 rounded-2xl bg-white px-6 py-7 text-center">
         <PenLine className="h-6 w-6 text-ocean-500" />
         <p className="text-sm text-ink-muted">
           Bạn đã đi tour này? Đăng nhập để chia sẻ cảm nhận với những khách sau.

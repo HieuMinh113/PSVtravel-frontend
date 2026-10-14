@@ -122,10 +122,11 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
   };
 
   return (
-    <div className="card-surface overflow-hidden ring-1 ring-ocean-100">
-      {/* Đầu thẻ — khối giá */}
-      <div className="relative overflow-hidden bg-deep-gradient p-5 text-white">
-        <div className="absolute inset-0 bg-aurora-deep bg-[length:200%_200%] animate-aurora opacity-70" />
+    <div className="card-surface overflow-hidden">
+      {/* Đầu thẻ — khối giá. Nền xanh đậm phẳng: giá và chữ trắng đọc rõ
+          (8.3:1). Nền chuyển màu cũ nhạt dần về góc phải, chữ trắng ở đó chỉ
+          còn khoảng 3:1. */}
+      <div className="relative overflow-hidden bg-ocean-800 p-5 text-white">
         <div className="relative">
           {tourLink && tour.name && (
             <Link href={tourLink} className="mb-2 flex items-start gap-1.5 text-sm font-semibold text-white transition-colors hover:text-gold-300">
@@ -152,7 +153,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
             {tour.oldPrice && (
               <span className="text-sm text-white/60 line-through">{formatVND(tour.oldPrice)}</span>
             )}
-            <span className="font-display text-[2rem] font-bold leading-none">{formatVND(donGiaNguoiLon)}</span>
+            <span className="font-display text-3xl font-bold leading-none">{formatVND(donGiaNguoiLon)}</span>
           </div>
 
           {tour.oldPrice && tour.oldPrice > donGiaNguoiLon && (
@@ -323,7 +324,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
               <Phone className="h-4 w-4" /> Gọi tư vấn: {hotline}
             </a>
 
-            <div className="grid grid-cols-3 gap-2 border-t border-ocean-100 pt-4 text-center">
+            <div className="grid grid-cols-3 gap-2 pt-2 text-center">
               {[
                 { icon: ShieldCheck, text: "Không phụ thu ẩn" },
                 { icon: CheckCircle2, text: "Xác nhận 15 phút" },

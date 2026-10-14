@@ -55,7 +55,7 @@ export default async function Page() {
         <DomesticTours tours={tours} danhMuc={danhMuc} />
       </Suspense>
 
-      <section className="border-t border-ocean-50 bg-foam py-14 sm:py-16">
+      <section className="bg-foam py-14 sm:py-16">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <SectionReveal className="prose-psv text-ink-muted">
             <h2>Tour du lịch trong nước trọn gói, khởi hành từ TP. Hồ Chí Minh</h2>
