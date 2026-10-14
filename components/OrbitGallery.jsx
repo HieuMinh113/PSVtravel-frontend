@@ -15,13 +15,21 @@ import { motion, useTime, useTransform } from "framer-motion";
  * ngang (cách tâm 560px) sau một phần tư vòng sẽ nhảy lên cao 560px, vượt khỏi
  * khung nhìn và bị cắt mất. Chỉ đúng khi quỹ đạo là hình tròn.
  */
-function AnhTrenQuyDao({ src, alt, gocBanDau, radiusX, radiusY, duration }) {
+function AnhTrenQuyDao({ src, alt, gocBanDau, radiusX, radiusY, duration, goc0 }) {
   const time = useTime();
 
   const goc = useTransform(time, (t) => gocBanDau + (t / (duration * 1000)) * 360);
 
-  const x = useTransform(goc, (g) => Math.cos((g * Math.PI) / 180) * radiusX);
-  const y = useTransform(goc, (g) => Math.sin((g * Math.PI) / 180) * radiusY);
+  // Làm tròn vị trí về đúng điểm ảnh của màn hình. Ảnh nằm lệch nửa điểm ảnh
+  // thì trình duyệt phải nội suy, ảnh nhỏ 96px trông nhoè hẳn đi. goc0 = toạ
+  // độ góc trái-trên của ảnh khi chưa dịch (tâm khung căn giữa nên hay lẻ .5).
+  const tron = (v, goc0Truc) => {
+    // useTransform tính giá trị đầu ngay lúc dựng trang trên máy chủ — chưa có window
+    const dpr = typeof window === "undefined" ? 1 : window.devicePixelRatio || 1;
+    return Math.round((goc0Truc + v) * dpr) / dpr - goc0Truc;
+  };
+  const x = useTransform(goc, (g) => tron(Math.cos((g * Math.PI) / 180) * radiusX, goc0.x));
+  const y = useTransform(goc, (g) => tron(Math.sin((g * Math.PI) / 180) * radiusY, goc0.y));
 
   // Chưa đo xong khung (lúc máy chủ dựng HTML, trước khi JavaScript chạy):
   // đặt ảnh bằng CSS thuần — cos()/sin() nhân với bán kính do CSS tính — nên
@@ -36,7 +44,9 @@ function AnhTrenQuyDao({ src, alt, gocBanDau, radiusX, radiusY, duration }) {
       className="orbit-anh absolute left-1/2 top-1/2 overflow-hidden rounded-2xl shadow-lg ring-2 ring-white/80"
       style={daDo ? { x, y } : { transform: viTriTinh }}
     >
-      <Image src={src} alt={alt} draggable={false} fill sizes="(max-width: 1023px) 64px, 96px" className="object-cover" />
+      {/* Tải gấp đôi cỡ hiển thị + nén nhẹ (90): ảnh thu nhỏ từ bản lớn nét hơn
+          hẳn bản vừa khít 96px nén 75 — mỗi ảnh vẫn chỉ vài chục KB */}
+      <Image src={src} alt={alt} draggable={false} fill sizes="(max-width: 1023px) 136px, 192px" quality={90} className="object-cover" />
     </motion.div>
   );
 }
@@ -76,7 +86,7 @@ export default function OrbitGallery({
   // bằng CSS (lớp .orbit-khung trong globals.css) — đúng ngay từ khung hình
   // đầu. JavaScript chỉ ĐỌC lại khung đã vẽ để biết bán kính cho chuyển động.
   const khungRef = useRef(null);
-  const [{ radiusX, radiusY }, setDims] = useState({ radiusX: null, radiusY: null });
+  const [{ radiusX, radiusY, goc0 }, setDims] = useState({ radiusX: null, radiusY: null, goc0: { x: 0, y: 0 } });
 
   useEffect(() => {
     const khung = khungRef.current;
@@ -84,9 +94,12 @@ export default function OrbitGallery({
     const doLai = () => {
       const anh = khung.querySelector(".orbit-anh");
       const cardSize = anh ? anh.offsetWidth : 0;
+      const r = khung.getBoundingClientRect();
       setDims({
         radiusX: (khung.offsetWidth - cardSize) / 2,
         radiusY: (khung.offsetHeight - cardSize) / 2,
+        // góc trái-trên của ảnh khi chưa dịch (tâm khung − nửa ảnh) — để làm tròn vị trí
+        goc0: { x: r.left + r.width / 2 - cardSize / 2, y: r.top + r.height / 2 - cardSize / 2 + window.scrollY },
       });
     };
     doLai();
@@ -134,6 +147,7 @@ export default function OrbitGallery({
           radiusX={radiusX}
           radiusY={radiusY}
           duration={duration}
+          goc0={goc0}
         />
       ))}
 

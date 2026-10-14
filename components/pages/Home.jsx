@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import OrbitGallery from "@/components/OrbitGallery";
+import NenAnhDoiCanh from "@/components/NenAnhDoiCanh";
 import hydrateKhiThay from "@/components/HydrateKhiThay";
 import { formatVND } from "@/data/tours";
 
@@ -28,9 +29,6 @@ const KhoiCuoiTrang = hydrateKhiThay(napKhoi("KhoiCuoiTrang"));
 // nên nền tự đổi theo mùa và theo tour mới mà không phải sửa code.
 const HERO_FALLBACK =
   "https://images.unsplash.com/photo-1573270689103-d7a4e42b609a?q=80&w=2000&auto=format&fit=crop";
-
-// Mỗi ảnh nền hiển thị bao lâu trước khi chuyển sang ảnh kế (mili giây)
-const HERO_DOI_ANH_MS = 6500;
 
 // Ảnh vòng xoay DỰ PHÒNG — chỉ dùng khi admin chưa upload ảnh nào.
 // Ảnh thật quản lý trong admin: Banner → Vị trí "Ảnh vòng xoay — Trang chủ".
@@ -119,39 +117,6 @@ export default function Home({
     return khongTrung.length ? khongTrung : [HERO_FALLBACK];
   }, [upcoming, anhBiaTour]);
 
-  const [heroIndex, setHeroIndex] = useState(0);
-
-  // Lúc mở trang CHỈ tải ảnh nền đầu tiên. Các ảnh sau nằm chồng lên nhau ở
-  // độ mờ 0 nhưng vẫn "trong màn hình" nên trình duyệt tải hết cả 4 ngay từ
-  // đầu (~200KB), tranh băng thông với tiêu đề/phông chữ trên 4G. Đợi trang
-  // tải xong thêm một nhịp mới gắn các ảnh còn lại và bắt đầu chuyển cảnh.
-  const [taiAnhSau, setTaiAnhSau] = useState(false);
-  useEffect(() => {
-    let hen;
-    const batDau = () => {
-      hen = setTimeout(() => setTaiAnhSau(true), 2500);
-    };
-    if (document.readyState === "complete") batDau();
-    else window.addEventListener("load", batDau, { once: true });
-    return () => {
-      window.removeEventListener("load", batDau);
-      clearTimeout(hen);
-    };
-  }, []);
-
-  // Chuyển cảnh chậm giữa các ảnh. Người dùng bật giảm chuyển động thì giữ
-  // nguyên một ảnh — không có gì nhấp nháy.
-  useEffect(() => {
-    if (!taiAnhSau || heroImages.length < 2) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const id = setInterval(
-      () => setHeroIndex((i) => (i + 1) % heroImages.length),
-      HERO_DOI_ANH_MS
-    );
-    return () => clearInterval(id);
-  }, [taiAnhSau, heroImages.length]);
-
   return (
     <div>
       {/* ===== HERO — bố cục co giãn, luôn vừa mọi màn hình =====
@@ -160,27 +125,8 @@ export default function Home({
           bị đẩy ra ngoài tầm nhìn. min-h-svh dùng đơn vị viewport nhỏ nhất —
           an toàn với thanh địa chỉ trình duyệt trên điện thoại. */}
       <section className="relative flex min-h-svh flex-col overflow-hidden bg-deep-gradient">
-        {/* Ảnh nền lấy từ tour đang bán, chuyển cảnh chậm.
-            Tất cả ảnh render sẵn và chỉ đổi độ mờ — không gắn/tháo phần tử liên tục
-            nên không giật. Ảnh đầu đặt priority để giữ điểm LCP tốt. */}
-        {heroImages.slice(0, taiAnhSau ? heroImages.length : 1).map((img, i) => (
-          <Image
-            key={img}
-            src={img}
-            // Ảnh nền trang trí (aria-hidden) nhưng vẫn ghi tên tour vào alt:
-            // công cụ SEO tính alt rỗng là "thiếu alt", Google Hình ảnh cũng đọc.
-            alt={tenAnhTour[img] || "Tour du lịch cùng PSV Travel"}
-            aria-hidden
-            fill
-            priority={i === 0}
-            sizes="100vw"
-            // Nền chỉ hiện mờ 35% dưới lớp phủ tối → nén mạnh hơn không thấy khác
-            quality={50}
-            className={`object-cover transition-opacity duration-[1600ms] ease-in-out ${
-              i === heroIndex ? "opacity-35" : "opacity-0"
-            }`}
-          />
-        ))}
+        {/* Ảnh nền lấy từ tour đang bán, chuyển cảnh chậm */}
+        <NenAnhDoiCanh images={heroImages.map((src) => ({ src, alt: tenAnhTour[src] }))} />
 
         {/* Nền Aurora: mesh gradient nhiều điểm dừng trôi chậm, có cặp bổ túc xanh–cam */}
         <div className="absolute inset-0 bg-aurora-deep bg-[length:180%_180%] animate-aurora opacity-80" />

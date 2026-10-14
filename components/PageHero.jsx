@@ -3,13 +3,17 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import OrbitGallery from "./OrbitGallery";
+import NenAnhDoiCanh from "./NenAnhDoiCanh";
 
 // Banner dùng chung cho các trang con — nền gradient xanh biển pha xanh ngọc,
 // không dùng ảnh chụp tĩnh và không dùng hình sóng, chỉ dùng ánh sáng + hoạ tiết chấm.
 // Nếu truyền `orbitImages`, banner sẽ có thêm vòng ảnh xoay bao quanh khối chữ —
 // dùng đúng kích thước như Hero trang chủ (radius 430) để đồng bộ toàn site.
-export default function PageHero({ eyebrow, title, description, crumbs = [], orbitImages }) {
+// Truyền thêm `backgroundImages` ({ src, alt }) thì nền là ảnh tour chuyển cảnh
+// chậm như trang chủ — trang Tour trong nước / nước ngoài dùng ảnh tour của riêng mình.
+export default function PageHero({ eyebrow, title, description, crumbs = [], orbitImages, backgroundImages }) {
   const hasOrbit = orbitImages && orbitImages.length > 0;
+  const coAnhNen = backgroundImages && backgroundImages.length > 0;
 
   return (
     <section
@@ -19,11 +23,14 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
           : "pb-20 pt-32 sm:pt-40"
       }`}
     >
+      {coAnhNen && <NenAnhDoiCanh images={backgroundImages} />}
+
       {/* Nền Aurora: mesh gradient nhiều điểm dừng trôi rất chậm, có cả sắc ấm —
           cho chiều sâu thay vì một mảng xanh phẳng. Chuyển động bằng transform
-          (GPU) — xem .animate-aurora trong globals.css. */}
+          (GPU) — xem .animate-aurora trong globals.css. Có ảnh nền thì lớp màu
+          nhạt bớt như trang chủ để ảnh lộ ra. */}
       <div className="absolute inset-0 bg-aurora-deep bg-[length:190%_190%] animate-aurora opacity-80" />
-      <div className="absolute inset-0 bg-duotone-glow opacity-70" />
+      <div className={`absolute inset-0 bg-duotone-glow ${coAnhNen ? "opacity-60" : "opacity-70"}`} />
       <div
         className="absolute inset-0 opacity-[0.12]"
         style={{

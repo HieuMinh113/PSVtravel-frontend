@@ -329,8 +329,10 @@ img, video {
    Trước đây còn thu nhỏ thêm bằng transform: scale theo chiều cao. Cộng với
    việc trục dọc đã tự co, vòng bị co hai lần nên teo lại nằm chen sau chữ
    thay vì bao quanh. Đã bỏ. */
+/* Vòng ảnh hiện rõ 100% — trước để 85% thì nền lộ qua, ảnh trông nhạt và mờ.
+   Chữ vẫn đọc rõ nhờ lớp phủ tối ở giữa banner. */
 .orbit-layer {
-  opacity: 0.85;
+  opacity: 1;
   transition: opacity 0.3s ease;
 }
 
@@ -368,9 +370,10 @@ img, video {
   margin-top: calc(var(--card) / -2);
 }
 
-/* Màn hình thấp: làm mờ bớt để chữ nổi lên, không thu nhỏ nữa */
-@media (max-height: 740px) {
-  .orbit-layer { opacity: 0.7; }
+/* Màn hình thấp / điện thoại (ảnh chạy ngay sau tiêu đề): làm mờ bớt một chút
+   để chữ nổi lên, không thu nhỏ nữa */
+@media (max-height: 740px), (max-width: 640px) {
+  .orbit-layer { opacity: 0.85; }
 }
 
 /* Điện thoại nằm ngang: dải tour phải nhường chỗ cho chữ và ô tìm kiếm */

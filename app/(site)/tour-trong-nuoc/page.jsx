@@ -21,15 +21,21 @@ export default async function Page() {
     getCategories("domestic"),
   ]);
 
-  // Chưa upload ảnh vòng xoay thì lấy tạm ảnh bìa tour đang bán
+  // Chưa upload ảnh vòng xoay thì lấy tạm ảnh bìa tour đang bán — chỉ tour CÓ
+  // ảnh bìa, tour chưa có ảnh mà lọt vào thì vòng xoay hiện ô trống
+  const tourCoAnh = tours.filter((t) => t.image);
   const anhVongXoay = orbitImages.length
     ? orbitImages
-    : tours.length
+    : tourCoAnh.length
     ? Array.from({ length: 10 }, (_, i) => {
-        const t = tours[i % tours.length];
+        const t = tourCoAnh[i % tourCoAnh.length];
         return { src: t.image, alt: t.name };
       })
     : [];
+
+  // Nền đầu trang: ảnh bìa các tour của chính trang này (tối đa 4, không trùng),
+  // chuyển cảnh chậm như trang chủ — mỗi trang một chất riêng
+  const anhNen = [...new Map(tourCoAnh.map((t) => [t.image, { src: t.image, alt: t.name }])).values()].slice(0, 4);
 
   return (
     <div>
@@ -42,6 +48,7 @@ export default async function Page() {
         description="Từ vịnh Hạ Long kỳ vĩ đến đảo Ngọc Phú Quốc rực nắng — mỗi vùng đất đều mang một câu chuyện riêng."
         crumbs={[{ label: "Tour trong nước" }]}
         orbitImages={anhVongXoay}
+        backgroundImages={anhNen}
       />
 
       <Suspense fallback={null}>
