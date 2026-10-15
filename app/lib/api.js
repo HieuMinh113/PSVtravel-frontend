@@ -118,6 +118,9 @@ function mapTour(t) {
       startDate: d.start_date_display ?? d.start_date,
       startISO: d.start_date ?? null, // Y-m-d cho schema
       price: d.price,
+      // Giá trẻ em / em bé của đợt (đợt không có giá riêng thì là giá chung của tour)
+      priceChild: d.price_child ?? null,
+      priceInfant: d.price_infant ?? null,
       seatsLeft: d.seats_left,
       // Hạn nộp hồ sơ visa của đợt này (đã tính theo quy tắc chung nếu đợt không có hạn riêng)
       visaDeadline: d.visa_deadline_display ?? null,

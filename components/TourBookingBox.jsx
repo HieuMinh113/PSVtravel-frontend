@@ -62,9 +62,10 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
   // Tour chưa nhập giá trẻ em → "Liên hệ báo giá": KHÔNG cộng vào tạm tính
   // (máy chủ cũng không tính), nhân viên báo giá sau. Trước đây web tự ước 60%
   // giá người lớn trong khi máy chủ tính 0đ — khách thấy một số, email ghi số khác.
-  const childPrice = tour.childPrice ?? null;
+  // Đợt có giá trẻ em / em bé riêng (theo lịch đối tác) thì dùng giá của đợt
+  const childPrice = dotDangChon?.priceChild ?? tour.childPrice ?? null;
   const treEmChoBaoGia = childPrice === null;
-  const infantPrice = tour.infantPrice ?? null;
+  const infantPrice = dotDangChon?.priceInfant ?? tour.infantPrice ?? null;
   const soNguoiLon = parseInt(adults, 10) || 0;
   const soTreEm = parseInt(children, 10) || 0;
   const total = soNguoiLon * donGiaNguoiLon + (treEmChoBaoGia ? 0 : soTreEm * childPrice);
@@ -163,7 +164,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
           )}
 
           <p className="mt-2 text-xs text-white/80">
-            / khách người lớn{tour.startDate ? ` · khởi hành ${tour.startDate}` : ""}
+            / khách người lớn{(dotDangChon?.startDate ?? tour.startDate) ? ` · khởi hành ${dotDangChon?.startDate ?? tour.startDate}` : ""}
           </p>
         </div>
       </div>
