@@ -87,6 +87,9 @@ function mapTour(t) {
     departure: t.departure_from ? `Từ ${t.departure_from}` : "",
     // Quy tắc chung "nộp hồ sơ visa trước ngày khởi hành N ngày" (null = không đặt)
     visaDeadlineDays: t.visa_deadline_days ?? null,
+    // Mọi ngày khởi hành hiện có đều đã quá hạn nộp hồ sơ visa (tour đã ẩn khỏi
+    // danh sách; khách vào bằng link cũ) → trang tour báo hết hạn, mời liên hệ
+    hetHanVisa: t.het_han_visa ?? false,
     price: t.adult_price,
     childPrice: t.child_price ?? null,
     // Giá em bé (dưới 2 tuổi) — chỉ để khách xem, đặt online chưa tính em bé

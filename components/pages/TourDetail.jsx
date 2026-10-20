@@ -18,7 +18,7 @@ import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwa
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
 import ReviewForm from "@/components/ReviewForm";
-import HanNopVisa from "@/components/HanNopVisa";
+import HanNopVisa, { HetHanNhanHoSo } from "@/components/HanNopVisa";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 
 const flagBySlug = {
@@ -751,7 +751,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       Phải phân biệt rõ: null/undefined = chưa rõ, 0 = hết. */}
                   {choConLai == null ? (
                     <span className="flex items-center gap-1.5 text-xs font-semibold text-white/90">
-                      <Users2 className="h-3.5 w-3.5" /> Đang nhận đặt chỗ
+                      <Users2 className="h-3.5 w-3.5" /> {tour.hetHanVisa ? "Liên hệ tư vấn đợt khởi hành mới" : "Đang nhận đặt chỗ"}
                     </span>
                   ) : choConLai > 0 ? (
                     <span className="flex items-center gap-1.5 text-xs font-semibold text-gold-300">
@@ -855,6 +855,8 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                           </select>
                           <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ocean-400" />
                         </div>
+                      ) : tour.hetHanVisa ? (
+                        <HetHanNhanHoSo hotline={hotline} className="mt-1.5" />
                       ) : (
                         <div className="mt-1.5 flex items-center gap-2 rounded-xl border border-ocean-100 bg-ocean-50/50 px-3.5 py-2.5 text-sm">
                           <CalendarDays className="h-4 w-4 text-ocean-500" /> {tour.startDate || "Liên hệ để biết lịch"}
@@ -865,7 +867,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                         className="mt-2"
                         ngay={dotDangChon?.visaDeadline}
                         iso={dotDangChon?.visaDeadlineISO}
-                        soNgay={dotDangChon ? null : tour.visaDeadlineDays}
+                        soNgay={dotDangChon || tour.hetHanVisa ? null : tour.visaDeadlineDays}
                       />
                     </div>
 

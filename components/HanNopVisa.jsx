@@ -52,3 +52,22 @@ export default function HanNopVisa({ ngay, iso, soNgay, className = "" }) {
     </p>
   );
 }
+
+/**
+ * Mọi ngày khởi hành hiện có đều đã quá hạn nộp hồ sơ visa (tour đã ẩn khỏi
+ * danh sách, khách vào bằng link cũ): báo rõ thay vì để trống ô ngày, mời gọi
+ * tư vấn đợt khác. Vẫn gửi yêu cầu được — nhân viên sẽ gọi lại.
+ */
+export function HetHanNhanHoSo({ hotline, className = "" }) {
+  return (
+    <div className={`flex items-start gap-2 rounded-xl bg-amber-50 px-3.5 py-2.5 text-xs leading-relaxed text-amber-900 ring-1 ring-amber-200 ${className}`}>
+      <FileClock className="mt-px h-4 w-4 shrink-0" aria-hidden="true" />
+      <span>
+        Các ngày khởi hành hiện có đã <strong className="font-bold">hết hạn nhận hồ sơ visa</strong>.
+        {" "}Gọi{" "}
+        <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="font-bold underline underline-offset-2">{hotline}</a>
+        {" "}hoặc gửi yêu cầu bên dưới để được tư vấn đợt khác.
+      </span>
+    </div>
+  );
+}
