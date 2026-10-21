@@ -85,7 +85,8 @@ function mapTour(t) {
     country: t.country,
     days: `${t.duration_days} ngày ${t.duration_nights} đêm`,
     departure: t.departure_from ? `Từ ${t.departure_from}` : "",
-    // Quy tắc chung "nộp hồ sơ visa trước ngày khởi hành N ngày" (null = không đặt)
+    // "Nộp hồ sơ visa trước ngày khởi hành N ngày" đang áp cho tour: theo danh sách
+    // visa theo nước hoặc số riêng của tour (null = không có)
     visaDeadlineDays: t.visa_deadline_days ?? null,
     // Mọi ngày khởi hành hiện có đều đã quá hạn nộp hồ sơ visa (tour đã ẩn khỏi
     // danh sách; khách vào bằng link cũ) → trang tour báo hết hạn, mời liên hệ
