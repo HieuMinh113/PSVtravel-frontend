@@ -90,6 +90,10 @@ function mapTour(t) {
     // Mọi ngày khởi hành hiện có đều đã quá hạn nộp hồ sơ visa (tour đã ẩn khỏi
     // danh sách; khách vào bằng link cũ) → trang tour báo hết hạn, mời liên hệ
     hetHanVisa: t.het_han_visa ?? false,
+    // Dạng visa của tour (visa đoàn / lẻ / điện tử / giấy thông hành) — null = chưa chọn
+    visaKind: t.visa_kind
+      ? { label: t.visa_kind_label, note: t.visa_kind_note }
+      : null,
     price: t.adult_price,
     childPrice: t.child_price ?? null,
     // Giá em bé (dưới 2 tuổi) — chỉ để khách xem, đặt online chưa tính em bé

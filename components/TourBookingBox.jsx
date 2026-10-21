@@ -247,6 +247,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
                 ngay={dotDangChon?.visaDeadline}
                 iso={dotDangChon?.visaDeadlineISO}
                 soNgay={dotDangChon || tour.hetHanVisa ? null : tour.visaDeadlineDays}
+                dang={tour.visaKind}
               />
             </div>
 

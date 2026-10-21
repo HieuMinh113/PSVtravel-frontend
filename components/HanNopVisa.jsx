@@ -27,28 +27,48 @@ const MAU = {
  * @param ngay   hạn của ngày khởi hành đang chọn, dạng "15/11/2026"
  * @param iso    cùng ngày đó dạng "2026-11-15" (để tính còn bao nhiêu ngày)
  * @param soNgay quy tắc chung của tour — dùng khi chưa có ngày khởi hành cụ thể
+ * @param dang   dạng visa của tour { label: "Visa đoàn", note: "đi và về cùng đoàn" }
  */
-export default function HanNopVisa({ ngay, iso, soNgay, className = "" }) {
+export default function HanNopVisa({ ngay, iso, soNgay, dang, className = "" }) {
   const [n, setN] = useState(null);
   useEffect(() => setN(conNgay(iso)), [iso]);
 
-  if (!ngay && !soNgay) return null;
+  if (!ngay && !soNgay) return dang ? <DangVisa dang={dang} className={className} /> : null;
   const muc = n === null ? "thuong" : n < 0 ? "qua" : n <= 7 ? "gap" : "thuong";
 
   return (
     <p className={`flex items-start gap-2 rounded-xl px-3.5 py-2.5 text-xs leading-relaxed ring-1 ${MAU[muc]} ${className}`}>
       <FileClock className="mt-px h-4 w-4 shrink-0" aria-hidden="true" />
-      {ngay ? (
-        <span>
-          Hạn nộp hồ sơ visa: <strong className="font-bold">{ngay}</strong>
-          {muc === "gap" && (n === 0 ? " — hôm nay là hạn cuối" : ` — còn ${n} ngày`)}
-          {muc === "qua" && " — đã qua hạn, gọi hotline để được hỗ trợ"}
-        </span>
-      ) : (
-        <span>
-          Nộp hồ sơ visa trước ngày khởi hành <strong className="font-bold">{soNgay} ngày</strong>
-        </span>
-      )}
+      <span>
+        {ngay ? (
+          <>
+            Hạn nộp hồ sơ visa: <strong className="font-bold">{ngay}</strong>
+            {muc === "gap" && (n === 0 ? " — hôm nay là hạn cuối" : ` — còn ${n} ngày`)}
+            {muc === "qua" && " — đã qua hạn, gọi hotline để được hỗ trợ"}
+          </>
+        ) : (
+          <>
+            Nộp hồ sơ visa trước ngày khởi hành <strong className="font-bold">{soNgay} ngày</strong>
+          </>
+        )}
+        {dang && (
+          <span className="mt-0.5 block">
+            <strong className="font-bold">{dang.label}</strong>{dang.note && ` — ${dang.note}`}
+          </span>
+        )}
+      </span>
+    </p>
+  );
+}
+
+/** Chỉ có dạng visa (tour chưa đặt hạn nộp hồ sơ). */
+function DangVisa({ dang, className }) {
+  return (
+    <p className={`flex items-start gap-2 rounded-xl px-3.5 py-2.5 text-xs leading-relaxed ring-1 ${MAU.thuong} ${className}`}>
+      <FileClock className="mt-px h-4 w-4 shrink-0" aria-hidden="true" />
+      <span>
+        <strong className="font-bold">{dang.label}</strong>{dang.note && ` — ${dang.note}`}
+      </span>
     </p>
   );
 }

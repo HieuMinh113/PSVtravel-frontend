@@ -703,6 +703,9 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       <span className="flex items-center gap-1.5 text-ink-muted"><Clock className="h-4 w-4 text-ocean-500" /> Thời gian xử lý: <strong className="text-deep-900">{visaInfo.time}</strong></span>
                       <span className="flex items-center gap-1.5 text-ink-muted"><BadgeCheck className="h-4 w-4 text-teal-600" /> Tỷ lệ đậu: <strong className="text-deep-900">{visaInfo.rate}</strong></span>
                       <span className="flex items-center gap-1.5 text-ink-muted"><FileCheck2 className="h-4 w-4 text-ocean-500" /> Phí dịch vụ từ: <strong className="text-deep-900">{visaInfo.price}</strong></span>
+                      {tour.visaKind && (
+                        <span className="flex items-center gap-1.5 text-ink-muted"><Plane className="h-4 w-4 text-ocean-500" /> Dạng visa: <strong className="text-deep-900">{tour.visaKind.label}</strong></span>
+                      )}
                       {(dotDangChon?.visaDeadline || tour.visaDeadlineDays) && (
                         <span className="flex items-center gap-1.5 text-ink-muted">
                           <CalendarDays className="h-4 w-4 text-sunset-600" /> Hạn nộp hồ sơ:{" "}
@@ -868,6 +871,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                         ngay={dotDangChon?.visaDeadline}
                         iso={dotDangChon?.visaDeadlineISO}
                         soNgay={dotDangChon || tour.hetHanVisa ? null : tour.visaDeadlineDays}
+                        dang={tour.visaKind}
                       />
                     </div>
 
