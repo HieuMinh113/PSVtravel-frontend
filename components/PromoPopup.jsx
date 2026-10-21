@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getImageProps } from "next/image";
 import { X } from "lucide-react";
 import { duocToiUu } from "@/app/lib/anh";
@@ -55,6 +55,16 @@ export default function PromoPopup({ poster }) {
     };
   }, [poster]);
 
+  const posterId = poster?.id;
+  const dong = useCallback(() => {
+    setHien(false);
+    try {
+      sessionStorage.setItem(KHOA, String(posterId));
+    } catch {
+      /* bỏ qua nếu storage bị chặn */
+    }
+  }, [posterId]);
+
   useEffect(() => {
     if (!hien) return;
     const onKey = (e) => {
@@ -62,16 +72,7 @@ export default function PromoPopup({ poster }) {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [hien]);
-
-  const dong = () => {
-    setHien(false);
-    try {
-      sessionStorage.setItem(KHOA, String(poster.id));
-    } catch {
-      /* bỏ qua nếu storage bị chặn */
-    }
-  };
+  }, [hien, dong]);
 
   if (!poster?.image || !hien) return null;
 

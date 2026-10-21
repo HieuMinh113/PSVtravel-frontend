@@ -1248,15 +1248,20 @@ function TheDiem({ diem, tieuDeRef, onDong }) {
   );
 }
 
-function KetQuaTim({ ketQua, cm, di, linkBai, truocKhiMoBai }) {
-  const tong = ketQua.nuoc.length + ketQua.tp.length + ketQua.diem.length;
-  if (!tong) return <p className="py-6 text-center text-sm text-ink-muted">Chưa có điểm nào khớp. Thử tên khác, hoặc chọn trên quả địa cầu.</p>;
-  const Nhom = ({ tieuDe, children }) => (
+// Một nhóm kết quả tìm kiếm (Nước / Thành phố / Điểm). Khai báo ngoài KetQuaTim:
+// khai báo bên trong thì mỗi lần gõ phím React coi là component mới, dựng lại cả danh sách.
+function Nhom({ tieuDe, children }) {
+  return (
     <div className="mb-3">
       <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-ink-subtle">{tieuDe}</p>
       <ul className="space-y-1">{children}</ul>
     </div>
   );
+}
+
+function KetQuaTim({ ketQua, cm, di, linkBai, truocKhiMoBai }) {
+  const tong = ketQua.nuoc.length + ketQua.tp.length + ketQua.diem.length;
+  if (!tong) return <p className="py-6 text-center text-sm text-ink-muted">Chưa có điểm nào khớp. Thử tên khác, hoặc chọn trên quả địa cầu.</p>;
   return (
     <div>
       <p className="sr-only" role="status">{tong} kết quả</p>
