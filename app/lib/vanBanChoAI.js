@@ -60,8 +60,8 @@ function lienHe(settings = {}) {
     hotline: settings.hotline || "0907 870 707",
     email: settings.email || CONG_TY.email,
     diaChi: settings.address || "529 Huỳnh Tấn Phát, Phường Tân Thuận, TP. Hồ Chí Minh",
-    // Giờ làm việc chỉ ghi khi admin đã nhập — không tự đặt giờ mặc định
-    gio: settings.working_hours || "",
+    // Giờ văn phòng: ô "Giờ làm việc" trong admin, trống thì giờ chuẩn của công ty
+    gio: settings.working_hours || CONG_TY.gioLamViec,
     giayPhep: settings.license_number || CONG_TY.giayPhep,
     noiCap: settings.license_issuer || CONG_TY.coQuanCap,
   };
@@ -69,10 +69,10 @@ function lienHe(settings = {}) {
 
 function khoiLienHe(lh) {
   return [
-    `- Hotline: ${lh.hotline}`,
+    `- Hotline (24/7): ${lh.hotline}`,
     `- Email: ${lh.email}`,
     `- Văn phòng: ${lh.diaChi}`,
-    lh.gio ? `- Giờ làm việc: ${lh.gio}` : null,
+    lh.gio ? `- Giờ làm việc văn phòng: ${lh.gio}` : null,
     `- Giấy phép kinh doanh lữ hành quốc tế số ${lh.giayPhep} (${lh.noiCap})`,
   ]
     .filter(Boolean)

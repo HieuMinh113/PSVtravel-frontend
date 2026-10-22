@@ -1,16 +1,21 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getImageProps } from "next/image";
 import { X } from "lucide-react";
 import { duocToiUu } from "@/app/lib/anh";
+import BangChuyen from "@/components/BangChuyen";
+import AnhVuaKhung from "@/components/AnhVuaKhung";
 
-// Poster quảng cáo bật lên khi mở web.
+// Poster quảng cáo bật lên khi mở web — MỌI poster đang bật trong admin.
 //
+// - Nhiều poster: băng chuyền (vuốt, mũi tên, chấm, tự chuyển 5 giây) trong
+//   khung dọc 4:5 cố định; mỗi poster bấm vào đi tới link riêng của nó. Trước
+//   đây chỉ hiện poster đầu tiên.
 // - Hiện 1 lần mỗi phiên: tắt rồi thì trong phiên đó không hiện lại (dùng
 //   sessionStorage, tự xoá khi khách đóng trình duyệt).
-// - Khoá theo id poster: admin đăng poster MỚI thì khách vẫn thấy lại.
-// - Hiện NGUYÊN tấm poster theo đúng tỉ lệ gốc (không cắt), tự thu vừa màn
-//   hình — cao tối đa 85% màn hình — nên poster dọc nhiều chữ vẫn đọc đủ.
+// - Khoá theo danh sách id poster: admin đăng poster MỚI thì khách vẫn thấy lại.
+// - Hiện NGUYÊN tấm poster (không cắt), tự thu vừa màn hình — cao tối đa 85%
+//   màn hình — nên poster dọc nhiều chữ vẫn đọc đủ. Một poster: đúng tỉ lệ gốc.
 // - Bấm vào ảnh: đóng popup rồi đi tới link admin đặt (nếu có); link ngoài
 //   mở tab mới.
 // - CHỈ HIỆN SAU KHI KHÁCH BẮT ĐẦU TƯƠNG TÁC (cuộn, chạm, bấm phím), không bật
@@ -25,18 +30,20 @@ import { duocToiUu } from "@/app/lib/anh";
 const SU_KIEN_TUONG_TAC = ["scroll", "wheel", "touchstart", "pointerdown", "keydown"];
 const KHOA = "psv_popup_da_tat";
 
-export default function PromoPopup({ poster }) {
+export default function PromoPopup({ posters = [] }) {
   const [hien, setHien] = useState(false);
+  const ds = useMemo(() => posters.filter((p) => p?.image), [posters]);
+  const khoaPoster = useMemo(() => ds.map((p) => p.id).join(","), [ds]);
 
   useEffect(() => {
-    if (!poster?.image) return;
+    if (!khoaPoster) return;
     let daTat = null;
     try {
       daTat = sessionStorage.getItem(KHOA);
     } catch {
       /* trình duyệt chặn storage — cứ hiện bình thường */
     }
-    if (daTat === String(poster.id)) return;
+    if (daTat === khoaPoster) return;
 
     let hen = null;
     const khiTuongTac = () => {
@@ -53,17 +60,16 @@ export default function PromoPopup({ poster }) {
       boNghe();
       clearTimeout(hen);
     };
-  }, [poster]);
+  }, [khoaPoster]);
 
-  const posterId = poster?.id;
   const dong = useCallback(() => {
     setHien(false);
     try {
-      sessionStorage.setItem(KHOA, String(posterId));
+      sessionStorage.setItem(KHOA, khoaPoster);
     } catch {
       /* bỏ qua nếu storage bị chặn */
     }
-  }, [posterId]);
+  }, [khoaPoster]);
 
   useEffect(() => {
     if (!hien) return;
@@ -74,7 +80,8 @@ export default function PromoPopup({ poster }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [hien, dong]);
 
-  if (!poster?.image || !hien) return null;
+  if (!ds.length || !hien) return null;
+  const poster = ds[0];
 
   // Bấm vào poster: chuyển thẳng trong TAB HIỆN TẠI (không mở tab mới) rồi
   // đóng poster. onClick={dong} lưu "đã tắt" trước khi trang điều hướng đi.
@@ -126,7 +133,34 @@ export default function PromoPopup({ poster }) {
           <X className="h-5 w-5" />
         </button>
 
-        {coLink ? (
+        {ds.length > 1 ? (
+          <BangChuyen nhan="Khuyến mãi PSV Travel" nenToi className="w-[min(92vw,26rem,68vh)]" khungClassName="overflow-hidden rounded-2xl shadow-2xl">
+            {ds.map((p) => {
+              const ten = p.title || "Khuyến mãi PSV Travel";
+              const hinh = (
+                <AnhVuaKhung
+                  anh={p.image}
+                  anhDienThoai={p.image_mobile}
+                  alt={ten}
+                  sizes="26rem"
+                  sizesDienThoai="92vw"
+                  loading="eager"
+                />
+              );
+              return (
+                <div key={p.id} className="relative aspect-[4/5] w-full bg-deep-950">
+                  {p.link?.trim() ? (
+                    <a href={p.link} onClick={dong} aria-label={ten} draggable={false} className="absolute inset-0 block">
+                      {hinh}
+                    </a>
+                  ) : (
+                    hinh
+                  )}
+                </div>
+              );
+            })}
+          </BangChuyen>
+        ) : coLink ? (
           <a
             href={poster.link}
             onClick={dong}

@@ -10,6 +10,7 @@ import SectionReveal from "@/components/SectionReveal";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/SocialIcons";
 import { fbTrack } from "@/app/lib/fbpixel";
 import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
+import { CONG_TY } from "@/app/lib/seo";
 
 
 export default function Contact({ settings = {} }) {
@@ -59,7 +60,7 @@ export default function Contact({ settings = {} }) {
       }),
   ];
   const contactEmail = settings.email || "nguyendusit399@gmail.com";
-  const workingHours = settings.working_hours || "Thứ 2 – Chủ nhật: 7:30 – 21:30";
+  const workingHours = settings.working_hours || CONG_TY.gioLamViec;
 
   const socials = [
     { Icon: FacebookIcon, href: settings.facebook, label: "Facebook" },

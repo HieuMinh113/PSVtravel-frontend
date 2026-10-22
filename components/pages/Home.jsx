@@ -67,7 +67,7 @@ const trustSignals = [
 export default function Home({
   initialAutumn = false,
   upcoming = [],
-  banner = null,
+  banners = [],
   orbitImages = [],
   anhBiaTour = [],
   tenAnhTour = {},
@@ -108,7 +108,6 @@ export default function Home({
   // Trước đây có một banner mặc định viết cứng trong code ("giảm 25%…") —
   // một khuyến mãi không có thật vẫn hiện lên trang, nhân viên không tắt được
   // vì nó không nằm trong admin. Giờ có banner thì hiện, không có thì bỏ qua.
-  const promo = banner;
 
   // Ảnh nền Hero lấy từ chính các tour sắp khởi hành — nền luôn phản ánh đúng
   // thứ đang bán. Lấy tối đa 4 ảnh để không tải quá nặng ở màn hình đầu.
@@ -300,7 +299,7 @@ export default function Home({
       {/* Các khối bên dưới màn hình đầu: HTML có đủ ngay từ máy chủ, còn
           JavaScript chỉ "đánh thức" từng khối khi khách cuộn gần tới — lúc mở
           trang máy không phải gánh cả trang một lượt. Xem HydrateKhiThay.jsx. */}
-      <KhoiTourSapKhoiHanh promo={promo} upcoming={upcoming} />
+      <KhoiTourSapKhoiHanh banners={banners} upcoming={upcoming} />
       <KhoiUuDaiDiemDen promotions={promotions} diemDen={diemDen} />
       <KhoiViSaoChonVideo anhViSao={anhViSao} videoTrangChu={videoTrangChu} tieuDeVideo={tieuDeVideo} />
       <KhoiDanhGia reviews={reviews} />

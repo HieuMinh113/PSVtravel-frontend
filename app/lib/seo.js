@@ -133,7 +133,10 @@ export const CONG_TY = {
   // Toạ độ THẬT lấy từ Google Business Profile (map nhúng ở trang liên hệ)
   viDo: 10.74372,
   kinhDo: 106.72971,
+  // Giờ văn phòng 8:00–17:00 mọi ngày (hotline vẫn 24/7). Đổi thì đổi CẢ HAI dòng:
+  // dòng trên cho Google (schema), dòng dưới hiện cho khách và trong /llms.txt
   gioMoCua: "Mo-Su 08:00-17:00",
+  gioLamViec: "Thứ 2 – Chủ nhật: 8:00 – 17:00",
   khoangGia: "$$",
   giayPhep: "79-769/2020/CDLQGVN-GP LHQT",
   coQuanCap: "Cục Du lịch Quốc gia Việt Nam",

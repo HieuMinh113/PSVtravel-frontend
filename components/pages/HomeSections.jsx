@@ -11,6 +11,7 @@ import CountUp from "@/components/CountUp";
 import TrustBar from "@/components/TrustBar";
 import Newsletter from "@/components/Newsletter";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
+import BannerKhuyenMai from "@/components/BannerKhuyenMai";
 import { formatVND } from "@/data/tours";
 import { duocToiUu } from "@/app/lib/anh";
 import { soNamHoatDong } from "@/app/lib/seo";
@@ -28,60 +29,19 @@ const whyUs = [
 ];
 
 // Dải cam kết + banner khuyến mãi + tour sát ngày khởi hành
-export function KhoiTourSapKhoiHanh({ promo = null, upcoming = [] }) {
+export function KhoiTourSapKhoiHanh({ banners = [], upcoming = [] }) {
   return (
     <>
       {/* ===== DẢI CAM KẾT — ngay dưới Hero, trả lời câu hỏi "có tin được không" ===== */}
       <TrustBar />
 
-      {/* ===== BANNER KHUYẾN MÃI — chỉ hiện khi admin đã tạo banner ===== */}
-      {promo && (
-      <section className="bg-foam px-5 pt-10 sm:px-8">
-        <SectionReveal className="mx-auto max-w-7xl">
-          <div className="group relative overflow-hidden rounded-3xl shadow-deep">
-            {/* Qua bộ tối ưu ảnh của Next: banner gốc admin upload có thể là PNG
-                vài MB, giờ được đổi sang WebP đúng cỡ màn hình và chỉ tải khi
-                khách cuộn gần tới. */}
-            <div className="relative h-[260px] w-full sm:h-[300px]">
-              <motion.div
-                initial={{ scale: 1.08 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={promo.image}
-                  alt={promo.title || "Ưu đãi PSVTravel"}
-                  fill
-                  sizes="(max-width: 1280px) 100vw, 1280px"
-                  unoptimized={!duocToiUu(promo.image)}
-                  className="object-cover"
-                />
-              </motion.div>
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-r from-deep-950/90 via-deep-950/60 to-transparent" />
-
-            <div className="absolute inset-0 flex flex-col items-start justify-center gap-3 px-6 sm:px-12">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-500 px-3.5 py-1 text-xs font-bold uppercase tracking-wide text-deep-950">
-                Ưu đãi có hạn
-              </span>
-              <h2 className="max-w-md font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
-                {promo.title}
-              </h2>
-              {promo.subtitle && (
-                <p className="max-w-sm text-sm text-white/85">{promo.subtitle}</p>
-              )}
-              <Link
-                href={promo.link || "/tour-nuoc-ngoai"}
-                className="btn-cta mt-2 !px-6 !py-3 text-sm"
-              >
-                Xem ưu đãi ngay <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </SectionReveal>
-      </section>
+      {/* ===== BANNER KHUYẾN MÃI — mọi banner đang chạy trong admin, tự chuyển ===== */}
+      {banners.length > 0 && (
+        <section className="bg-foam px-5 pt-10 sm:px-8">
+          <SectionReveal className="mx-auto max-w-7xl">
+            <BannerKhuyenMai banners={banners} />
+          </SectionReveal>
+        </section>
       )}
 
       {/* ===== TOUR SÁT NGÀY KHỞI HÀNH ===== */}

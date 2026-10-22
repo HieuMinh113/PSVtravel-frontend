@@ -24,8 +24,8 @@ export default async function SiteLayout({ children }) {
     getBanners("popup"),
   ]);
 
-  // Poster popup: lấy cái đầu tiên đang bật (sắp theo thứ tự trong admin)
-  const poster = Array.isArray(popups) && popups.length ? popups[0] : null;
+  // Poster popup: MỌI poster đang bật, theo thứ tự trong admin (băng chuyền)
+  const posters = Array.isArray(popups) ? popups : [];
 
   return (
     <>
@@ -43,7 +43,7 @@ export default async function SiteLayout({ children }) {
       <main id="noi-dung" tabIndex={-1} className="outline-none">{children}</main>
       <Footer settings={settings} />
       <FloatingContact settings={settings} />
-      {poster && <PromoPopup poster={poster} />}
+      {posters.length > 0 && <PromoPopup posters={posters} />}
     </>
   );
 }

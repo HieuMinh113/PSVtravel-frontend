@@ -93,7 +93,7 @@ export default async function Page() {
     <Home
       initialAutumn={isAutumnSeason()}
       upcoming={upcoming}
-      banner={banners[0] ?? null}
+      banners={banners}
       orbitImages={orbitImages}
       anhBiaTour={anhBiaTour}
       tenAnhTour={tenAnhTour}
