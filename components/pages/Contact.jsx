@@ -11,6 +11,7 @@ import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/SocialIco
 import { fbTrack } from "@/app/lib/fbpixel";
 import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 import { CONG_TY } from "@/app/lib/seo";
+import { layNguon } from "@/app/lib/nguonKhach";
 
 
 export default function Contact({ settings = {} }) {
@@ -79,7 +80,7 @@ export default function Contact({ settings = {} }) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, nguon: layNguon() }),
       });
       const data = await res.json().catch(() => ({}));
 

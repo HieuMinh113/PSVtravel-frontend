@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, organizationJsonLd, websiteJsonLd, JsonLd } from "./lib/seo";
 import MetaPixel from "@/components/MetaPixel";
 import GoogleTag from "@/components/GoogleTag";
+import GhiNguonKhach from "@/components/GhiNguonKhach";
 
 // PHÔNG CHỮ LƯU SẴN TRONG MÃ NGUỒN (app/fonts/), không tải từ Google lúc build.
 //
@@ -93,6 +94,7 @@ export default function RootLayout({ children }) {
         <JsonLd data={websiteJsonLd()} />
         <MetaPixel />
         <GoogleTag />
+        <GhiNguonKhach />
       </body>
     </html>
   );

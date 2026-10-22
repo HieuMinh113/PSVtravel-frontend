@@ -1,4 +1,5 @@
 // Mọi lời gọi tới backend Laravel đi qua đây. Đổi domain khi lên production.
+import { layNguon } from "./nguonKhach";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 const REVALIDATE = 60; // giây — chậm nhất 1 phút thấy thay đổi từ admin
 
@@ -215,7 +216,8 @@ export async function createBooking(payload) {
   const res = await fetch(`/api/bookings`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify(payload),
+    // Kênh khách đến (TikTok, Google, ChatGPT…) để biết kênh / clip nào ra đơn
+    body: JSON.stringify({ ...payload, nguon: layNguon() }),
   });
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {

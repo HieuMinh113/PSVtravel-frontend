@@ -1,4 +1,5 @@
 "use client";
+import { layNguon } from "@/app/lib/nguonKhach";
 import { useState } from "react";
 import { Send, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { fbTrack } from "@/app/lib/fbpixel";
@@ -39,7 +40,7 @@ export default function TeamBuildingForm({ goi = "", hotline = "0907 870 707" })
       const res = await fetch("/api/team-building", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, package: goi || form.package }),
+        body: JSON.stringify({ ...form, package: goi || form.package, nguon: layNguon() }),
       });
       const data = await res.json().catch(() => ({}));
 

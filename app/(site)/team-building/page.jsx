@@ -1,6 +1,6 @@
 import TeamBuilding from "@/components/pages/TeamBuilding";
-import { pageMeta, serviceJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
-import { getEvents, getSettings } from "@/app/lib/api";
+import { pageMeta, serviceJsonLd, faqJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
+import { getEvents, getSettings, getFaqs } from "@/app/lib/api";
 
 export const revalidate = 60;
 
@@ -13,7 +13,9 @@ export const metadata = pageMeta({
 });
 
 export default async function Page() {
-  const [events, settings] = await Promise.all([getEvents(), getSettings()]);
+  const [events, settings, faqs] = await Promise.all([getEvents(), getSettings(), getFaqs()]);
+  // Hỏi đáp nhóm "Doanh nghiệp / Team building" trong admin (chỉ câu đang hiển thị)
+  const hoiDap = faqs.filter((f) => f.category === "doanh-nghiep");
 
   const schema = serviceJsonLd({
     name: "Tổ chức du lịch công ty, team building & sự kiện doanh nghiệp",
@@ -26,7 +28,8 @@ export default async function Page() {
   return (
     <>
       <JsonLd data={schema} />
-      <TeamBuilding events={events} settings={settings} />
+      <JsonLd data={faqJsonLd(hoiDap.map((f) => ({ q: f.question, a: f.answer })))} />
+      <TeamBuilding events={events} settings={settings} faqs={hoiDap} />
     </>
   );
 }
