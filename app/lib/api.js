@@ -175,6 +175,16 @@ export async function getTourSitemap() {
   return json?.data ?? [];
 }
 
+// Bảng giá mọi tour khách đặt được, cho /pricing.md và /llms.txt: mỗi tour kèm
+// 3 đợt gần nhất (giá, hạn nộp visa). Không giới hạn 50 tour như getTours.
+export async function getBangGia() {
+  const json = await layJSON(`/tours-bang-gia`, { batBuoc: true });
+  // layJSON coi 404 là "không có" và trả null — ở đây 404 nghĩa là API chưa có
+  // đường dẫn này (backend cũ), không phải "0 tour": ném lỗi để giữ bản cũ
+  if (!Array.isArray(json?.data)) throw new Error("API /tours-bang-gia không trả dữ liệu");
+  return json.data;
+}
+
 export async function getTourBySlug(slug) {
   const json = await layJSON(`/tours/${slug}`);
   return mapTour(json?.data ?? json);
@@ -250,6 +260,7 @@ function mapVisa(c) {
     rate: c.success_rate ? `${c.success_rate}%` : null,
     time: c.processing_time,
     price: c.price ? `${Number(c.price).toLocaleString("vi-VN")}đ` : "Liên hệ",
+    priceValue: Number(c.price) || 0, // số, cho bảng giá /pricing.md
     documents: c.required_documents ?? [],
     description: c.description ?? "",
     required: true,

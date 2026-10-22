@@ -22,6 +22,7 @@ import HanNopVisa, { HetHanNhanHoSo } from "@/components/HanNopVisa";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { duocToiUu } from "@/app/lib/anh";
 import { tourFaqs } from "@/app/lib/tourFaqs";
+import { tomTatTour, thongTinNhanh } from "@/app/lib/tomTatTour";
 
 const flagBySlug = {
   "Thái Lan": FlagThailand,
@@ -637,15 +638,34 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
             </SectionReveal>
 
             <SectionReveal className="card-surface p-6 sm:p-8">
-              <h2 className="font-display text-xl font-bold text-deep-900">Điểm nổi bật của hành trình</h2>
-              <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {tour.highlights.map((h) => (
-                  <div key={h} className="flex items-start gap-2.5 rounded-xl bg-ocean-50/60 p-3">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-700" />
-                    <span className="text-sm font-semibold text-deep-900">{h}</span>
+              {/* Tổng quan: "Mô tả" nhân viên viết trong admin; chưa viết thì tự ghép
+                  từ dữ liệu tour (app/lib/tomTatTour.js) */}
+              <h2 className="font-display text-xl font-bold text-deep-900">Tổng quan tour</h2>
+              <p className="mt-3 whitespace-pre-line text-base leading-relaxed text-ink">
+                {String(tour.description || "").trim() || tomTatTour(tour)}
+              </p>
+              <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {thongTinNhanh(tour).map((o) => (
+                  <div key={o.nhan} className="rounded-xl bg-ocean-50/60 px-3 py-2.5">
+                    <dt className="text-xs text-ink-subtle">{o.nhan}</dt>
+                    <dd className="mt-0.5 text-sm font-semibold text-deep-900">{o.giaTri}</dd>
                   </div>
                 ))}
-              </div>
+              </dl>
+
+              {tour.highlights.length > 0 && (
+                <>
+                  <h2 className="mt-8 font-display text-xl font-bold text-deep-900">Điểm nổi bật của hành trình</h2>
+                  <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {tour.highlights.map((h) => (
+                      <div key={h} className="flex items-start gap-2.5 rounded-xl bg-ocean-50/60 p-3">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-700" />
+                        <span className="text-sm font-semibold text-deep-900">{h}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </SectionReveal>
 
             {/* ===== VIDEO TOUR — chỉ hiện khi admin đã dán link YouTube ===== */}

@@ -1,3 +1,5 @@
+import { tomTatTour } from "./tomTatTour";
+
 // Cấu hình SEO dùng chung. Đổi SITE_URL sang domain thật khi lên production.
 // Đổi qua biến NEXT_PUBLIC_SITE_URL trong .env.local khi lên domain thật.
 // Sai giá trị này thì thẻ canonical, Open Graph và sitemap đều trỏ nhầm chỗ.
@@ -121,7 +123,7 @@ export function tourMeta(tour, basePath) {
 // Thông tin pháp nhân — cố định theo giấy phép doanh nghiệp, ít khi đổi.
 // Để ở đây (không đọc từ API) vì layout dựng tĩnh; đọc API sẽ khiến mọi trang
 // chuyển sang render động, mất phần dựng sẵn.
-const CONG_TY = {
+export const CONG_TY = {
   dienThoai: "+84 907 870 707",
   email: "nguyendusit399@gmail.com",
   diaChi: "529 Huỳnh Tấn Phát",
@@ -257,7 +259,8 @@ export function tourJsonLd(tour, basePath) {
     "@context": "https://schema.org",
     "@type": "TouristTrip",
     name: tour.name,
-    description: boDauSao((tour.highlights || []).join(", ")),
+    // Đúng đoạn "Tổng quan tour" đang hiện đầu trang
+    description: boDauSao(String(tour.description || "").trim() || tomTatTour(tour)),
     image: tour.coAnhBia ? tour.image : undefined,
     url,
     touristType: "Leisure",
@@ -322,9 +325,15 @@ export function tourProductJsonLd(tour, basePath) {
     tour.departures?.[tour.departures.length - 1]?.startISO ||
     `${new Date().getFullYear() + 1}-12-31`;
   const coDanhGia = Boolean(tour.rating && tour.reviews > 0);
+  // Từng đánh giá: tối đa 5 bài ĐẦU TIÊN đang hiện trên trang (Google chỉ nhận
+  // đánh giá khách nhìn thấy được), có tên, số sao và nội dung — AI trích được
+  // lời khách thật thay vì chỉ một con số trung bình.
+  const danhGia = (tour.reviewsList || [])
+    .filter((r) => r.name && String(r.comment || "").trim() && r.rating > 0)
+    .slice(0, 5);
   // Product phải có giá hoặc đánh giá mới hợp lệ — tour giá liên hệ chưa có đánh
   // giá thì không khai báo (khai thiếu thì Search Console báo lỗi cả trang).
-  if (!(tour.price > 0) && !coDanhGia) return null;
+  if (!(tour.price > 0) && !coDanhGia && !danhGia.length) return null;
 
   return {
     "@context": "https://schema.org",
@@ -357,6 +366,17 @@ export function tourProductJsonLd(tour, basePath) {
             bestRating: 5,
             worstRating: 1,
           },
+        }
+      : {}),
+    ...(danhGia.length
+      ? {
+          review: danhGia.map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.name },
+            reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+            reviewBody: String(r.comment).trim(),
+            ...(r.date ? { datePublished: String(r.date).slice(0, 10) } : {}),
+          })),
         }
       : {}),
   };
