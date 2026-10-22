@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { BadgeCheck, Wallet, Headset, Plane, ArrowRight, Phone } from "lucide-react";
 import PageHero from "@/components/PageHero";
@@ -152,9 +153,9 @@ export default function Flights({ airlines = [], deals = [], settings = {} }) {
             <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="btn-cta">
               <Phone className="h-4 w-4" /> Gọi ngay: {hotline}
             </a>
-            <a href="/lien-he" className="btn-ghost">
+            <Link href="/lien-he" className="btn-ghost">
               Gửi yêu cầu <ArrowRight className="h-4 w-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </section>

@@ -540,6 +540,18 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
               {basePath === "/tour-trong-nuoc" ? "Tour trong nước" : "Tour nước ngoài"}
             </Link>
             <span>/</span>
+            {/* Cấp điểm đến = danh mục đầu tiên của tour (khớp breadcrumb gửi Google) */}
+            {tour.categories?.[0] && (
+              <>
+                <Link
+                  href={`${basePath}?category=${encodeURIComponent(tour.categories[0].slug)}&scroll=1`}
+                  className="vung-bam transition-colors hover:text-gold-300"
+                >
+                  {tour.categories[0].name}
+                </Link>
+                <span>/</span>
+              </>
+            )}
             <span className="text-white/90">{tour.name}</span>
           </div>
           <div className="flex items-center gap-1.5 text-sm font-medium text-ocean-200">

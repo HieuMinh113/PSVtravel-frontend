@@ -39,3 +39,12 @@ export function LinkedinIcon(props) {
     </svg>
   );
 }
+// Messenger: bong bóng chat + tia chớp, cùng nét vẽ với bộ icon Lucide
+export function MessengerIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M12 2.5C6.75 2.5 2.5 6.43 2.5 11.28c0 2.6 1.22 4.93 3.15 6.53V21.5l3.2-1.76c.99.27 2.05.42 3.15.42 5.25 0 9.5-3.93 9.5-8.78S17.25 2.5 12 2.5Z" />
+      <path d="m7 13.5 3.3-3.5 2.4 2.2 4.3-3.7-3.3 3.6-2.4-2.2L7 13.5Z" />
+    </svg>
+  );
+}

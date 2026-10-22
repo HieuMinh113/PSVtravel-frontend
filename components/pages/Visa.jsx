@@ -199,9 +199,9 @@ export default function Visa({ countries: apiCountries = [], settings = {} }) {
             <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} className="btn-cta">
               <Phone className="h-4 w-4" /> Gọi tư vấn miễn phí
             </a>
-            <a href="/lien-he" className="btn-ghost">
+            <Link href="/lien-he" className="btn-ghost">
               Gửi yêu cầu qua form <ArrowRight className="h-4 w-4" />
-            </a>
+            </Link>
           </div>
         </div>
         <ShieldCheck className="pointer-events-none absolute -bottom-6 -left-6 h-32 w-32 text-white/5" />

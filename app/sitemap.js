@@ -1,4 +1,4 @@
-import { getTourSitemap, getGuideSitemap, getVisaSlugs, getEventSlugs, getDestinationSlugs, getJobSlugs } from "@/app/lib/api";
+import { getTourSitemap, getGuideSitemap, getVisaSlugs, getEventSlugs, getDestinationSlugs, getJobSlugs, getSeasonPages } from "@/app/lib/api";
 import { SITE_URL } from "./lib/seo";
 
 // Sitemap dựng lại mỗi giờ để tour và bài viết mới sớm được Google ghi nhận
@@ -51,13 +51,14 @@ export default async function sitemap() {
 
   // Tour: lấy từ API riêng cho sitemap — danh sách tour thường chỉ trả tối đa 50
   // tour mỗi loại và bỏ tour tạm ẩn vì hết hạn visa, sitemap sẽ sót tour.
-  const [tours, guides, visaSlugs, eventSlugs, destSlugs, jobSlugs] = await Promise.all([
+  const [tours, guides, visaSlugs, eventSlugs, destSlugs, jobSlugs, seasonPages] = await Promise.all([
     anToan(() => getTourSitemap()),
     anToan(() => getGuideSitemap()),
     anToan(() => getVisaSlugs()),
     anToan(() => getEventSlugs()),
     anToan(() => getDestinationSlugs()),
     anToan(() => getJobSlugs()),
+    anToan(() => getSeasonPages()),
   ]);
 
   const tourEntries = tours
@@ -121,5 +122,13 @@ export default async function sitemap() {
       priority: 0.5,
     }));
 
-  return [...staticEntries, ...tourEntries, ...guideEntries, ...visaEntries, ...eventEntries, ...destEntries, ...jobEntries];
+  // Trang tour theo mùa / dịp (/tour-tet…): đổi theo lịch khởi hành nên quét thường xuyên
+  const seasonEntries = seasonPages.map((p) => ({
+    url: `${SITE_URL}/${p.slug}`,
+    lastModified: ngay(p.updated_at),
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
+
+  return [...staticEntries, ...tourEntries, ...seasonEntries, ...guideEntries, ...visaEntries, ...eventEntries, ...destEntries, ...jobEntries];
 }

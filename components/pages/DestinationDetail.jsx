@@ -6,7 +6,7 @@ import TourCard from "@/components/TourCard";
 import { duocToiUu } from "@/app/lib/anh";
 
 // Trang chi tiết điểm đến — server component (SEO). Hiển thị giới thiệu + tour liên quan.
-export default function DestinationDetail({ destination, tours = [] }) {
+export default function DestinationDetail({ destination, tours = [], toursKhac = [] }) {
   if (!destination) return null;
   const d = destination;
 
@@ -50,28 +50,32 @@ export default function DestinationDetail({ destination, tours = [] }) {
         </div>
       </section>
 
-      {/* Tour liên quan */}
-      {tours.length > 0 && (
-        <section className="bg-ocean-50/50 py-14 sm:py-20">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8">
-            <div className="mb-10 text-center">
-              <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">
-                Tour {d.name} đang mở
-              </h2>
+      {/* Tour đúng điểm đến, rồi tour khác cùng vùng — hai nhóm tách bạch để
+          tiêu đề "Tour {tên điểm}" không gom nhầm tour nơi khác */}
+      {[
+        { ds: tours, tieuDe: `Tour ${d.name} đang mở` },
+        { ds: toursKhac, tieuDe: tours.length ? "Tour khác cùng khu vực" : `Tour cùng khu vực${d.region ? ` ${d.region}` : ""}` },
+      ]
+        .filter((nhom) => nhom.ds.length > 0)
+        .map((nhom, n) => (
+          <section key={nhom.tieuDe} className={`${n === 0 ? "bg-ocean-50/50" : "bg-foam"} py-14 sm:py-20`}>
+            <div className="mx-auto max-w-7xl px-5 sm:px-8">
+              <div className="mb-10 text-center">
+                <h2 className="font-display text-3xl font-bold text-deep-900 sm:text-4xl">{nhom.tieuDe}</h2>
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {nhom.ds.map((t, i) => (
+                  <TourCard
+                    key={t.slug ?? i}
+                    tour={t}
+                    basePath={t.type === "abroad" ? "/tour-nuoc-ngoai" : "/tour-trong-nuoc"}
+                    index={i}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {tours.map((t, i) => (
-                <TourCard
-                  key={t.slug ?? i}
-                  tour={t}
-                  basePath={t.type === "abroad" ? "/tour-nuoc-ngoai" : "/tour-trong-nuoc"}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+          </section>
+        ))}
 
       <section className="bg-foam pb-16">
         <div className="mx-auto flex max-w-3xl justify-center px-5 sm:px-8">

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import TourDetail from "@/components/pages/TourDetail";
 import { tourMeta, tourJsonLd, tourProductJsonLd, tourVideoJsonLd, breadcrumbJsonLd, faqJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
 import { tourFaqs } from "@/app/lib/tourFaqs";
+import { tourLienQuan } from "@/app/lib/tourLienQuan";
 import { getTours, getTourBySlug, getSettings, getVisaCountries, getCategories } from "@/app/lib/api";
 
 const BASE = "/tour-nuoc-ngoai";
@@ -23,9 +24,13 @@ export default async function Page({ params }) {
   const tour = await getTourBySlug(slug);
   if (!tour || tour.type !== "abroad") notFound();
 
+  // Danh mục đầu tiên của tour = cấp "điểm đến" (breadcrumb, tour liên quan)
+  const dm = tour.categories?.[0] ?? null;
+
   // Chỉ lấy đúng số tour cần cho khối "Tour liên quan" thay vì tải cả 50 tour
   // rồi vứt đi 47 cái. Lấy dư vài tour để sau khi loại chính nó ra vẫn đủ 3.
-  const [all, settings, visaList, danhMuc] = await Promise.all([
+  const [cungDanhMuc, all, settings, visaList, danhMuc] = await Promise.all([
+    dm ? getTours({ category: dm.slug, perPage: 8 }) : [],
     getTours({ type: "abroad", perPage: 8 }),
     getSettings(),
     // Thông tin visa thật từ admin, dùng cho khối Hướng dẫn visa
@@ -33,9 +38,7 @@ export default async function Page({ params }) {
     // Thanh lọc đi tắt dùng đúng Danh Mục Tour trong admin
     getCategories("abroad"),
   ]);
-  const related = all
-    .filter((t) => t.slug !== tour.slug && t.region === tour.region)
-    .slice(0, 3);
+  const related = tourLienQuan(tour, dm, [...cungDanhMuc, ...all]);
 
   return (
     <>
@@ -47,6 +50,7 @@ export default async function Page({ params }) {
         data={breadcrumbJsonLd([
           { name: "Trang chủ", url: SITE_URL },
           { name: "Tour nước ngoài", url: `${SITE_URL}${BASE}` },
+          ...(dm ? [{ name: dm.name, url: `${SITE_URL}${BASE}?category=${encodeURIComponent(dm.slug)}` }] : []),
           { name: tour.name, url: `${SITE_URL}${BASE}/${tour.slug}` },
         ])}
       />

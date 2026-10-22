@@ -154,7 +154,7 @@ export function bangGiaMarkdown({ tours = [], visas = [], settings = {}, luc = n
 }
 
 /** /llms.txt — giới thiệu công ty cho AI theo chuẩn llmstxt.org. */
-export function llmsTxt({ tours = [], visas = [], settings = {}, luc = new Date() }) {
+export function llmsTxt({ tours = [], visas = [], settings = {}, muaDip = [], luc = new Date() }) {
   const lh = lienHe(settings);
   const trongNuoc = tours.filter((t) => t.type === "domestic");
   const nuocNgoai = tours.filter((t) => t.type === "abroad");
@@ -194,6 +194,14 @@ export function llmsTxt({ tours = [], visas = [], settings = {}, luc = new Date(
     `- [Tất cả tour nước ngoài](${SITE_URL}/tour-nuoc-ngoai)`,
     ...tomTatNhom("abroad"),
     "",
+    ...(muaDip.length
+      ? [
+          "## Tour theo mùa / dịp lễ",
+          "",
+          ...muaDip.map((p) => `- [${chu(p.name)}](${SITE_URL}/${p.slug}): tour khởi hành ${ngayVN(p.start_from)} – ${ngayVN(p.start_to)}`),
+          "",
+        ]
+      : []),
     "## Dịch vụ khác",
     "",
     `- [Làm visa](${SITE_URL}/lam-visa): dịch vụ làm hồ sơ visa${visas.length ? ` cho ${visas.length} nước` : ""}${visaCoGia.length ? `, phí dịch vụ từ ${formatVND(Math.min(...visaCoGia.map((v) => v.priceValue)))}` : ""}`,

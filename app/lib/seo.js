@@ -1,4 +1,4 @@
-import { tomTatTour } from "./tomTatTour";
+import { tomTatTour, tenCoSoNgay } from "./tomTatTour";
 
 // Cấu hình SEO dùng chung. Đổi SITE_URL sang domain thật khi lên production.
 // Đổi qua biến NEXT_PUBLIC_SITE_URL trong .env.local khi lên domain thật.
@@ -115,8 +115,26 @@ export function tourMeta(tour, basePath) {
   ]
     .filter(Boolean)
     .join(". ") + ".";
-  // Ưu tiên "Tiêu đề SEO" nhân viên tự viết trong admin; trống thì dùng tên tour
-  return pageMeta({ title: tour.seoTitle || tour.name, description, path, image: tour.coAnhBia ? tour.image : undefined });
+  // Ưu tiên "Tiêu đề SEO" nhân viên tự viết trong admin; trống thì tự sinh
+  return pageMeta({ title: tour.seoTitle || tieuDeTour(tour), description, path, image: tour.coAnhBia ? tour.image : undefined });
+}
+
+// Tiêu đề Google tự sinh: tên tour (+ số ngày nếu tên chưa có) + "Từ 3,99 triệu"
+// — giá hiện ngay trên kết quả tìm kiếm kéo thêm lượt bấm (ưu tiên hơn đuôi
+// " | PSV Travel", đuôi chỉ thêm khi còn chỗ). Giá viết gọn vì tên tour thật
+// thường đã 40–50 ký tự; dài quá 65 ký tự thì bỏ giá cho khỏi bị Google cắt.
+function tieuDeTour(tour) {
+  const m = String(tour.days || "").match(/(\d+)\s*ngày\s*(\d+)\s*đêm/);
+  const soNgay = !m || tenCoSoNgay(tour) ? "" : Number(m[2]) > 0 ? ` ${m[1]}N${m[2]}Đ` : ` ${m[1]} ngày`;
+  const ten = `${String(tour.name || "").trim()}${soNgay}`;
+  const gia = Number(tour.price);
+  if (!(gia > 0)) return ten;
+  const giaGon =
+    gia >= 1_000_000
+      ? `${(gia / 1_000_000).toLocaleString("vi-VN", { maximumFractionDigits: 2 })} triệu`
+      : `${gia.toLocaleString("vi-VN")}đ`;
+  const coGia = `${ten} | Từ ${giaGon}`;
+  return coGia.length <= 65 ? coGia : ten;
 }
 
 // JSON-LD tổ chức (đặt ở layout gốc)

@@ -114,6 +114,8 @@ function mapTour(t) {
     coAnhBia: Boolean(t.cover_image),
     tag: t.tag,
     categorySlugs: t.category_slugs ?? [],
+    // Danh mục tour [{ slug, name }] (chỉ trang chi tiết) — cấp "điểm đến" của breadcrumb
+    categories: t.categories ?? [],
     highlights: t.highlights ?? [],
     itinerary: (t.itineraries ?? []).map((it) => ({
       day: `Ngày ${it.day_number}`,
@@ -183,6 +185,22 @@ export async function getBangGia() {
   // đường dẫn này (backend cũ), không phải "0 tour": ném lỗi để giữ bản cũ
   if (!Array.isArray(json?.data)) throw new Error("API /tours-bang-gia không trả dữ liệu");
   return json.data;
+}
+
+// Trang tour theo mùa / dịp (/tour-tet, /tour-he…) đang bật: [{ slug, name,
+// start_from, start_to, updated_at }] — cho sitemap, llms.txt, dựng sẵn trang
+export async function getSeasonPages() {
+  const json = await layJSON(`/season-pages`);
+  return (json?.data ?? []).filter((p) => slugHopLe(p.slug));
+}
+
+// Một trang theo mùa / dịp + tour khởi hành trong dịp (thẻ tour chỉ kể ngày đi
+// trong dịp). Không có thì null để trang báo 404.
+export async function getSeasonPage(slug) {
+  const json = await layJSON(`/season-pages/${slug}`);
+  const p = json?.data;
+  if (!p) return null;
+  return { ...p, faqs: p.faqs ?? [], tours: (p.tours ?? []).map(mapTour) };
 }
 
 export async function getTourBySlug(slug) {

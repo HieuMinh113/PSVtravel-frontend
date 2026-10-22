@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import DestinationDetail from "@/components/pages/DestinationDetail";
 import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
 import { getDestinationBySlug, getDestinationSlugs, getTours } from "@/app/lib/api";
+import { tourTheoDiemDen } from "@/app/lib/tourTheoDiemDen";
 
 export const revalidate = 60;
 
@@ -27,8 +28,15 @@ export default async function Page({ params }) {
   const d = await getDestinationBySlug(slug);
   if (!d) notFound();
 
-  // Tour liên quan lấy theo danh mục admin gắn cho điểm đến (nếu có).
-  const tours = d.category_slug ? await getTours({ category: d.category_slug, perPage: 6 }) : [];
+  // Tour đúng điểm đến (tìm trong mọi tour đang bán) + tour khác cùng vùng (danh
+  // mục admin gắn cho điểm đến). Hai danh sách 50 tour dùng chung bộ đệm với
+  // trang danh sách tour nên không tốn thêm lượt gọi API.
+  const [cungVung, trongNuoc, nuocNgoai] = await Promise.all([
+    d.category_slug ? getTours({ category: d.category_slug }) : [],
+    getTours({ type: "domestic" }),
+    getTours({ type: "abroad" }),
+  ]);
+  const { dungDiem, cungKhuVuc } = tourTheoDiemDen(d, { tatCa: [...trongNuoc, ...nuocNgoai], cungVung });
 
   return (
     <>
@@ -39,7 +47,7 @@ export default async function Page({ params }) {
           { name: d.name, url: `${SITE_URL}/diem-den/${slug}` },
         ])}
       />
-      <DestinationDetail destination={d} tours={tours} />
+      <DestinationDetail destination={d} tours={dungDiem} toursKhac={cungKhuVuc} />
     </>
   );
 }

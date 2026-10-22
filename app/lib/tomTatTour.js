@@ -21,13 +21,15 @@ const giaTreEmThapNhat = (tour) => {
   return ds.length ? Math.min(...ds) : 0;
 };
 
+// Tên tour thường đã có thời gian ("… 3 ngày 2 đêm", "… 5N4Đ") thì không lặp lại
+export const tenCoSoNgay = (tour) =>
+  String(tour.name || "").includes(tour.days) || /\d+\s*N\s*\d+\s*Đ/i.test(tour.name || "");
+
 export function tomTatTour(tour) {
   const cau = [];
   const loai = tour.type === "abroad" ? "nước ngoài" : "trong nước";
-  // Tên tour thường đã có thời gian ("… 3 ngày 2 đêm", "… 5N4Đ") thì không lặp lại
-  const tenCoSoNgay = String(tour.name || "").includes(tour.days) || /\d+\s*N\s*\d+\s*Đ/i.test(tour.name || "");
   cau.push(
-    `${tour.name} là tour ${loai}${tenCoSoNgay ? "" : ` ${tour.days}`} do PSV Travel tổ chức${noiDi(tour) ? `, khởi hành từ ${noiDi(tour)}` : ""}.`
+    `${tour.name} là tour ${loai}${tenCoSoNgay(tour) ? "" : ` ${tour.days}`} do PSV Travel tổ chức${noiDi(tour) ? `, khởi hành từ ${noiDi(tour)}` : ""}.`
   );
 
   if (tour.price > 0) {
