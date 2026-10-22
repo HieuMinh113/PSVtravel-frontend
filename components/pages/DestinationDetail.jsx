@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import { locHtml } from "@/app/lib/sanitize";
 import { MapPin, ArrowRight, ArrowLeft } from "lucide-react";
 import TourCard from "@/components/TourCard";
+import { duocToiUu } from "@/app/lib/anh";
 
 // Trang chi tiết điểm đến — server component (SEO). Hiển thị giới thiệu + tour liên quan.
 export default function DestinationDetail({ destination, tours = [] }) {
@@ -13,7 +15,7 @@ export default function DestinationDetail({ destination, tours = [] }) {
       {/* Hero */}
       <section className="relative h-[48dvh] min-h-[340px] overflow-hidden">
         {d.image ? (
-          <img src={d.image} alt={d.name} className="absolute inset-0 h-full w-full object-cover" />
+          <Image src={d.image} alt={d.name} fill preload sizes="100vw" unoptimized={!duocToiUu(d.image)} className="object-cover" />
         ) : (
           <div className="h-full w-full bg-deep-gradient" />
         )}

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -8,6 +9,7 @@ import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { anhThuNho, mediaKhoanhKhac } from "@/app/lib/youtube";
+import { duocToiUu } from "@/app/lib/anh";
 
 const chuCaiDau = (ten) => (ten || "?").trim().charAt(0).toUpperCase();
 
@@ -104,11 +106,13 @@ export default function Gallery({ photos = [], settings = {} }) {
                   aria-label={`${p.videoId ? "Xem video" : "Xem ảnh"} của ${p.name || "khách hàng"}`}
                   className={`group relative overflow-hidden rounded-2xl bg-deep-900 text-left shadow-card outline-none focus-visible:ring-4 focus-visible:ring-ocean-400/50 ${bentoSpan(i)}`}
                 >
-                  <img
+                  <Image
                     src={p.photo}
                     alt={p.caption || `Khoảnh khắc của ${p.name || "khách hàng"}`}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    unoptimized={!duocToiUu(p.photo)}
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
                   />
                   {/* Lớp phủ đáy để chữ trắng luôn đọc được, đậm dần khi rê chuột */}
                   <div className="absolute inset-0 bg-gradient-to-t from-deep-950/75 via-deep-950/10 to-transparent transition-opacity duration-500 group-hover:from-deep-950/90" />
@@ -150,7 +154,7 @@ export default function Gallery({ photos = [], settings = {} }) {
                     )}
                     <div className="flex items-center gap-2">
                       {p.avatar ? (
-                        <img src={p.avatar} alt="" className="h-7 w-7 rounded-full border-2 border-white/80 object-cover" />
+                        <Image src={p.avatar} alt="" width={28} height={28} unoptimized={!duocToiUu(p.avatar)} className="h-7 w-7 rounded-full border-2 border-white/80 object-cover" />
                       ) : (
                         <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-white/80 bg-ocean-700 text-[10px] font-bold text-white">
                           {chuCaiDau(p.name)}
@@ -276,7 +280,7 @@ export default function Gallery({ photos = [], settings = {} }) {
               <div className="flex flex-col p-6 sm:p-7">
                 <div className="flex items-center gap-3">
                   {active.avatar ? (
-                    <img src={active.avatar} alt="" className="h-11 w-11 rounded-full object-cover" />
+                    <Image src={active.avatar} alt="" width={44} height={44} unoptimized={!duocToiUu(active.avatar)} className="h-11 w-11 rounded-full object-cover" />
                   ) : (
                     <span className="grid h-11 w-11 place-items-center rounded-full bg-ocean-700 text-sm font-bold text-white">
                       {chuCaiDau(active.name)}
@@ -322,7 +326,7 @@ export default function Gallery({ photos = [], settings = {} }) {
                           gi === photoIndex ? "border-ocean-500" : "border-transparent opacity-70 hover:opacity-100"
                         }`}
                       >
-                        <img src={item.loai === "video" ? anhThuNho(item.id) : item.src} alt="" onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} className="h-full w-full bg-deep-900 object-cover" />
+                        <Image src={item.loai === "video" ? anhThuNho(item.id) : item.src} alt="" fill sizes="64px" unoptimized={!duocToiUu(item.loai === "video" ? anhThuNho(item.id) : item.src)} onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} className="bg-deep-900 object-cover" />
                         {item.loai === "video" && (
                           <span className="absolute inset-0 grid place-items-center bg-deep-950/35">
                             <Play className="ml-0.5 h-5 w-5 fill-white text-white" aria-hidden="true" />

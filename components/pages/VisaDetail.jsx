@@ -26,6 +26,7 @@ export default function VisaDetail({ visa, related = [], settings = {} }) {
         eyebrow="Dịch vụ visa"
         title={`Visa ${visa.typeLabel} ${visa.name}`}
         description={`Hỗ trợ trọn gói hồ sơ xin visa ${visa.name}: tư vấn, chuẩn bị giấy tờ, đặt lịch và nộp hồ sơ. Tỷ lệ đậu cao, minh bạch chi phí.`}
+        breadcrumbSchema={false}
         crumbs={[{ label: "Làm visa", to: "/lam-visa" }, { label: visa.name }]}
       />
 

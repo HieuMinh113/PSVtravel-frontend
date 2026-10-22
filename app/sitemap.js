@@ -1,4 +1,4 @@
-import { getTours, getGuides, getVisaSlugs, getEventSlugs, getDestinationSlugs, getJobSlugs } from "@/app/lib/api";
+import { getTourSitemap, getGuideSitemap, getVisaSlugs, getEventSlugs, getDestinationSlugs, getJobSlugs } from "@/app/lib/api";
 import { SITE_URL } from "./lib/seo";
 
 // Sitemap dựng lại mỗi giờ để tour và bài viết mới sớm được Google ghi nhận
@@ -36,7 +36,7 @@ export default async function sitemap() {
   // trong data/tours.js — sitemap khai báo với Google những trang không tồn tại,
   // còn tour đang bán thật thì không bao giờ được gửi lên.
   //
-  // BỌC try/catch cho từng lời gọi: getTours ném lỗi khi API trục trặc (batBuoc).
+  // BỌC try/catch cho từng lời gọi: getTourSitemap ném lỗi khi API trục trặc (batBuoc).
   // Không bọc thì chỉ một nhịp API chập chờn là CẢ sitemap văng lỗi 500, và
   // Google báo "Không thể tìm nạp" — mất luôn cả các trang tĩnh vốn không cần API.
   // Sitemap phải LUÔN trả về được: thà thiếu vài tour còn hơn không có sitemap.
@@ -49,20 +49,19 @@ export default async function sitemap() {
     }
   };
 
-  const [domestic, abroad, guides, visaSlugs, eventSlugs, destSlugs, jobSlugs] = await Promise.all([
-    anToan(() => getTours({ type: "domestic" })),
-    anToan(() => getTours({ type: "abroad" })),
-    anToan(() => getGuides()),
+  // Tour: lấy từ API riêng cho sitemap — danh sách tour thường chỉ trả tối đa 50
+  // tour mỗi loại và bỏ tour tạm ẩn vì hết hạn visa, sitemap sẽ sót tour.
+  const [tours, guides, visaSlugs, eventSlugs, destSlugs, jobSlugs] = await Promise.all([
+    anToan(() => getTourSitemap()),
+    anToan(() => getGuideSitemap()),
     anToan(() => getVisaSlugs()),
     anToan(() => getEventSlugs()),
     anToan(() => getDestinationSlugs()),
     anToan(() => getJobSlugs()),
   ]);
 
-  const tourEntries = [
-    ...domestic.map((t) => ({ base: "/tour-trong-nuoc", slug: t.slug, updatedAt: t.updatedAt })),
-    ...abroad.map((t) => ({ base: "/tour-nuoc-ngoai", slug: t.slug, updatedAt: t.updatedAt })),
-  ]
+  const tourEntries = tours
+    .map((t) => ({ base: t.type === "abroad" ? "/tour-nuoc-ngoai" : "/tour-trong-nuoc", slug: t.slug, updatedAt: t.updated_at }))
     .filter((x) => x.slug)
     .map(({ base, slug, updatedAt }) => ({
       url: `${SITE_URL}${base}/${slug}`,
@@ -71,12 +70,13 @@ export default async function sitemap() {
       priority: 0.8,
     }));
 
-  // Bài cẩm nang trước đây bị bỏ sót hoàn toàn khỏi sitemap
+  // Bài cẩm nang trước đây bị bỏ sót hoàn toàn khỏi sitemap; sau đó chỉ có 30 bài
+  // mới nhất (API danh sách chia trang) — giờ lấy đủ mọi bài từ API riêng
   const guideEntries = guides
     .filter((g) => g?.slug)
     .map((g) => ({
       url: `${SITE_URL}/cam-nang/${g.slug}`,
-      lastModified: ngay(g.updatedAt),
+      lastModified: ngay(g.updated_at),
       changeFrequency: "monthly",
       priority: 0.6,
     }));

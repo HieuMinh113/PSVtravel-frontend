@@ -11,7 +11,7 @@ const DOI_ANH_MS = 6500;
  * truyền ảnh tour của riêng nó nên nền luôn đúng thứ đang bán ở trang đó.
  *
  * Tất cả ảnh render sẵn và chỉ đổi độ mờ — không gắn/tháo phần tử liên tục
- * nên không giật. Ảnh đầu đặt priority để giữ điểm LCP tốt.
+ * nên không giật. Ảnh đầu đặt preload để giữ điểm LCP tốt.
  *
  * @param images danh sách { src, alt }
  */
@@ -55,7 +55,7 @@ export default function NenAnhDoiCanh({ images }) {
       alt={alt || "Tour du lịch cùng PSV Travel"}
       aria-hidden
       fill
-      priority={i === 0}
+      preload={i === 0}
       sizes="100vw"
       // Nền chỉ hiện mờ 35% dưới lớp phủ tối → nén mạnh hơn không thấy khác
       quality={50}

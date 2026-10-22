@@ -20,6 +20,8 @@ import SectionReveal from "@/components/SectionReveal";
 import ReviewForm from "@/components/ReviewForm";
 import HanNopVisa, { HetHanNhanHoSo } from "@/components/HanNopVisa";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
+import { duocToiUu } from "@/app/lib/anh";
+import { tourFaqs } from "@/app/lib/tourFaqs";
 
 const flagBySlug = {
   "Thái Lan": FlagThailand,
@@ -29,33 +31,6 @@ const flagBySlug = {
   "Trung Quốc": FlagChina,
   "Đài Loan": FlagTaiwan,
 };
-
-const tourFaqs = (tour, isAbroad) => [
-  {
-    q: "Tôi có thể huỷ hoặc đổi lịch khởi hành không?",
-    a: "Có. Bạn có thể đổi ngày khởi hành miễn phí nếu báo trước 7 ngày. Huỷ tour trước 5 ngày được hoàn 80% giá trị, chi tiết theo chính sách huỷ tour từng thời điểm.",
-  },
-  {
-    q: "Hình thức thanh toán như thế nào?",
-    a: "Bạn có thể đặt cọc 30% để giữ chỗ và thanh toán phần còn lại trước ngày khởi hành 3 ngày, qua chuyển khoản, ví điện tử hoặc tại văn phòng.",
-  },
-  {
-    q: "Trẻ em đi cùng có được giảm giá không?",
-    a: "Trẻ em dưới 12 tuổi được tính 60% giá tour người lớn (đã áp dụng sẵn khi bạn chọn số lượng trẻ em ở phần đặt tour bên trên).",
-  },
-  ...(isAbroad
-    ? [{
-        q: "Tôi cần chuẩn bị visa như thế nào cho tour này?",
-        a: `Với tour ${tour.country}, xem chi tiết yêu cầu visa ở phần "Hướng dẫn visa" phía trên. Đội ngũ PSVTravel hỗ trợ trọn gói thủ tục nếu bạn cần.`,
-      }]
-    : []),
-  {
-    // KHÔNG khẳng định tour nào cũng có vé máy bay — tour đi xe thì không.
-    // Câu trả lời cũ vừa bịa vừa trỏ tới khối "Chính sách giá tour" đã gỡ bỏ.
-    q: "Giá tour đã bao gồm những gì?",
-    a: 'Xem đầy đủ ở mục "Giá tour bao gồm" và "Giá tour không bao gồm" trong khối Những thông tin cần lưu ý ở cuối trang. Còn thắc mắc, gọi hotline để được tư vấn viên giải đáp.',
-  },
-];
 
 // Tô đậm tên điểm tham quan.
 //
@@ -154,14 +129,19 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
               </div>
               {day.images && day.images.length > 0 && (
                 <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                  {/* Qua bộ tối ưu ảnh của Next (WebP, đúng cỡ ô) — ảnh admin tải lên
+                      có thể vài MB, trước đây tải nguyên bản gốc xuống điện thoại */}
                   {day.images.map((img, k) => (
-                    <img
-                      key={k}
-                      src={img}
-                      alt={`${day.title} - ảnh ${k + 1}`}
-                      loading="lazy"
-                      className="h-24 w-full rounded-xl object-cover sm:h-32"
-                    />
+                    <div key={k} className="relative h-24 w-full overflow-hidden rounded-xl sm:h-32">
+                      <Image
+                        src={img}
+                        alt={`${day.title} - ảnh ${k + 1}`}
+                        fill
+                        sizes="(max-width: 640px) 50vw, 260px"
+                        unoptimized={!duocToiUu(img)}
+                        className="object-cover"
+                      />
+                    </div>
                   ))}
                 </div>
               )}
@@ -433,7 +413,8 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     };
   }, [tour, visaList]);
   const VisaFlag = tour?.country ? flagBySlug[tour.country] : null;
-  const faqs = useMemo(() => (tour ? tourFaqs(tour, !!tour.country) : []), [tour]);
+  // Dùng chung với dữ liệu FAQPage gửi Google (app/lib/tourFaqs.js) — hai bên luôn khớp
+  const faqs = useMemo(() => (tour ? tourFaqs(tour) : []), [tour]);
 
   if (!tour) return notFound();
 
@@ -547,7 +528,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     <div>
       {/* Hero ảnh lớn */}
       <section className="relative h-[62dvh] min-h-[460px] overflow-hidden">
-        <Image src={tour.image} alt={tour.name} fill priority sizes="100vw" quality={90} className="object-cover" />
+        <Image src={tour.image} alt={tour.name} fill preload sizes="100vw" quality={90} className="object-cover" />
         <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-deep-950/80 via-deep-950/30 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-deep-950/85 via-deep-950/20 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-5 pb-10 pt-24 sm:px-8">
@@ -1001,11 +982,13 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                 aria-label={`Xem ảnh ${i + 1} của ${tour.name}`}
                 className={`group relative overflow-hidden rounded-2xl ${i === 0 ? "col-span-2 row-span-2" : "col-span-1 row-span-1"}`}
               >
-                <img
+                <Image
                   src={img}
                   alt={`${tour.name} - ảnh ${i + 1}`}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 ease-enter group-hover:scale-110"
+                  fill
+                  sizes={i === 0 ? "(max-width: 1024px) 50vw, 420px" : "(max-width: 1024px) 25vw, 210px"}
+                  unoptimized={!duocToiUu(img)}
+                  className="object-cover transition-transform duration-500 ease-enter group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-deep-950/0 transition-colors duration-300 group-hover:bg-deep-950/20" />
                 {/* Dấu phóng to hiện khi rê chuột — cho biết ảnh bấm được */}

@@ -20,8 +20,8 @@ export default function TeamBuilding({ events = [], settings = {} }) {
     <div>
       <PageHero
         eyebrow="Tổ chức sự kiện"
-        title="Team Building & Sự kiện doanh nghiệp"
-        description="PSV Travel tổ chức trọn gói team building, gala dinner, company trip và sự kiện doanh nghiệp — từ kịch bản, hậu cần đến hình ảnh, cho đoàn từ vài chục đến vài trăm khách."
+        title="Team Building & Du lịch công ty"
+        description="PSV Travel tổ chức trọn gói du lịch công ty (company trip), team building, gala dinner và sự kiện doanh nghiệp — từ kịch bản, hậu cần đến hình ảnh, cho đoàn từ vài chục đến vài trăm khách."
         crumbs={[{ label: "Team Building" }]}
       />
 

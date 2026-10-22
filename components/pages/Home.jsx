@@ -182,15 +182,26 @@ export default function Home({
               {autumn ? "THÁNG 10 – CHẠM SẮC THU" : "HÀNH TRÌNH MỚI – TRẢI NGHIỆM MỚI"}
             </motion.span>
 
+            {/* H1 chứa từ khoá khách gõ trên Google ("đặt tour du lịch trong nước, nước
+                ngoài"); khẩu hiệu thương hiệu giữ ngay bên dưới, cỡ chữ nhỏ hơn. */}
             <motion.h1
               initial={{ y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.12 }}
-              className="mt-[clamp(1rem,3vh,1.5rem)] font-display text-[clamp(2rem,5.2vw,3.6rem)] font-bold leading-[1.1] text-white"
+              className="mt-[clamp(1rem,3vh,1.5rem)] text-balance font-display text-[clamp(1.85rem,4.2vw,2.8rem)] font-bold leading-[1.12] text-white"
             >
-              Chạm thế giới<br />
-              <span className="text-ocean-300">Trọn từng hành trình</span>
+              Đặt tour du lịch<br />
+              <span className="text-ocean-300">trong nước &amp; nước ngoài trọn gói</span>
             </motion.h1>
+
+            <motion.p
+              initial={{ y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="mt-[clamp(0.5rem,1.5vh,0.85rem)] font-display text-lg font-semibold text-white sm:text-xl"
+            >
+              Chạm thế giới – Trọn từng hành trình
+            </motion.p>
 
             <motion.p
               initial={{ y: 24 }}

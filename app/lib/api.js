@@ -167,6 +167,14 @@ export async function getTours({ type, featured, category, perPage = 50 } = {}) 
   return (json?.data ?? []).map(mapTour);
 }
 
+// Mọi tour đang hiển thị cho sitemap.xml: [{ slug, type, updated_at }]. Khác
+// getTours: không giới hạn 50 tour, và gồm cả tour tạm ẩn khỏi danh sách vì hết
+// hạn nộp visa (trang tour vẫn mở).
+export async function getTourSitemap() {
+  const json = await layJSON(`/tours-sitemap`, { batBuoc: true });
+  return json?.data ?? [];
+}
+
 export async function getTourBySlug(slug) {
   const json = await layJSON(`/tours/${slug}`);
   return mapTour(json?.data ?? json);
@@ -338,6 +346,13 @@ export async function getGuides({ category } = {}) {
   q.set("per_page", "30");
   const json = await layJSON(`/guides?${q.toString()}`);
   return (json?.data ?? []).map(mapGuide);
+}
+
+// Mọi bài cẩm nang đang hiển thị cho sitemap.xml: [{ slug, updated_at }] —
+// getGuides chỉ lấy 30 bài mới nhất.
+export async function getGuideSitemap() {
+  const json = await layJSON(`/guides-sitemap`);
+  return json?.data ?? [];
 }
 
 export async function getGuideBySlug(slug) {

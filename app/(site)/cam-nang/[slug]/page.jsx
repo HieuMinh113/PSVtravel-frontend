@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import GuideDetail from "@/components/pages/GuideDetail";
-import { pageMeta, JsonLd, SITE_URL, videoJsonLd } from "@/app/lib/seo";
+import { pageMeta, JsonLd, SITE_URL, videoJsonLd, breadcrumbJsonLd } from "@/app/lib/seo";
 import { getGuideBySlug, getGuideMap, getGuideSlugs, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -41,6 +41,13 @@ export default async function Page({ params }) {
   return (
     <>
       <JsonLd data={jsonLd} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Trang chủ", url: SITE_URL },
+          { name: "Cẩm nang", url: `${SITE_URL}/cam-nang` },
+          { name: guide.title, url: `${SITE_URL}/cam-nang/${guide.slug}` },
+        ])}
+      />
       <JsonLd
         data={videoJsonLd({
           videoId: guide.videoId,

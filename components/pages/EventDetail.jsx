@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { locHtml } from "@/app/lib/sanitize";
 import { Users, Clock, MapPin, Wallet, CheckCircle2, ArrowLeft, PartyPopper, Star, CalendarDays } from "lucide-react";
@@ -6,6 +7,7 @@ import SectionReveal from "@/components/SectionReveal";
 import TeamBuildingForm from "@/components/TeamBuildingForm";
 import EventReviewForm from "@/components/EventReviewForm";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
+import { duocToiUu } from "@/app/lib/anh";
 
 const DOI_TUONG = { "gia-dinh": "Gia đình", "doanh-nghiep": "Doanh nghiệp", "ca-nhan": "Cá nhân" };
 
@@ -41,6 +43,7 @@ export default function EventDetail({ event, related = [], settings = {}, review
         eyebrow="Team Building & Sự kiện"
         title={event.title}
         description={event.summary || "Gói tổ chức sự kiện trọn gói cho doanh nghiệp."}
+        breadcrumbSchema={false}
         crumbs={[{ label: "Team Building", to: "/team-building" }, { label: event.title }]}
       />
 
@@ -65,7 +68,8 @@ export default function EventDetail({ event, related = [], settings = {}, review
 
             {event.image && (
               <SectionReveal className="overflow-hidden rounded-2xl">
-                <img src={event.image} alt={event.title} className="w-full object-cover" />
+                {/* width/height chỉ để giữ chỗ; h-auto giữ đúng tỉ lệ ảnh thật, không cắt */}
+                <Image src={event.image} alt={event.title} width={1200} height={750} sizes="(max-width: 1024px) 100vw, 800px" unoptimized={!duocToiUu(event.image)} className="h-auto w-full object-cover" />
               </SectionReveal>
             )}
 
@@ -130,8 +134,8 @@ export default function EventDetail({ event, related = [], settings = {}, review
                       {ngay.images?.length > 0 && (
                         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
                           {ngay.images.map((src, k) => (
-                            <div key={k} className="overflow-hidden rounded-xl bg-ocean-100">
-                              <img src={src} alt={`${ngay.title || `Ngày ${i + 1}`} ${k + 1}`} className="aspect-[4/3] w-full object-cover" loading="lazy" />
+                            <div key={k} className="relative aspect-[4/3] overflow-hidden rounded-xl bg-ocean-100">
+                              <Image src={src} alt={`${ngay.title || `Ngày ${i + 1}`} ${k + 1}`} fill sizes="(max-width: 640px) 50vw, 260px" unoptimized={!duocToiUu(src)} className="object-cover" />
                             </div>
                           ))}
                         </div>
@@ -156,8 +160,8 @@ export default function EventDetail({ event, related = [], settings = {}, review
                 <h2 className="font-display text-xl font-bold text-deep-900">Hình ảnh thực tế</h2>
                 <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {anhThucTe.map((src, i) => (
-                    <div key={i} className="overflow-hidden rounded-xl bg-ocean-100">
-                      <img src={src} alt={`${event.title} ${i + 1}`} className="aspect-square w-full object-cover" loading="lazy" />
+                    <div key={i} className="relative aspect-square overflow-hidden rounded-xl bg-ocean-100">
+                      <Image src={src} alt={`${event.title} ${i + 1}`} fill sizes="(max-width: 640px) 50vw, 260px" unoptimized={!duocToiUu(src)} className="object-cover" />
                     </div>
                   ))}
                 </div>
@@ -244,9 +248,9 @@ export default function EventDetail({ event, related = [], settings = {}, review
                   href={`/team-building/${e.slug}`}
                   className="card-surface group flex flex-col overflow-hidden transition-transform hover:-translate-y-1"
                 >
-                  <div className="aspect-[16/10] overflow-hidden bg-ocean-100">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-ocean-100">
                     {e.image ? (
-                      <img src={e.image} alt={e.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <Image src={e.image} alt={e.title} fill sizes="(max-width: 640px) 100vw, 33vw" unoptimized={!duocToiUu(e.image)} className="object-cover transition-transform duration-500 group-hover:scale-105" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-ocean-300"><PartyPopper className="h-10 w-10" /></div>
                     )}

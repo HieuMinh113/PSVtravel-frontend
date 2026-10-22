@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import OrbitGallery from "./OrbitGallery";
+import { breadcrumbJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
 import NenAnhDoiCanh from "./NenAnhDoiCanh";
 
 // Banner dùng chung cho các trang con — nền gradient xanh biển pha xanh ngọc,
@@ -11,7 +12,10 @@ import NenAnhDoiCanh from "./NenAnhDoiCanh";
 // dùng đúng kích thước như Hero trang chủ (radius 430) để đồng bộ toàn site.
 // Truyền thêm `backgroundImages` ({ src, alt }) thì nền là ảnh tour chuyển cảnh
 // chậm như trang chủ — trang Tour trong nước / nước ngoài dùng ảnh tour của riêng mình.
-export default function PageHero({ eyebrow, title, description, crumbs = [], orbitImages, backgroundImages }) {
+// breadcrumbSchema: kèm dữ liệu có cấu trúc BreadcrumbList dựng từ đúng dải điều
+// hướng đang hiện (Google hiện đường dẫn phân cấp trên kết quả tìm kiếm). Trang
+// nào đã tự khai báo breadcrumb đầy đủ hơn thì truyền false để khỏi trùng.
+export default function PageHero({ eyebrow, title, description, crumbs = [], orbitImages, backgroundImages, breadcrumbSchema = true }) {
   const hasOrbit = orbitImages && orbitImages.length > 0;
   const coAnhNen = backgroundImages && backgroundImages.length > 0;
 
@@ -87,6 +91,15 @@ export default function PageHero({ eyebrow, title, description, crumbs = [], orb
       )}
 
       <div className={`relative z-10 mx-auto text-center ${hasOrbit ? "max-w-3xl" : "max-w-5xl"}`}>
+        {crumbs.length > 0 && breadcrumbSchema && (
+          <JsonLd
+            data={breadcrumbJsonLd([
+              { name: "Trang chủ", url: SITE_URL },
+              // mục cuối (trang đang xem) không có link — Google cho phép bỏ trống
+              ...crumbs.map((c) => ({ name: c.label, url: c.to ? SITE_URL + c.to : undefined })),
+            ])}
+          />
+        )}
         {crumbs.length > 0 && (
           <div className="mb-4 flex flex-wrap items-center justify-center gap-1.5 text-xs text-white/80">
             <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>

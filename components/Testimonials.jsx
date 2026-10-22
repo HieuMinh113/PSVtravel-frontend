@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Star, Quote, ArrowRight, Images } from "lucide-react";
 import SectionReveal from "./SectionReveal";
+import { duocToiUu } from "@/app/lib/anh";
 
 function TestimonialCard({ t }) {
   const initial = (t.name || "?").trim().charAt(0).toUpperCase();
@@ -19,9 +20,12 @@ function TestimonialCard({ t }) {
             ))}
           </span>
           {t.avatar ? (
-            <img
+            <Image
               src={t.avatar}
               alt={t.name}
+              width={48}
+              height={48}
+              unoptimized={!duocToiUu(t.avatar)}
               className="absolute -bottom-5 left-4 h-12 w-12 rounded-full border-4 border-white object-cover shadow"
             />
           ) : (

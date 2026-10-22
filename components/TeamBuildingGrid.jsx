@@ -1,7 +1,9 @@
 "use client";
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Users, Clock, MapPin, ArrowRight, PartyPopper, Star } from "lucide-react";
+import { duocToiUu } from "@/app/lib/anh";
 
 // Nhãn đối tượng — khớp với App\Models\Event::DOI_TUONG bên backend
 const DOI_TUONG = {
@@ -56,7 +58,7 @@ export default function TeamBuildingGrid({ events = [] }) {
           >
             <div className="relative aspect-[16/10] overflow-hidden bg-ocean-100">
               {e.image ? (
-                <img src={e.image} alt={e.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <Image src={e.image} alt={e.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized={!duocToiUu(e.image)} className="object-cover transition-transform duration-500 group-hover:scale-105" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-ocean-300">
                   <PartyPopper className="h-12 w-12" />

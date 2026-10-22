@@ -201,7 +201,7 @@ export default function Auth() {
           />
           <div className="absolute inset-0 flex flex-col justify-between p-8 text-white">
             <Link href="/" className="flex items-center gap-2.5">
-              <Image src="/logo.png" alt="PSVTravel" width={900} height={349} priority className="h-10 w-auto object-contain drop-shadow-sm" />
+              <Image src="/logo.png" alt="PSVTravel" width={900} height={349} preload className="h-10 w-auto object-contain drop-shadow-sm" />
               <span className="font-display text-lg font-bold">PSVTravel</span>
             </Link>
             <div>

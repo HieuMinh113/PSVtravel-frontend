@@ -1,7 +1,9 @@
 "use client";
+import Image from "next/image";
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { duocToiUu } from "@/app/lib/anh";
 
 // Carousel 3D giới thiệu đội ngũ.
 //
@@ -78,7 +80,7 @@ export default function TeamCarousel({ members = [] }) {
           {members.map((m, index) => (
             <div key={m.id ?? index} className="tc-slide" style={kieuAnh(index)}>
               {m.photo ? (
-                <img src={m.photo} alt={m.name} className="tc-img" />
+                <Image src={m.photo} alt={m.name} fill sizes="(max-width: 768px) 90vw, 420px" unoptimized={!duocToiUu(m.photo)} className="tc-img" />
               ) : (
                 <div className="tc-img tc-fallback">{chuDau(m.name)}</div>
               )}

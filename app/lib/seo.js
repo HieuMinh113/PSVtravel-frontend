@@ -27,6 +27,10 @@ export const formatVND = (n) =>
 // 1200×630 khi có; tạm dùng logo cho đủ thẻ.
 const OG_IMAGE_MAC_DINH = `${SITE_URL}/logo.png`;
 
+// Gỡ dấu sao bọc tên điểm tham quan ("*Vạn Lý Trường Thành*") — quy ước nội bộ
+// để tô đậm ngoài giao diện, không được lọt lên Google.
+const boDauSao = (chu) => String(chu || "").replace(/\*([^*\n]+)\*/g, "$1");
+
 // Cắt mô tả về tối đa ~155 ký tự (ngắt ở khoảng trắng, thêm dấu …) để thẻ meta
 // description không bị công cụ tìm kiếm cắt cụt. Mô tả ngắn giữ nguyên.
 function rutGonMoTa(text, gioiHan = 155) {
@@ -97,9 +101,18 @@ export function pageMeta({ title, description, path = "/", image }) {
 export function tourMeta(tour, basePath) {
   if (!tour) return pageMeta({ title: "Không tìm thấy tour", path: basePath });
   const path = `${basePath}/${tour.slug}`;
-  const description = `${tour.name} — ${tour.days}, khởi hành ${tour.departure}. Giá từ ${formatVND(
-    tour.price
-  )}/khách. ${(tour.highlights || []).slice(0, 3).join(", ")}.`;
+  // Ghép từng phần, phần nào trống thì bỏ — trước đây ra "khởi hành Từ Hồ Chí
+  // Minh" (hoa giữa câu), "khởi hành ." khi chưa nhập nơi đi, "Giá từ 0 ₫" với
+  // tour giá liên hệ, và lọt dấu * đánh dấu tên điểm tham quan lên Google.
+  const noiDi = String(tour.departure || "").trim();
+  const diemNhan = (tour.highlights || []).map((h) => boDauSao(h).trim()).filter(Boolean).slice(0, 3);
+  const description = [
+    `${tour.name} — ${tour.days}${noiDi ? `, khởi hành ${noiDi.charAt(0).toLowerCase()}${noiDi.slice(1)}` : ""}`,
+    tour.price > 0 ? `Giá từ ${formatVND(tour.price)}/khách` : "Liên hệ để nhận báo giá",
+    diemNhan.join(", "),
+  ]
+    .filter(Boolean)
+    .join(". ") + ".";
   // Ưu tiên "Tiêu đề SEO" nhân viên tự viết trong admin; trống thì dùng tên tour
   return pageMeta({ title: tour.seoTitle || tour.name, description, path, image: tour.coAnhBia ? tour.image : undefined });
 }
@@ -232,8 +245,11 @@ export function serviceJsonLd({ name, serviceType, url, description }) {
 }
 
 // JSON-LD cho một tour (TouristTrip + Offer)
-// Gỡ dấu sao bọc tên điểm tham quan trong nội dung lịch trình.
-const boDauSao = (chu) => String(chu || "").replace(/\*([^*\n]+)\*/g, "$1");
+
+// Tình trạng bán theo thực tế: mọi ngày khởi hành đều đã hết hạn nhận hồ sơ visa
+// thì "hết", còn lại "còn" (tour chưa có lịch vẫn nhận đặt theo yêu cầu).
+const tinhTrangBan = (tour) =>
+  tour.hetHanVisa ? "https://schema.org/OutOfStock" : "https://schema.org/InStock";
 
 export function tourJsonLd(tour, basePath) {
   const url = `${SITE_URL}${basePath}/${tour.slug}`;
@@ -261,19 +277,24 @@ export function tourJsonLd(tour, basePath) {
     provider: { "@id": ORG_ID },
     // Ngày cập nhật gần nhất — độ mới là yếu tố mạnh để AI trích dẫn.
     ...(tour.updatedAt ? { dateModified: String(tour.updatedAt).slice(0, 10) } : {}),
-    offers: {
-      "@type": "Offer",
-      price: tour.price,
-      priceCurrency: "VND",
-      availability: "https://schema.org/InStock",
-      url,
-      ...(tour.departures?.length
-        ? {
-            // Đợt khởi hành gần nhất còn mở (đã lọc, sắp theo ngày)
-            validFrom: tour.departures[0].startISO,
-          }
-        : {}),
-    },
+    // Tour giá "liên hệ" (0đ) không khai giá: Google sẽ hiện thành "Miễn phí"
+    ...(tour.price > 0
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: tour.price,
+            priceCurrency: "VND",
+            availability: tinhTrangBan(tour),
+            url,
+            ...(tour.departures?.length
+              ? {
+                  // Đợt khởi hành gần nhất còn mở (đã lọc, sắp theo ngày)
+                  validFrom: tour.departures[0].startISO,
+                }
+              : {}),
+          },
+        }
+      : {}),
     // aggregateRating CHỈ khi có đánh giá thật: Google coi block này không hợp lệ
     // nếu reviewCount = 0, cả trang mất luôn dữ liệu có cấu trúc.
     ...(tour.rating && tour.reviews > 0
@@ -300,6 +321,10 @@ export function tourProductJsonLd(tour, basePath) {
     tour.lastDepartureDate ||
     tour.departures?.[tour.departures.length - 1]?.startISO ||
     `${new Date().getFullYear() + 1}-12-31`;
+  const coDanhGia = Boolean(tour.rating && tour.reviews > 0);
+  // Product phải có giá hoặc đánh giá mới hợp lệ — tour giá liên hệ chưa có đánh
+  // giá thì không khai báo (khai thiếu thì Search Console báo lỗi cả trang).
+  if (!(tour.price > 0) && !coDanhGia) return null;
 
   return {
     "@context": "https://schema.org",
@@ -309,14 +334,18 @@ export function tourProductJsonLd(tour, basePath) {
     description: boDauSao((tour.highlights || []).join(", ")) || tour.name,
     brand: { "@type": "Brand", name: SITE_NAME },
     ...(tour.slug ? { sku: tour.slug } : {}),
-    offers: {
-      "@type": "Offer",
-      price: tour.price,
-      priceCurrency: "VND",
-      availability: "https://schema.org/InStock",
-      url,
-      priceValidUntil: String(hanGia).slice(0, 10),
-    },
+    ...(tour.price > 0
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: tour.price,
+            priceCurrency: "VND",
+            availability: tinhTrangBan(tour),
+            url,
+            priceValidUntil: String(hanGia).slice(0, 10),
+          },
+        }
+      : {}),
     // aggregateRating chỉ thêm khi có đánh giá thật (reviewCount > 0) — bắt buộc
     // để Google hiện sao, và để không vi phạm chính sách "đánh giá phải có thật".
     ...(tour.rating && tour.reviews > 0
@@ -362,6 +391,21 @@ export function tourVideoJsonLd(tour, basePath) {
     uploadDate: tour.updatedAt,
     url: `${SITE_URL}${basePath}/${tour.slug}`,
   });
+}
+
+// Câu hỏi thường gặp — items: [{ q, a }] đúng như đang hiện trên trang (Google
+// yêu cầu nội dung FAQPage phải nhìn thấy được trên trang).
+export function faqJsonLd(items) {
+  if (!items?.length) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
 }
 
 // Component nhúng JSON-LD

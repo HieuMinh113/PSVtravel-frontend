@@ -14,6 +14,7 @@ import CountUp from "@/components/CountUp";
 import TeamCarousel from "@/components/TeamCarousel";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { anhThuNho, mediaKhoanhKhac } from "@/app/lib/youtube";
+import { duocToiUu } from "@/app/lib/anh";
 
 const values = [
   {
@@ -457,7 +458,7 @@ export default function AboutUs({ moments = [], team = [], aboutImages = [], vid
                         gi === photoIndex ? "border-ocean-500" : "border-transparent opacity-70 hover:opacity-100"
                       }`}
                     >
-                      <img src={item.loai === "video" ? anhThuNho(item.id) : item.src} alt="" onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} className="h-full w-full bg-deep-900 object-cover" />
+                      <Image src={item.loai === "video" ? anhThuNho(item.id) : item.src} alt="" fill sizes="64px" unoptimized={!duocToiUu(item.loai === "video" ? anhThuNho(item.id) : item.src)} onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} className="bg-deep-900 object-cover" />
                       {item.loai === "video" && (
                         <span className="absolute inset-0 grid place-items-center bg-deep-950/35">
                           <Play className="ml-0.5 h-5 w-5 fill-white text-white" aria-hidden="true" />
