@@ -9,6 +9,7 @@ import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/SocialIcons";
 import { fbTrack } from "@/app/lib/fbpixel";
+import { bamLienHe, ghiLead } from "@/app/lib/doLuong";
 import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 import { CONG_TY } from "@/app/lib/seo";
 import { layNguon } from "@/app/lib/nguonKhach";
@@ -99,6 +100,7 @@ export default function Contact({ settings = {} }) {
       // Khách đã gửi form liên hệ (tên + SĐT + nhu cầu) → một "Lead" thực sự.
       fbTrack("Lead", { content_name: form.subject, content_category: "lien-he" });
       gtagConversion(CONVERSION_LIEN_HE, { value: 1.0, currency: "VND" });
+      ghiLead("lien_he");
       setForm({ name: "", phone: "", email: "", subject: "Tư vấn tour trong nước", message: "", website: "" });
     } catch {
       setLoi("Không kết nối được máy chủ. Vui lòng gọi hotline giúp chúng tôi.");
@@ -152,7 +154,7 @@ export default function Contact({ settings = {} }) {
                 <SectionReveal key={k.label} delay={i * 0.08}>
                   <Boc
                     {...(k.href ? { href: k.href } : {})}
-                    {...(k.href?.startsWith("tel:") ? { onClick: () => fbTrack("Contact", { method: "hotline" }) } : {})}
+                    {...(k.href?.startsWith("tel:") ? { onClick: () => bamLienHe("hotline") } : {})}
                     className={`card-surface group flex h-full items-start gap-4 p-5 ${k.href ? "cursor-pointer" : ""}`}
                   >
                     <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${k.mau} text-white transition-transform duration-400 ease-enter group-hover:scale-110`}>
@@ -302,7 +304,7 @@ export default function Contact({ settings = {} }) {
                     )}
                   </button>
                   <p className="text-center text-xs text-ink-subtle">
-                    Hoặc gọi trực tiếp <a href={`tel:${hotline.replace(/[^0-9]/g, "")}`} onClick={() => fbTrack("Contact", { method: "hotline" })} className="vung-bam font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
+                    Hoặc gọi trực tiếp <a href={`tel:${hotline.replace(/[^0-9]/g, "")}`} onClick={() => bamLienHe("hotline")} className="vung-bam font-semibold text-sunset-700 hover:underline">{hotline}</a> để được hỗ trợ ngay.
                   </p>
                 </form>
               )}

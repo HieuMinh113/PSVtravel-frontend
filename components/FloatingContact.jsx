@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Phone, MessageCircle } from "lucide-react";
-import { fbTrack } from "@/app/lib/fbpixel";
+import { bamLienHe } from "@/app/lib/doLuong";
 import { MessengerIcon } from "@/components/SocialIcons";
 
 // Nút liên hệ nổi — giúp khách chốt tour nhanh qua gọi điện / Zalo / Messenger,
@@ -66,7 +66,7 @@ export default function FloatingContact({ settings = {} }) {
         href={messengerHref}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={() => fbTrack("Contact", { method: "messenger" })}
+        onClick={() => bamLienHe("messenger")}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.45 }}
@@ -87,7 +87,7 @@ export default function FloatingContact({ settings = {} }) {
         href={zaloHref}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={() => fbTrack("Contact", { method: "zalo" })}
+        onClick={() => bamLienHe("zalo")}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
@@ -105,7 +105,7 @@ export default function FloatingContact({ settings = {} }) {
       {/* Hotline — có vòng lan toả (ripple) để thu hút chú ý */}
       <motion.a
         href={telHref}
-        onClick={() => fbTrack("Contact", { method: "hotline" })}
+        onClick={() => bamLienHe("hotline")}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.15 }}

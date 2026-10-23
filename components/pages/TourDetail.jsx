@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { createBooking } from "@/app/lib/api";
 import { fbTrack } from "@/app/lib/fbpixel";
+import { bamLienHe, ghiLead, ghiXemTour } from "@/app/lib/doLuong";
 import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 import { formatVND } from "@/data/tours";
 import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwan } from "@/components/FlagIcons";
@@ -273,6 +274,15 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
   const [submitting, setSubmitting] = useState(false);
   const [bookingCode, setBookingCode] = useState("");
   const [depId, setDepId] = useState(tour?.departures?.[0]?.id ?? null);
+
+  // GA4: khách xem tour nào (báo cáo "Mặt hàng" — tour nào nhiều người xem mà ít
+  // người đặt). Một lần mỗi tour; chuyển sang tour khác thì bắn lại.
+  useEffect(() => {
+    if (!tour?.slug) return;
+    ghiXemTour(tour);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chỉ theo tour đang xem
+  }, [tour?.slug]);
+
   // Điền sẵn tên và số điện thoại cho khách đã đăng nhập.
   //
   // Cố ý lấy ở phía trình duyệt chứ không lấy lúc dựng trang: trang chi tiết
@@ -512,6 +522,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
         currency: "VND",
         ...(res?.data?.booking_code ? { transaction_id: res.data.booking_code } : {}),
       });
+      ghiLead("dat_tour", { giaTri: total, tenTour: tour.name });
     } catch (e) {
       setFormError(e.message);
     } finally {
@@ -964,7 +975,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                       {submitting ? "Đang gửi..." : <>Đặt tour ngay <ArrowRight className="h-4 w-4" /></>}
                     </button>
 
-                    <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} onClick={() => fbTrack("Contact", { method: "hotline", content_name: tour.name })} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
+                    <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} onClick={() => bamLienHe("hotline", tour.name)} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
                       <Phone className="h-4 w-4" /> Gọi tư vấn: {hotline}
                     </a>
 
@@ -1184,7 +1195,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
               <div className="flex shrink-0 items-center gap-2">
                 <a
                   href={`tel:${hotline.replace(/[^0-9+]/g, "")}`}
-                  onClick={() => fbTrack("Contact", { method: "hotline", content_name: tour.name })}
+                  onClick={() => bamLienHe("hotline", tour.name)}
                   aria-label={`Gọi tư vấn ${hotline}`}
                   className="grid h-12 w-12 place-items-center rounded-full border border-ocean-200 text-ocean-700 transition-colors active:bg-ocean-50"
                 >

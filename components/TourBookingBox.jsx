@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { createBooking } from "@/app/lib/api";
 import { fbTrack } from "@/app/lib/fbpixel";
+import { bamLienHe, ghiLead } from "@/app/lib/doLuong";
 import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 import { formatVND } from "@/data/tours";
 import HanNopVisa, { HetHanNhanHoSo } from "@/components/HanNopVisa";
@@ -115,6 +116,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
         currency: "VND",
         ...(res?.data?.booking_code ? { transaction_id: res.data.booking_code } : {}),
       });
+      ghiLead("dat_tour", { giaTri: total, tenTour: tour.name });
     } catch (e) {
       setFormError(e.message);
     } finally {
@@ -324,7 +326,7 @@ export default function TourBookingBox({ tour, settings = {}, tourLink = null })
               {submitting ? "Đang gửi..." : <>Đặt tour ngay <ArrowRight className="h-4 w-4" /></>}
             </button>
 
-            <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} onClick={() => fbTrack("Contact", { method: "hotline", content_name: tour.name })} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
+            <a href={`tel:${hotline.replace(/[^0-9+]/g, "")}`} onClick={() => bamLienHe("hotline", tour.name)} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ocean-200 py-3 text-sm font-semibold text-ocean-700 transition-colors hover:border-ocean-400 hover:bg-ocean-50">
               <Phone className="h-4 w-4" /> Gọi tư vấn: {hotline}
             </a>
 
