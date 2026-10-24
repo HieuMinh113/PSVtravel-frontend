@@ -7,6 +7,7 @@ import { locHtml } from "@/app/lib/sanitize";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import BanDoCamNang from "@/components/camnang/BanDoCamNang";
 import NutXemBanDo from "@/components/camnang/NutXemBanDo";
+import { AnhTacGia, VeTacGia } from "@/components/pages/AuthorDetail";
 
 // Trang chi tiết bài viết cẩm nang — component phía server (không cần "use client")
 // để nội dung bài viết được render sẵn trong HTML, tốt cho SEO.
@@ -63,7 +64,15 @@ export default function GuideDetail({ guide, settings = {}, banDo = null }) {
           <span className="mt-5 block h-1 w-16 rounded-full bg-gradient-to-r from-gold-400 to-sunset-500" />
 
           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/85">
-            {guide.author && (
+            {guide.authorProfile ? (
+              <Link href={`/tac-gia/${guide.authorProfile.slug}`} rel="author" className="flex items-center gap-2 transition-colors hover:text-gold-300">
+                <AnhTacGia author={guide.authorProfile} size={28} />
+                <span>
+                  {guide.authorProfile.name}
+                  {guide.authorProfile.position && <span className="text-white/70"> · {guide.authorProfile.position}</span>}
+                </span>
+              </Link>
+            ) : guide.author && (
               <span className="flex items-center gap-1.5"><User className="h-4 w-4 text-gold-400" /> {guide.author}</span>
             )}
             {guide.date && (
@@ -123,6 +132,8 @@ export default function GuideDetail({ guide, settings = {}, banDo = null }) {
           ) : (
             <p className="mt-10 text-ink-muted">Nội dung bài viết đang được cập nhật.</p>
           )}
+
+          <VeTacGia author={guide.authorProfile} />
 
           {/* Khối kêu gọi cuối bài — người vừa đọc xong cẩm nang là lúc dễ chuyển
               sang xem tour nhất, nên đặt lời mời ở đây thay vì chỉ 2 nút trơn */}

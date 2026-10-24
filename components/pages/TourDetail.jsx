@@ -88,10 +88,14 @@ function tachBuoi(noiDung) {
     });
 }
 
+// Nội dung MỌI ngày luôn nằm sẵn trong HTML, ngày đang đóng chỉ thu chiều cao
+// về 0. Trước đây ngày đóng không được dựng ra — Google và AI đọc trang chỉ
+// thấy lịch trình ngày 1. `inert` khi đóng: bấm Tab không lọt vào phần ẩn.
 function ItineraryItem({ day, index, isOpen, onToggle }) {
+  const maNoiDung = `lich-trinh-ngay-${index + 1}`;
   return (
     <div className="overflow-hidden rounded-2xl bg-white shadow-card">
-      <button onClick={onToggle} className="flex w-full items-center gap-4 p-5 text-left">
+      <button onClick={onToggle} aria-expanded={isOpen} aria-controls={maNoiDung} className="flex w-full items-center gap-4 p-5 text-left">
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ocean-700 font-display text-sm font-bold text-white">
           {index + 1}
         </span>
@@ -103,15 +107,14 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
           <ChevronDown className="h-5 w-5 text-ink-subtle" />
         </motion.span>
       </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="overflow-hidden"
-          >
+      <motion.div
+        id={maNoiDung}
+        initial={false}
+        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        inert={!isOpen}
+        className="overflow-hidden"
+      >
             <div className="flex flex-col gap-4 px-5 pb-5 sm:pl-[4.25rem]">
               {/* Nhãn buổi và nội dung nằm hai cột riêng: dòng thứ hai trở đi
                   thẳng hàng với dòng đầu thay vì tụt về sát lề trái, mắt đọc
@@ -148,9 +151,36 @@ function ItineraryItem({ day, index, isOpen, onToggle }) {
                 </div>
               )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </motion.div>
+    </div>
+  );
+}
+
+// "Giá tour bao gồm / không bao gồm" — hai cột hiện sẵn, không giấu trong ô
+// bấm mở: khách so tour hay hỏi đúng chỗ này, Google và AI cũng đọc được.
+function BaoGomKhongBaoGom({ baoGom = [], khongBaoGom = [] }) {
+  if (!baoGom.length && !khongBaoGom.length) return null;
+  const cot = [
+    { tieuDe: "Giá tour bao gồm", ds: baoGom, Icon: Check, mauIcon: "text-teal-600", nen: "bg-teal-50" },
+    { tieuDe: "Giá tour không bao gồm", ds: khongBaoGom, Icon: X, mauIcon: "text-sunset-700", nen: "bg-sunset-50" },
+  ].filter((c) => c.ds.length);
+  return (
+    <div className={`mt-5 grid gap-4 ${cot.length > 1 ? "md:grid-cols-2" : ""}`}>
+      {cot.map(({ tieuDe, ds, Icon, mauIcon, nen }) => (
+        <div key={tieuDe} className="rounded-2xl bg-white p-5 shadow-card sm:p-6">
+          <h3 className="font-display text-base font-bold text-deep-900">{tieuDe}</h3>
+          <ul className="mt-3 space-y-2.5 text-base leading-relaxed text-ink-muted">
+            {ds.map((dong, i) => (
+              <li key={i} className="flex gap-2.5">
+                <span aria-hidden="true" className={`mt-[0.2rem] grid h-5 w-5 shrink-0 place-items-center rounded-full ${nen}`}>
+                  <Icon className={`h-3.5 w-3.5 ${mauIcon}`} strokeWidth={3} />
+                </span>
+                <span>{dong}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 }
@@ -198,9 +228,8 @@ function ReviewCard({ r, index }) {
 // dài tới 160 ký tự thì mắt đọc tới cuối dòng là lạc sang dòng khác.
 //
 // Nội dung do nhân viên gõ trong admin nên phải giữ nguyên cách xuống dòng —
-// bảng phí huỷ tour mà dồn hết thành một đoạn thì không ai đọc nổi. Danh sách
-// (bao gồm / không bao gồm) truyền vào qua `muc` thay vì `noiDung`.
-function LuuYItem({ tieuDe, noiDung, muc, isOpen, onToggle }) {
+// bảng phí huỷ tour mà dồn hết thành một đoạn thì không ai đọc nổi.
+function LuuYItem({ tieuDe, noiDung, isOpen, onToggle }) {
   return (
     <div className="border-b border-ocean-100 last:border-b-0">
       <button
@@ -219,18 +248,7 @@ function LuuYItem({ tieuDe, noiDung, muc, isOpen, onToggle }) {
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        {muc ? (
-          <ul className="max-w-2xl space-y-1.5 pb-4 text-base leading-relaxed text-ink-muted">
-            {muc.map((dong, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-ocean-400" />
-                <span>{dong}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="max-w-2xl whitespace-pre-line pb-4 text-base leading-relaxed text-ink-muted">{noiDung}</p>
-        )}
+        <p className="max-w-2xl whitespace-pre-line pb-4 text-base leading-relaxed text-ink-muted">{noiDung}</p>
       </motion.div>
     </div>
   );
@@ -386,8 +404,7 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
     if (!tour) return [];
     const ds = [];
 
-    if (tour.included?.length) ds.push({ tieuDe: "Giá tour bao gồm", muc: tour.included });
-    if (tour.excluded?.length) ds.push({ tieuDe: "Giá tour không bao gồm", muc: tour.excluded });
+    // "Bao gồm / không bao gồm" đã hiện thành hai cột ngay dưới lịch trình
     if (tour.cancellationPolicy?.trim()) {
       ds.push({ tieuDe: "Chính sách huỷ tour", noiDung: tour.cancellationPolicy });
     }
@@ -709,6 +726,13 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                 ))}
               </div>
             </SectionReveal>
+
+            {(tour.included?.length > 0 || tour.excluded?.length > 0) && (
+              <SectionReveal delay={0.1} className="mt-8">
+                <h2 className="font-display text-xl font-bold text-deep-900">Giá tour bao gồm những gì</h2>
+                <BaoGomKhongBaoGom baoGom={tour.included ?? []} khongBaoGom={tour.excluded ?? []} />
+              </SectionReveal>
+            )}
 
             {/* ===== HƯỚNG DẪN VISA — chỉ hiện với tour nước ngoài ===== */}
             {visaInfo && (
@@ -1046,9 +1070,9 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
       )}
 
       {/* ===== NHỮNG THÔNG TIN CẦN LƯU Ý =====
-          Toàn bộ nội dung lấy từ admin: Dịch vụ bao gồm, Không bao gồm, Chính
-          sách huỷ tour và các mục tự đặt trong khối "Những thông tin cần lưu ý"
-          của từng tour. Tour chưa nhập gì thì ẩn hẳn. */}
+          Toàn bộ nội dung lấy từ admin: Chính sách huỷ tour và các mục tự đặt
+          trong khối "Những thông tin cần lưu ý" của từng tour (bao gồm / không
+          bao gồm nằm dưới lịch trình). Tour chưa nhập gì thì ẩn hẳn. */}
       {cacMucLuuY.length > 0 && (
         <section className="bg-foam pb-14 sm:pb-16">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -1061,7 +1085,6 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
                   key={`${muc.tieuDe}-${i}`}
                   tieuDe={muc.tieuDe}
                   noiDung={muc.noiDung}
-                  muc={muc.muc}
                   isOpen={openLuuY === i}
                   onToggle={() => setOpenLuuY(openLuuY === i ? -1 : i)}
                 />

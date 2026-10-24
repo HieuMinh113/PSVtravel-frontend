@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import GuideDetail from "@/components/pages/GuideDetail";
-import { pageMeta, JsonLd, SITE_URL, videoJsonLd, breadcrumbJsonLd } from "@/app/lib/seo";
+import { pageMeta, JsonLd, SITE_URL, ORG_ID, videoJsonLd, breadcrumbJsonLd, personJsonLd } from "@/app/lib/seo";
 import { getGuideBySlug, getGuideMap, getGuideSlugs, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -33,8 +33,16 @@ export default async function Page({ params }) {
     headline: guide.title,
     description: guide.excerpt,
     image: guide.image,
-    author: { "@type": "Organization", name: guide.author || "PSV Travel" },
+    // Có trang tác giả → Person đầy đủ; chỉ có tên → Person theo tên; không có
+    // ai → chính công ty. Trước đây khai tên người là "Organization" — sai loại.
+    author: guide.authorProfile
+      ? personJsonLd(guide.authorProfile)
+      : guide.author
+        ? { "@type": "Person", name: guide.author }
+        : { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
     datePublished: guide.date ? guide.date.split("/").reverse().join("-") : undefined,
+    dateModified: guide.updatedAt ?? undefined,
     mainEntityOfPage: `${SITE_URL}/cam-nang/${guide.slug}`,
   };
 

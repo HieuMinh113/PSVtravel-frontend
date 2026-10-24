@@ -55,6 +55,61 @@ export async function traLinkCu(duongDan) {
   }
 }
 
+// ===== Tour / bài cẩm nang đổi đường dẫn =====
+// Nhân viên đổi đường dẫn tour / bài đã đăng → backend tự ghi chuyển hướng.
+// Chuyển ở proxy (trước bộ đệm trang): trang tour dựng sẵn (ISR) mà tự chuyển
+// hướng thì Next lưu mã 308 nhưng MẤT địa chỉ đích — Google không theo được.
+// Danh sách { cũ: mới } giữ trong bộ nhớ 60 giây; tải lỗi thì giữ bản cũ.
+
+export const TIEN_TO_DOI_DUONG_DAN = ["/tour-nuoc-ngoai/", "/tour-trong-nuoc/", "/cam-nang/"];
+const GIU_DANH_SACH_MS = 60_000;
+let danhSachDoi = null;
+let taiLuc = 0;
+let dangTai = null;
+
+async function taiDanhSachDoi() {
+  try {
+    const res = await fetch(`${API_URL}/link-cu/doi-duong-dan`, {
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(3000),
+    });
+    if (res.ok) {
+      const ds = (await res.json())?.data;
+      if (ds && typeof ds === "object") danhSachDoi = new Map(Object.entries(ds));
+    }
+  } catch (e) {
+    console.error("Không tải được danh sách đổi đường dẫn:", e?.cause?.code || e?.message);
+  } finally {
+    // Lần đầu tải lỗi: coi như chưa có ai đổi, khỏi bắt khách chờ lần nữa
+    danhSachDoi ??= new Map();
+    taiLuc = Date.now();
+    dangTai = null;
+  }
+}
+
+/**
+ * Đường dẫn mới của tour / bài vừa đổi đường dẫn, hoặc null. Lần đầu chờ tải
+ * danh sách; sau đó dùng bản trong bộ nhớ, quá 60 giây thì tải lại ngầm.
+ */
+export async function traDoiDuongDan(duongDan) {
+  const p = String(duongDan || "").toLowerCase().replace(/\/+$/, "");
+  if (!TIEN_TO_DOI_DUONG_DAN.some((t) => p.startsWith(t))) return null;
+  if (Date.now() - taiLuc > GIU_DANH_SACH_MS) {
+    dangTai ??= taiDanhSachDoi();
+    if (!danhSachDoi) await dangTai;
+  }
+  const toi = danhSachDoi?.get(p);
+  // Chỉ chuyển trong website, và không chuyển về chính nó
+  return typeof toi === "string" && /^\/(?!\/)/.test(toi) && toi !== p ? toi : null;
+}
+
+// Cho npm test: nạp sẵn danh sách, khỏi gọi backend
+export function _datDanhSachDoi(ds) {
+  danhSachDoi = ds ? new Map(Object.entries(ds)) : null;
+  taiLuc = ds ? Date.now() : 0;
+}
+
 // Trang báo "đã gỡ" (410) gọn nhẹ: Google bỏ link khỏi kết quả sớm hơn 404,
 // khách vẫn có lối đi tiếp.
 export const TRANG_DA_GO = `<!doctype html>

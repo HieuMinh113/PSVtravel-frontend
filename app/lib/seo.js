@@ -238,6 +238,26 @@ export function websiteJsonLd() {
   };
 }
 
+// Tác giả bài cẩm nang (Person) — Google dùng để đánh giá độ tin cậy của bài
+// (E-E-A-T). Chỉ khai các ô admin đã điền; sameAs là trang mạng xã hội của
+// chính người đó. a: tác giả đã qua mapTacGia (app/lib/api.js).
+export function personJsonLd(a) {
+  const url = `${SITE_URL}/tac-gia/${a.slug}`;
+  const knowsAbout = [a.expertise, ...(a.countries ?? [])].filter(Boolean);
+  return {
+    "@type": "Person",
+    "@id": `${url}#person`,
+    name: a.name,
+    url,
+    jobTitle: a.position || undefined,
+    image: a.photo || undefined,
+    description: a.bio || undefined,
+    worksFor: { "@id": ORG_ID },
+    knowsAbout: knowsAbout.length ? knowsAbout : undefined,
+    sameAs: a.socialLinks?.length ? a.socialLinks : undefined,
+  };
+}
+
 // Đường dẫn phân cấp (breadcrumb) — hiện dải điều hướng trên kết quả tìm kiếm,
 // và giúp AI hiểu cấu trúc trang. items: [{ name, url }] theo thứ tự từ gốc.
 export function breadcrumbJsonLd(items) {

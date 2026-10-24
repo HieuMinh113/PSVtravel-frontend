@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -105,6 +106,11 @@ export default function TeamCarousel({ members = [] }) {
                   <Mail className="h-4 w-4" /> {active.email}
                 </a>
               )}
+              {active.authorSlug && (
+                <Link href={`/tac-gia/${active.authorSlug}`} className="tc-tac-gia">
+                  Đọc bài cẩm nang của {active.name} <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
               {active.bio && (
                 <p className="tc-bio">
                   {active.bio.split(" ").map((word, i) => (
@@ -168,6 +174,9 @@ export default function TeamCarousel({ members = [] }) {
         .tc-email { display: inline-flex; align-items: center; gap: .4rem; margin: .8rem auto 0;
           color: #55606f; font-size: .9rem; text-decoration: none; }
         .tc-email:hover { color: #0e6b74; }
+        .tc-tac-gia { display: flex; width: fit-content; align-items: center; gap: .4rem; margin: .4rem auto 0;
+          min-height: 44px; color: #c2410c; font-weight: 600; font-size: .95rem; text-decoration: none; }
+        .tc-tac-gia:hover { color: #9a3412; }
         .tc-bio { color: #55606f; font-size: 1rem; line-height: 1.7; margin: 1.1rem 0 0; }
         .tc-arrows { display: flex; gap: 1rem; justify-content: center; padding-top: 2rem; }
         .tc-arrow { width: 2.7rem; height: 2.7rem; border-radius: 50%; display: flex;
@@ -176,7 +185,7 @@ export default function TeamCarousel({ members = [] }) {
         @media (min-width: 768px) {
           .tc-grid { grid-template-columns: 1fr 1fr; }
           .tc-content { text-align: left; }
-          .tc-email { margin-left: 0; margin-right: auto; }
+          .tc-email, .tc-tac-gia { margin-left: 0; margin-right: auto; }
           .tc-arrows { justify-content: flex-start; padding-top: 0; }
         }
       `}</style>

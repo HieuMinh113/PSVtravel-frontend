@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { phanLoaiLinkCu, traLinkCu, TRANG_DA_GO } from "./app/lib/linkCu";
+import { phanLoaiLinkCu, traLinkCu, traDoiDuongDan, TRANG_DA_GO } from "./app/lib/linkCu";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://psvtravel.com";
 
@@ -7,8 +7,18 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://psvtravel.com";
 // /wp-content/…) — không trùng trang nào của website mới nên chặn ở đây, trước
 // khi Next dựng trang. Link một cấp (/nhat-ban, /cua-hang, bài viết cũ) do
 // app/(site)/[trang] xử lý khi không có trang thật trùng tên.
+//
+// Tour / bài cẩm nang nhân viên vừa đổi đường dẫn cũng chuyển ở đây (xem
+// traDoiDuongDan) — giữ nguyên ?query (link quảng cáo có utm_…).
 export async function proxy(request) {
   const duongDan = request.nextUrl.pathname;
+  const doi = await traDoiDuongDan(duongDan);
+  if (doi) {
+    const toi = new URL(doi, SITE_URL);
+    toi.search = request.nextUrl.search;
+    return NextResponse.redirect(toi, 301);
+  }
+
   let kq = phanLoaiLinkCu(duongDan);
   if (kq?.hoi) kq = await traLinkCu(duongDan);
 
@@ -28,6 +38,10 @@ export async function proxy(request) {
 // app/lib/linkCu.js.
 export const config = {
   matcher: [
+    // Trang tour / cẩm nang có thể đã đổi đường dẫn (TIEN_TO_DOI_DUONG_DAN)
+    "/tour-nuoc-ngoai/:slug",
+    "/tour-trong-nuoc/:slug",
+    "/cam-nang/:slug",
     "/tour_nuoc_ngoai/:path+",
     "/tour_trong_nuoc/:path+",
     "/tour/:path+",

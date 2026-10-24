@@ -1,4 +1,4 @@
-import { getTourSitemap, getGuideSitemap, getVisaSlugs, getEventSlugs, getDestinationSlugs, getJobSlugs, getSeasonPages } from "@/app/lib/api";
+import { getTourSitemap, getGuideSitemap, getVisaSlugs, getEventSlugs, getDestinationSlugs, getJobSlugs, getSeasonPages, getAuthors } from "@/app/lib/api";
 import { SITE_URL } from "./lib/seo";
 
 // Sitemap dựng lại mỗi giờ để tour và bài viết mới sớm được Google ghi nhận
@@ -51,7 +51,7 @@ export default async function sitemap() {
 
   // Tour: lấy từ API riêng cho sitemap — danh sách tour thường chỉ trả tối đa 50
   // tour mỗi loại và bỏ tour tạm ẩn vì hết hạn visa, sitemap sẽ sót tour.
-  const [tours, guides, visaSlugs, eventSlugs, destSlugs, jobSlugs, seasonPages] = await Promise.all([
+  const [tours, guides, visaSlugs, eventSlugs, destSlugs, jobSlugs, seasonPages, authors] = await Promise.all([
     anToan(() => getTourSitemap()),
     anToan(() => getGuideSitemap()),
     anToan(() => getVisaSlugs()),
@@ -59,6 +59,7 @@ export default async function sitemap() {
     anToan(() => getDestinationSlugs()),
     anToan(() => getJobSlugs()),
     anToan(() => getSeasonPages()),
+    anToan(() => getAuthors()),
   ]);
 
   const tourEntries = tours
@@ -130,5 +131,13 @@ export default async function sitemap() {
     priority: 0.7,
   }));
 
-  return [...staticEntries, ...tourEntries, ...seasonEntries, ...guideEntries, ...visaEntries, ...eventEntries, ...destEntries, ...jobEntries];
+  // Trang tác giả cẩm nang (chỉ người đã có bài đăng)
+  const authorEntries = authors.map((a) => ({
+    url: `${SITE_URL}/tac-gia/${a.slug}`,
+    lastModified: ngay(a.updated_at),
+    changeFrequency: "monthly",
+    priority: 0.5,
+  }));
+
+  return [...staticEntries, ...tourEntries, ...seasonEntries, ...guideEntries, ...authorEntries, ...visaEntries, ...eventEntries, ...destEntries, ...jobEntries];
 }

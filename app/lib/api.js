@@ -347,6 +347,23 @@ export async function getSettings() {
   const json = await layJSON(`/settings`);
   return json?.data ?? {};
 }
+function mapTacGia(a) {
+  if (!a?.slug) return null;
+  return {
+    slug: a.slug,
+    name: a.name,
+    position: a.position ?? null,
+    photo: a.photo ?? null,
+    yearsExperience: a.years_experience ?? null,
+    expertise: a.expertise ?? null,
+    bio: a.bio ?? "",
+    countries: a.countries ?? [],
+    profile: a.profile ?? "",
+    socialLinks: a.social_links ?? [],
+    updatedAt: a.updated_at ?? null,
+  };
+}
+
 function mapGuide(g) {
   if (!g) return null;
   return {
@@ -356,6 +373,8 @@ function mapGuide(g) {
     image: g.cover_image,
     category: g.category,
     author: g.author_name ?? null,
+    // Tác giả có trang riêng /tac-gia/{slug} (null: bài chỉ có tên người nhập)
+    authorProfile: mapTacGia(g.author),
     views: g.view_count ?? 0,
     date: g.published_at ? g.published_at.split("-").reverse().join("/") : null, // yyyy-mm-dd → dd/mm/yyyy
     updatedAt: g.updated_at ?? g.published_at ?? null, // cho sitemap lastmod thật
@@ -405,6 +424,19 @@ export async function getGuideSlugs() {
   // Nhận cả mảng trần lẫn { data: [...] } như các hàm *Slugs khác — lệch dạng
   // là generateStaticParams gọi .map() trên object, cả lượt build hỏng.
   return Array.isArray(json) ? json : json?.data ?? [];
+}
+
+// Tác giả bài cẩm nang: [{ slug, name, updated_at }] — chỉ người có bài đã đăng
+export async function getAuthors() {
+  const json = await layJSON(`/authors`);
+  return (json?.data ?? []).filter((a) => slugHopLe(a?.slug));
+}
+
+// Hồ sơ tác giả + các bài đã viết; null nếu không có / đã ẩn
+export async function getAuthor(slug) {
+  const json = await layJSON(`/authors/${slug}`);
+  const a = mapTacGia(json?.data);
+  return a ? { ...a, guides: (json.data.guides ?? []).map(mapGuide) } : null;
 }
 
 // ---- Sự kiện / Team Building ----
@@ -481,6 +513,7 @@ export async function getTeamMembers() {
     email: m.email ?? null,
     photo: m.photo ?? null,
     bio: m.bio ?? "",
+    authorSlug: m.author_slug ?? null, // có trang tác giả → gắn link
   }));
 }
 
