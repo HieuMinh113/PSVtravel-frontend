@@ -68,7 +68,17 @@ const nextConfig = {
     // Mặc định chỉ có [75]; thêm 90 cho ảnh bìa tour và ảnh lớn cho nét.
     // 50 dành cho ảnh nền Hero trang chủ: ảnh chỉ hiện mờ 35% dưới lớp phủ tối
     // nên nén mạnh hơn không nhìn ra khác biệt, mà nhẹ đi ~1/3.
-    qualities: [50, 75, 90],
+    //
+    // 80 cho ảnh bìa tour / bài (trước là 90: bản to nhất nặng ~3 MB, Ahrefs
+    // báo "Image file size too large"; mắt thường không phân biệt 80 với 90).
+    qualities: [50, 75, 80, 90],
+
+    // Bỏ hai cỡ 2048 / 3840 mặc định: ảnh bìa tràn màn hình (sizes="100vw") có
+    // bản 3840px, máy quét SEO và màn hình 4K tải bản đó (~3 MB), máy chủ lại
+    // phải nén ảnh rất to trong lúc khách đang vào. 1920px đủ nét cho mọi màn
+    // hình phổ thông. Ảnh trong nội dung bài (app/lib/sanitize.js) dùng các cỡ
+    // trong danh sách này — sửa ở đây thì xem lại cả bên đó.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     remotePatterns: [
       ...mayChuAnh,
       // Máy lập trình: tuỳ người mà .env ghi localhost hay 127.0.0.1

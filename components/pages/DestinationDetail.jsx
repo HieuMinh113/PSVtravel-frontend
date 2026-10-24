@@ -45,7 +45,7 @@ export default function DestinationDetail({ destination, tours = [], toursKhac =
             <p className="font-display text-lg leading-relaxed text-deep-900">{d.summary}</p>
           )}
           {d.description ? (
-            <div className="prose-psv mt-8" dangerouslySetInnerHTML={{ __html: locHtml(d.description) }} />
+            <div className="prose-psv mt-8" dangerouslySetInnerHTML={{ __html: locHtml(d.description, { tenBai: d.name }) }} />
           ) : null}
         </div>
       </section>

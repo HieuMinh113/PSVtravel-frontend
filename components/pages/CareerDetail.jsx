@@ -55,19 +55,19 @@ export default function CareerDetail({ job }) {
             {j.description && (
               <div>
                 <h2 className="font-display text-xl font-bold text-deep-900">Mô tả công việc</h2>
-                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: locHtml(j.description) }} />
+                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: locHtml(j.description, { tenBai: j.title }) }} />
               </div>
             )}
             {j.requirements && (
               <div>
                 <h2 className="font-display text-xl font-bold text-deep-900">Yêu cầu ứng viên</h2>
-                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: locHtml(j.requirements) }} />
+                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: locHtml(j.requirements, { tenBai: j.title }) }} />
               </div>
             )}
             {j.benefits && (
               <div>
                 <h2 className="font-display text-xl font-bold text-deep-900">Quyền lợi</h2>
-                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: locHtml(j.benefits) }} />
+                <div className="prose-psv mt-4" dangerouslySetInnerHTML={{ __html: locHtml(j.benefits, { tenBai: j.title }) }} />
               </div>
             )}
 

@@ -150,7 +150,7 @@ export default function EventDetail({ event, related = [], settings = {}, review
             {event.description?.trim() && (
               <SectionReveal delay={0.1} className="mt-8 card-surface p-6 sm:p-8">
                 <h2 className="font-display text-xl font-bold text-deep-900">Giới thiệu chi tiết</h2>
-                <div className="prose-psv mt-4 text-ink-muted" dangerouslySetInnerHTML={{ __html: locHtml(event.description) }} />
+                <div className="prose-psv mt-4 text-ink-muted" dangerouslySetInnerHTML={{ __html: locHtml(event.description, { tenBai: event.title }) }} />
               </SectionReveal>
             )}
 

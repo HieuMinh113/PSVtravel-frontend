@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import GuideDetail from "@/components/pages/GuideDetail";
-import { pageMeta, JsonLd, SITE_URL, ORG_ID, videoJsonLd, breadcrumbJsonLd, personJsonLd } from "@/app/lib/seo";
+import { pageMeta, JsonLd, SITE_URL, ORG_ID, videoJsonLd, breadcrumbJsonLd, personJsonLd, moTaDu } from "@/app/lib/seo";
 import { getGuideBySlug, getGuideMap, getGuideSlugs, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }) {
   if (!guide) return pageMeta({ title: "Không tìm thấy bài viết", path: `/cam-nang/${slug}` });
   return pageMeta({
     title: guide.metaTitle,
-    description: guide.metaDescription,
+    description: moTaDu(guide.metaDescription, guide.content),
     path: `/cam-nang/${guide.slug}`,
     image: guide.image,
   });

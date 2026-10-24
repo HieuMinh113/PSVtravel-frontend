@@ -39,7 +39,10 @@ test("Tour / bài vừa đổi đường dẫn: chuyển theo danh sách backend
     "/cam-nang/bai-cu": "/cam-nang/bai-moi",
     "/cam-nang/vong-lap": "/cam-nang/vong-lap",
     "/cam-nang/ra-ngoai": "//trang-khac.com/x",
+    "/cam-nang/Tempura Nhật Bản: Nguồn Gốc": "/cam-nang/tempura-nhat-ban-nguon-goc",
   });
+  // Trình duyệt gửi đường dẫn có dấu dưới dạng %xx
+  assert.equal(await traDoiDuongDan("/cam-nang/Tempura%20Nh%E1%BA%ADt%20B%E1%BA%A3n:%20Ngu%E1%BB%93n%20G%E1%BB%91c"), "/cam-nang/tempura-nhat-ban-nguon-goc");
   assert.equal(await traDoiDuongDan("/tour-nuoc-ngoai/thanhdo-cuutraicau"), "/tour-nuoc-ngoai/thanh-do-cuu-trai-cau");
   assert.equal(await traDoiDuongDan("/Cam-Nang/Bai-Cu/"), "/cam-nang/bai-moi");
   assert.equal(await traDoiDuongDan("/cam-nang/bai-moi"), null); // trang đang có

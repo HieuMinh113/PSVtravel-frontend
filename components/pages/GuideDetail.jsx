@@ -34,7 +34,7 @@ export default function GuideDetail({ guide, settings = {}, banDo = null }) {
       {/* Ảnh bìa + tiêu đề */}
       <section className="relative h-[52dvh] min-h-[380px] overflow-hidden">
         {guide.image ? (
-          <Image src={guide.image} alt={guide.title} fill preload sizes="100vw" quality={90} className="object-cover" />
+          <Image src={guide.image} alt={guide.title} fill preload sizes="100vw" quality={80} className="object-cover" />
         ) : (
           <div className="h-full w-full bg-deep-gradient" />
         )}
@@ -127,7 +127,7 @@ export default function GuideDetail({ guide, settings = {}, banDo = null }) {
           {guide.content ? (
             <div
               className="prose-psv mt-10"
-              dangerouslySetInnerHTML={{ __html: locHtml(guide.content) }}
+              dangerouslySetInnerHTML={{ __html: locHtml(guide.content, { tenBai: guide.title }) }}
             />
           ) : (
             <p className="mt-10 text-ink-muted">Nội dung bài viết đang được cập nhật.</p>

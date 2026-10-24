@@ -76,7 +76,7 @@ async function taiDanhSachDoi() {
     });
     if (res.ok) {
       const ds = (await res.json())?.data;
-      if (ds && typeof ds === "object") danhSachDoi = new Map(Object.entries(ds));
+      if (ds && typeof ds === "object") danhSachDoi = taoBang(ds);
     }
   } catch (e) {
     console.error("Không tải được danh sách đổi đường dẫn:", e?.cause?.code || e?.message);
@@ -88,12 +88,27 @@ async function taiDanhSachDoi() {
   }
 }
 
+// Khoá so khớp: đường dẫn đã giải mã %xx, chữ thường, chuẩn Unicode NFC. Bài
+// cũ từng có đường dẫn có dấu, có dấu cách ("/cam-nang/Tempura Nhật Bản: …") —
+// trình duyệt gửi lên dạng %20%E1%BA…, còn bảng lưu nguyên chữ.
+function khoa(duongDan) {
+  let p = String(duongDan || "");
+  try {
+    p = decodeURIComponent(p);
+  } catch {
+    /* %xx hỏng: so nguyên chuỗi */
+  }
+  return p.normalize("NFC").toLowerCase().replace(/\/+$/, "");
+}
+
+const taoBang = (ds) => new Map(Object.entries(ds).map(([cu, moi]) => [khoa(cu), moi]));
+
 /**
  * Đường dẫn mới của tour / bài vừa đổi đường dẫn, hoặc null. Lần đầu chờ tải
  * danh sách; sau đó dùng bản trong bộ nhớ, quá 60 giây thì tải lại ngầm.
  */
 export async function traDoiDuongDan(duongDan) {
-  const p = String(duongDan || "").toLowerCase().replace(/\/+$/, "");
+  const p = khoa(duongDan);
   if (!TIEN_TO_DOI_DUONG_DAN.some((t) => p.startsWith(t))) return null;
   if (Date.now() - taiLuc > GIU_DANH_SACH_MS) {
     dangTai ??= taiDanhSachDoi();
@@ -106,7 +121,7 @@ export async function traDoiDuongDan(duongDan) {
 
 // Cho npm test: nạp sẵn danh sách, khỏi gọi backend
 export function _datDanhSachDoi(ds) {
-  danhSachDoi = ds ? new Map(Object.entries(ds)) : null;
+  danhSachDoi = ds ? taoBang(ds) : null;
   taiLuc = ds ? Date.now() : 0;
 }
 

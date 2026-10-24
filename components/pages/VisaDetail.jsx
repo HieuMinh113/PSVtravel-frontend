@@ -78,7 +78,7 @@ export default function VisaDetail({ visa, related = [], settings = {} }) {
                 </h2>
                 <div
                   className="prose-psv mt-4 text-ink-muted"
-                  dangerouslySetInnerHTML={{ __html: locHtml(visa.description) }}
+                  dangerouslySetInnerHTML={{ __html: locHtml(visa.description, { tenBai: `Visa ${visa.name}` }) }}
                 />
               </SectionReveal>
             ) : (

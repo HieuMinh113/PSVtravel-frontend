@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import DestinationDetail from "@/components/pages/DestinationDetail";
-import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
+import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL, moTaDu } from "@/app/lib/seo";
 import { getDestinationBySlug, getDestinationSlugs, getTours } from "@/app/lib/api";
 import { tourTheoDiemDen } from "@/app/lib/tourTheoDiemDen";
 
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }) {
   if (!d) return pageMeta({ title: "Không tìm thấy điểm đến", path: `/diem-den/${slug}` });
   return pageMeta({
     title: d.name,
-    description: d.summary || `Khám phá ${d.name} cùng PSV Travel — giới thiệu chi tiết và tour đang mở.`,
+    description: moTaDu(d.summary, d.description) || `Khám phá ${d.name} cùng PSV Travel — giới thiệu chi tiết và tour đang mở.`,
     path: `/diem-den/${d.slug}`,
     image: d.image,
   });

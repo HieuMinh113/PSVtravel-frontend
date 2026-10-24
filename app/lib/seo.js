@@ -43,6 +43,35 @@ function rutGonMoTa(text, gioiHan = 155) {
   return (khoangTrangCuoi > 0 ? cat.slice(0, khoangTrangCuoi) : cat).trimEnd() + "…";
 }
 
+// Mô tả Google ngắn quá (dưới 110 ký tự — Ahrefs báo "Meta description too
+// short", Google hay tự lấy đoạn khác thay vào) thì nối thêm đoạn mở đầu của
+// CHÍNH nội dung trang. pageMeta rút gọn lại về ~155 ký tự.
+export function moTaDu(moTa, html) {
+  const dau = String(moTa || "").replace(/\s+/g, " ").trim();
+  if (dau.length >= 110 || !html) return dau;
+  // Mỗi đoạn / tiêu đề mục thành một câu (thêm dấu chấm nếu thiếu) — khỏi dính
+  // "…bỏ qua Phố cổ Hội An về đêm Xem thêm…" thành một câu vô nghĩa
+  const chu = String(html)
+    .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, " ")
+    .split(/<\/(?:p|h[1-6]|li|div|figcaption|blockquote|td|th)>|<br\s*\/?>/i)
+    .map((doan) =>
+      doan
+        .replace(/<[^>]+>/g, " ")
+        .replace(/&nbsp;/g, " ").replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'")
+        .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&")
+        .replace(/\s+/g, " ")
+        .replace(/\s+([.,!?;:…])/g, "$1")
+        .trim()
+    )
+    .filter(Boolean)
+    .map((cau) => (/[.!?…:]$/.test(cau) ? cau : `${cau}.`))
+    .join(" ");
+  if (!chu) return dau;
+  // Nội dung mở đầu bằng đúng câu tóm tắt thì khỏi lặp lại
+  const them = dau && chu.startsWith(dau) ? chu.slice(dau.length).trim() : chu;
+  return dau ? `${/[.!?…]$/.test(dau) ? dau : `${dau}.`} ${them}` : them;
+}
+
 // Tiêu đề hiển thị trên Google — tối đa 70 ký tự (quá mức này Google cắt cụt
 // thành "…" và công cụ audit báo "Long title element").
 //
