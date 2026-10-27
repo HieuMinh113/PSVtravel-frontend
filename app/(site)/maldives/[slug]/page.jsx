@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import MaldivesDetail from "@/components/pages/MaldivesDetail";
 import { pageMeta, JsonLd, SITE_URL, ORG_ID, breadcrumbJsonLd, moTaDu } from "@/app/lib/seo";
 import { getMaldivesCombo, getMaldivesSitemap, getSettings } from "@/app/lib/api";
-import { tyGia, usd } from "@/app/lib/maldives";
+import { saoChu, tyGia, usd } from "@/app/lib/maldives";
 
 export const revalidate = 60;
 
@@ -14,7 +14,7 @@ export async function generateStaticParams() {
 // Mô tả Google: tóm tắt nhân viên viết; thiếu thì ghép từ dữ liệu thật của combo
 function moTa(c) {
   const tuDong = [
-    c.resort?.name && `Combo ${c.resort.name}${c.resort.stars ? ` ${c.resort.stars} sao` : ""} Maldives`,
+    c.resort?.name && `Combo ${c.resort.name}${c.resort.stars ? ` ${saoChu(c.resort.stars)} sao` : ""} Maldives`,
     c.days && `${c.days} ngày ${c.nights ?? ""} đêm`.trim(),
     c.airline && `bay ${c.airline}`,
     c.transfer,

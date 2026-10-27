@@ -60,8 +60,12 @@ export default function DatComboMaldives({ combo, hotline = "0907 870 707", tg =
   useEffect(() => { ghiXemMaldives(combo); }, [combo]);
 
   const phong = combo.roomTypes.find((p) => p.id === phongId) ?? null;
+  // Hạng phòng chỉ nhận người lớn (từ 18 tuổi): không tính / không gửi trẻ em, em bé
+  const chiNguoiLon = Boolean(phong?.adultsOnly);
+  const soTreEm = chiNguoiLon ? 0 : treEm;
+  const soEmBe = chiNguoiLon ? 0 : emBe;
   const nd = combo.noiKhoiHanh.find((n) => n.city === noiDi) ?? null;
-  const gia = baoGia({ childPercent: combo.childPercent, ngay, phongId, noiDi: nd, nguoiLon, treEm, emBe, tg });
+  const gia = baoGia({ childPercent: combo.childPercent, ngay, phongId, noiDi: nd, nguoiLon, treEm: soTreEm, emBe: soEmBe, tg });
 
   const gui = async () => {
     setLoi("");
@@ -71,7 +75,7 @@ export default function DatComboMaldives({ combo, hotline = "0907 870 707", tg =
     try {
       const kq = await datComboMaldives({
         combo_id: combo.id, combo_date_id: ngayId, room_type_id: phongId, departure_city: noiDi || null,
-        adults: nguoiLon, children: treEm, infants: emBe,
+        adults: nguoiLon, children: soTreEm, infants: soEmBe,
         customer_name: khach.ten.trim(), customer_phone: khach.sdt.trim(), customer_email: khach.email.trim() || null, note: khach.ghiChu.trim() || null,
       });
       setXong(kq?.data ?? {});
@@ -152,16 +156,24 @@ export default function DatComboMaldives({ combo, hotline = "0907 870 707", tg =
 
           <div className="space-y-2">
             <SoKhach nhan="Người lớn" giaTri={nguoiLon} doi={setNguoiLon} toiThieu={1} />
-            <SoKhach nhan="Trẻ em" phu={[combo.childAge, gia.giaTreEm ? usd(gia.giaTreEm) : combo.childPercent ? `${combo.childPercent}% giá người lớn` : null].filter(Boolean).join(" · ")} giaTri={treEm} doi={setTreEm} />
-            <SoKhach nhan="Em bé dưới 2 tuổi" phu={combo.infantNote || "Liên hệ"} giaTri={emBe} doi={setEmBe} />
+            {chiNguoiLon ? (
+              <p className="rounded-xl bg-gold-50 px-3.5 py-2.5 text-xs leading-relaxed text-gold-900">
+                {phong.name} chỉ nhận khách từ 18 tuổi. Đi cùng trẻ em, vui lòng chọn hạng phòng khác hoặc gọi để được tư vấn.
+              </p>
+            ) : (
+              <>
+                <SoKhach nhan="Trẻ em" phu={[combo.childAge, gia.giaTreEm ? usd(gia.giaTreEm) : combo.childPercent ? `${combo.childPercent}% giá người lớn` : null].filter(Boolean).join(" · ")} giaTri={treEm} doi={setTreEm} />
+                <SoKhach nhan="Em bé dưới 2 tuổi" phu={combo.infantNote || "Liên hệ"} giaTri={emBe} doi={setEmBe} />
+              </>
+            )}
           </div>
 
           <div className="space-y-1.5 rounded-xl bg-ocean-50/60 p-3.5 text-sm">
             {gia.donGia ? (
               <>
                 <div className="flex justify-between text-ink-muted"><span>{nguoiLon} người lớn × {usd(gia.donGia)}</span><span className="font-medium text-ink">{usd(nguoiLon * gia.donGia)}</span></div>
-                {treEm > 0 && gia.giaTreEm !== null && <div className="flex justify-between text-ink-muted"><span>{treEm} trẻ em × {usd(gia.giaTreEm)}</span><span className="font-medium text-ink">{usd(treEm * gia.giaTreEm)}</span></div>}
-                {gia.phuThu > 0 && <div className="flex justify-between text-ink-muted"><span>Phụ thu {noiDi} × {nguoiLon + treEm} khách</span><span className="font-medium text-ink">{usd(gia.phuThu * (nguoiLon + treEm))}</span></div>}
+                {soTreEm > 0 && gia.giaTreEm !== null && <div className="flex justify-between text-ink-muted"><span>{soTreEm} trẻ em × {usd(gia.giaTreEm)}</span><span className="font-medium text-ink">{usd(soTreEm * gia.giaTreEm)}</span></div>}
+                {gia.phuThu > 0 && <div className="flex justify-between text-ink-muted"><span>Phụ thu {noiDi} × {nguoiLon + soTreEm} khách</span><span className="font-medium text-ink">{usd(gia.phuThu * (nguoiLon + soTreEm))}</span></div>}
                 <div className="flex items-baseline justify-between border-t border-ocean-200/70 pt-2">
                   <span className="font-semibold text-deep-900">Tạm tính</span>
                   <span className="text-right">

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { baoGia, usd, trieuDong, tyGia, quyDoi, ngayVN } from "../app/lib/maldives.js";
+import { baoGia, usd, trieuDong, tyGia, quyDoi, ngayVN, saoChu } from "../app/lib/maldives.js";
 
 const ngay = { prices: { 11: 2631, 12: 2846 } };
 
@@ -29,4 +29,10 @@ test("Định dạng giá", () => {
   assert.equal(quyDoi(2631, 26300), "≈ 69,2 triệu đồng");
   assert.equal(quyDoi(2631, null), "");
   assert.equal(ngayVN("2026-11-04"), "04/11/2026");
+});
+
+test("Hạng sao resort viết kiểu Việt Nam: 4.5 → 4,5", () => {
+  assert.equal(saoChu(4.5), "4,5");
+  assert.equal(saoChu(5), "5");
+  assert.equal(saoChu("4.5"), "4,5");
 });

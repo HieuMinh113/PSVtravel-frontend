@@ -449,7 +449,7 @@ function mapComboMaldives(c) {
     excluded: c.excluded ?? [],
     notes: c.notes ?? [],
     dates: (c.dates ?? []).map((d) => ({ id: d.id, startDate: d.start_date, label: d.label ?? null, status: d.status, prices: d.prices ?? {} })),
-    roomTypes: (c.room_types ?? []).map((p) => ({ id: p.id, name: p.name, capacity: p.capacity ?? "", description: p.description ?? "", image: p.image ?? null })),
+    roomTypes: (c.room_types ?? []).map((p) => ({ id: p.id, name: p.name, capacity: p.capacity ?? "", adultsOnly: Boolean(p.adults_only), description: p.description ?? "", image: p.image ?? null })),
     itinerary: (c.days ?? []).map((d) => ({ day: d.day_number, title: d.title, meals: d.meals ?? "", desc: d.description ?? "", images: d.images ?? [] })),
     resort: c.resort
       ? {

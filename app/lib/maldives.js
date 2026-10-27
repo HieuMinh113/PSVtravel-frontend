@@ -8,6 +8,11 @@ export function usd(n) {
   return `$${so.toLocaleString("vi-VN")}`;
 }
 
+// Hạng sao resort: 4.5 → "4,5", 5 → "5"
+export function saoChu(n) {
+  return String(Number(n)).replace(".", ",");
+}
+
 // 69200000 → "69,2 triệu"
 export function trieuDong(n) {
   const so = Number(n) || 0;

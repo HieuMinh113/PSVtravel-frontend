@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Clock, Plane, Ship, Star } from "lucide-react";
+import { ArrowRight, CalendarDays, Clock, Plane, Ship } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import DoanGioiThieu, { noiDanhSach } from "@/components/DoanGioiThieu";
+import SaoResort from "@/components/maldives/SaoResort";
 import { duocToiUu } from "@/app/lib/anh";
 import { ngayVN, quyDoi, usd } from "@/app/lib/maldives";
 
@@ -19,11 +20,7 @@ function TheCombo({ c, tg }) {
           ) : (
             <div className="h-full w-full bg-gradient-to-br from-ocean-200 to-teal-200" />
           )}
-          {c.resort?.stars ? (
-            <span className="absolute left-3 top-3 flex items-center gap-0.5 rounded-full bg-white/95 px-2.5 py-1 shadow-sm" aria-label={`${c.resort.stars} sao`}>
-              {Array.from({ length: c.resort.stars }).map((_, i) => <Star key={i} aria-hidden="true" className="h-3.5 w-3.5 fill-gold-500 text-gold-500" />)}
-            </span>
-          ) : null}
+          <SaoResort sao={c.resort?.stars} className="absolute left-3 top-3 flex items-center gap-0.5 rounded-full bg-white/95 px-2.5 py-1 shadow-sm" saoClass="h-3.5 w-3.5 fill-gold-500 text-gold-500" />
         </div>
         <div className="flex flex-1 flex-col p-5">
           {c.resort?.name && <p className="text-xs font-semibold uppercase tracking-wide text-ocean-700">{c.resort.name}{c.resort.atoll ? ` · ${c.resort.atoll}` : ""}</p>}

@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BedDouble, CalendarDays, Check, ChevronDown, Clock, MapPin, Plane, Ship, Sparkles, Star, Utensils, X } from "lucide-react";
+import { BedDouble, CalendarDays, Check, ChevronDown, Clock, MapPin, Plane, Ship, Sparkles, Utensils, X } from "lucide-react";
 import DatComboMaldives from "@/components/maldives/DatComboMaldives";
+import SaoResort from "@/components/maldives/SaoResort";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { duocToiUu } from "@/app/lib/anh";
 import { ngayVN, quyDoi, usd } from "@/app/lib/maldives";
@@ -59,7 +60,7 @@ export default function MaldivesDetail({ combo, hotline, tg }) {
           {r.name && (
             <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-gold-300">
               {r.name}
-              {r.stars ? <span className="flex" aria-label={`${r.stars} sao`}>{Array.from({ length: r.stars }).map((_, i) => <Star key={i} aria-hidden="true" className="h-3.5 w-3.5 fill-gold-400 text-gold-400" />)}</span> : null}
+              <SaoResort sao={r.stars} />
               {r.atoll && <span className="font-normal text-white/80">· {r.atoll}</span>}
             </p>
           )}
@@ -136,6 +137,7 @@ export default function MaldivesDetail({ combo, hotline, tg }) {
                           <th scope="row" className="px-4 py-3 font-semibold text-deep-900">
                             {p.name}
                             {p.capacity && <span className="block text-xs font-normal text-ink-muted">{p.capacity}</span>}
+                            {p.adultsOnly && <span className="mt-1 inline-block rounded-full bg-gold-100 px-2 py-0.5 text-[11px] font-semibold text-gold-800">Chỉ người lớn 18+</span>}
                           </th>
                           {combo.dates.map((d) => {
                             const g = Number(d.prices?.[p.id]);
@@ -170,6 +172,7 @@ export default function MaldivesDetail({ combo, hotline, tg }) {
                       <div className="p-4">
                         <p className="flex items-center gap-2 font-display font-semibold text-deep-900"><BedDouble aria-hidden="true" className="h-4 w-4 text-ocean-600" />{p.name}</p>
                         {p.capacity && <p className="mt-1 text-sm text-ocean-700">{p.capacity}</p>}
+                        {p.adultsOnly && <p className="mt-1 text-xs font-semibold text-gold-800">Chỉ nhận khách từ 18 tuổi</p>}
                         {p.description && <p className="mt-2 text-sm leading-relaxed text-ink-muted">{p.description}</p>}
                       </div>
                     </div>
