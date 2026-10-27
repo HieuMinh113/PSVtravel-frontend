@@ -274,6 +274,7 @@ export default function Contact({ settings = {} }) {
                       <option>Tư vấn tour trong nước</option>
                       <option>Tư vấn tour nước ngoài</option>
                       <option>Dịch vụ visa</option>
+                      <option>Combo Maldives</option>
                       <option>Vé máy bay</option>
                       <option>Khác</option>
                     </select>

@@ -1,4 +1,4 @@
-import { getBangGia, getVisaCountries, getSettings, slugHopLe } from "@/app/lib/api";
+import { getBangGia, getVisaCountries, getSettings, getMaldivesCombos, slugHopLe } from "@/app/lib/api";
 import { bangGiaMarkdown } from "@/app/lib/vanBanChoAI";
 
 // /pricing.md — bảng giá mọi tour đang mở bán, dạng Markdown cho AI và trợ lý tự
@@ -10,9 +10,9 @@ import { bangGiaMarkdown } from "@/app/lib/vanBanChoAI";
 export const revalidate = 60;
 
 export async function GET() {
-  const [tours, visas, settings] = await Promise.all([getBangGia(), getVisaCountries(), getSettings()]);
+  const [tours, visas, settings, maldives] = await Promise.all([getBangGia(), getVisaCountries(), getSettings(), getMaldivesCombos()]);
 
-  return new Response(bangGiaMarkdown({ tours, visas: visas.filter((v) => slugHopLe(v.slug)), settings }), {
+  return new Response(bangGiaMarkdown({ tours, visas: visas.filter((v) => slugHopLe(v.slug)), settings, maldives }), {
     headers: { "Content-Type": "text/markdown; charset=utf-8" },
   });
 }

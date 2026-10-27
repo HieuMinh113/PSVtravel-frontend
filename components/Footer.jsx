@@ -181,7 +181,7 @@ export default function Footer({ settings = {} }) {
             <ul className="mt-4 space-y-0.5 text-sm text-white/65 sm:space-y-2.5">
               <li><Link href="/tour-trong-nuoc" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Tour trong nước</Link></li>
               <li><Link href="/tour-nuoc-ngoai" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Tour nước ngoài</Link></li>
-              <li><Link href="/ve-may-bay" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Vé máy bay</Link></li>
+              <li><Link href="/maldives" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Combo Maldives</Link></li>
               <li><Link href="/lam-visa" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Làm visa</Link></li>
               <li><Link href="/cam-nang" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Cẩm nang du lịch</Link></li>
               <li><Link href="/khoanh-khac-du-khach" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Khoảnh khắc du khách</Link></li>

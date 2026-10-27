@@ -47,6 +47,12 @@ const nextConfig = {
       },
     ];
   },
+  // Trang Vé máy bay đã thay bằng Maldives (10/2026): link cũ khách lưu, Google
+  // đang xếp hạng chuyển hẳn sang trang mới
+  async redirects() {
+    return [{ source: "/ve-may-bay", destination: "/maldives", statusCode: 301 }];
+  },
+
   // Gói sẵn mọi thứ cần khi chạy vào .next/standalone để đóng ảnh Docker nhẹ.
   // Không ảnh hưởng gì lúc chạy `npm run dev` trên máy lập trình.
   output: "standalone",

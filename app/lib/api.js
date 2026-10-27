@@ -321,28 +321,6 @@ export async function getVisaSlugs() {
   const json = await layJSON(`/visa-countries`);
   return (json?.data ?? []).map((c) => c.slug).filter(slugHopLe);
 }
-export async function getAirlines() {
-  const json = await layJSON(`/airlines`);
-  return (json?.data ?? []).map((a) => ({
-    name: a.name,
-    code: a.code,
-    logoImage: a.logo, // URL hoặc null
-  }));
-}
-
-export async function getFlightDeals() {
-  const json = await layJSON(`/flight-deals`);
-  return (json?.data ?? []).map((d, i) => ({
-    id: i,
-    route: `${d.from_city} → ${d.to_city}`,
-    price: d.price ? `${Number(d.price).toLocaleString("vi-VN")}đ` : "Liên hệ",
-    oldPrice: d.old_price ? `${Number(d.old_price).toLocaleString("vi-VN")}đ` : null,
-    airlineName: d.airline?.name ?? null,
-    airlineLogo: d.airline?.logo ?? null,
-    note: d.note ?? null,
-    image: null, // FlightDeal không có ảnh
-  }));
-}
 export async function getSettings() {
   const json = await layJSON(`/settings`);
   return json?.data ?? {};
@@ -437,6 +415,90 @@ export async function getAuthor(slug) {
   const json = await layJSON(`/authors/${slug}`);
   const a = mapTacGia(json?.data);
   return a ? { ...a, guides: (json.data.guides ?? []).map(mapGuide) } : null;
+}
+
+// ---- Combo Maldives (tách riêng khỏi tour) ----
+function mapComboMaldives(c) {
+  if (!c?.slug) return null;
+  return {
+    id: c.id,
+    slug: c.slug,
+    name: c.name,
+    seoTitle: c.seo_title ?? null,
+    summary: c.summary ?? "",
+    image: c.cover_image ?? null,
+    days: c.duration_days ?? null,
+    nights: c.duration_nights ?? null,
+    stay: c.stay_summary ?? "",
+    airline: c.airline ?? "",
+    transfer: c.transfer ?? "",
+    giaTu: c.gia_tu_usd ?? null,
+    // Thẻ danh sách: tên nơi khởi hành; trang chi tiết: đủ phụ thu + lịch bay
+    noiKhoiHanh: (c.noi_khoi_hanh ?? []).map((n) =>
+      typeof n === "string" ? { city: n } : { city: n.city, surchargeUsd: n.surcharge_usd ?? null, flights: n.flights ?? [] }
+    ),
+    ngayKhoiHanh: (c.ngay_khoi_hanh ?? []).map((d) => ({ startDate: d.start_date, label: d.label ?? null })),
+    featured: !!c.is_featured,
+    updatedAt: c.updated_at ?? null,
+    highlights: c.highlights ?? [],
+    childPercent: c.child_percent ?? null,
+    childAge: c.child_age ?? "",
+    infantNote: c.infant_note ?? "",
+    minGroup: c.min_group ?? null,
+    included: c.included ?? [],
+    excluded: c.excluded ?? [],
+    notes: c.notes ?? [],
+    dates: (c.dates ?? []).map((d) => ({ id: d.id, startDate: d.start_date, label: d.label ?? null, status: d.status, prices: d.prices ?? {} })),
+    roomTypes: (c.room_types ?? []).map((p) => ({ id: p.id, name: p.name, capacity: p.capacity ?? "", description: p.description ?? "", image: p.image ?? null })),
+    itinerary: (c.days ?? []).map((d) => ({ day: d.day_number, title: d.title, meals: d.meals ?? "", desc: d.description ?? "", images: d.images ?? [] })),
+    resort: c.resort
+      ? {
+          slug: c.resort.slug,
+          name: c.resort.name,
+          stars: c.resort.stars ?? null,
+          atoll: c.resort.atoll ?? "",
+          packageName: c.resort.package_name ?? "",
+          intro: c.resort.intro ?? "",
+          highlights: c.resort.highlights ?? [],
+          image: c.resort.cover_image ?? null,
+          gallery: c.resort.gallery ?? [],
+          videoId: c.resort.video_id ?? null,
+          amenities: c.resort.amenities ?? [],
+          policies: c.resort.policies ?? [],
+        }
+      : null,
+  };
+}
+
+export async function getMaldivesCombos() {
+  const json = await layJSON(`/maldives`);
+  return (json?.data ?? []).map(mapComboMaldives).filter(Boolean);
+}
+
+export async function getMaldivesCombo(slug) {
+  const json = await layJSON(`/maldives/${encodeURIComponent(slug)}`);
+  return mapComboMaldives(json?.data ?? null);
+}
+
+// [{ slug, updated_at }] cho sitemap / dựng sẵn trang
+export async function getMaldivesSitemap() {
+  const json = await layJSON(`/maldives-sitemap`);
+  return (json?.data ?? []).filter((c) => slugHopLe(c?.slug));
+}
+
+// Khách gửi yêu cầu đặt combo — đi qua route của Next (gắn tài khoản, IP khách)
+export async function datComboMaldives(payload) {
+  const res = await fetch(`/api/maldives`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ ...payload, nguon: layNguon() }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const loi = json?.errors ? Object.values(json.errors).flat()[0] : null;
+    throw new Error(loi || json?.message || "Gửi yêu cầu thất bại, vui lòng thử lại hoặc gọi hotline.");
+  }
+  return json;
 }
 
 // ---- Sự kiện / Team Building ----

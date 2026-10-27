@@ -38,3 +38,13 @@ export function ghiXemTour(tour) {
     ],
   });
 }
+
+// Khách mở trang combo Maldives — "view_item" tính bằng USD (giá combo niêm yết USD)
+export function ghiXemMaldives(combo) {
+  const gia = Number(combo.giaTu) || 0;
+  gaEvent("view_item", {
+    currency: "USD",
+    ...(gia > 0 ? { value: gia } : {}),
+    items: [{ item_id: `maldives-${combo.slug}`, item_name: combo.name, item_category: "Combo Maldives", ...(gia > 0 ? { price: gia } : {}) }],
+  });
+}

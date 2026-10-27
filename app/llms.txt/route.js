@@ -1,4 +1,4 @@
-import { getBangGia, getVisaCountries, getSettings, getSeasonPages, slugHopLe } from "@/app/lib/api";
+import { getBangGia, getVisaCountries, getSettings, getSeasonPages, getMaldivesCombos, slugHopLe } from "@/app/lib/api";
 import { llmsTxt } from "@/app/lib/vanBanChoAI";
 
 // /llms.txt — bản giới thiệu website cho các cỗ máy tìm kiếm AI (ChatGPT,
@@ -11,9 +11,9 @@ import { llmsTxt } from "@/app/lib/vanBanChoAI";
 export const revalidate = 60;
 
 export async function GET() {
-  const [tours, visas, settings, muaDip] = await Promise.all([getBangGia(), getVisaCountries(), getSettings(), getSeasonPages()]);
+  const [tours, visas, settings, muaDip, maldives] = await Promise.all([getBangGia(), getVisaCountries(), getSettings(), getSeasonPages(), getMaldivesCombos()]);
 
-  return new Response(llmsTxt({ tours, visas: visas.filter((v) => slugHopLe(v.slug)), settings, muaDip }), {
+  return new Response(llmsTxt({ tours, visas: visas.filter((v) => slugHopLe(v.slug)), settings, muaDip, maldives }), {
     headers: { "Content-Type": "text/plain; charset=utf-8" },
   });
 }

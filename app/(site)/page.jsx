@@ -136,7 +136,7 @@ export default async function Page() {
       <h3>Dịch vụ đi kèm</h3>
       <p>
         Bên cạnh các chương trình tham quan, chúng tôi cung cấp{" "}
-        <Link href="/ve-may-bay">vé máy bay</Link> nội địa và quốc tế, dịch vụ visa, xe du lịch,
+        <Link href="/maldives">combo nghỉ dưỡng Maldives</Link>, vé máy bay nội địa và quốc tế, dịch vụ visa, xe du lịch,
         đặt khách sạn – resort, cùng chương trình{" "}
         <Link href="/team-building">team building và tổ chức sự kiện</Link> cho doanh nghiệp.
       </p>

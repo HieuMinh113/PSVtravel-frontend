@@ -1,4 +1,4 @@
-import { getTourSitemap, getGuideSitemap, getVisaSlugs, getEventSlugs, getDestinationSlugs, getJobSlugs, getSeasonPages, getAuthors } from "@/app/lib/api";
+import { getTourSitemap, getGuideSitemap, getVisaSlugs, getEventSlugs, getDestinationSlugs, getJobSlugs, getSeasonPages, getAuthors, getMaldivesSitemap } from "@/app/lib/api";
 import { SITE_URL } from "./lib/seo";
 
 // Sitemap dựng lại mỗi giờ để tour và bài viết mới sớm được Google ghi nhận
@@ -17,7 +17,7 @@ export default async function sitemap() {
   };
 
   const staticPaths = [
-    "", "/tour-trong-nuoc", "/tour-nuoc-ngoai", "/ve-may-bay",
+    "", "/tour-trong-nuoc", "/tour-nuoc-ngoai", "/maldives",
     "/lam-visa", "/team-building", "/cam-nang", "/khoanh-khac-du-khach", "/ve-chung-toi", "/lien-he",
     "/khuyen-mai", "/diem-den", "/cau-hoi-thuong-gap", "/tuyen-dung",
     // Các trang pháp lý bắt buộc — cần Google lập chỉ mục để chứng minh website
@@ -51,7 +51,7 @@ export default async function sitemap() {
 
   // Tour: lấy từ API riêng cho sitemap — danh sách tour thường chỉ trả tối đa 50
   // tour mỗi loại và bỏ tour tạm ẩn vì hết hạn visa, sitemap sẽ sót tour.
-  const [tours, guides, visaSlugs, eventSlugs, destSlugs, jobSlugs, seasonPages, authors] = await Promise.all([
+  const [tours, guides, visaSlugs, eventSlugs, destSlugs, jobSlugs, seasonPages, authors, maldives] = await Promise.all([
     anToan(() => getTourSitemap()),
     anToan(() => getGuideSitemap()),
     anToan(() => getVisaSlugs()),
@@ -60,6 +60,7 @@ export default async function sitemap() {
     anToan(() => getJobSlugs()),
     anToan(() => getSeasonPages()),
     anToan(() => getAuthors()),
+    anToan(() => getMaldivesSitemap()),
   ]);
 
   const tourEntries = tours
@@ -139,5 +140,13 @@ export default async function sitemap() {
     priority: 0.5,
   }));
 
-  return [...staticEntries, ...tourEntries, ...seasonEntries, ...guideEntries, ...authorEntries, ...visaEntries, ...eventEntries, ...destEntries, ...jobEntries];
+  // Combo Maldives
+  const maldivesEntries = maldives.map((c) => ({
+    url: `${SITE_URL}/maldives/${c.slug}`,
+    lastModified: ngay(c.updated_at),
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
+
+  return [...staticEntries, ...tourEntries, ...maldivesEntries, ...seasonEntries, ...guideEntries, ...authorEntries, ...visaEntries, ...eventEntries, ...destEntries, ...jobEntries];
 }

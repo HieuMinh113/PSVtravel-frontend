@@ -42,6 +42,7 @@ export const config = {
     "/tour-nuoc-ngoai/:slug",
     "/tour-trong-nuoc/:slug",
     "/cam-nang/:slug",
+    "/maldives/:slug",
     "/tour_nuoc_ngoai/:path+",
     "/tour_trong_nuoc/:path+",
     "/tour/:path+",

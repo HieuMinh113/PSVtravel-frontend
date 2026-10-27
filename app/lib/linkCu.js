@@ -61,7 +61,7 @@ export async function traLinkCu(duongDan) {
 // hướng thì Next lưu mã 308 nhưng MẤT địa chỉ đích — Google không theo được.
 // Danh sách { cũ: mới } giữ trong bộ nhớ 60 giây; tải lỗi thì giữ bản cũ.
 
-export const TIEN_TO_DOI_DUONG_DAN = ["/tour-nuoc-ngoai/", "/tour-trong-nuoc/", "/cam-nang/"];
+export const TIEN_TO_DOI_DUONG_DAN = ["/tour-nuoc-ngoai/", "/tour-trong-nuoc/", "/cam-nang/", "/maldives/"];
 const GIU_DANH_SACH_MS = 60_000;
 let danhSachDoi = null;
 let taiLuc = 0;

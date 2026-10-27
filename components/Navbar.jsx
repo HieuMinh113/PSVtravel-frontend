@@ -15,7 +15,7 @@ const links = [
   { to: "/ve-chung-toi", label: "Về chúng tôi" },
   { to: "/tour-trong-nuoc", label: "Tour trong nước", mega: "domestic" },
   { to: "/tour-nuoc-ngoai", label: "Tour nước ngoài", mega: "abroad" },
-  { to: "/ve-may-bay", label: "Vé máy bay" },
+  { to: "/maldives", label: "Maldives" },
   { to: "/lam-visa", label: "Làm visa" },
   { to: "/team-building", label: "Team Building" },
   { to: "/cam-nang", label: "Cẩm nang" },

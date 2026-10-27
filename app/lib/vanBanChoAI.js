@@ -104,7 +104,7 @@ function dongTour(t) {
 }
 
 /** /pricing.md — bảng giá mọi tour đang mở bán + phí dịch vụ visa. */
-export function bangGiaMarkdown({ tours = [], visas = [], settings = {}, luc = new Date() }) {
+export function bangGiaMarkdown({ tours = [], visas = [], settings = {}, maldives = [], luc = new Date() }) {
   const lh = lienHe(settings);
   const phan = [
     `# Bảng giá tour — ${SITE_NAME}`,
@@ -149,12 +149,26 @@ export function bangGiaMarkdown({ tours = [], visas = [], settings = {}, luc = n
     );
   }
 
+  // Combo Maldives niêm yết USD theo hạng phòng × ngày (bảng đầy đủ trên trang từng combo)
+  if (maldives.length) {
+    phan.push(
+      "",
+      "## Combo nghỉ dưỡng Maldives",
+      "",
+      "Giá USD cho 1 người lớn, theo hạng phòng và ngày khởi hành; bảng giá đầy đủ trên trang từng combo.",
+      "",
+      ...maldives.map((c) =>
+        `- [${chu(c.name)}](${SITE_URL}/maldives/${c.slug})${c.days ? ` — ${c.days} ngày ${c.nights ?? ""} đêm`.trimEnd() : ""}${c.airline ? `, bay ${c.airline}` : ""}: ${c.giaTu ? `từ $${Number(c.giaTu).toLocaleString("vi-VN")}/khách` : "liên hệ"}`
+      )
+    );
+  }
+
   phan.push("", "## Liên hệ đặt tour", "", khoiLienHe(lh), "");
   return phan.join("\n");
 }
 
 /** /llms.txt — giới thiệu công ty cho AI theo chuẩn llmstxt.org. */
-export function llmsTxt({ tours = [], visas = [], settings = {}, muaDip = [], luc = new Date() }) {
+export function llmsTxt({ tours = [], visas = [], settings = {}, muaDip = [], maldives = [], luc = new Date() }) {
   const lh = lienHe(settings);
   const trongNuoc = tours.filter((t) => t.type === "domestic");
   const nuocNgoai = tours.filter((t) => t.type === "abroad");
@@ -205,7 +219,7 @@ export function llmsTxt({ tours = [], visas = [], settings = {}, muaDip = [], lu
     "## Dịch vụ khác",
     "",
     `- [Làm visa](${SITE_URL}/lam-visa): dịch vụ làm hồ sơ visa${visas.length ? ` cho ${visas.length} nước` : ""}${visaCoGia.length ? `, phí dịch vụ từ ${formatVND(Math.min(...visaCoGia.map((v) => v.priceValue)))}` : ""}`,
-    `- [Vé máy bay](${SITE_URL}/ve-may-bay): vé trong nước và quốc tế`,
+    `- [Combo Maldives](${SITE_URL}/maldives): combo nghỉ dưỡng trọn gói vé máy bay + resort${maldives.length ? `, ${maldives.length} combo đang mở bán` : ""}`,
     `- [Team building & du lịch công ty](${SITE_URL}/team-building): company trip, gala dinner, sự kiện doanh nghiệp trọn gói`,
     "",
     "## Hỏi đáp & cẩm nang",
