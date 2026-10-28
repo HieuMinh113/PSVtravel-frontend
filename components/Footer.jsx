@@ -186,7 +186,7 @@ export default function Footer({ settings = {} }) {
               <li><Link href="/lam-visa" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Làm visa</Link></li>
               <li><Link href="/cam-nang" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Cẩm nang du lịch</Link></li>
               <li><Link href="/khoanh-khac-du-khach" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Khoảnh khắc du khách</Link></li>
-              <li><Link href="/khuyen-mai" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Khuyến mãi &amp; ưu đãi</Link></li>
+              <li><Link href="/khuyen-mai" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Voucher &amp; ưu đãi</Link></li>
               <li><Link href="/diem-den" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Điểm đến nổi bật</Link></li>
             </ul>
           </div>

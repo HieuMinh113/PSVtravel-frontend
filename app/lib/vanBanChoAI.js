@@ -222,6 +222,7 @@ export function llmsTxt({ tours = [], visas = [], settings = {}, muaDip = [], ma
     `- [Combo Maldives](${SITE_URL}/maldives): combo nghỉ dưỡng trọn gói vé máy bay + resort${maldives.length ? `, ${maldives.length} combo đang mở bán` : ""}`,
     `- [Vé máy bay](${SITE_URL}/ve-may-bay): vé trong nước và quốc tế`,
     `- [Team building & du lịch công ty](${SITE_URL}/team-building): company trip, gala dinner, sự kiện doanh nghiệp trọn gói`,
+    `- [Voucher & ưu đãi](${SITE_URL}/khuyen-mai): kiểm tra voucher PSV Travel còn dùng được không (gõ mã hoặc quét QR), chương trình giảm giá đang áp dụng`,
     "",
     "## Hỏi đáp & cẩm nang",
     "",

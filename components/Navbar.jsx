@@ -25,7 +25,7 @@ const links = [
     drop: "kham-pha",
     submenu: [
       { to: "/ve-may-bay", label: "Vé máy bay", icon: Plane },
-      { to: "/khuyen-mai", label: "Khuyến mãi", icon: Tag },
+      { to: "/khuyen-mai", label: "Voucher & ưu đãi", icon: Tag },
       { to: "/diem-den", label: "Điểm đến", icon: MapPin },
       { to: "/cau-hoi-thuong-gap", label: "Câu hỏi thường gặp", icon: HelpCircle },
       { to: "/tuyen-dung", label: "Tuyển dụng", icon: Briefcase },
@@ -255,7 +255,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
   // Thanh điều hướng để trong suốt với chữ trắng khi chưa cuộn — hợp với trang
   // có Hero tối, nhưng trên trang nền sáng thì thành trắng trên trắng, cả menu
   // biến mất. Ép nền trắng ngay từ đầu cho những trang này.
-  const TRANG_NEN_SANG = ["/tai-khoan"];
+  const TRANG_NEN_SANG = ["/tai-khoan", "/voucher"];
   const nenSang = TRANG_NEN_SANG.some((p) => pathname === p || pathname.startsWith(p + "/"));
 
   const solid = scrolled || open || nenSang;

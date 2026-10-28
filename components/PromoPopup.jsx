@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getImageProps } from "next/image";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { duocToiUu } from "@/app/lib/anh";
 import BangChuyen from "@/components/BangChuyen";
@@ -29,14 +30,18 @@ import AnhVuaKhung from "@/components/AnhVuaKhung";
 //   đúng thiết bị — trước đây tải cả bản máy tính lẫn bản điện thoại (2 × 1,1MB).
 const SU_KIEN_TUONG_TAC = ["scroll", "wheel", "touchstart", "pointerdown", "keydown"];
 const KHOA = "psv_popup_da_tat";
+// Trang mở từ QR trên voucher: khách / nhân viên quầy chỉ cần xem kết quả, không che bằng poster
+const TRANG_KHONG_HIEN = ["/voucher/"];
 
 export default function PromoPopup({ posters = [] }) {
   const [hien, setHien] = useState(false);
   const ds = useMemo(() => posters.filter((p) => p?.image), [posters]);
   const khoaPoster = useMemo(() => ds.map((p) => p.id).join(","), [ds]);
+  const pathname = usePathname();
+  const khongHien = TRANG_KHONG_HIEN.some((t) => pathname?.startsWith(t));
 
   useEffect(() => {
-    if (!khoaPoster) return;
+    if (!khoaPoster || khongHien) return;
     let daTat = null;
     try {
       daTat = sessionStorage.getItem(KHOA);
@@ -60,7 +65,7 @@ export default function PromoPopup({ posters = [] }) {
       boNghe();
       clearTimeout(hen);
     };
-  }, [khoaPoster]);
+  }, [khoaPoster, khongHien]);
 
   const dong = useCallback(() => {
     setHien(false);
