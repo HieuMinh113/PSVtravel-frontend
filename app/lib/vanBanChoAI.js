@@ -220,6 +220,7 @@ export function llmsTxt({ tours = [], visas = [], settings = {}, muaDip = [], ma
     "",
     `- [Làm visa](${SITE_URL}/lam-visa): dịch vụ làm hồ sơ visa${visas.length ? ` cho ${visas.length} nước` : ""}${visaCoGia.length ? `, phí dịch vụ từ ${formatVND(Math.min(...visaCoGia.map((v) => v.priceValue)))}` : ""}`,
     `- [Combo Maldives](${SITE_URL}/maldives): combo nghỉ dưỡng trọn gói vé máy bay + resort${maldives.length ? `, ${maldives.length} combo đang mở bán` : ""}`,
+    `- [Vé máy bay](${SITE_URL}/ve-may-bay): vé trong nước và quốc tế`,
     `- [Team building & du lịch công ty](${SITE_URL}/team-building): company trip, gala dinner, sự kiện doanh nghiệp trọn gói`,
     "",
     "## Hỏi đáp & cẩm nang",

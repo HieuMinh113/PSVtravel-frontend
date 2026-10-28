@@ -17,7 +17,7 @@ export default async function sitemap() {
   };
 
   const staticPaths = [
-    "", "/tour-trong-nuoc", "/tour-nuoc-ngoai", "/maldives",
+    "", "/tour-trong-nuoc", "/tour-nuoc-ngoai", "/maldives", "/ve-may-bay",
     "/lam-visa", "/team-building", "/cam-nang", "/khoanh-khac-du-khach", "/ve-chung-toi", "/lien-he",
     "/khuyen-mai", "/diem-den", "/cau-hoi-thuong-gap", "/tuyen-dung",
     // Các trang pháp lý bắt buộc — cần Google lập chỉ mục để chứng minh website

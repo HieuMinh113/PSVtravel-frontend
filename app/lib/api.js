@@ -470,6 +470,29 @@ function mapComboMaldives(c) {
   };
 }
 
+export async function getAirlines() {
+  const json = await layJSON(`/airlines`);
+  return (json?.data ?? []).map((a) => ({
+    name: a.name,
+    code: a.code,
+    logoImage: a.logo, // URL hoặc null
+  }));
+}
+
+export async function getFlightDeals() {
+  const json = await layJSON(`/flight-deals`);
+  return (json?.data ?? []).map((d, i) => ({
+    id: i,
+    route: `${d.from_city} → ${d.to_city}`,
+    price: d.price ? `${Number(d.price).toLocaleString("vi-VN")}đ` : "Liên hệ",
+    oldPrice: d.old_price ? `${Number(d.old_price).toLocaleString("vi-VN")}đ` : null,
+    airlineName: d.airline?.name ?? null,
+    airlineLogo: d.airline?.logo ?? null,
+    note: d.note ?? null,
+    image: null, // FlightDeal không có ảnh
+  }));
+}
+
 export async function getMaldivesCombos() {
   const json = await layJSON(`/maldives`);
   return (json?.data ?? []).map(mapComboMaldives).filter(Boolean);

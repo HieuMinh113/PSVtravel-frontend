@@ -8,7 +8,7 @@ import UserMenu from "./UserMenu";
 import useNguoiDung from "@/app/lib/useNguoiDung";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ChevronDown, Compass, ArrowRight, ShieldCheck, ExternalLink, Tag, MapPin, HelpCircle, Briefcase } from "lucide-react";
+import { Menu, X, User, ChevronDown, Compass, ArrowRight, ShieldCheck, ExternalLink, Tag, MapPin, HelpCircle, Briefcase, Plane } from "lucide-react";
 
 const links = [
   { to: "/", label: "Trang chủ" },
@@ -24,6 +24,7 @@ const links = [
     label: "Khám phá",
     drop: "kham-pha",
     submenu: [
+      { to: "/ve-may-bay", label: "Vé máy bay", icon: Plane },
       { to: "/khuyen-mai", label: "Khuyến mãi", icon: Tag },
       { to: "/diem-den", label: "Điểm đến", icon: MapPin },
       { to: "/cau-hoi-thuong-gap", label: "Câu hỏi thường gặp", icon: HelpCircle },
