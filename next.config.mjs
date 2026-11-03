@@ -80,6 +80,11 @@ const nextConfig = {
     // hình phổ thông. Ảnh trong nội dung bài (app/lib/sanitize.js) dùng các cỡ
     // trong danh sách này — sửa ở đây thì xem lại cả bên đó.
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+
+    // Ảnh đã nén được giữ trên ổ Docker riêng qua các lần triển khai
+    // (docker-compose.prod.yml ở repo backend). Mặc định Next được dùng tới 50%
+    // ổ trống — đặt 500 MB, quá thì tự xoá ảnh lâu không ai xem.
+    maximumDiskCacheSize: 500_000_000,
     remotePatterns: [
       ...mayChuAnh,
       // Máy lập trình: tuỳ người mà .env ghi localhost hay 127.0.0.1

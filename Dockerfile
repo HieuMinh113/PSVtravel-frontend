@@ -44,6 +44,11 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Bộ đệm ảnh đã nén (/_next/image) được gắn ổ Docker riêng để giữ qua các lần
+# triển khai. Thư mục phải có sẵn và thuộc nextjs: ổ mới tạo lần đầu nhận chủ
+# sở hữu theo thư mục này — không có thì thuộc root, Next không ghi được.
+RUN mkdir -p .next/cache/images && chown -R nextjs:nodejs .next/cache
+
 USER nextjs
 EXPOSE 3000
 

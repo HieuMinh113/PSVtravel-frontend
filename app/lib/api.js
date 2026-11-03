@@ -1,5 +1,6 @@
 // Mọi lời gọi tới backend Laravel đi qua đây. Đổi domain khi lên production.
 import { layNguon } from "./nguonKhach";
+import { headerNoiBo } from "./noiBo";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 const REVALIDATE = 60; // giây — chậm nhất 1 phút thấy thay đổi từ admin
 
@@ -35,7 +36,7 @@ async function layJSON(duongDan, { batBuoc = false } = {}) {
     try {
       const res = await fetch(`${API_URL}${duongDan}`, {
         next: { revalidate: REVALIDATE },
-        headers: { Accept: "application/json" },
+        headers: { Accept: "application/json", ...headerNoiBo() },
       });
 
       if (res.ok) return res.json();

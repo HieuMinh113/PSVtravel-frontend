@@ -4,6 +4,8 @@
 // trang đích do backend khớp (GET /link-cu, bảng "Chuyển hướng link cũ" trong
 // admin). Dùng đường dẫn tương đối (không @/) để chạy được trong npm test.
 
+import { headerNoiBo } from "./noiBo.js";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // Tiền tố trang tour / danh mục của web cũ — cần hỏi backend
@@ -41,7 +43,7 @@ export async function traLinkCu(duongDan) {
   try {
     const res = await fetch(`${API_URL}/link-cu?path=${encodeURIComponent(duongDan)}`, {
       cache: "no-store",
-      headers: { Accept: "application/json" },
+      headers: { Accept: "application/json", ...headerNoiBo() },
       signal: AbortSignal.timeout(3000),
     });
     if (!res.ok) return null;
@@ -71,7 +73,7 @@ async function taiDanhSachDoi() {
   try {
     const res = await fetch(`${API_URL}/link-cu/doi-duong-dan`, {
       cache: "no-store",
-      headers: { Accept: "application/json" },
+      headers: { Accept: "application/json", ...headerNoiBo() },
       signal: AbortSignal.timeout(3000),
     });
     if (res.ok) {
