@@ -7,16 +7,29 @@ import { CalendarDays, Eye, ArrowRight, BookOpen, Sparkles } from "lucide-react"
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import BanDoCamNang from "@/components/camnang/BanDoCamNang";
+import { cacChuyenMuc, tenChuyenMuc } from "@/app/lib/chuyenMuc";
+
+const TAT_CA = "tat-ca";
+// Mở trang hiện 12 bài, mỗi lần bấm "Xem thêm" hiện thêm 12. Bài chưa hiện vẫn
+// có sẵn trong trang (chỉ ẩn đi) — Google đọc được link mọi bài, ảnh của bài ẩn
+// chưa tải nên trang không nặng thêm.
+const MOI_LAN = 12;
 
 export default function Guides({ guides: apiGuides = [], banDo = null }) {
   // Chỉ hiện bài viết thật từ admin. Trước đây DB trống thì đổ ra 6 bài mẫu
   // với ảnh Unsplash — khách đọc tưởng bài thật, bấm vào lỗi 404, mà một trong
   // số ảnh đó nay đã bị xoá khỏi Unsplash nên trang báo lỗi ảnh.
   const list = apiGuides;
-  const categories = ["Tất cả", ...Array.from(new Set(list.map((g) => g.category).filter(Boolean)))];
+  const categories = [TAT_CA, ...cacChuyenMuc(list)];
 
-  const [category, setCategory] = useState("Tất cả");
-  const filtered = category === "Tất cả" ? list : list.filter((g) => g.category === category);
+  const [category, setCategory] = useState(TAT_CA);
+  const [soHien, setSoHien] = useState(MOI_LAN);
+  const chonMuc = (c) => {
+    setCategory(c);
+    setSoHien(MOI_LAN);
+  };
+  const filtered = category === TAT_CA ? list : list.filter((g) => g.category === category);
+  const conLai = Math.max(0, filtered.length - soHien);
 
   // Bài đầu danh sách được trình bày lớn hơn — tạo nhịp điệu thị giác,
   // tránh cảm giác lưới thẻ đều tăm tắp gây nhàm mắt.
@@ -52,7 +65,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
               return (
                 <button
                   key={c}
-                  onClick={() => setCategory(c)}
+                  onClick={() => chonMuc(c)}
                   aria-pressed={dangChon}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 ease-enter ${
                     dangChon
@@ -60,7 +73,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                       : "bg-ocean-50 text-ocean-700 hover:bg-ocean-100"
                   }`}
                 >
-                  {c}
+                  {c === TAT_CA ? "Tất cả" : tenChuyenMuc(c)}
                 </button>
               );
             })}
@@ -68,7 +81,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
 
           <p className="mt-6 text-center text-sm text-ink-muted">
             <strong className="font-semibold text-ocean-700">{filtered.length}</strong> bài viết
-            {category !== "Tất cả" && <> trong mục <strong className="font-semibold text-ink">{category}</strong></>}
+            {category !== TAT_CA && <> trong mục <strong className="font-semibold text-ink">{tenChuyenMuc(category)}</strong></>}
           </p>
 
           {filtered.length === 0 ? (
@@ -80,7 +93,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
               <p className="mx-auto mt-2 max-w-sm text-sm text-ink-muted">
                 Hãy quay lại sau, hoặc xem các bài viết khác trong cẩm nang.
               </p>
-              <button onClick={() => setCategory("Tất cả")} className="btn-cta mt-7 !px-6 !py-3 text-sm">
+              <button onClick={() => chonMuc(TAT_CA)} className="btn-cta mt-7 !px-6 !py-3 text-sm">
                 Xem tất cả bài viết
               </button>
             </div>
@@ -114,7 +127,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                       <div className="flex flex-col justify-center p-6 sm:p-8">
                         {baiNoiBat.category && (
                           <span className="mb-3 self-start rounded-full bg-ocean-50 px-3 py-1 text-xs font-semibold text-ocean-700">
-                            {baiNoiBat.category}
+                            {tenChuyenMuc(baiNoiBat.category)}
                           </span>
                         )}
                         <h2 className="font-display text-2xl font-bold leading-snug text-deep-900 transition-colors group-hover:text-ocean-700 sm:text-3xl">
@@ -123,7 +136,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                         <p className="mt-3 line-clamp-3 text-ink-muted">{baiNoiBat.excerpt}</p>
 
                         <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-ink-subtle">
-                          <span className="flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" /> {baiNoiBat.date}</span>
+                          {baiNoiBat.date && <span className="flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" /> {baiNoiBat.date}</span>}
                           <span className="flex items-center gap-1.5"><Eye className="h-3.5 w-3.5" /> {baiNoiBat.readTime || `${baiNoiBat.views ?? 0} lượt xem`}</span>
                         </div>
 
@@ -147,7 +160,9 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: (i % 6) * 0.06, ease: [0.22, 1, 0.36, 1] }}
                       whileHover={{ y: -6 }}
-                      className="card-surface group flex flex-col overflow-hidden"
+                      // +1: bài nổi bật phía trên đã tính là bài thứ nhất. Ẩn bằng lớp
+                      // "hidden" (không dùng thuộc tính hidden: lớp "flex" đè mất)
+                      className={`card-surface group flex-col overflow-hidden ${i + 1 >= soHien ? "hidden" : "flex"}`}
                     >
                       <Link href={`/cam-nang/${g.slug}`} className="flex flex-1 flex-col">
                         <div className="relative h-48 overflow-hidden">
@@ -159,7 +174,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                           <div className="absolute inset-0 bg-gradient-to-t from-deep-950/45 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                           {g.category && (
                             <span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 text-xs font-semibold text-ocean-700 shadow-sm">
-                              {g.category}
+                              {tenChuyenMuc(g.category)}
                             </span>
                           )}
                         </div>
@@ -169,7 +184,7 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                           </h3>
                           <p className="mt-2 line-clamp-2 flex-1 text-base text-ink-muted">{g.excerpt}</p>
                           <div className="mt-4 flex items-center justify-between text-xs text-ink-subtle">
-                            <span className="flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" /> {g.date}</span>
+                            <span className="flex items-center gap-1">{g.date && <><CalendarDays className="h-3.5 w-3.5" /> {g.date}</>}</span>
                             <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {g.readTime || `${g.views ?? 0} lượt xem`}</span>
                           </div>
                           <span className="mt-4 flex items-center gap-1 text-sm font-semibold text-sunset-700">
@@ -179,6 +194,15 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                       </Link>
                     </motion.article>
                   ))}
+                </div>
+              )}
+
+              {conLai > 0 && (
+                <div className="mt-10 text-center">
+                  <button onClick={() => setSoHien((n) => n + MOI_LAN)} className="btn-cta !px-7 !py-3 text-sm">
+                    Xem thêm {Math.min(MOI_LAN, conLai)} bài
+                  </button>
+                  <p className="mt-2 text-xs text-ink-subtle">Còn {conLai} bài chưa hiện</p>
                 </div>
               )}
             </>

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BriefcaseBusiness, CalendarDays, Eye, Globe2, Sparkles } from "lucide-react";
 import { duocToiUu } from "@/app/lib/anh";
+import { tenChuyenMuc } from "@/app/lib/chuyenMuc";
 
 const chuDau = (t) => (t || "?").trim().charAt(0).toUpperCase();
 
@@ -142,7 +143,7 @@ export default function AuthorDetail({ author }) {
                       <div className="h-full w-full bg-gradient-to-br from-ocean-100 to-teal-100" />
                     )}
                     {g.category && (
-                      <span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 text-xs font-semibold text-ocean-700 shadow-sm">{g.category}</span>
+                      <span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 text-xs font-semibold text-ocean-700 shadow-sm">{tenChuyenMuc(g.category)}</span>
                     )}
                   </div>
                   <div className="flex flex-1 flex-col p-5">

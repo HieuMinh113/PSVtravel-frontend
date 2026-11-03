@@ -34,7 +34,7 @@ export default async function Page() {
     // Điểm đến nổi bật = Danh mục tour trong admin, số tour do máy chủ đếm thật
     getCategories(),
     getPromotions(),
-    getGuides(),
+    getGuides({ perPage: 4 }), // chỉ hiện 4 bài mới nhất
     getPartners(),
     // Video giới thiệu trang chủ (admin dán link YouTube trong Cài đặt)
     getSettings(),

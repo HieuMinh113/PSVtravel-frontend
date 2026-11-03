@@ -8,6 +8,7 @@ import YouTubeEmbed from "@/components/YouTubeEmbed";
 import BanDoCamNang from "@/components/camnang/BanDoCamNang";
 import NutXemBanDo from "@/components/camnang/NutXemBanDo";
 import { AnhTacGia, VeTacGia } from "@/components/pages/AuthorDetail";
+import { tenChuyenMuc } from "@/app/lib/chuyenMuc";
 
 // Trang chi tiết bài viết cẩm nang — component phía server (không cần "use client")
 // để nội dung bài viết được render sẵn trong HTML, tốt cho SEO.
@@ -52,7 +53,7 @@ export default function GuideDetail({ guide, settings = {}, banDo = null }) {
 
           {guide.category && (
             <span className="inline-block rounded-full bg-sunset-700 px-3.5 py-1 text-xs font-bold text-white shadow">
-              {guide.category}
+              {tenChuyenMuc(guide.category)}
             </span>
           )}
 

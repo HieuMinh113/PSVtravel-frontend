@@ -12,6 +12,6 @@ export const metadata = pageMeta({
 });
 
 export default async function Page() {
-  const [guides, banDo] = await Promise.all([getGuides(), getGuideMap()]);
+  const [guides, banDo] = await Promise.all([getGuides({ perPage: 200 }), getGuideMap()]);
   return <Guides guides={guides} banDo={banDo} />;
 }

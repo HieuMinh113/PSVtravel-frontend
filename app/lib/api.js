@@ -369,16 +369,18 @@ function mapGuide(g) {
   };
 }
 
-export async function getGuides({ category } = {}) {
+// perPage: trang chủ chỉ cần vài bài mới nhất; trang /cam-nang lấy hết (API
+// cho tối đa 200) — trước đây cố định 30, có 55 bài thì 25 bài không hiện.
+export async function getGuides({ category, perPage = 30 } = {}) {
   const q = new URLSearchParams();
   if (category) q.set("category", category);
-  q.set("per_page", "30");
+  q.set("per_page", String(perPage));
   const json = await layJSON(`/guides?${q.toString()}`);
   return (json?.data ?? []).map(mapGuide);
 }
 
 // Mọi bài cẩm nang đang hiển thị cho sitemap.xml: [{ slug, updated_at }] —
-// getGuides chỉ lấy 30 bài mới nhất.
+// gọn hơn getGuides (chỉ đường dẫn + ngày sửa).
 export async function getGuideSitemap() {
   const json = await layJSON(`/guides-sitemap`);
   return json?.data ?? [];
