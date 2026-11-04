@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BriefcaseBusiness, CalendarDays, Eye, Globe2, Sparkles } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, CalendarDays, Globe2, Sparkles } from "lucide-react";
 import { duocToiUu } from "@/app/lib/anh";
 import { tenChuyenMuc } from "@/app/lib/chuyenMuc";
 
@@ -151,7 +151,6 @@ export default function AuthorDetail({ author }) {
                     {g.excerpt && <p className="mt-2 line-clamp-2 flex-1 text-base text-ink-muted">{g.excerpt}</p>}
                     <div className="mt-4 flex items-center justify-between text-xs text-ink-subtle">
                       {g.date && <span className="flex items-center gap-1"><CalendarDays aria-hidden="true" className="h-3.5 w-3.5" /> {g.date}</span>}
-                      <span className="flex items-center gap-1"><Eye aria-hidden="true" className="h-3.5 w-3.5" /> {g.views} lượt xem</span>
                     </div>
                   </div>
                 </Link>

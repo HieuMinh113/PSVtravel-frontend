@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, Eye, User, ArrowLeft, ArrowRight, Quote, MapPin, Navigation } from "lucide-react";
+import { CalendarDays, User, ArrowLeft, ArrowRight, Quote, MapPin, Navigation } from "lucide-react";
 import GhiNhanLuotXem from "@/components/GhiNhanLuotXem";
 import TourBookingBox from "@/components/TourBookingBox";
 import { locHtml } from "@/app/lib/sanitize";
@@ -79,7 +79,6 @@ export default function GuideDetail({ guide, settings = {}, banDo = null }) {
             {guide.date && (
               <span className="flex items-center gap-1.5"><CalendarDays className="h-4 w-4 text-gold-400" /> {guide.date}</span>
             )}
-            <span className="flex items-center gap-1.5"><Eye className="h-4 w-4 text-gold-400" /> {guide.views ?? 0} lượt xem</span>
           </div>
 
           {/* Vị trí của bài trên bản đồ cẩm nang — bấm để xuống bản đồ cuối bài */}

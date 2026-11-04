@@ -354,7 +354,6 @@ function mapGuide(g) {
     author: g.author_name ?? null,
     // Tác giả có trang riêng /tac-gia/{slug} (null: bài chỉ có tên người nhập)
     authorProfile: mapTacGia(g.author),
-    views: g.view_count ?? 0,
     date: g.published_at ? g.published_at.split("-").reverse().join("/") : null, // yyyy-mm-dd → dd/mm/yyyy
     updatedAt: g.updated_at ?? g.published_at ?? null, // cho sitemap lastmod thật
     videoId: g.video_id ?? null, // video minh hoạ (YouTube)

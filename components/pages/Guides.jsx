@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CalendarDays, Eye, ArrowRight, BookOpen, Sparkles } from "lucide-react";
+import { CalendarDays, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import BanDoCamNang from "@/components/camnang/BanDoCamNang";
@@ -137,7 +137,6 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
 
                         <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-ink-subtle">
                           {baiNoiBat.date && <span className="flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" /> {baiNoiBat.date}</span>}
-                          <span className="flex items-center gap-1.5"><Eye className="h-3.5 w-3.5" /> {baiNoiBat.readTime || `${baiNoiBat.views ?? 0} lượt xem`}</span>
                         </div>
 
                         <span className="mt-6 flex items-center gap-1.5 font-semibold text-sunset-700">
@@ -185,7 +184,6 @@ export default function Guides({ guides: apiGuides = [], banDo = null }) {
                           <p className="mt-2 line-clamp-2 flex-1 text-base text-ink-muted">{g.excerpt}</p>
                           <div className="mt-4 flex items-center justify-between text-xs text-ink-subtle">
                             <span className="flex items-center gap-1">{g.date && <><CalendarDays className="h-3.5 w-3.5" /> {g.date}</>}</span>
-                            <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {g.readTime || `${g.views ?? 0} lượt xem`}</span>
                           </div>
                           <span className="mt-4 flex items-center gap-1 text-sm font-semibold text-sunset-700">
                             Đọc tiếp <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 ease-enter group-hover:translate-x-1" />
