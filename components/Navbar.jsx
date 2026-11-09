@@ -277,7 +277,16 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
       </div>
 
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link href="/" className="group flex shrink-0 items-center">
+        <Link
+          href="/"
+          // Chữ "PSV" trong logo màu xanh đậm: nằm thẳng trên ảnh đầu trang tối
+          // (menu đang trong suốt) thì gần như không đọc được. Lót nền trắng bo
+          // góc chỉ khi menu trong suốt; cuộn xuống menu nền trắng thì bỏ nền.
+          // -mx/-my bù phần đệm để logo và chiều cao menu không xê dịch.
+          className={`group -mx-2.5 -my-1 flex shrink-0 items-center rounded-2xl px-2.5 py-1 transition-colors duration-500 ${
+            solid ? "bg-transparent" : "bg-white/95 shadow-sm"
+          }`}
+        >
           <Image
             src="/logo.png"
             alt="PSVTravel"

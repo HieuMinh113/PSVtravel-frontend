@@ -28,6 +28,20 @@ export default function TeamBuildingGrid({ events = [] }) {
   const danhSach =
     loc === "all" ? events : events.filter((e) => (e.audience || []).includes(loc));
 
+  // Ít gói thì đừng để thẻ nằm lệch trái, bên phải trống: 1 gói → thẻ ngang
+  // rộng hết khối (ảnh trái, nội dung phải); 2 gói → hai cột đều nhau.
+  const motGoi = danhSach.length === 1;
+  const luoi = motGoi
+    ? "grid-cols-1"
+    : danhSach.length === 2
+      ? "grid-cols-1 sm:grid-cols-2"
+      : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+  const coAnh = motGoi
+    ? "(max-width: 768px) 100vw, 50vw"
+    : danhSach.length === 2
+      ? "(max-width: 640px) 100vw, 50vw"
+      : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
+
   return (
     <div>
       {tabs.length > 2 && (
@@ -49,16 +63,16 @@ export default function TeamBuildingGrid({ events = [] }) {
         </div>
       )}
 
-      <div className="mt-7 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={`mt-7 grid gap-6 ${luoi}`}>
         {danhSach.map((e) => (
           <Link
             key={e.slug}
             href={`/team-building/${e.slug}`}
-            className="card-surface group flex h-full flex-col overflow-hidden transition-transform duration-300 hover:-translate-y-1"
+            className={`card-surface group flex h-full flex-col overflow-hidden transition-transform duration-300 hover:-translate-y-1 ${motGoi ? "md:flex-row" : ""}`}
           >
-            <div className="relative aspect-[16/10] overflow-hidden bg-ocean-100">
+            <div className={`relative aspect-[16/10] overflow-hidden bg-ocean-100 ${motGoi ? "md:aspect-auto md:min-h-[340px] md:w-1/2 md:shrink-0" : ""}`}>
               {e.image ? (
-                <Image src={e.image} alt={e.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized={!duocToiUu(e.image)} className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                <Image src={e.image} alt={e.title} fill sizes={coAnh} unoptimized={!duocToiUu(e.image)} className="object-cover transition-transform duration-500 group-hover:scale-105" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-ocean-300">
                   <PartyPopper className="h-12 w-12" />
@@ -68,7 +82,7 @@ export default function TeamBuildingGrid({ events = [] }) {
                 <span className="absolute left-3 top-3 rounded-full bg-sunset-700 px-3 py-1 text-xs font-bold text-white shadow">Nổi bật</span>
               )}
             </div>
-            <div className="flex flex-1 flex-col p-5">
+            <div className={`flex flex-1 flex-col p-5 ${motGoi ? "md:p-8 lg:p-10" : ""}`}>
               {e.audience?.length > 0 && (
                 <div className="mb-2 flex flex-wrap gap-1.5">
                   {e.audience.map((a) => (
@@ -79,7 +93,7 @@ export default function TeamBuildingGrid({ events = [] }) {
                 </div>
               )}
               <div className="flex items-center gap-2">
-                <h3 className="font-display text-lg font-bold text-deep-900 group-hover:text-ocean-700">{e.title}</h3>
+                <h3 className={`font-display font-bold text-deep-900 group-hover:text-ocean-700 ${motGoi ? "text-xl md:text-2xl" : "text-lg"}`}>{e.title}</h3>
               </div>
               {e.reviewCount > 0 && (
                 <div className="mt-1 flex items-center gap-1 text-xs text-ink-subtle">
@@ -88,7 +102,7 @@ export default function TeamBuildingGrid({ events = [] }) {
                   <span>({e.reviewCount})</span>
                 </div>
               )}
-              {e.summary && <p className="mt-2 line-clamp-2 text-sm text-ink-muted">{e.summary}</p>}
+              {e.summary && <p className={`mt-2 text-ink-muted ${motGoi ? "line-clamp-4 text-sm md:text-base" : "line-clamp-2 text-sm"}`}>{e.summary}</p>}
 
               <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-ink-subtle">
                 {e.groupSize && <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5 text-ocean-500" /> {e.groupSize}</span>}
