@@ -527,6 +527,14 @@ export async function datComboMaldives(payload) {
 }
 
 // ---- Sự kiện / Team Building ----
+// Nội dung trang giới thiệu Team Building (Admin → Nội dung website → Trang
+// Team Building). Dữ liệu phụ: API lỗi / chưa có thì null — trang dùng chữ mặc
+// định, khối thiếu dữ liệu tự ẩn.
+export async function getTrangTeamBuilding() {
+  const json = await layJSON(`/team-building-page`);
+  return json?.data ?? null;
+}
+
 function mapEvent(e) {
   if (!e) return null;
   return {
