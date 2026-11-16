@@ -112,6 +112,9 @@ export default function Gallery({ photos = [], settings = {} }) {
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     unoptimized={!duocToiUu(p.photo)}
+                    // Vài ảnh đầu nằm ngay dưới đầu trang: tải ngay, không chờ cuộn
+                    loading={i < 3 ? "eager" : undefined}
+                    fetchPriority={i === 0 ? "high" : undefined}
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
                   />
                   {/* Lớp phủ đáy để chữ trắng luôn đọc được, đậm dần khi rê chuột */}

@@ -7,7 +7,7 @@ import { getVisaCountries, getSettings } from "@/app/lib/api";
 export const revalidate = 60;
 
 export const metadata = pageMeta({
-  title: "Làm visa",
+  title: "Dịch vụ làm visa du lịch trọn gói",
   description:
     "Dịch vụ làm visa trọn gói tại PSV Travel: tư vấn hồ sơ, nộp và nhận kết quả. Xem giấy tờ cần chuẩn bị, thời gian xử lý và phí theo từng quốc gia.",
   path: "/lam-visa",

@@ -6,12 +6,30 @@ import { SlidersHorizontal, Search, X, MapPinned, RotateCcw } from "lucide-react
 import TourCard from "@/components/TourCard";
 import SectionReveal from "@/components/SectionReveal";
 
-export default function TourListPage({
+// Bản đọc bộ lọc từ địa chỉ (?category=, ?q=, ?ngay=, ?khach=). Trang tĩnh gọi
+// useSearchParams thì phần này chỉ dựng ở trình duyệt; HTML gửi về là fallback
+// của <Suspense> — xem TourListTinh bên dưới.
+export default function TourListPage(props) {
+  const searchParams = useSearchParams();
+  return <DanhSachTour {...props} searchParams={searchParams} />;
+}
+
+// Cùng giao diện nhưng KHÔNG đọc địa chỉ (bộ lọc trống = tất cả tour). Dùng làm
+// fallback của <Suspense> ở trang danh sách: HTML có sẵn đủ thẻ tour và link tới
+// từng tour cho Google / Bing / bot AI (không chạy JavaScript vẫn thấy). Trình
+// duyệt chạy xong thì bản đọc địa chỉ ở trên thay vào, cùng bố cục nên không nhảy.
+export function TourListTinh(props) {
+  return <DanhSachTour {...props} searchParams={THAM_SO_TRONG} />;
+}
+
+const THAM_SO_TRONG = new URLSearchParams();
+
+function DanhSachTour({
   tours,
   basePath,
   danhMuc = [], // Danh Mục Tour trong admin — cùng nguồn với mega menu
+  searchParams,
 }) {
-  const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const initialQuery = searchParams.get("q") || "";

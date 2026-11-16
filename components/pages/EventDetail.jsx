@@ -69,7 +69,7 @@ export default function EventDetail({ event, related = [], settings = {}, review
             {event.image && (
               <SectionReveal className="overflow-hidden rounded-2xl">
                 {/* width/height chỉ để giữ chỗ; h-auto giữ đúng tỉ lệ ảnh thật, không cắt */}
-                <Image src={event.image} alt={event.title} width={1200} height={750} sizes="(max-width: 1024px) 100vw, 800px" unoptimized={!duocToiUu(event.image)} className="h-auto w-full object-cover" />
+                <Image src={event.image} alt={event.title} width={1200} height={750} sizes="(max-width: 1024px) 100vw, 800px" unoptimized={!duocToiUu(event.image)} loading="eager" fetchPriority="high" className="h-auto w-full object-cover" />
               </SectionReveal>
             )}
 

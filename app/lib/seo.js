@@ -27,7 +27,9 @@ export const formatVND = (n) =>
 // mọi trang đều có og:image (nếu thiếu, công cụ audit báo "OG tags incomplete",
 // và khi dán link lên Facebook/Zalo cũng không hiện ảnh). Thay bằng ảnh banner
 // 1200×630 khi có; tạm dùng logo cho đủ thẻ.
-const OG_IMAGE_MAC_DINH = `${SITE_URL}/logo.png`;
+// Ảnh chia sẻ mặc định 1200×630 (Facebook / Zalo / X cắt đẹp). Trước đây là logo
+// 900×349 — chia sẻ trang chủ, trang danh mục lên mạng xã hội bị cắt méo.
+const OG_IMAGE_MAC_DINH = `${SITE_URL}/og-image.jpg`;
 
 // Gỡ dấu sao bọc tên điểm tham quan ("*Vạn Lý Trường Thành*") — quy ước nội bộ
 // để tô đậm ngoài giao diện, không được lọt lên Google.
@@ -117,7 +119,7 @@ export function pageMeta({ title, description, path = "/", image }) {
       siteName: SITE_NAME,
       locale: "vi_VN",
       type: "website",
-      images: [{ url: anh }],
+      images: [anh === OG_IMAGE_MAC_DINH ? { url: anh, width: 1200, height: 630, alt: SITE_NAME } : { url: anh }],
     },
     twitter: {
       card: "summary_large_image",
@@ -289,6 +291,75 @@ export function personJsonLd(a) {
 
 // Đường dẫn phân cấp (breadcrumb) — hiện dải điều hướng trên kết quả tìm kiếm,
 // và giúp AI hiểu cấu trúc trang. items: [{ name, url }] theo thứ tự từ gốc.
+// ===== Tin tuyển dụng (Google for Jobs) =====
+// Hình thức gõ tay trong admin ("Toàn thời gian / Bán thời gian / Thực tập") →
+// giá trị chuẩn của schema. Không khớp thì bỏ trống, không đoán.
+const HINH_THUC_VIEC = [
+  [/thực tập|intern/i, "INTERN"],
+  [/bán thời gian|part[\s-]?time/i, "PART_TIME"],
+  [/toàn thời gian|full[\s-]?time/i, "FULL_TIME"],
+  [/thời vụ|tạm thời/i, "TEMPORARY"],
+  [/cộng tác|hợp đồng|freelance/i, "CONTRACTOR"],
+];
+
+// "10-15 triệu", "Từ 12 triệu/tháng" → lương VND theo tháng; "Thoả thuận" → null
+export function luongThang(chuoi) {
+  const t = String(chuoi || "").toLowerCase();
+  if (!/triệu/.test(t)) return null;
+  const so = (t.match(/\d+(?:[.,]\d+)?/g) || [])
+    .map((x) => Math.round(parseFloat(x.replace(",", ".")) * 1e6))
+    .filter((n) => n > 0);
+  if (!so.length) return null;
+  const value = so.length > 1
+    ? { "@type": "QuantitativeValue", minValue: Math.min(...so), maxValue: Math.max(...so), unitText: "MONTH" }
+    : { "@type": "QuantitativeValue", value: so[0], unitText: "MONTH" };
+  return { "@type": "MonetaryAmount", currency: "VND", value };
+}
+
+// Schema JobPosting cho trang chi tiết tin. API chỉ trả tin đang mở (chưa hết
+// hạn). Thiếu mô tả hoặc ngày đăng (Google bắt buộc) thì không xuất.
+export function jobPostingJsonLd(j) {
+  const moTa = [
+    j?.description,
+    j?.requirements && `<h3>Yêu cầu</h3>${j.requirements}`,
+    j?.benefits && `<h3>Quyền lợi</h3>${j.benefits}`,
+  ].filter(Boolean).join("");
+  if (!j?.title || !moTa || !j?.date_posted) return null;
+  const loai = HINH_THUC_VIEC.find(([re]) => re.test(j.employment_type || ""))?.[1];
+  const luong = luongThang(j.salary_range);
+  // Nơi làm việc ghi khác văn phòng TP.HCM (chi nhánh khác) thì dùng đúng chữ đó
+  const ngoaiVanPhong = j.location && !/hồ chí minh|hcm|sài gòn|quận 7|q\.?\s?7|huỳnh tấn phát/i.test(j.location);
+  return {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: j.title,
+    description: moTa,
+    datePosted: j.date_posted,
+    ...(j.deadline ? { validThrough: `${j.deadline}T23:59:59+07:00` } : {}),
+    ...(loai ? { employmentType: loai } : {}),
+    hiringOrganization: { "@type": "Organization", "@id": ORG_ID, name: SITE_NAME, sameAs: SITE_URL, logo: `${SITE_URL}/logo.png` },
+    jobLocation: {
+      "@type": "Place",
+      address: ngoaiVanPhong
+        ? { "@type": "PostalAddress", streetAddress: j.location, addressCountry: "VN" }
+        : {
+          "@type": "PostalAddress",
+          streetAddress: CONG_TY.diaChi,
+          addressLocality: CONG_TY.quan,
+          addressRegion: CONG_TY.thanhPho,
+          postalCode: CONG_TY.maBuuChinh,
+          addressCountry: "VN",
+        },
+    },
+    ...(luong ? { baseSalary: luong } : {}),
+    ...(j.quantity > 0 ? { totalJobOpenings: j.quantity } : {}),
+    // Ứng viên nộp CV ngay trên trang (form ứng tuyển)
+    directApply: true,
+    identifier: { "@type": "PropertyValue", name: SITE_NAME, value: j.slug },
+    url: `${SITE_URL}/tuyen-dung/${j.slug}`,
+  };
+}
+
 export function breadcrumbJsonLd(items) {
   return {
     "@context": "https://schema.org",
@@ -303,7 +374,7 @@ export function breadcrumbJsonLd(items) {
 }
 
 // Schema dịch vụ (visa, vé máy bay) — trỏ nhà cung cấp về pháp nhân qua @id.
-export function serviceJsonLd({ name, serviceType, url, description }) {
+export function serviceJsonLd({ name, serviceType, url, description, image }) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -311,6 +382,7 @@ export function serviceJsonLd({ name, serviceType, url, description }) {
     serviceType,
     url,
     description,
+    ...(image ? { image } : {}),
     provider: { "@id": ORG_ID },
     areaServed: "VN",
   };

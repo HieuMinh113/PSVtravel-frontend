@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import EventDetail from "@/components/pages/EventDetail";
-import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL, videoJsonLd } from "@/app/lib/seo";
+import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL, videoJsonLd, serviceJsonLd } from "@/app/lib/seo";
 import { getEventBySlug, getEventSlugs, getEvents, getEventReviews, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -45,6 +45,16 @@ export default async function Page({ params }) {
   return (
     <>
       <JsonLd data={bc} />
+      {/* Gói team building = dịch vụ do PSV cung cấp (trước đây trang không có schema) */}
+      <JsonLd
+        data={serviceJsonLd({
+          name: event.title,
+          serviceType: "Team building & du lịch doanh nghiệp",
+          url: `${SITE_URL}/team-building/${event.slug}`,
+          description: event.metaDescription || event.summary || undefined,
+          image: event.image || undefined,
+        })}
+      />
       <JsonLd
         data={videoJsonLd({
           videoId: event.videoId,

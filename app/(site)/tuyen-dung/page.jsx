@@ -5,7 +5,7 @@ import { getJobs } from "@/app/lib/api";
 export const revalidate = 60;
 
 export const metadata = pageMeta({
-  title: "Tuyển dụng",
+  title: "Tuyển dụng việc làm ngành du lịch tại TP.HCM",
   description: "Cơ hội nghề nghiệp tại PSV Travel — các vị trí đang tuyển dụng và cách ứng tuyển.",
   path: "/tuyen-dung",
 });

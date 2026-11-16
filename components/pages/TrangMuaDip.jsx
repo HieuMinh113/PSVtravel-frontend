@@ -43,6 +43,7 @@ export default function TrangMuaDip({ trang, khoangNgay }) {
                   key={t.slug}
                   tour={t}
                   index={i}
+                  taiSom={i < 3}
                   basePath={t.type === "abroad" ? "/tour-nuoc-ngoai" : "/tour-trong-nuoc"}
                 />
               ))}

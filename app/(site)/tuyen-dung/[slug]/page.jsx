@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import CareerDetail from "@/components/pages/CareerDetail";
-import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
+import { pageMeta, breadcrumbJsonLd, jobPostingJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
 import { getJobBySlug, getJobSlugs } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -25,8 +25,10 @@ export default async function Page({ params }) {
   const { slug } = await params;
   const j = await getJobBySlug(slug);
   if (!j) notFound();
+  const tin = jobPostingJsonLd(j);
   return (
     <>
+      {tin && <JsonLd data={tin} />}
       <JsonLd
         data={breadcrumbJsonLd([
           { name: "Trang chủ", url: SITE_URL },

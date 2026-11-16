@@ -7,7 +7,7 @@ import { getAirlines, getFlightDeals, getSettings } from "@/app/lib/api";
 export const revalidate = 60;
 
 export const metadata = pageMeta({
-  title: "Vé máy bay",
+  title: "Đặt vé máy bay nội địa & quốc tế",
   description:
     "Đặt vé máy bay nội địa và quốc tế tại PSV Travel: so sánh giá nhiều hãng bay, hỗ trợ đổi và hoàn vé. Gọi 0907 870 707 để nhận giá theo ngày bay.",
   path: "/ve-may-bay",

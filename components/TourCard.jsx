@@ -26,7 +26,9 @@ const ngayGon = (iso) => {
   return ngay && thang ? `${ngay}/${thang}` : iso;
 };
 
-export default function TourCard({ tour, basePath, index = 0 }) {
+// taiSom: thẻ nằm ngay dưới đầu trang (vài thẻ đầu của lưới) — tải ảnh ngay thay vì
+// chờ cuộn tới (lazy), vì ảnh đó thường là phần hiển thị lớn nhất (LCP).
+export default function TourCard({ tour, basePath, index = 0, taiSom = false }) {
   const discount = tour.oldPrice
     ? Math.round((1 - tour.price / tour.oldPrice) * 100)
     : null;
@@ -56,6 +58,8 @@ export default function TourCard({ tour, basePath, index = 0 }) {
             alt={tour.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            loading={taiSom ? "eager" : undefined}
+            fetchPriority={taiSom && index === 0 ? "high" : undefined}
             className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110"
           />
 

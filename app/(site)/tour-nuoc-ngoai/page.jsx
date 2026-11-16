@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { TourListTinh } from "@/components/pages/TourListPage";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import { TomTatTour } from "@/components/DoanGioiThieu";
@@ -9,7 +10,7 @@ import { getTours, getOrbitImages, getCategories } from "@/app/lib/api";
 export const revalidate = 60;
 
 export const metadata = pageMeta({
-  title: "Tour nước ngoài",
+  title: "Tour du lịch nước ngoài trọn gói, giá minh bạch",
   description: "Tour nước ngoài: Thái Lan, Hàn Quốc, Nhật Bản, Singapore… Trọn gói vé máy bay, khách sạn, hỗ trợ visa.",
   path: "/tour-nuoc-ngoai",
 });
@@ -50,7 +51,8 @@ export default async function Page() {
         backgroundImages={anhNen}
       />
 
-      <Suspense fallback={null}>
+      {/* Fallback = danh sách đầy đủ dựng sẵn trong HTML (xem TourListTinh) */}
+      <Suspense fallback={<TourListTinh tours={tours} danhMuc={danhMuc} basePath="/tour-nuoc-ngoai" />}>
         <AbroadTours tours={tours} danhMuc={danhMuc} />
       </Suspense>
 

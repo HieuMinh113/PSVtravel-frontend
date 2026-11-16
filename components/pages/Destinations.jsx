@@ -40,7 +40,7 @@ export default function Destinations({ items = [] }) {
                     className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-3xl shadow-card"
                   >
                     {d.image ? (
-                      <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized={!duocToiUu(d.image)} className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                      <Image src={d.image} alt={d.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized={!duocToiUu(d.image)} loading={i < 3 ? "eager" : undefined} fetchPriority={i === 0 ? "high" : undefined} className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                     ) : (
                       <div className="absolute inset-0 bg-deep-gradient" />
                     )}

@@ -5,7 +5,7 @@ import { getPromotions, getSettings, getTours } from "@/app/lib/api";
 export const revalidate = 60;
 
 export const metadata = pageMeta({
-  title: "Voucher & ưu đãi — kiểm tra voucher, khuyến mãi tour",
+  title: "Voucher & khuyến mãi tour du lịch",
   description: "Kiểm tra voucher PSV Travel còn dùng được không (gõ mã hoặc quét QR), xem mệnh giá, hạn dùng và các chương trình giảm giá tour, visa đang áp dụng.",
   path: "/khuyen-mai",
 });

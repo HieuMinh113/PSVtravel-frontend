@@ -5,15 +5,18 @@ import { SITE_URL } from "./lib/seo";
 export const revalidate = 3600;
 
 export default async function sitemap() {
-  const now = new Date();
-
-  // Đổi chuỗi ngày từ backend thành Date hợp lệ; hỏng/thiếu thì dùng thời điểm
-  // hiện tại. Nhờ vậy mỗi trang có lastmod THẬT thay vì cùng một mốc dựng site
-  // (công cụ audit cảnh báo mọi lastmod giống hệt nhau).
+  // lastmod chỉ ghi khi biết ngày cập nhật THẬT. Google bỏ qua lastmod của cả
+  // sitemap nếu thấy nó không đúng — trước đây trang tĩnh, điểm đến, visa… luôn
+  // ghi "lúc dựng sitemap" nên mỗi giờ đều như vừa sửa. Không biết thì bỏ trống.
   const ngay = (v) => {
-    if (!v) return now;
+    if (!v) return undefined;
     const d = new Date(v);
-    return Number.isNaN(d.getTime()) ? now : d;
+    return Number.isNaN(d.getTime()) ? undefined : d;
+  };
+  // Trang danh sách: ngày của mục mới sửa gần nhất trong danh sách đó
+  const moiNhat = (...ds) => {
+    const t = ds.flat().filter(Boolean).map((d) => d.getTime());
+    return t.length ? new Date(Math.max(...t)) : undefined;
   };
 
   const staticPaths = [
@@ -24,13 +27,6 @@ export default async function sitemap() {
     // đã công khai đầy đủ theo quy định
     "/chinh-sach-bao-mat", "/dieu-khoan-su-dung", "/chinh-sach-thanh-toan", "/chinh-sach-huy-hoan",
   ];
-
-  const staticEntries = staticPaths.map((p) => ({
-    url: SITE_URL + p,
-    lastModified: now,
-    changeFrequency: "weekly",
-    priority: p === "" ? 1 : 0.7,
-  }));
 
   // Lấy dữ liệu THẬT từ backend. Trước đây phần này đọc mảng tour mẫu viết cứng
   // trong data/tours.js — sitemap khai báo với Google những trang không tồn tại,
@@ -63,6 +59,22 @@ export default async function sitemap() {
     anToan(() => getMaldivesSitemap()),
   ]);
 
+  const ngayTour = (loai) => tours.filter((t) => (t.type === "abroad") === (loai === "abroad")).map((t) => ngay(t.updated_at));
+  const ngayDanhSach = {
+    "/tour-trong-nuoc": moiNhat(ngayTour("domestic")),
+    "/tour-nuoc-ngoai": moiNhat(ngayTour("abroad")),
+    "/cam-nang": moiNhat(guides.map((g) => ngay(g.updated_at))),
+    "/maldives": moiNhat(maldives.map((c) => ngay(c.updated_at))),
+  };
+  ngayDanhSach[""] = moiNhat(Object.values(ngayDanhSach));
+
+  const staticEntries = staticPaths.map((p) => ({
+    url: SITE_URL + p,
+    lastModified: ngayDanhSach[p],
+    changeFrequency: "weekly",
+    priority: p === "" ? 1 : 0.7,
+  }));
+
   const tourEntries = tours
     .map((t) => ({ base: t.type === "abroad" ? "/tour-nuoc-ngoai" : "/tour-trong-nuoc", slug: t.slug, updatedAt: t.updated_at }))
     .filter((x) => x.slug)
@@ -89,7 +101,6 @@ export default async function sitemap() {
     .filter(Boolean)
     .map((slug) => ({
       url: `${SITE_URL}/lam-visa/${slug}`,
-      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
     }));
@@ -99,7 +110,6 @@ export default async function sitemap() {
     .filter(Boolean)
     .map((slug) => ({
       url: `${SITE_URL}/team-building/${slug}`,
-      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
     }));
@@ -109,7 +119,6 @@ export default async function sitemap() {
     .filter(Boolean)
     .map((slug) => ({
       url: `${SITE_URL}/diem-den/${slug}`,
-      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.7,
     }));
@@ -119,7 +128,6 @@ export default async function sitemap() {
     .filter(Boolean)
     .map((slug) => ({
       url: `${SITE_URL}/tuyen-dung/${slug}`,
-      lastModified: now,
       changeFrequency: "weekly",
       priority: 0.5,
     }));

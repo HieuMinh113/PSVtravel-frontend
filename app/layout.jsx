@@ -66,9 +66,9 @@ export const metadata = {
     url: SITE_URL,
     title: `${SITE_NAME} — Đặt tour du lịch trong nước & nước ngoài`,
     description: SITE_DESCRIPTION,
-    images: [{ url: `${SITE_URL}/logo.png` }],
+    images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: SITE_NAME }],
   },
-  twitter: { card: "summary_large_image", images: [`${SITE_URL}/logo.png`] },
+  twitter: { card: "summary_large_image", images: [`${SITE_URL}/og-image.jpg`] },
   // Biểu tượng tab lấy từ app/icon.png và app/apple-icon.png — Next tự sinh
   // thẻ <link> nên không khai báo icons ở đây nữa, tránh phải giữ hai chỗ khớp
   // nhau. Tài liệu Next 16 cũng khuyên dùng cách theo tệp thay vì khai báo tay.

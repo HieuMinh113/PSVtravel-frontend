@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { TourListTinh } from "@/components/pages/TourListPage";
 import PageHero from "@/components/PageHero";
 import SectionReveal from "@/components/SectionReveal";
 import { TomTatTour } from "@/components/DoanGioiThieu";
@@ -9,7 +10,7 @@ import { getTours, getOrbitImages, getCategories } from "@/app/lib/api";
 export const revalidate = 60;
 
 export const metadata = pageMeta({
-  title: "Tour trong nước",
+  title: "Tour du lịch trong nước trọn gói, giá minh bạch",
   description: "Tour du lịch trong nước từ Bắc chí Nam: Hạ Long, Sa Pa, Đà Nẵng, Phú Quốc… Giá trọn gói minh bạch.",
   path: "/tour-trong-nuoc",
 });
@@ -51,7 +52,8 @@ export default async function Page() {
         backgroundImages={anhNen}
       />
 
-      <Suspense fallback={null}>
+      {/* Fallback = danh sách đầy đủ dựng sẵn trong HTML (xem TourListTinh) */}
+      <Suspense fallback={<TourListTinh tours={tours} danhMuc={danhMuc} basePath="/tour-trong-nuoc" />}>
         <DomesticTours tours={tours} danhMuc={danhMuc} />
       </Suspense>
 

@@ -4,7 +4,7 @@ import FloatingContact from "@/components/FloatingContact";
 import ScrollToTop from "@/components/ScrollToTop";
 import ThanhTienTrinh from "@/components/ThanhTienTrinh";
 import PromoPopup from "@/components/PromoPopup";
-import { getSettings, getCategories, getBanners } from "@/app/lib/api";
+import { getSettings, getCategories, getBanners, getSeasonPages } from "@/app/lib/api";
 
 export default async function SiteLayout({ children }) {
   // Mega menu lấy thẳng từ Danh Mục Tour trong admin: mỗi danh mục có tên,
@@ -17,12 +17,16 @@ export default async function SiteLayout({ children }) {
   //
   // Đổi luôn được hai lượt tải toàn bộ tour ở mọi trang thành hai lượt tải
   // danh mục — nhẹ hơn hẳn.
-  const [settings, dmTrongNuoc, dmNuocNgoai, popups] = await Promise.all([
+  const [settings, dmTrongNuoc, dmNuocNgoai, popups, dsTrangMua] = await Promise.all([
     getSettings(),
     getCategories("domestic"),
     getCategories("abroad"),
     getBanners("popup"),
+    getSeasonPages(),
   ]);
+  // Trang theo mùa / dịp đang bật (/tour-tet…): đưa vào menu Khám phá + footer.
+  // Không có link nào trỏ tới thì Google khó tìm và coi trang là kém quan trọng.
+  const trangMua = (dsTrangMua ?? []).slice(0, 4).map((p) => ({ slug: p.slug, name: p.name }));
 
   // Poster popup: MỌI poster đang bật, theo thứ tự trong admin (băng chuyền)
   const posters = Array.isArray(popups) ? popups : [];
@@ -39,9 +43,9 @@ export default async function SiteLayout({ children }) {
       </a>
       <ScrollToTop />
       <ThanhTienTrinh />
-      <Navbar settings={settings} dmTrongNuoc={dmTrongNuoc} dmNuocNgoai={dmNuocNgoai} />
+      <Navbar settings={settings} dmTrongNuoc={dmTrongNuoc} dmNuocNgoai={dmNuocNgoai} trangMua={trangMua} />
       <main id="noi-dung" tabIndex={-1} className="outline-none">{children}</main>
-      <Footer settings={settings} />
+      <Footer settings={settings} trangMua={trangMua} />
       <FloatingContact settings={settings} />
       {posters.length > 0 && <PromoPopup posters={posters} />}
     </>

@@ -16,7 +16,8 @@ export async function generateMetadata({ params }) {
   const d = await getDestinationBySlug(slug);
   if (!d) return pageMeta({ title: "Không tìm thấy điểm đến", path: `/diem-den/${slug}` });
   return pageMeta({
-    title: d.name,
+    // "Bali | PSV Travel" quá ngắn, thiếu từ khoá người ta gõ ("du lịch Bali", "tour Bali")
+    title: `Du lịch ${d.name} – tour ${d.name} trọn gói`,
     description: moTaDu(d.summary, d.description) || `Khám phá ${d.name} cùng PSV Travel — giới thiệu chi tiết và tour đang mở.`,
     path: `/diem-den/${d.slug}`,
     image: d.image,
@@ -47,6 +48,22 @@ export default async function Page({ params }) {
           { name: d.name, url: `${SITE_URL}/diem-den/${slug}` },
         ])}
       />
+      {/* Tour đang mở tại điểm đến — cho Google / AI biết trang này dẫn tới tour nào */}
+      {dungDiem.length > 0 && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: `Tour ${d.name}`,
+            itemListElement: dungDiem.map((t, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              url: `${SITE_URL}/${t.type === "abroad" ? "tour-nuoc-ngoai" : "tour-trong-nuoc"}/${t.slug}`,
+              name: t.name,
+            })),
+          }}
+        />
+      )}
       <DestinationDetail destination={d} tours={dungDiem} toursKhac={cungKhuVuc} />
     </>
   );

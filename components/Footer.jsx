@@ -57,7 +57,7 @@ function BanDoVanPhong({ src }) {
   );
 }
 
-export default function Footer({ settings = {} }) {
+export default function Footer({ settings = {}, trangMua = [] }) {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
@@ -188,6 +188,10 @@ export default function Footer({ settings = {} }) {
               <li><Link href="/khoanh-khac-du-khach" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Khoảnh khắc du khách</Link></li>
               <li><Link href="/khuyen-mai" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Voucher &amp; ưu đãi</Link></li>
               <li><Link href="/diem-den" className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">Điểm đến nổi bật</Link></li>
+              {/* Trang theo mùa / dịp đang bật — để trang có link trỏ tới */}
+              {trangMua.map((p) => (
+                <li key={p.slug}><Link href={`/${p.slug}`} className="vung-bam inline-block py-1.5 transition-colors hover:text-teal-400 sm:py-0">{p.name}</Link></li>
+              ))}
             </ul>
           </div>
 

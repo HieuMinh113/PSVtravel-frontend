@@ -8,7 +8,7 @@ import UserMenu from "./UserMenu";
 import useNguoiDung from "@/app/lib/useNguoiDung";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ChevronDown, Compass, ArrowRight, ShieldCheck, ExternalLink, Tag, MapPin, HelpCircle, Briefcase, Plane } from "lucide-react";
+import { Menu, X, User, ChevronDown, Compass, ArrowRight, ShieldCheck, ExternalLink, Tag, MapPin, HelpCircle, Briefcase, Plane, CalendarHeart } from "lucide-react";
 
 const links = [
   { to: "/", label: "Trang chủ" },
@@ -151,7 +151,14 @@ function MegaPanel({ config }) {
   );
 }
 
-export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = [] }) {
+export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = [], trangMua = [] }) {
+  // Trang theo mùa / dịp đang bật (Tour Tết, Tour hè…) đứng đầu menu Khám phá
+  const menu = useMemo(
+    () => links.map((l) => (l.drop === "kham-pha"
+      ? { ...l, submenu: [...trangMua.map((p) => ({ to: `/${p.slug}`, label: p.name, icon: CalendarHeart })), ...l.submenu] }
+      : l)),
+    [trangMua],
+  );
   // Dựng lại chỉ khi danh sách đổi, không dựng lại mỗi lần rê chuột
   // Danh mục do layout dựng sẵn ở phía máy chủ truyền xuống.
   //
@@ -304,7 +311,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
             laptop nhỏ) — "Liên hệ", nút Đăng nhập bị đẩy ra ngoài mép màn hình, không bấm được.
             Dưới 1280px dùng nút ☰ như điện thoại. */}
         <div className="hidden items-center xl:flex 2xl:gap-1">
-          {links.map((l) =>
+          {menu.map((l) =>
             l.submenu ? (
               <div
                 key={l.label}
@@ -462,7 +469,7 @@ export default function Navbar({ settings = {}, dmTrongNuoc = [], dmNuocNgoai = 
               style={{ maxHeight: caoToiDa }}
               className="flex flex-col gap-1 overflow-y-auto overscroll-contain px-5 pb-6 pt-2"
             >
-              {links.map((l) =>
+              {menu.map((l) =>
                 l.submenu ? (
                   <div key={l.label}>
                     <button

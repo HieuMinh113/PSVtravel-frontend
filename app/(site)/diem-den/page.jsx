@@ -5,7 +5,7 @@ import { getDestinations } from "@/app/lib/api";
 export const revalidate = 60;
 
 export const metadata = pageMeta({
-  title: "Điểm đến nổi bật",
+  title: "Điểm đến du lịch trong nước & nước ngoài",
   description: "Khám phá các điểm đến du lịch trong nước và quốc tế cùng PSV Travel — giới thiệu chi tiết và tour đang mở.",
   path: "/diem-den",
 });

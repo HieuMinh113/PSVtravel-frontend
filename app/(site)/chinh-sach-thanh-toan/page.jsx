@@ -1,5 +1,5 @@
 import TrangTinh from "@/components/pages/TrangTinh";
-import { pageMeta } from "@/app/lib/seo";
+import { pageMeta, moTaDu } from "@/app/lib/seo";
 import { getPage, getSettings } from "@/app/lib/api";
 
 const SLUG = "payment-policy";
@@ -12,7 +12,8 @@ export async function generateMetadata() {
   const page = await getPage(SLUG);
   return pageMeta({
     title: page?.metaTitle || TIEU_DE,
-    description: page?.metaDescription || MO_TA,
+    // Mô tả ngắn (dưới 110 ký tự) thì nối đoạn mở đầu của chính nội dung trang
+    description: moTaDu(page?.metaDescription || MO_TA, page?.body),
     path: "/chinh-sach-thanh-toan",
   });
 }

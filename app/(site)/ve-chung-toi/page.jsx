@@ -5,7 +5,7 @@ import { getMoments, getTeamMembers, getAboutImages, getSettings } from "@/app/l
 export const revalidate = 60;
 
 export const metadata = pageMeta({
-  title: "Về chúng tôi",
+  title: "Về chúng tôi: công ty lữ hành quốc tế từ 2013",
   description:
     `PSV Travel — doanh nghiệp lữ hành hoạt động từ năm ${NAM_THANH_LAP}, hơn 300 tuyến tour trong nước và quốc tế, phục vụ hơn 10.000 lượt khách mỗi năm.`,
   path: "/ve-chung-toi",
