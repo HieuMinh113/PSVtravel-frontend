@@ -12,6 +12,16 @@ const SO_TUYEN_TOUR = "300";
 
 const TEN_PHAP_NHAN = "Công ty Cổ phần Du lịch P.S.V Travel";
 
+// Máy chủ MCP của backend (https://api.psvtravel.com/mcp): trợ lý AI tra tour,
+// giá, chỗ còn… trực tiếp từ hệ thống thay vì đọc trang. Lấy theo địa chỉ API.
+const MCP_URL = (() => {
+  try {
+    return new URL("/mcp", process.env.NEXT_PUBLIC_API_URL).href;
+  } catch {
+    return null;
+  }
+})();
+
 // "22/10/2026 10:49" theo giờ Việt Nam (máy chủ chạy giờ UTC; định dạng vi-VN
 // sẵn có lại đặt giờ lên trước ngày)
 const dinhDangGio = new Intl.DateTimeFormat("en-GB", {
@@ -197,6 +207,9 @@ export function llmsTxt({ tours = [], visas = [], settings = {}, muaDip = [], ma
     "## Bảng giá",
     "",
     `- [Bảng giá tour](${SITE_URL}/pricing.md): mọi tour đang mở bán — giá người lớn, trẻ em, 3 ngày khởi hành gần nhất, hạn nộp hồ sơ visa, phí dịch vụ visa. Tự cập nhật theo hệ thống đặt tour.`,
+    MCP_URL
+      ? `- [Máy chủ MCP](${MCP_URL}) (Streamable HTTP, không cần đăng nhập): trợ lý AI tra trực tiếp tour, lịch khởi hành, giá, chỗ còn, dịch vụ visa, combo Maldives, cẩm nang và gửi yêu cầu tư vấn khi khách đồng ý.`
+      : null,
     "",
     "## Tour trong nước",
     "",
