@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import EventDetail from "@/components/pages/EventDetail";
-import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL, videoJsonLd, serviceJsonLd } from "@/app/lib/seo";
+import { pageMeta, breadcrumbJsonLd, JsonLd, SITE_URL, videoJsonLd, serviceJsonLd, moTaDu } from "@/app/lib/seo";
 import { getEventBySlug, getEventSlugs, getEvents, getEventReviews, getSettings } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -10,15 +10,23 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug }));
 }
 
+// Mô tả Google: tóm tắt + đoạn đầu phần giới thiệu gói; vẫn dưới 120 ký tự thì
+// thêm câu giới thiệu dịch vụ — Google bớt tự lấy đoạn khác thay vào.
+function moTaGoi(event) {
+  const chung = `Gói ${event.title} do PSV Travel tổ chức trọn gói cho doanh nghiệp. Tư vấn kịch bản, báo giá minh bạch.`;
+  const moTa = moTaDu(event.summary, event.description);
+  if (!moTa) return chung;
+  if (moTa.length >= 120) return moTa;
+  return `${/[.!?…]$/.test(moTa) ? moTa : `${moTa}.`} ${chung}`;
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const event = await getEventBySlug(slug);
   if (!event) return pageMeta({ title: "Team Building", path: `/team-building/${slug}` });
   return pageMeta({
     title: `${event.title} — Team Building & Sự kiện`,
-    description:
-      event.summary ||
-      `Gói ${event.title} do PSV Travel tổ chức trọn gói cho doanh nghiệp. Tư vấn kịch bản, báo giá minh bạch.`,
+    description: moTaGoi(event),
     path: `/team-building/${slug}`,
     image: event.image || undefined,
   });

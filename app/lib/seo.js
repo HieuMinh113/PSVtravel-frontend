@@ -45,12 +45,12 @@ function rutGonMoTa(text, gioiHan = 155) {
   return (khoangTrangCuoi > 0 ? cat.slice(0, khoangTrangCuoi) : cat).trimEnd() + "…";
 }
 
-// Mô tả Google ngắn quá (dưới 110 ký tự — Ahrefs báo "Meta description too
-// short", Google hay tự lấy đoạn khác thay vào) thì nối thêm đoạn mở đầu của
+// Mô tả Google ngắn quá (dưới 120 ký tự — Ahrefs, claude-seo báo "Meta description
+// too short", Google hay tự lấy đoạn khác thay vào) thì nối thêm đoạn mở đầu của
 // CHÍNH nội dung trang. pageMeta rút gọn lại về ~155 ký tự.
 export function moTaDu(moTa, html) {
   const dau = String(moTa || "").replace(/\s+/g, " ").trim();
-  if (dau.length >= 110 || !html) return dau;
+  if (dau.length >= 120 || !html) return dau;
   // Mỗi đoạn / tiêu đề mục thành một câu (thêm dấu chấm nếu thiếu) — khỏi dính
   // "…bỏ qua Phố cổ Hội An về đêm Xem thêm…" thành một câu vô nghĩa
   const chu = String(html)
@@ -74,19 +74,21 @@ export function moTaDu(moTa, html) {
   return dau ? `${/[.!?…]$/.test(dau) ? dau : `${dau}.`} ${them}` : them;
 }
 
-// Tiêu đề hiển thị trên Google — tối đa 70 ký tự (quá mức này Google cắt cụt
-// thành "…" và công cụ audit báo "Long title element").
+// Tiêu đề hiển thị trên Google: khoảng 60 ký tự là hiện trọn, dài hơn Google
+// cắt thành "…" (công cụ audit báo "title too long" từ 61 ký tự).
 //
-// Mặc định thêm đuôi " | PSV Travel" (template ở layout gốc). Tên tour / bài
-// viết đã dài thì BỎ đuôi; vẫn còn quá dài thì cắt gọn ở ranh giới một từ —
-// không bao giờ cắt giữa chữ. Tour và bài cẩm nang có ô "Tiêu đề SEO" trong
-// trang quản trị để nhân viên tự viết tiêu đề ngắn, đẹp hơn cách cắt tự động.
+// Đuôi " | PSV Travel" (template ở layout gốc) chỉ thêm khi cả câu vẫn trong
+// 60 ký tự — tên tour / bài viết quan trọng hơn đuôi thương hiệu. Tên tự nó
+// dài quá 70 thì cắt gọn ở ranh giới một từ — không bao giờ cắt giữa chữ.
+// Tour và bài cẩm nang có ô "Tiêu đề SEO" trong trang quản trị để nhân viên
+// tự viết tiêu đề ngắn, đẹp hơn cách cắt tự động.
+export const TIEU_DE_HIEN_TRON = 60;
 const TIEU_DE_TOI_DA = 70;
 const DUOI_TIEU_DE = ` | ${SITE_NAME}`;
 
 export function tieuDeSeo(title) {
   const t = String(title || "").replace(/\s+/g, " ").trim();
-  if ((t + DUOI_TIEU_DE).length <= TIEU_DE_TOI_DA) {
+  if ((t + DUOI_TIEU_DE).length <= TIEU_DE_HIEN_TRON) {
     return { metaTitle: t, hienThi: t + DUOI_TIEU_DE };
   }
   let ngan = t;
@@ -152,20 +154,22 @@ export function tourMeta(tour, basePath) {
 
 // Tiêu đề Google tự sinh: tên tour (+ số ngày nếu tên chưa có) + "Từ 3,99 triệu"
 // — giá hiện ngay trên kết quả tìm kiếm kéo thêm lượt bấm (ưu tiên hơn đuôi
-// " | PSV Travel", đuôi chỉ thêm khi còn chỗ). Giá viết gọn vì tên tour thật
-// thường đã 40–50 ký tự; dài quá 65 ký tự thì bỏ giá cho khỏi bị Google cắt.
+// " | PSV Travel", đuôi chỉ thêm khi còn chỗ). Tên tour thật thường đã 40–50
+// ký tự nên lần lượt thử cho vừa 60 ký tự: đủ chữ + giá → viết gọn
+// "5 ngày 4 đêm" thành "5N4Đ" + giá → bỏ giá.
 function tieuDeTour(tour) {
   const m = String(tour.days || "").match(/(\d+)\s*ngày\s*(\d+)\s*đêm/);
   const soNgay = !m || tenCoSoNgay(tour) ? "" : Number(m[2]) > 0 ? ` ${m[1]}N${m[2]}Đ` : ` ${m[1]} ngày`;
   const ten = `${String(tour.name || "").trim()}${soNgay}`;
+  const tenGon = ten.replace(/(\d+)\s*ngày\s*(\d+)\s*đêm/i, "$1N$2Đ");
   const gia = Number(tour.price);
-  if (!(gia > 0)) return ten;
+  if (!(gia > 0)) return ten.length <= TIEU_DE_HIEN_TRON ? ten : tenGon;
   const giaGon =
     gia >= 1_000_000
       ? `${(gia / 1_000_000).toLocaleString("vi-VN", { maximumFractionDigits: 2 })} triệu`
       : `${gia.toLocaleString("vi-VN")}đ`;
-  const coGia = `${ten} | Từ ${giaGon}`;
-  return coGia.length <= 65 ? coGia : ten;
+  const thu = [`${ten} | Từ ${giaGon}`, `${tenGon} | Từ ${giaGon}`, ten, tenGon];
+  return thu.find((t) => t.length <= TIEU_DE_HIEN_TRON) ?? tenGon;
 }
 
 // JSON-LD tổ chức (đặt ở layout gốc)

@@ -6,7 +6,7 @@ export const revalidate = 60;
 
 export const metadata = pageMeta({
   title: "Điểm đến du lịch trong nước & nước ngoài",
-  description: "Khám phá các điểm đến du lịch trong nước và quốc tế cùng PSV Travel — giới thiệu chi tiết và tour đang mở.",
+  description: "Khám phá các điểm đến du lịch trong nước và nước ngoài cùng PSV Travel: giới thiệu chi tiết từng nơi và các tour trọn gói đang mở bán cho mỗi điểm đến.",
   path: "/diem-den",
 });
 

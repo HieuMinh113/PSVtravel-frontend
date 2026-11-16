@@ -6,7 +6,7 @@ export const revalidate = 60;
 
 export const metadata = pageMeta({
   title: "Tuyển dụng việc làm ngành du lịch tại TP.HCM",
-  description: "Cơ hội nghề nghiệp tại PSV Travel — các vị trí đang tuyển dụng và cách ứng tuyển.",
+  description: "Cơ hội nghề nghiệp tại PSV Travel, công ty lữ hành quốc tế hoạt động từ 2013: xem các vị trí đang tuyển, mô tả công việc, quyền lợi và ứng tuyển trực tuyến.",
   path: "/tuyen-dung",
 });
 

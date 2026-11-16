@@ -11,7 +11,7 @@ export const revalidate = 60;
 
 export const metadata = pageMeta({
   title: "Tour du lịch nước ngoài trọn gói, giá minh bạch",
-  description: "Tour nước ngoài: Thái Lan, Hàn Quốc, Nhật Bản, Singapore… Trọn gói vé máy bay, khách sạn, hỗ trợ visa.",
+  description: "Tour du lịch nước ngoài trọn gói: Thái Lan, Hàn Quốc, Nhật Bản, Singapore… Đã gồm vé máy bay, khách sạn, hỗ trợ làm visa. Hotline 0907 870 707.",
   path: "/tour-nuoc-ngoai",
 });
 

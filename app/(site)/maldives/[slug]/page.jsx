@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import MaldivesDetail from "@/components/pages/MaldivesDetail";
-import { pageMeta, JsonLd, SITE_URL, ORG_ID, breadcrumbJsonLd, moTaDu } from "@/app/lib/seo";
+import { pageMeta, JsonLd, SITE_URL, ORG_ID, breadcrumbJsonLd, moTaDu, TIEU_DE_HIEN_TRON } from "@/app/lib/seo";
 import { getMaldivesCombo, getMaldivesSitemap, getSettings } from "@/app/lib/api";
 import { saoChu, tyGia, usd } from "@/app/lib/maldives";
 
@@ -23,11 +23,21 @@ function moTa(c) {
   return moTaDu(c.summary || (tuDong ? `${tuDong}.` : ""), c.resort?.intro || "");
 }
 
+// Tên combo thường dạng "Resort 5* – bay Singapore Airlines, thuỷ phi cơ" (60–70
+// ký tự, Google cắt cụt). Chưa có Tiêu đề SEO thì bỏ dần các ý phụ sau dấu
+// phẩy cuối cho vừa 60 ký tự: tên resort + hãng bay mới là phần khách tìm.
+function tieuDe(c) {
+  if (c.seoTitle) return c.seoTitle;
+  let t = String(c.name || "").trim();
+  while (t.length > TIEU_DE_HIEN_TRON && t.lastIndexOf(", ") > 30) t = t.slice(0, t.lastIndexOf(", "));
+  return t;
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const c = await getMaldivesCombo(slug);
   if (!c) return pageMeta({ title: "Không tìm thấy combo", path: `/maldives/${slug}` });
-  return pageMeta({ title: c.seoTitle || c.name, description: moTa(c), path: `/maldives/${c.slug}`, image: c.image || c.resort?.image || undefined });
+  return pageMeta({ title: tieuDe(c), description: moTa(c), path: `/maldives/${c.slug}`, image: c.image || c.resort?.image || undefined });
 }
 
 export default async function Page({ params }) {

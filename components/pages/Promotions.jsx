@@ -25,12 +25,13 @@ export function cauHoi(hotline) {
   ];
 }
 
-function TheUuDai({ p }) {
+// taiSom: 3 thẻ đầu nằm ngay dưới đầu trang — tải ảnh ngay, không chờ cuộn (LCP)
+function TheUuDai({ p, taiSom = false }) {
   const inner = (
     <>
       <div className="relative aspect-[16/10] overflow-hidden bg-deep-900">
         {p.image ? (
-          <Image src={p.image} alt={p.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized={!duocToiUu(p.image)} className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+          <Image src={p.image} alt={p.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized={!duocToiUu(p.image)} loading={taiSom ? "eager" : undefined} className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
         ) : (
           <div className="h-full w-full bg-deep-gradient" />
         )}
@@ -180,12 +181,12 @@ export default function Promotions({ items = [], tours = [], hotline = "0907 870
 
           {items.length > 0 ? (
             <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map((p, i) => <TheUuDai key={p.id ?? i} p={p} />)}
+              {items.map((p, i) => <TheUuDai key={p.id ?? i} p={p} taiSom={i < 3} />)}
             </div>
           ) : tourHien.length > 0 ? (
             <div className={`mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 ${tourHien.length === 4 ? "xl:grid-cols-4" : "lg:grid-cols-3"}`}>
               {tourHien.map((tour, i) => (
-                <TourCard key={tour.slug} tour={tour} index={i} basePath={tour.type === "domestic" ? "/tour-trong-nuoc" : "/tour-nuoc-ngoai"} />
+                <TourCard key={tour.slug} tour={tour} index={i} taiSom={i < 3} basePath={tour.type === "domestic" ? "/tour-trong-nuoc" : "/tour-nuoc-ngoai"} />
               ))}
             </div>
           ) : (

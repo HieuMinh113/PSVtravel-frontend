@@ -16,7 +16,13 @@ export async function generateMetadata({ params }) {
   if (!a) return pageMeta({ title: "Không tìm thấy tác giả", path: `/tac-gia/${slug}` });
   return pageMeta({
     title: `${a.name}${a.position ? ` — ${a.position}` : ""}`,
-    description: a.bio || `Các bài cẩm nang du lịch do ${a.name}${a.position ? `, ${a.position}` : ""} tại PSV Travel viết.`,
+    description: [
+      `${a.name}${a.position ? `, ${a.position}` : ""} tại PSV Travel.`,
+      a.bio,
+      a.guides?.length > 0
+        ? `Đọc ${a.guides.length} bài cẩm nang du lịch do ${a.name} viết: kinh nghiệm, lịch trình và mẹo cho chuyến đi.`
+        : `Các bài cẩm nang du lịch do ${a.name} viết.`,
+    ].filter(Boolean).join(" "),
     path: `/tac-gia/${a.slug}`,
     image: a.photo,
   });

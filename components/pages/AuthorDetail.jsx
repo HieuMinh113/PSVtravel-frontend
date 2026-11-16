@@ -133,12 +133,19 @@ export default function AuthorDetail({ author }) {
             Bài viết của {author.name} <span className="text-base font-normal text-ink-subtle">({author.guides.length})</span>
           </h2>
           <ul className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {author.guides.map((g) => (
+            {author.guides.map((g, i) => (
               <li key={g.slug} className="card-surface group flex flex-col overflow-hidden">
                 <Link href={`/cam-nang/${g.slug}`} className="flex flex-1 flex-col">
                   <div className="relative h-44 overflow-hidden">
                     {g.image ? (
-                      <Image src={g.image} alt={g.title} fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover transition-transform duration-700 ease-enter group-hover:scale-105" />
+                      <Image
+                        src={g.image}
+                        alt={g.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                        // 2 bài đầu nằm ngay dưới phần giới thiệu tác giả: tải ảnh ngay
+                        loading={i < 2 ? "eager" : undefined}
+                        className="object-cover transition-transform duration-700 ease-enter group-hover:scale-105" />
                     ) : (
                       <div className="h-full w-full bg-gradient-to-br from-ocean-100 to-teal-100" />
                     )}

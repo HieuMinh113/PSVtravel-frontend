@@ -11,6 +11,14 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug }));
 }
 
+// Mô tả Google: tóm tắt + đoạn đầu bài giới thiệu; vẫn dưới 120 ký tự (điểm đến
+// mới, nội dung còn ngắn) thì thêm câu mời xem tour — Google bớt tự lấy đoạn khác.
+function moTaDuDiemDen(d) {
+  const moTa = moTaDu(d.summary, d.description) || `Khám phá ${d.name} cùng PSV Travel.`;
+  if (moTa.length >= 120) return moTa;
+  return `${/[.!?…]$/.test(moTa) ? moTa : `${moTa}.`} Tour ${d.name} trọn gói tại PSV Travel: lịch trình chi tiết, giá từng đợt khởi hành.`;
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const d = await getDestinationBySlug(slug);
@@ -18,7 +26,7 @@ export async function generateMetadata({ params }) {
   return pageMeta({
     // "Bali | PSV Travel" quá ngắn, thiếu từ khoá người ta gõ ("du lịch Bali", "tour Bali")
     title: `Du lịch ${d.name} – tour ${d.name} trọn gói`,
-    description: moTaDu(d.summary, d.description) || `Khám phá ${d.name} cùng PSV Travel — giới thiệu chi tiết và tour đang mở.`,
+    description: moTaDuDiemDen(d),
     path: `/diem-den/${d.slug}`,
     image: d.image,
   });

@@ -6,7 +6,7 @@ export const revalidate = 60;
 
 export const metadata = pageMeta({
   title: "Câu hỏi thường gặp",
-  description: "Giải đáp các thắc mắc về đặt tour, thanh toán, đổi huỷ và thủ tục visa tại PSV Travel.",
+  description: "Giải đáp các thắc mắc thường gặp tại PSV Travel: cách đặt tour, thanh toán, đổi huỷ tour và thủ tục làm visa. Chưa thấy câu trả lời? Gọi hotline 0907 870 707.",
   path: "/cau-hoi-thuong-gap",
 });
 

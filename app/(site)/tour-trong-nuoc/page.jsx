@@ -11,7 +11,7 @@ export const revalidate = 60;
 
 export const metadata = pageMeta({
   title: "Tour du lịch trong nước trọn gói, giá minh bạch",
-  description: "Tour du lịch trong nước từ Bắc chí Nam: Hạ Long, Sa Pa, Đà Nẵng, Phú Quốc… Giá trọn gói minh bạch.",
+  description: "Tour du lịch trong nước trọn gói từ Bắc chí Nam: Hạ Long, Sa Pa, Đà Nẵng, Phú Quốc… Giá minh bạch, lịch trình chi tiết từng ngày. Hotline 0907 870 707.",
   path: "/tour-trong-nuoc",
 });
 

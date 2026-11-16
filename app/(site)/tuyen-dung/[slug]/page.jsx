@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import CareerDetail from "@/components/pages/CareerDetail";
-import { pageMeta, breadcrumbJsonLd, jobPostingJsonLd, JsonLd, SITE_URL } from "@/app/lib/seo";
+import { pageMeta, breadcrumbJsonLd, jobPostingJsonLd, JsonLd, SITE_URL, moTaDu } from "@/app/lib/seo";
 import { getJobBySlug, getJobSlugs } from "@/app/lib/api";
 
 export const revalidate = 60;
@@ -16,7 +16,14 @@ export async function generateMetadata({ params }) {
   if (!j) return pageMeta({ title: "Không tìm thấy tin tuyển dụng", path: `/tuyen-dung/${slug}` });
   return pageMeta({
     title: `Tuyển dụng: ${j.title}`,
-    description: `PSV Travel tuyển dụng ${j.title}${j.location ? ` tại ${j.location}` : ""}.`,
+    description: moTaDu(
+      [
+        `PSV Travel tuyển ${j.title}${j.location ? ` tại ${j.location}` : ""}`,
+        j.salary_range && `lương ${j.salary_range}`,
+        j.deadline && `hạn nộp ${j.deadline.split("-").reverse().join("/")}`,
+      ].filter(Boolean).join(", ") + ".",
+      j.description,
+    ),
     path: `/tuyen-dung/${j.slug}`,
   });
 }
