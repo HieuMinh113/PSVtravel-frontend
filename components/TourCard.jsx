@@ -1,9 +1,9 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Star, MapPin, CalendarDays, Users2, ArrowUpRight } from "lucide-react";
 import { formatVND } from "@/data/tours";
+import AnhVuaKhung from "@/components/AnhVuaKhung";
 
 // Nhãn khuyến mãi: mỗi loại một màu riêng, tất cả đều đạt tương phản với chữ trắng
 const tagStyles = {
@@ -52,16 +52,20 @@ export default function TourCard({ tour, basePath, index = 0, taiSom = false }) 
       className="card-surface group flex flex-col overflow-hidden"
     >
       <Link href={`${basePath}/${tour.slug}`} className="flex flex-1 flex-col">
-        <div className="relative h-52 overflow-hidden">
-          <Image
-            src={tour.image}
-            alt={tour.name}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            loading={taiSom ? "eager" : undefined}
-            fetchPriority={taiSom && index === 0 ? "high" : undefined}
-            className="object-cover transition-transform duration-700 ease-enter group-hover:scale-110"
-          />
+        {/* Khung ảnh tỉ lệ cố định 16:9 (trước đây cao cố định 208px: thẻ rộng
+            hẹp theo màn hình nên mỗi thẻ cắt ảnh một kiểu, banner mất chữ hai
+            bên). Ảnh đúng 16:9 (admin cắt khi tải lên) lấp kín khung; ảnh cũ
+            lệch tỉ lệ thì hiện nguyên tấm trên nền mờ của chính nó. */}
+        <div className="relative aspect-video overflow-hidden">
+          <div className="absolute inset-0 transition-transform duration-700 ease-enter group-hover:scale-110">
+            <AnhVuaKhung
+              anh={tour.image}
+              alt={tour.name}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              loading={taiSom ? "eager" : undefined}
+              fetchPriority={taiSom && index === 0 ? "high" : undefined}
+            />
+          </div>
 
           {/* Lớp phủ mờ chân ảnh: luôn hiện nhẹ để chữ trắng phía trên ảnh luôn đọc
               được, đậm dần khi rê chuột */}

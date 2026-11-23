@@ -10,7 +10,8 @@ import { duocToiUu } from "@/app/lib/anh";
 //
 // Đặt trong một phần tử `relative` có tỉ lệ khung (aspect-*). `anhDienThoai`:
 // ảnh riêng cho màn < 640px; <picture> làm trình duyệt chỉ tải đúng một ảnh.
-function Hinh({ anh, anhDienThoai, alt, sizes, sizesDienThoai, className, loading, anDi }) {
+// fetchPriority chỉ gắn cho ảnh chính (ảnh nền mờ cùng địa chỉ, không cần tải riêng).
+function Hinh({ anh, anhDienThoai, alt, sizes, sizesDienThoai, className, loading, fetchPriority, anDi }) {
   const dt = anhDienThoai || anh;
   const { props: pMay } = getImageProps({ src: anh, alt, fill: true, sizes, loading, unoptimized: !duocToiUu(anh) });
   const { props: pDt } = getImageProps({
@@ -30,6 +31,7 @@ function Hinh({ anh, anhDienThoai, alt, sizes, sizesDienThoai, className, loadin
         // trong globals.css mạnh hơn class blur-* nên class bị đè, nền không mờ
         style={anDi ? { ...pDt.style, filter: "blur(28px) brightness(0.55) saturate(1.2)" } : pDt.style}
         alt={anDi ? "" : alt}
+        fetchPriority={anDi ? undefined : fetchPriority}
         aria-hidden={anDi || undefined}
         draggable={false}
         className={className}
