@@ -17,7 +17,6 @@ import { gtagConversion, CONVERSION_LIEN_HE } from "@/app/lib/gtag";
 import { formatVND } from "@/data/tours";
 import { FlagThailand, FlagKorea, FlagJapan, FlagSingapore, FlagChina, FlagTaiwan } from "@/components/FlagIcons";
 import TourCard from "@/components/TourCard";
-import AnhVuaKhung from "@/components/AnhVuaKhung";
 import SectionReveal from "@/components/SectionReveal";
 import ReviewForm from "@/components/ReviewForm";
 import HanNopVisa, { HetHanNhanHoSo } from "@/components/HanNopVisa";
@@ -556,15 +555,12 @@ export default function TourDetail({ basePath, tour, related = [], danhMuc = [],
 
   return (
     <div>
-      {/* Ảnh bìa hiện TRỌN (khung 16:9, ảnh lệch tỉ lệ có nền mờ); chữ nằm dưới
-          ảnh để không che chữ thiết kế sẵn trên banner. Nền tối giữ menu trắng đọc rõ. */}
-      <section className="bg-deep-gradient pt-24 sm:pt-28">
-        <div className="mx-auto max-w-7xl sm:px-8">
-          <div className="relative aspect-video max-h-[70dvh] w-full overflow-hidden sm:rounded-2xl">
-            <AnhVuaKhung anh={tour.image} alt={tour.name} sizes="(max-width: 1280px) 100vw, 1216px" loading="eager" fetchPriority="high" />
-          </div>
-        </div>
-        <div className="mx-auto max-w-7xl px-5 pb-10 pt-6 sm:px-8">
+      {/* Hero ảnh lớn */}
+      <section className="relative h-[62dvh] min-h-[460px] overflow-hidden">
+        <Image src={tour.image} alt={tour.name} fill preload sizes="100vw" quality={80} className="object-cover" />
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-deep-950/80 via-deep-950/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-deep-950/85 via-deep-950/20 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-5 pb-10 pt-24 sm:px-8">
           <div className="mb-3 flex items-center gap-1.5 text-xs text-white/75">
             <Link href="/" className="vung-bam transition-colors hover:text-gold-300">Trang chủ</Link>
             <span>/</span>
